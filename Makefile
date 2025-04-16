@@ -8,12 +8,17 @@ all: $(SUBDIR) 		# default action
 
 clean: $(SUBDIR)	# clean-up environment
 	@find . -name '*.sw[po]' -delete
+	flutter clean
 
 test:				# run test
+	flutter test --coverage
 
 run:				# run in the local environment
+	flutter run
 
 build:				# build the binary/library
+	flutter build macos --release
+	flutter build web --release
 
 upgrade:			# upgrade all the necessary packages
 	pre-commit autoupdate

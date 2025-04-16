@@ -9,3 +9,11 @@ repos:
     rev: v0.44.0
     hooks:
       - id: markdownlint-fix
+
+  - repo: local
+    hooks:
+      - id: dart-analyzer
+        name: run dart analyzer
+        files: \.dart$
+        language: system
+        entry: dart analyze --fatal-infos
