@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:glacial/core.dart';
+
 class GlacialApp extends StatefulWidget {
   const GlacialApp({super.key});
 
@@ -46,11 +48,18 @@ class Glacial extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(child: buildContent()));
+    logger.i("build and load the Glacial");
+    return Scaffold(
+      body: SafeArea(
+        child: buildContent(),
+      ),
+    );
   }
 
   Widget buildContent() {
-    return Center(child: Text("Hello, Glacial!"));
+    return Center(
+      child: Text("Hello, Glacial!"),
+    );
   }
 }
 
