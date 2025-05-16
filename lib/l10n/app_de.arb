@@ -1,0 +1,11 @@
+{
+  "@@locale": "de",
+  "txt_app_name": "Gletscher",
+  "txt_search_mastodon": "mastodon.social",
+  "txt_search_hint": "Drücken Sie Enter zum Suchen...",
+  "txt_search_helper": "Suche nach etwas Interessantem",
+  "txt_search_history": "Suchverlauf",
+  "txt_invalid_instance": "Ungültiger Mastodon-Server",
+  "btn_clean_all": "Alles löschen",
+  "dots": "..."
+}

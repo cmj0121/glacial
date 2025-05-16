@@ -1,0 +1,11 @@
+{
+  "@@locale": "fr",
+  "txt_app_name": "glacial",
+  "txt_search_mastodon": "mastodon.social",
+  "txt_search_hint": "Appuyez sur Entrée pour rechercher...",
+  "txt_search_helper": "Recherchez quelque chose d'intéressant",
+  "txt_search_history": "Historique de recherche",
+  "txt_invalid_instance": "Serveur Mastodon invalide",
+  "btn_clean_all": "Tout effacer",
+  "dots": "..."
+}

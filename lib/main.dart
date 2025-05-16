@@ -1,7 +1,16 @@
+// The entry point of the app that initializes the environment and starts the app.
 import 'package:flutter/material.dart';
-import 'package:glacial/app.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+import 'package:glacial/app.dart';
+import 'package:glacial/core.dart';
+
+void main() async {
+  await dotenv.load(fileName: ".env");
+  await Info.init();
+  await Storage.init(purge: false);
+
+  logger.d("completely preloaded ...");
   runApp(const GlacialApp());
 }
 
