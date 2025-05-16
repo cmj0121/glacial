@@ -1,0 +1,22 @@
+name: Auditing
+
+on: pull_request
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  audting:
+    name: Protect and Discover Secrets
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # fetch all history for all branches and tags.
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
