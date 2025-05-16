@@ -1,0 +1,9 @@
+{
+  "@@locale": "ja",
+  "txt_app_name": "氷河",
+  "txt_search_mastodon": "mastodon.social",
+  "txt_search_hint": "入力して検索...",
+  "txt_search_helper": "興味のあるものを検索してください",
+  "txt_invalid_instance": "無効な Mastodon サーバー",
+  "dots": "..."
+}

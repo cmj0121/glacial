@@ -64,15 +64,19 @@ class _ServerExplorerState extends State<ServerExplorer> {
   // The header of the explorer page, shows the search bar and the history
   // button to show the search history.
   Widget buildHeader() {
+    final double iconSize = 32;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Flexible(child: buildSearchBar()),
         const SizedBox(width: 16),
         Builder(
           builder: (context) {
             return IconButton(
-              icon: const Icon(Icons.history),
+              icon: Icon(Icons.history, size: iconSize),
               onPressed: () => Scaffold.of(context).openDrawer(),
               tooltip: "Search History",
             );
@@ -95,6 +99,10 @@ class _ServerExplorerState extends State<ServerExplorer> {
           onPressed: () => onSearch(),
         ),
         suffixIcon: buildCleanButton(),
+
+        hintText: AppLocalizations.of(context)?.txt_search_mastodon ?? "mastodon.social",
+        hintStyle: TextStyle(color: Theme.of(context).colorScheme.surfaceBright),
+        helperText: AppLocalizations.of(context)?.txt_search_helper ?? 'Search for something interesting',
 
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -127,11 +135,46 @@ class _ServerExplorerState extends State<ServerExplorer> {
 
   void onSearch() async {
     final String keyword = controller.text.trim();
-    logger.i("searching for $keyword");
 
-    setState(() {
-      child = Text("Searching $keyword ...");
-    });
+    if (keyword.isEmpty) {
+      return;
+    }
+
+    setState( () => child = ServerBuilder(domain: keyword));
+  }
+}
+
+class ServerBuilder extends StatelessWidget {
+  final String domain;
+
+  const ServerBuilder({
+    super.key,
+    required this.domain,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: fetch(domain),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LinearProgressIndicator();
+        } else if (snapshot.hasError) {
+          final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: $domain';
+          return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
+        }
+
+        return Text('Finding the server: $domain');
+      }
+    );
+  }
+
+  Future<void> fetch(String domain) async {
+    logger.i('search the mastodon server: $domain');
+
+    final Uri url = Uri.parse('https://$domain/api/v2/instance');
+    final response = await get(url);
+    logger.i('response: ${response.body}');
   }
 }
 
