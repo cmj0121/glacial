@@ -1,64 +1,27 @@
+// The main application and define the global variables.
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/routes.dart';
 
-class GlacialApp extends StatefulWidget {
+class GlacialApp extends StatelessWidget {
   const GlacialApp({super.key});
 
   @override
-  State<GlacialApp> createState() => _GlacialAppState();
-}
-
-class _GlacialAppState extends State<GlacialApp> {
-  String? title;
-
-  @override
-  void initState() {
-    super.initState();
-    load();
-  }
-
-  void load() async {
-    final info = await PackageInfo.fromPlatform();
-
-    setState(() {
-      title = info.appName;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final info = Info().info;
+
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: title,
+      title: info == null ? "Glacial" : '${info.appName} (v${info.version})',
 
       // The theme mode
       themeMode: ThemeMode.dark,
       theme: ThemeData(useMaterial3: true, brightness: Brightness.light),
       darkTheme: ThemeData(useMaterial3: true, brightness: Brightness.dark),
-      // The home page of the app.
-      home: Glacial(),
-    );
-  }
-}
 
-class Glacial extends StatelessWidget {
-  const Glacial({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    logger.i("build and load the Glacial");
-    return Scaffold(
-      body: SafeArea(
-        child: buildContent(),
-      ),
-    );
-  }
-
-  Widget buildContent() {
-    return Center(
-      child: Text("Hello, Glacial!"),
+      // The router implementation
+      routerConfig: router,
     );
   }
 }

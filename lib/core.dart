@@ -1,7 +1,5 @@
 // The core library of the app.
-import 'package:logger/logger.dart';
-
-// The logger instance.
-final Logger logger = Logger(printer: PrettyPrinter());
+export 'cores/observer.dart';
+export 'cores/misc.dart';
 
 // vim: set ts=2 sw=2 sts=2 et:
