@@ -21,7 +21,7 @@ Future<ServerSchema> fetch(String domain) async {
 }
 
 // The Mastodon server widget to show the information based on the widget type.
-class MastodonServer extends StatelessWidget {
+class MastodonServer extends StatefulWidget {
   final ServerSchema schema;
   final ValueChanged<ServerSchema>? onTap;
 
@@ -30,6 +30,9 @@ class MastodonServer extends StatelessWidget {
     required this.schema,
     this.onTap,
   });
+
+  @override
+  State<MastodonServer> createState() => _MastodonServerState();
 
   // The static method to create the server widget by the passed domain, with
   // the future builder to load the server information.
@@ -50,11 +53,15 @@ class MastodonServer extends StatelessWidget {
       }
     );
   }
+}
+
+class _MastodonServerState extends State<MastodonServer> {
+  final double badgeFontSize = 10;
 
   @override
   Widget build(BuildContext context) {
     return InkWellDone(
-      onTap: () => onTap?.call(schema),
+      onTap: () => widget.onTap?.call(widget.schema),
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -63,12 +70,17 @@ class MastodonServer extends StatelessWidget {
             children: [
               Flexible(child: buildThumbnail()),
               const SizedBox(height: 16),
-              Text(schema.title, style: Theme.of(context).textTheme.headlineLarge),
+              Text(widget.schema.title, style: Theme.of(context).textTheme.headlineLarge),
               const SizedBox(height: 16),
               Flexible(
-                child: Text(schema.desc, style: Theme.of(context).textTheme.bodyLarge),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(widget.schema.desc, style: Theme.of(context).textTheme.bodyLarge),
+                ),
               ),
               const SizedBox(height: 6),
+
+              const Spacer(),
               buildMetadata(),
             ],
           ),
@@ -86,7 +98,7 @@ class MastodonServer extends StatelessWidget {
         maxWidth: double.infinity,
         maxHeight: double.infinity,
         child: CachedNetworkImage(
-          imageUrl: schema.thumbnail,
+          imageUrl: widget.schema.thumbnail,
           placeholder: (context, url) => const CircularProgressIndicator(),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
@@ -98,25 +110,60 @@ class MastodonServer extends StatelessWidget {
   // supported languages.
   Widget buildMetadata() {
     final List<String> tags = [
-      'v${schema.version}',
-      'mau: ${schema.usage.userActiveMonthly}',
-      ...schema.languages,
+      'v${widget.schema.version}',
+      'mau: ${widget.schema.usage.userActiveMonthly}',
+      ...widget.schema.languages,
     ];
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: tags.map((tag) {
-        // Show the pill tag with the text.
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          margin: const EdgeInsets.only(left: 8),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade400,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(tag, style: const TextStyle(fontSize: 10, color: Colors.black)),
-        );
-      }).toList(),
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        buildContact(),
+
+        const Spacer(),
+
+        ...tags.map((tag) {
+          // Show the pill tag with the text.
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            margin: const EdgeInsets.only(left: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade400,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(tag, style: TextStyle(fontSize: badgeFontSize, color: Colors.black)),
+          );
+        }),
+        buildRegisterBadge(),
+      ],
+    );
+  }
+
+  // Build the register requirement of the server.
+  Widget buildRegisterBadge() {
+    if (!widget.schema.registration.enabled) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      margin: const EdgeInsets.only(left: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade400,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        "registration",
+        style: TextStyle(fontSize: badgeFontSize, color: Colors.black),
+      ),
+    );
+  }
+
+  // Build the contact information of the server.
+  Widget buildContact() {
+    return Text(
+      widget.schema.contact.email,
+      style: Theme.of(context).textTheme.bodySmall,
     );
   }
 }

@@ -15,6 +15,8 @@ class ServerSchema {
   final String thumbnail;
   final ServerUsageSchema usage;
   final ServerConfigSchema config;
+  final RegisterConfigSchema registration;
+  final ContactSchema contact;
   final List<String> languages;
   final List<RuleSchema> rules;
 
@@ -26,6 +28,8 @@ class ServerSchema {
     required this.thumbnail,
     required this.usage,
     required this.config,
+    required this.registration,
+    required this.contact,
     this.languages = const [],
     this.rules = const [],
   });
@@ -48,6 +52,8 @@ class ServerSchema {
       thumbnail: thumbnail['url'] as String,
       usage: ServerUsageSchema.fromJson(json['usage'] as Map<String, dynamic>),
       config: ServerConfigSchema.fromJson(json['configuration'] as Map<String, dynamic>),
+      registration: RegisterConfigSchema.fromJson(json['registrations'] as Map<String, dynamic>),
+      contact: ContactSchema.fromJson(json['contact'] as Map<String, dynamic>),
       languages: (json['languages'] as List<dynamic>).map((e) => e as String).toList(),
       rules: (json['rules'] as List<dynamic>).map((e) {
         final Map<String, dynamic> rule = e as Map<String, dynamic>;

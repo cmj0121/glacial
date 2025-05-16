@@ -41,7 +41,7 @@ class _ServerExplorerState extends State<ServerExplorer> {
           alignment: Alignment.topCenter,
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(24.0),
               child: buildContent(),
             ),
           ),
@@ -99,7 +99,7 @@ class _ServerExplorerState extends State<ServerExplorer> {
   // The header of the explorer page, shows the search bar and the history
   // button to show the search history.
   Widget buildHeader() {
-    final double iconSize = 32;
+    final double iconSize = 36;
 
     return Row(
       mainAxisSize: MainAxisSize.min,

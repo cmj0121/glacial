@@ -71,4 +71,37 @@ class ServerConfigSchema {
   }
 }
 
+// The information about registering for this website.
+class RegisterConfigSchema {
+  final bool enabled;
+  final bool approvalRequired;
+
+  const RegisterConfigSchema({
+    required this.enabled,
+    required this.approvalRequired,
+  });
+
+  factory RegisterConfigSchema.fromJson(Map<String, dynamic> json) {
+    return RegisterConfigSchema(
+      enabled: json['enabled'] as bool? ?? false,
+      approvalRequired: json['approval_required'] as bool? ?? false,
+    );
+  }
+}
+
+// The hints related to contacting a representative of the website.
+class ContactSchema {
+  final String email;
+
+  const ContactSchema({
+    required this.email,
+  });
+
+  factory ContactSchema.fromJson(Map<String, dynamic> json) {
+    return ContactSchema(
+      email: json['email'] as String,
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:
