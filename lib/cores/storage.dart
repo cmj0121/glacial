@@ -23,13 +23,13 @@ class Storage {
   }
 
   // Set the raw string value to the storage.
-  void setString(String key, String value, {bool secure = false}) async {
+  Future<void> setString(String key, String value, {bool secure = false}) async {
     await _prefs?.setString(key, value);
   }
 
   // Set the list of string to the storage.
-  void setStringList(String key, List<String> value) async {
-    _prefs?.setStringList(key, value);
+  Future<void> setStringList(String key, List<String> value) async {
+    await _prefs?.setStringList(key, value);
   }
 }
 
