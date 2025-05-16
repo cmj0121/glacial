@@ -1,0 +1,10 @@
+# The docs are available on https://docs.fastlane.tools/actions/match
+require 'dotenv'
+Dotenv.load
+
+git_url        "ssh://${ENV['MATCH_GIT_URL']}"
+git_branch     "main"
+app_identifier ENV["APP_IDENTIFIER"]
+type           "appstore"
+
+# vim: ts=2 sw=2 ft=ruby et :

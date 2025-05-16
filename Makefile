@@ -1,6 +1,6 @@
 SUBDIR :=
 
-.PHONY: all clean test run build upgrade help $(SUBDIR)
+.PHONY: all clean test run build release upgrade help $(SUBDIR)
 
 all: $(SUBDIR) 		# default action
 	@[ -f .git/hooks/pre-commit ] || pre-commit install --install-hooks
@@ -17,8 +17,11 @@ run:				# run in the local environment
 	flutter run
 
 build:				# build the binary/library
-	flutter build macos --release
-	flutter build web --release
+	cd ios && fastlane build
+
+release:			# build the release binary/library
+	dart run flutter_launcher_icons -f pubspec.yaml
+	cd ios && fastlane release
 
 upgrade:			# upgrade all the necessary packages
 	pre-commit autoupdate

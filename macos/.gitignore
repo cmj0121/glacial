@@ -1,3 +1,6 @@
+glacial.app*
+glacial.pkg
+
 # Flutter-related
 **/Flutter/ephemeral/
 **/Pods/

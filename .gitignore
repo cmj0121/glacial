@@ -1,3 +1,4 @@
+.env
 *.sw[po]
 
 # packages file containing multi-root paths
