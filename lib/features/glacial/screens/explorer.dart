@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
+import 'server.dart';
 
 // The main search page that shows the search bar and the possible
 // mastodon servers.
@@ -56,7 +57,7 @@ class _ServerExplorerState extends State<ServerExplorer> {
       children: <Widget>[
         buildHeader(),
         const SizedBox(height: 16),
-        child ?? const SizedBox.shrink(),
+        Flexible(child: child ?? const SizedBox.shrink()),
       ],
     );
   }
@@ -140,41 +141,7 @@ class _ServerExplorerState extends State<ServerExplorer> {
       return;
     }
 
-    setState( () => child = ServerBuilder(domain: keyword));
-  }
-}
-
-class ServerBuilder extends StatelessWidget {
-  final String domain;
-
-  const ServerBuilder({
-    super.key,
-    required this.domain,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: fetch(domain),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LinearProgressIndicator();
-        } else if (snapshot.hasError) {
-          final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: $domain';
-          return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
-        }
-
-        return Text('Finding the server: $domain');
-      }
-    );
-  }
-
-  Future<void> fetch(String domain) async {
-    logger.i('search the mastodon server: $domain');
-
-    final Uri url = Uri.parse('https://$domain/api/v2/instance');
-    final response = await get(url);
-    logger.i('response: ${response.body}');
+    setState( () => child = MastodonServer.builder(domain: keyword) );
   }
 }
 
