@@ -1,8 +1,8 @@
 // The routes.dart file defines the routes for the app.
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/glacial/screens/core.dart';
 
 class WIP extends StatelessWidget {
   const WIP({super.key});
@@ -23,20 +23,27 @@ class WIP extends StatelessWidget {
 }
 
 enum RoutePath {
+  landing,
   home;
 
   // Get the string path for the route.
   String get path {
     switch (this) {
-      case RoutePath.home:
+      case RoutePath.landing:
         return '/';
+      case RoutePath.home:
+        return '/home';
     }
   }
 }
 
 final GoRouter router = GoRouter(
-  initialLocation: RoutePath.home.path,
+  initialLocation: RoutePath.landing.path,
   routes: <RouteBase>[
+    GoRoute(
+      path: RoutePath.landing.path,
+      builder: (BuildContext context, GoRouterState state) => const LandingPage(),
+    ),
     GoRoute(
       path: RoutePath.home.path,
       builder: (BuildContext context, GoRouterState state) => const WIP(),
