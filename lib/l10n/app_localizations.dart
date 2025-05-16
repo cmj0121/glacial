@@ -131,11 +131,23 @@ abstract class AppLocalizations {
   /// **'Search for something interesting'**
   String get txt_search_helper;
 
+  /// No description provided for @txt_search_history.
+  ///
+  /// In en, this message translates to:
+  /// **'Search history'**
+  String get txt_search_history;
+
   /// No description provided for @txt_invalid_instance.
   ///
   /// In en, this message translates to:
   /// **'Invalid Mastodon server'**
   String get txt_invalid_instance;
+
+  /// No description provided for @btn_clean_all.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean All'**
+  String get btn_clean_all;
 
   /// No description provided for @dots.
   ///

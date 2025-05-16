@@ -4,6 +4,8 @@
   "txt_search_mastodon": "mastodon.social",
   "txt_search_hint": "輸入並搜尋 ...",
   "txt_search_helper": "搜尋有興趣的東西",
+  "txt_search_history": "搜尋紀錄",
   "txt_invalid_instance": "無效的 Mastodon 伺服器",
+  "btn_clean_all": "清除全部",
   "dots": "..."
 }

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/glacial/models/server.dart';
 import 'server.dart';
 
 // The main search page that shows the search bar and the possible
@@ -15,12 +16,15 @@ class ServerExplorer extends StatefulWidget {
 
 class _ServerExplorerState extends State<ServerExplorer> {
   final TextEditingController controller = TextEditingController();
+  final Storage storage = Storage();
 
   Widget? child;
+  late List<String> history;
 
   @override
   void initState() {
     super.initState();
+    history = storage.serverHistory;
   }
 
   @override
@@ -43,14 +47,12 @@ class _ServerExplorerState extends State<ServerExplorer> {
           ),
         ),
       ),
-      drawer: const Drawer(
-        child: Center(
-          child: Text("Search History"),
-        ),
-      ),
+      drawer: Drawer(child: buildSidebar()),
     );
   }
 
+  // The main content of the explorer page, shows the search bar and the
+  // mastodon server list.
   Widget buildContent() {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -59,6 +61,38 @@ class _ServerExplorerState extends State<ServerExplorer> {
         const SizedBox(height: 16),
         Flexible(child: child ?? const SizedBox.shrink()),
       ],
+    );
+  }
+
+  // The sidebar of the explorer page, shows the search history
+  Widget buildSidebar() {
+    final bool isEmpty = history.isEmpty;
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            AppLocalizations.of(context)?.txt_search_history ?? "Search History",
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          const Divider(),
+          Expanded(child: buildServerHistory()),
+          const Spacer(),
+          TextButton.icon(
+            icon: const Icon(Icons.cleaning_services),
+            label: Text(AppLocalizations.of(context)?.btn_clean_all ?? "Clear All"),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.secondary,
+            ),
+            onPressed: isEmpty ? null : () {
+              storage.serverHistory = [];
+              setState(() => history = []);
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -134,6 +168,39 @@ class _ServerExplorerState extends State<ServerExplorer> {
     );
   }
 
+  // The history of the search, shows the list of mastodon servers that the user
+  // can select it again.
+  Widget buildServerHistory() {
+    return ReorderableListView.builder(
+      shrinkWrap: true,
+      itemCount: history.length,
+      itemBuilder: (context, index) {
+        final String domain = history[index];
+        final Widget item = ListTile(
+          title: Text(domain, overflow: TextOverflow.ellipsis),
+          selectedTileColor: Theme.of(context).colorScheme.primary,
+          onTap: () {
+            controller.text = domain;
+            onSearch();
+            Navigator.of(context).pop();
+          },
+        );
+
+        return Dismissible(
+          key: ValueKey(domain),
+          background: Container(
+            color: Colors.red,
+            child: const Icon(Icons.delete, color: Colors.white),
+          ),
+          direction: DismissDirection.startToEnd,
+          child: item,
+        );
+      },
+      onReorder: onReorder,
+    );
+  }
+
+  // The search function that is called when the user presses the search
   void onSearch() async {
     final String keyword = controller.text.trim();
 
@@ -141,7 +208,30 @@ class _ServerExplorerState extends State<ServerExplorer> {
       return;
     }
 
-    setState( () => child = MastodonServer.builder(domain: keyword) );
+    setState( () => child = MastodonServer.builder(domain: keyword, onTap: onSelect) );
+  }
+
+  // The callback when user clicks the mastodon server.
+  void onSelect(ServerSchema schema) {
+    logger.i("onTap: ${schema.domain}");
+
+    setState(() {
+      if (!history.contains(schema.domain)) {
+        history.add(schema.domain);
+        storage.serverHistory = history;
+      }
+    });
+  }
+
+  // Reorder the history list when the user drags the item.
+  void onReorder(int oldIndex, int newIndex) {
+    if (oldIndex < newIndex) {
+      newIndex--;
+    }
+
+    final String domain = history.removeAt(oldIndex);
+    history.insert(newIndex, domain);
+    storage.serverHistory = history;
   }
 }
 

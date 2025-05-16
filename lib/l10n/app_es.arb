@@ -4,6 +4,8 @@
   "txt_search_mastodon": "mastodon.social",
   "txt_search_hint": "Presiona Enter para buscar...",
   "txt_search_helper": "Busca algo interesante",
+  "txt_search_history": "Historial de búsqueda",
   "txt_invalid_instance": "Servidor de Mastodon no válido",
+  "btn_clean_all": "Borrar todo",
   "dots": "..."
 }

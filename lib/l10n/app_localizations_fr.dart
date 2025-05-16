@@ -21,7 +21,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_search_helper => 'Recherchez quelque chose d\'intéressant';
 
   @override
+  String get txt_search_history => 'Historique de recherche';
+
+  @override
   String get txt_invalid_instance => 'Serveur Mastodon invalide';
+
+  @override
+  String get btn_clean_all => 'Tout effacer';
 
   @override
   String get dots => '...';

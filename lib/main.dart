@@ -8,6 +8,7 @@ import 'package:glacial/core.dart';
 void main() async {
   await dotenv.load(fileName: ".env");
   await Info.init();
+  await Storage.init(purge: false);
 
   logger.d("completely preloaded ...");
   runApp(const GlacialApp());

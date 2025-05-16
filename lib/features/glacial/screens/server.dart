@@ -33,7 +33,7 @@ class MastodonServer extends StatelessWidget {
 
   // The static method to create the server widget by the passed domain, with
   // the future builder to load the server information.
-  static Widget builder({required String domain}) {
+  static Widget builder({required String domain, ValueChanged<ServerSchema>? onTap}) {
     return FutureBuilder(
       future: fetch(domain),
       builder: (context, snapshot) {
@@ -46,29 +46,32 @@ class MastodonServer extends StatelessWidget {
 
         final ServerSchema schema = snapshot.data as ServerSchema;
         logger.i("successfully loaded the server: ${schema.domain}");
-        return MastodonServer(schema: schema);
+        return MastodonServer(schema: schema, onTap: onTap);
       }
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(child: buildThumbnail()),
-            const SizedBox(height: 16),
-            Text(schema.title, style: Theme.of(context).textTheme.headlineLarge),
-            const SizedBox(height: 16),
-            Flexible(
-              child: Text(schema.desc, style: Theme.of(context).textTheme.bodyLarge),
-            ),
-            const SizedBox(height: 6),
-            buildMetadata(),
-          ],
+    return InkWellDone(
+      onTap: () => onTap?.call(schema),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(child: buildThumbnail()),
+              const SizedBox(height: 16),
+              Text(schema.title, style: Theme.of(context).textTheme.headlineLarge),
+              const SizedBox(height: 16),
+              Flexible(
+                child: Text(schema.desc, style: Theme.of(context).textTheme.bodyLarge),
+              ),
+              const SizedBox(height: 6),
+              buildMetadata(),
+            ],
+          ),
         ),
       ),
     );
