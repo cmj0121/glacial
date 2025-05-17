@@ -9,5 +9,13 @@
   "txt_server_contact": "연락처",
   "txt_server_rules": "서버 규칙",
   "btn_clean_all": "모두 지우기",
+  "btn_back_to_explorer": "탐색 페이지로 돌아가기",
+  "btn_sign_in": "로그인",
+  "btn_timeline": "타임라인",
+  "btn_trending": "트렌드",
+  "btn_notifications": "알림",
+  "btn_explore": "탐색",
+  "btn_settings": "설정",
+  "btn_post": "게시",
   "dots": "..."
 }

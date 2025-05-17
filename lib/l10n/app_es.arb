@@ -9,5 +9,13 @@
   "txt_server_contact": "Información de contacto",
   "txt_server_rules": "Reglas del servidor",
   "btn_clean_all": "Borrar todo",
+  "btn_back_to_explorer": "Volver al explorador",
+  "btn_sign_in": "Iniciar sesión",
+  "btn_timeline": "Línea de tiempo",
+  "btn_trending": "Tendencias",
+  "btn_notifications": "Notificaciones",
+  "btn_explore": "Explorar",
+  "btn_settings": "Configuración",
+  "btn_post": "Publicar",
   "dots": "..."
 }

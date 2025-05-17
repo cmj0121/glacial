@@ -9,5 +9,13 @@
   "txt_server_contact": "Kontaktinformationen",
   "txt_server_rules": "Serverregeln",
   "btn_clean_all": "Alles löschen",
+  "btn_back_to_explorer": "Zurück zum Explorer",
+  "btn_sign_in": "Anmelden",
+  "btn_timeline": "Zeitleiste",
+  "btn_trending": "Trends",
+  "btn_notifications": "Benachrichtigungen",
+  "btn_explore": "Entdecken",
+  "btn_settings": "Einstellungen",
+  "btn_post": "Beitrag",
   "dots": "..."
 }

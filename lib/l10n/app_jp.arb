@@ -9,5 +9,13 @@
   "txt_server_contact": "連絡先",
   "txt_server_rules": "サーバールール",
   "btn_clean_all": "すべて削除",
+  "btn_back_to_explorer": "検索ページに戻る",
+  "btn_sign_in": "サインイン",
+  "btn_timeline": "タイムライン",
+  "btn_trending": "トレンド",
+  "btn_notifications": "通知",
+  "btn_explore": "検索",
+  "btn_settings": "設定",
+  "btn_post": "投稿",
   "dots": "..."
 }

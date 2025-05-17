@@ -54,7 +54,7 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: RoutePath.home.path,
-      builder: (BuildContext context, GoRouterState state) => const WIP(),
+      builder: (BuildContext context, GoRouterState state) => const GlacialHome(),
     ),
   ],
   observers: [

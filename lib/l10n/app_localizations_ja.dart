@@ -36,5 +36,29 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_clean_all => 'すべて削除';
 
   @override
+  String get btn_back_to_explorer => '検索ページに戻る';
+
+  @override
+  String get btn_sign_in => 'サインイン';
+
+  @override
+  String get btn_timeline => 'タイムライン';
+
+  @override
+  String get btn_trending => 'トレンド';
+
+  @override
+  String get btn_notifications => '通知';
+
+  @override
+  String get btn_explore => '検索';
+
+  @override
+  String get btn_settings => '設定';
+
+  @override
+  String get btn_post => '投稿';
+
+  @override
   String get dots => '...';
 }

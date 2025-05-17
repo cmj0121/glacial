@@ -36,5 +36,29 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_clean_all => 'Tout effacer';
 
   @override
+  String get btn_back_to_explorer => 'Retour à l\'explorateur';
+
+  @override
+  String get btn_sign_in => 'Se connecter';
+
+  @override
+  String get btn_timeline => 'Fil d’actualité';
+
+  @override
+  String get btn_trending => 'Tendances';
+
+  @override
+  String get btn_notifications => 'Notifications';
+
+  @override
+  String get btn_explore => 'Explorer';
+
+  @override
+  String get btn_settings => 'Paramètres';
+
+  @override
+  String get btn_post => 'Publier';
+
+  @override
   String get dots => '...';
 }

@@ -36,5 +36,29 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_clean_all => '모두 지우기';
 
   @override
+  String get btn_back_to_explorer => '탐색 페이지로 돌아가기';
+
+  @override
+  String get btn_sign_in => '로그인';
+
+  @override
+  String get btn_timeline => '타임라인';
+
+  @override
+  String get btn_trending => '트렌드';
+
+  @override
+  String get btn_notifications => '알림';
+
+  @override
+  String get btn_explore => '탐색';
+
+  @override
+  String get btn_settings => '설정';
+
+  @override
+  String get btn_post => '게시';
+
+  @override
   String get dots => '...';
 }

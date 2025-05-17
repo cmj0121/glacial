@@ -9,5 +9,13 @@
   "txt_server_contact": "Contact Info",
   "txt_server_rules": "Server Rules",
   "btn_clean_all": "Clean All",
+  "btn_back_to_explorer": "Back to Explorer",
+  "btn_sign_in": "Sign In",
+  "btn_timeline": "Timeline",
+  "btn_trending": "Trending",
+  "btn_notifications": "Notification",
+  "btn_explore": "Explore",
+  "btn_settings": "Settings",
+  "btn_post": "Post",
   "dots": "..."
 }

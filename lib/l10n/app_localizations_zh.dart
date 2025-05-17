@@ -36,5 +36,29 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_clean_all => '清除全部';
 
   @override
+  String get btn_back_to_explorer => '回到搜尋頁';
+
+  @override
+  String get btn_sign_in => '登入';
+
+  @override
+  String get btn_timeline => '時間軸';
+
+  @override
+  String get btn_trending => '趨勢';
+
+  @override
+  String get btn_notifications => '通知';
+
+  @override
+  String get btn_explore => '搜尋';
+
+  @override
+  String get btn_settings => '設定';
+
+  @override
+  String get btn_post => '嘟文';
+
+  @override
   String get dots => '...';
 }

@@ -36,5 +36,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_clean_all => 'Clean All';
 
   @override
+  String get btn_back_to_explorer => 'Back to Explorer';
+
+  @override
+  String get btn_sign_in => 'Sign In';
+
+  @override
+  String get btn_timeline => 'Timeline';
+
+  @override
+  String get btn_trending => 'Trending';
+
+  @override
+  String get btn_notifications => 'Notification';
+
+  @override
+  String get btn_explore => 'Explore';
+
+  @override
+  String get btn_settings => 'Settings';
+
+  @override
+  String get btn_post => 'Post';
+
+  @override
   String get dots => '...';
 }
