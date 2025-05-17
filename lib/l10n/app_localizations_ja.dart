@@ -27,6 +27,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_invalid_instance => '無効な Mastodon サーバー';
 
   @override
+  String get txt_server_contact => '連絡先';
+
+  @override
+  String get txt_server_rules => 'サーバールール';
+
+  @override
   String get btn_clean_all => 'すべて削除';
 
   @override

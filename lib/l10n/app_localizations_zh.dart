@@ -27,6 +27,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_invalid_instance => '無效的 Mastodon 伺服器';
 
   @override
+  String get txt_server_contact => '聯絡我們';
+
+  @override
+  String get txt_server_rules => '伺服器規則';
+
+  @override
   String get btn_clean_all => '清除全部';
 
   @override

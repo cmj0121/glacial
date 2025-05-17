@@ -69,7 +69,7 @@ class _ServerExplorerState extends State<ServerExplorer> {
     final bool isEmpty = history.isEmpty;
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(top: 32, left: 16, right: 16, bottom: 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -163,7 +163,7 @@ class _ServerExplorerState extends State<ServerExplorer> {
       focusColor: Colors.transparent,
       onPressed: () {
         controller.clear();
-        setState(() {});
+        setState(() => child = null);
       },
     );
   }

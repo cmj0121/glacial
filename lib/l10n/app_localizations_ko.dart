@@ -27,6 +27,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_invalid_instance => '유효하지 않은 Mastodon 서버';
 
   @override
+  String get txt_server_contact => '연락처';
+
+  @override
+  String get txt_server_rules => '서버 규칙';
+
+  @override
   String get btn_clean_all => '모두 지우기';
 
   @override

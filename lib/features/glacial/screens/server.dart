@@ -72,15 +72,10 @@ class _MastodonServerState extends State<MastodonServer> {
               const SizedBox(height: 16),
               Text(widget.schema.title, style: Theme.of(context).textTheme.headlineLarge),
               const SizedBox(height: 16),
-              Flexible(
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(widget.schema.desc, style: Theme.of(context).textTheme.bodyLarge),
-                ),
-              ),
+              Text(widget.schema.desc, style: Theme.of(context).textTheme.bodyLarge),
               const SizedBox(height: 6),
 
-              const Spacer(),
+              Expanded(child: buildExtraContent()),
               buildMetadata(),
             ],
           ),
@@ -106,6 +101,67 @@ class _MastodonServerState extends State<MastodonServer> {
     );
   }
 
+  // Show the extra content about the server info
+  Widget buildExtraContent() {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildExpansionTile(
+              context,
+              title: AppLocalizations.of(context)?.txt_server_contact ?? 'Contact Info',
+              children: [
+                ListTile(
+                  title: Text(widget.schema.contact.email),
+                  titleTextStyle: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+            buildExpansionTile(
+              context,
+              title: AppLocalizations.of(context)?.txt_server_rules ?? 'Server Rules',
+              children: [
+                ...widget.schema.rules.map((rule) {
+                  final String text = rule.text.replaceAll(RegExp(r'[\n\r]'), ' ');
+
+                  return ListTile(
+                    leading: Icon(Icons.library_add_check, color: Theme.of(context).colorScheme.tertiary),
+                    title: Text(text),
+                    subtitle: rule.hint.isEmpty ? null : Text(rule.hint),
+                    titleTextStyle: Theme.of(context).textTheme.bodySmall,
+                  );
+                }),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Show the expansion list of the children.
+  Widget buildExpansionTile(BuildContext context, {
+    required String title,
+    required List<Widget> children,
+  }) {
+    final String text = title;
+    final TextStyle? titleStyle = Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.primary);
+
+    return ExpansionTile(
+      title: Text(text, style: titleStyle),
+      children: children.map((child) {
+        return Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+          ),
+          child: child,
+        );
+      }).toList(),
+    );
+  }
+
   // Build the metadata of the server, including the server version and the
   // supported languages.
   Widget buildMetadata() {
@@ -116,12 +172,8 @@ class _MastodonServerState extends State<MastodonServer> {
     ];
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        buildContact(),
-
-        const Spacer(),
-
         ...tags.map((tag) {
           // Show the pill tag with the text.
           return Container(
@@ -134,7 +186,6 @@ class _MastodonServerState extends State<MastodonServer> {
             child: Text(tag, style: TextStyle(fontSize: badgeFontSize, color: Colors.black)),
           );
         }),
-        buildRegisterBadge(),
       ],
     );
   }
@@ -156,14 +207,6 @@ class _MastodonServerState extends State<MastodonServer> {
         "registration",
         style: TextStyle(fontSize: badgeFontSize, color: Colors.black),
       ),
-    );
-  }
-
-  // Build the contact information of the server.
-  Widget buildContact() {
-    return Text(
-      widget.schema.contact.email,
-      style: Theme.of(context).textTheme.bodySmall,
     );
   }
 }

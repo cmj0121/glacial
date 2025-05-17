@@ -27,6 +27,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_invalid_instance => 'Ungültiger Mastodon-Server';
 
   @override
+  String get txt_server_contact => 'Kontaktinformationen';
+
+  @override
+  String get txt_server_rules => 'Serverregeln';
+
+  @override
   String get btn_clean_all => 'Alles löschen';
 
   @override

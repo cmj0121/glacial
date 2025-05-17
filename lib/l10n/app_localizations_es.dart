@@ -27,6 +27,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_invalid_instance => 'Servidor de Mastodon no válido';
 
   @override
+  String get txt_server_contact => 'Información de contacto';
+
+  @override
+  String get txt_server_rules => 'Reglas del servidor';
+
+  @override
   String get btn_clean_all => 'Borrar todo';
 
   @override
