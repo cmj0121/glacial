@@ -163,7 +163,7 @@ class _ServerExplorerState extends State<ServerExplorer> {
       focusColor: Colors.transparent,
       onPressed: () {
         controller.clear();
-        setState(() {});
+        setState(() => child = null);
       },
     );
   }
