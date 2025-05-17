@@ -4,6 +4,7 @@ export 'package:go_router/go_router.dart';
 export 'cores/observer.dart';
 export 'cores/http.dart';
 export 'cores/misc.dart';
+export 'cores/provider.dart';
 export 'cores/screens.dart';
 export 'cores/storage.dart';
 export 'l10n/app_localizations.dart';

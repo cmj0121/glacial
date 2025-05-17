@@ -45,6 +45,7 @@ dependencies:
   http: ^1.4.0
   cached_network_image: ^3.4.1
   shared_preferences: ^2.5.3
+  flutter_riverpod: ^2.6.1
 
 dev_dependencies:
   flutter_test:

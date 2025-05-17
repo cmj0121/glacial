@@ -1,20 +1,22 @@
 // The Mastodon server explorer.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/routes.dart';
 import 'package:glacial/features/glacial/models/server.dart';
 import 'server.dart';
 
 // The main search page that shows the search bar and the possible
 // mastodon servers.
-class ServerExplorer extends StatefulWidget {
+class ServerExplorer extends ConsumerStatefulWidget {
   const ServerExplorer({super.key});
 
   @override
-  State<ServerExplorer> createState() => _ServerExplorerState();
+  ConsumerState<ServerExplorer> createState() => _ServerExplorerState();
 }
 
-class _ServerExplorerState extends State<ServerExplorer> {
+class _ServerExplorerState extends ConsumerState<ServerExplorer> {
   final TextEditingController controller = TextEditingController();
   final Storage storage = Storage();
 
@@ -221,6 +223,9 @@ class _ServerExplorerState extends State<ServerExplorer> {
         storage.serverHistory = history;
       }
     });
+
+    ref.read(currentServerProvider.notifier).state = schema;
+    GoRouter.of(context).push(RoutePath.home.path);
   }
 
   // Reorder the history list when the user drags the item.

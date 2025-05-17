@@ -10,6 +10,7 @@ class WIP extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: Center(
           child: Text(
@@ -23,14 +24,17 @@ class WIP extends StatelessWidget {
 }
 
 enum RoutePath {
-  landing,
-  home;
+  landing,    // The landing page of the app when user opens it.
+  explorer,   // The server explorer page of the app.
+  home;       // The home page of the app to show the server explorer.
 
   // Get the string path for the route.
   String get path {
     switch (this) {
       case RoutePath.landing:
         return '/';
+      case RoutePath.explorer:
+        return '/explorer';
       case RoutePath.home:
         return '/home';
     }
@@ -45,8 +49,12 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state) => const LandingPage(),
     ),
     GoRoute(
-      path: RoutePath.home.path,
+      path: RoutePath.explorer.path,
       builder: (BuildContext context, GoRouterState state) => const ServerExplorer(),
+    ),
+    GoRoute(
+      path: RoutePath.home.path,
+      builder: (BuildContext context, GoRouterState state) => const WIP(),
     ),
   ],
   observers: [

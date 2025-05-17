@@ -91,7 +91,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
 
     if (mounted) {
       logger.i("completely preloaded ...");
-      context.go(RoutePath.home.path);
+      context.go(RoutePath.explorer.path);
     }
   }
 }
