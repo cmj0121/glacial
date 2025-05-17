@@ -143,6 +143,18 @@ abstract class AppLocalizations {
   /// **'Invalid Mastodon server'**
   String get txt_invalid_instance;
 
+  /// No description provided for @txt_server_contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Info'**
+  String get txt_server_contact;
+
+  /// No description provided for @txt_server_rules.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Rules'**
+  String get txt_server_rules;
+
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:

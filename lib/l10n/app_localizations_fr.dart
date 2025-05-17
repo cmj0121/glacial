@@ -27,6 +27,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_invalid_instance => 'Serveur Mastodon invalide';
 
   @override
+  String get txt_server_contact => 'Coordonnées';
+
+  @override
+  String get txt_server_rules => 'Règles du serveur';
+
+  @override
   String get btn_clean_all => 'Tout effacer';
 
   @override

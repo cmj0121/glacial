@@ -6,6 +6,8 @@
   "txt_search_helper": "Search for something interesting",
   "txt_search_history": "Search history",
   "txt_invalid_instance": "Invalid Mastodon server",
+  "txt_server_contact": "Contact Info",
+  "txt_server_rules": "Server Rules",
   "btn_clean_all": "Clean All",
   "dots": "..."
 }
