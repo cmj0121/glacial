@@ -75,7 +75,7 @@ class _MastodonServerState extends State<MastodonServer> {
               Text(widget.schema.desc, style: Theme.of(context).textTheme.bodyLarge),
               const SizedBox(height: 6),
 
-              Flexible(child: buildExtraContent()),
+              Expanded(child: buildExtraContent()),
               buildMetadata(),
             ],
           ),
