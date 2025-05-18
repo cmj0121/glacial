@@ -60,5 +60,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_post => '嘟文';
 
   @override
+  String get btn_home_timeline => '首頁';
+
+  @override
+  String get btn_local_timeline => '本站';
+
+  @override
+  String get btn_federal_timeline => '聯邦';
+
+  @override
+  String get btn_public_timeline => '公開';
+
+  @override
+  String get btn_bookmarks_timeline => '書籤';
+
+  @override
+  String get btn_favourites_timeline => '收藏';
+
+  @override
   String get dots => '...';
 }

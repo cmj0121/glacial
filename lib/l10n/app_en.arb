@@ -17,5 +17,11 @@
   "btn_explore": "Explore",
   "btn_settings": "Settings",
   "btn_post": "Post",
+  "btn_home_timeline": "Home",
+  "btn_local_timeline": "Local",
+  "btn_federal_timeline": "Federal",
+  "btn_public_timeline": "Public",
+  "btn_bookmarks_timeline": "Bookmarks",
+  "btn_favourites_timeline": "Favourites",
   "dots": "..."
 }

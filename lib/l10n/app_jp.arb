@@ -17,5 +17,11 @@
   "btn_explore": "検索",
   "btn_settings": "設定",
   "btn_post": "投稿",
+  "btn_home_timeline": "ホーム",
+  "btn_local_timeline": "ローカル",
+  "btn_federal_timeline": "フェデレーション",
+  "btn_public_timeline": "パブリック",
+  "btn_bookmarks_timeline": "ブックマーク",
+  "btn_favourites_timeline": "お気に入り",
   "dots": "..."
 }

@@ -60,5 +60,23 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_post => '게시';
 
   @override
+  String get btn_home_timeline => '홈';
+
+  @override
+  String get btn_local_timeline => '로컬';
+
+  @override
+  String get btn_federal_timeline => '페더럴';
+
+  @override
+  String get btn_public_timeline => '공개';
+
+  @override
+  String get btn_bookmarks_timeline => '북마크';
+
+  @override
+  String get btn_favourites_timeline => '즐겨찾기';
+
+  @override
   String get dots => '...';
 }

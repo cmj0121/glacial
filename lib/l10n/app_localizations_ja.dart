@@ -60,5 +60,23 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_post => '投稿';
 
   @override
+  String get btn_home_timeline => 'ホーム';
+
+  @override
+  String get btn_local_timeline => 'ローカル';
+
+  @override
+  String get btn_federal_timeline => 'フェデレーション';
+
+  @override
+  String get btn_public_timeline => 'パブリック';
+
+  @override
+  String get btn_bookmarks_timeline => 'ブックマーク';
+
+  @override
+  String get btn_favourites_timeline => 'お気に入り';
+
+  @override
   String get dots => '...';
 }

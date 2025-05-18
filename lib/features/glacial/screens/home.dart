@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/routes.dart';
 import 'package:glacial/features/glacial/models/server.dart';
+import 'package:glacial/features/timeline/screens/core.dart';
 
 // The possible actions in sidebar and used to interact with the current server.
 enum SidebarButtonType {
@@ -71,8 +72,8 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   final List<SidebarButtonType> actions = SidebarButtonType.values;
   late final ServerSchema schema;
 
-  int selectedIndex = 0;
-  Widget content = const WIP();
+  late int selectedIndex;
+  late Widget content;
 
   @override
   void initState() {
@@ -84,6 +85,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     }
 
     this.schema = schema;
+    onSelect(SidebarButtonType.timeline.index);
   }
 
   @override
@@ -258,10 +260,24 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   void onSelect(int index) {
     setState(() {
       selectedIndex = index;
-      content = Text(
-        "Selected: ${actions[index].name}",
-        style: Theme.of(context).textTheme.headlineSmall,
-      );
+
+      switch (actions[index]) {
+        case SidebarButtonType.timeline:
+          content = const TimelineTab();
+          break;
+        case SidebarButtonType.trending:
+          content = const WIP();
+          break;
+        case SidebarButtonType.explore:
+          content = const WIP();
+          break;
+        case SidebarButtonType.notifications:
+          content = const WIP();
+          break;
+        case SidebarButtonType.settings:
+          content = const WIP();
+          break;
+      }
     });
   }
 }

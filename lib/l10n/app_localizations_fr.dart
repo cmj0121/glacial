@@ -60,5 +60,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_post => 'Publier';
 
   @override
+  String get btn_home_timeline => 'Accueil';
+
+  @override
+  String get btn_local_timeline => 'Local';
+
+  @override
+  String get btn_federal_timeline => 'Fédéral';
+
+  @override
+  String get btn_public_timeline => 'Public';
+
+  @override
+  String get btn_bookmarks_timeline => 'Favoris';
+
+  @override
+  String get btn_favourites_timeline => 'Favoris';
+
+  @override
   String get dots => '...';
 }

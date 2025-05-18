@@ -209,6 +209,42 @@ abstract class AppLocalizations {
   /// **'Post'**
   String get btn_post;
 
+  /// No description provided for @btn_home_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get btn_home_timeline;
+
+  /// No description provided for @btn_local_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get btn_local_timeline;
+
+  /// No description provided for @btn_federal_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Federal'**
+  String get btn_federal_timeline;
+
+  /// No description provided for @btn_public_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get btn_public_timeline;
+
+  /// No description provided for @btn_bookmarks_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks'**
+  String get btn_bookmarks_timeline;
+
+  /// No description provided for @btn_favourites_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourites'**
+  String get btn_favourites_timeline;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

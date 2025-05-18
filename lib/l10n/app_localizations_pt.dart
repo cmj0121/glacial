@@ -60,5 +60,23 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_post => 'Publicar';
 
   @override
+  String get btn_home_timeline => 'Início';
+
+  @override
+  String get btn_local_timeline => 'Local';
+
+  @override
+  String get btn_federal_timeline => 'Federal';
+
+  @override
+  String get btn_public_timeline => 'Público';
+
+  @override
+  String get btn_bookmarks_timeline => 'Favoritos';
+
+  @override
+  String get btn_favourites_timeline => 'Curtidas';
+
+  @override
   String get dots => '...';
 }

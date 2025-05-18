@@ -17,5 +17,11 @@
   "btn_explore": "搜尋",
   "btn_settings": "設定",
   "btn_post": "嘟文",
+  "btn_home_timeline": "首頁",
+  "btn_local_timeline": "本站",
+  "btn_federal_timeline": "聯邦",
+  "btn_public_timeline": "公開",
+  "btn_bookmarks_timeline": "書籤",
+  "btn_favourites_timeline": "收藏",
   "dots": "..."
 }
