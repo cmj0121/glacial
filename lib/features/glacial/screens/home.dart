@@ -96,9 +96,12 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           appBar: AppBar(
             leading: buildBackButton(),
             title: Center(
-              child: Text(
-                schema.title,
-                style: Theme.of(context).textTheme.headlineSmall,
+              child: Tooltip(
+                message: schema.desc,
+                child: Text(
+                  schema.title,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
               ),
             ),
             actions: [
