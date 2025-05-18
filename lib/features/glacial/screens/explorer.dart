@@ -224,7 +224,9 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
       }
     });
 
+    storage.saveLastServer(schema.domain);
     ref.read(currentServerProvider.notifier).state = schema;
+    logger.i("save current server: ${schema.domain}");
     GoRouter.of(context).push(RoutePath.home.path);
   }
 
