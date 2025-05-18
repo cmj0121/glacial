@@ -33,7 +33,7 @@ enum SidebarButtonType {
       case trending:
         return Icons.trending_up_outlined;
       case explore:
-        return Icons.manage_search_outlined;
+        return Icons.search_outlined;
       case notifications:
         return Icons.notifications_outlined;
       case settings:
@@ -72,6 +72,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   late final ServerSchema schema;
 
   int selectedIndex = 0;
+  Widget content = const WIP();
 
   @override
   void initState() {
@@ -120,8 +121,20 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   // The main content of the home page, shows the server timeline and other
   // features.
   Widget buildContent({required bool isMobile}) {
+    final Widget animatedContent = AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return ScaleTransition(scale: animation, child: child);
+      },
+      child: Align(
+        key: ValueKey<int>(selectedIndex), // Ensure actually changing the widget identity
+        alignment: Alignment.topCenter,
+        child: content,
+      ),
+    );
+
     if (isMobile) {
-      return const SizedBox.shrink();
+      return animatedContent;
     }
 
     return Row(
@@ -131,6 +144,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       children: [
         buildSidebar(),
         const VerticalDivider(),
+        Flexible(child: animatedContent),
       ],
     );
   }
@@ -175,12 +189,13 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         final bool isSelected = selectedIndex == index;
 
         return IconButton(
+          key: ValueKey<int>(index),
           icon: Icon(isSelected ? action.activeIcon : action.icon, size: sidebarSize),
           color: isSelected ? Theme.of(context).colorScheme.primary : null,
           tooltip: actionTooltip(action),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: action.supportAnonymous ? () => setState(() => selectedIndex = index) : null,
+          onPressed: action.supportAnonymous ? () => onSelect(index) : null,
         );
       }).toList();
   }
@@ -235,6 +250,16 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       case SidebarButtonType.settings:
         return AppLocalizations.of(context)?.btn_settings ?? "Settings";
     }
+  }
+
+  void onSelect(int index) {
+    setState(() {
+      selectedIndex = index;
+      content = Text(
+        "Selected: ${actions[index].name}",
+        style: Theme.of(context).textTheme.headlineSmall,
+      );
+    });
   }
 }
 
