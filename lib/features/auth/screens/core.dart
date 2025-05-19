@@ -100,7 +100,10 @@ class _SignInState extends ConsumerState<SignIn> {
 
       logger.i("completed sign-in and gain the access token");
       if (Platform.isIOS) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        final bool launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+        if (!launched) {
+          logger.w("Failed to launch URL: $uri");
+        }
       } else {
         context.go(RoutePath.home.path);
       }
