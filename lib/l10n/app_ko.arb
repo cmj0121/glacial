@@ -28,5 +28,13 @@
   "btn_public_timeline": "공개",
   "btn_bookmarks_timeline": "북마크",
   "btn_favourites_timeline": "즐겨찾기",
+  "btn_reply": "답글",
+  "btn_reblog": "리블로그",
+  "btn_favourite": "즐겨찾기",
+  "btn_bookmark": "북마크",
+  "btn_share": "공유",
+  "btn_mute": "음소거",
+  "btn_block": "차단",
+  "btn_delete": "삭제",
   "dots": "..."
 }

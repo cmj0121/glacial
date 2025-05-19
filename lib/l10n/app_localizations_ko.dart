@@ -93,5 +93,29 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_favourites_timeline => '즐겨찾기';
 
   @override
+  String get btn_reply => '답글';
+
+  @override
+  String get btn_reblog => '리블로그';
+
+  @override
+  String get btn_favourite => '즐겨찾기';
+
+  @override
+  String get btn_bookmark => '북마크';
+
+  @override
+  String get btn_share => '공유';
+
+  @override
+  String get btn_mute => '음소거';
+
+  @override
+  String get btn_block => '차단';
+
+  @override
+  String get btn_delete => '삭제';
+
+  @override
   String get dots => '...';
 }

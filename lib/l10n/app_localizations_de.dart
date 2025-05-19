@@ -93,5 +93,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_favourites_timeline => 'Favoriten';
 
   @override
+  String get btn_reply => 'Antworten';
+
+  @override
+  String get btn_reblog => 'Rebloggen';
+
+  @override
+  String get btn_favourite => 'Favorit';
+
+  @override
+  String get btn_bookmark => 'Lesezeichen';
+
+  @override
+  String get btn_share => 'Teilen';
+
+  @override
+  String get btn_mute => 'Stumm';
+
+  @override
+  String get btn_block => 'Blockieren';
+
+  @override
+  String get btn_delete => 'Löschen';
+
+  @override
   String get dots => '...';
 }

@@ -165,7 +165,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         children: [
           ...buildActions(),
           const Spacer(),
-          buildPostButton(),
+          NewStatus(size: sidebarSize),
         ],
     );
   }
@@ -183,7 +183,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ...buildActions(),
-          buildPostButton(),
+          NewStatus(size: sidebarSize),
         ],
       ),
     );
@@ -224,17 +224,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     );
   }
 
-  // The post button to post a new status to the current server.
-  Widget buildPostButton() {
-    return IconButton.filledTonal(
-      icon: Icon(Icons.post_add_outlined, size: sidebarSize),
-      tooltip: AppLocalizations.of(context)?.btn_post ?? "Post",
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      onPressed: () {},
-    );
-  }
-
   // The list of actions could be performed in the sidebar.
   String actionTooltip(SidebarButtonType action) {
     switch (action) {
@@ -251,6 +240,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     }
   }
 
+  // Select the action in the sidebar and show the corresponding content.
   void onSelect(int index) {
     setState(() {
       selectedIndex = index;

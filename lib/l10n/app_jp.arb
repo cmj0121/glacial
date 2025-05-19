@@ -28,5 +28,13 @@
   "btn_public_timeline": "パブリック",
   "btn_bookmarks_timeline": "ブックマーク",
   "btn_favourites_timeline": "お気に入り",
+  "btn_reply": "返信",
+  "btn_reblog": "再投稿",
+  "btn_favourite": "お気に入り",
+  "btn_bookmark": "ブックマーク",
+  "btn_share": "共有",
+  "btn_mute": "ミュート",
+  "btn_block": "ブロック",
+  "btn_delete": "削除",
   "dots": "..."
 }

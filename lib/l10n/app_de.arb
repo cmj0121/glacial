@@ -28,5 +28,13 @@
   "btn_public_timeline": "Öffentlich",
   "btn_bookmarks_timeline": "Lesezeichen",
   "btn_favourites_timeline": "Favoriten",
+  "btn_reply": "Antworten",
+  "btn_reblog": "Rebloggen",
+  "btn_favourite": "Favorit",
+  "btn_bookmark": "Lesezeichen",
+  "btn_share": "Teilen",
+  "btn_mute": "Stumm",
+  "btn_block": "Blockieren",
+  "btn_delete": "Löschen",
   "dots": "..."
 }

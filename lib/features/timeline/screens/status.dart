@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/glacial/models/server.dart';
 
 import 'account.dart';
 import 'interaction.dart';
@@ -56,7 +58,7 @@ class _StatusState extends ConsumerState<Status> {
         Html(data: schema.content),
 
         const SizedBox(height: 8),
-        InteractionBar(schema: schema),
+        InteractionBar(schema: schema, onReload: onReload),
       ],
     );
   }
@@ -72,9 +74,169 @@ class _StatusState extends ConsumerState<Status> {
 
         Text(duration, style: const TextStyle(color: Colors.grey)),
         const SizedBox(width: 4),
-        StatusVisibility(type: schema.visibility, size: 16),
+        StatusVisibility(type: schema.visibility, size: 16, isCompact: true),
       ],
     );
+  }
+
+  // reload the status when the user interacts with it.
+  void onReload(StatusSchema schema) async {
+    // fetch the status again from the server, and update the status
+    setState(() => this.schema = schema);
+  }
+}
+
+// The new status button to create a new status.
+class NewStatus extends ConsumerWidget {
+  final double size;
+
+  const NewStatus({
+    super.key,
+    this.size = 32,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
+
+    return IconButton.filledTonal(
+      icon: Icon(Icons.post_add_outlined, size: size),
+      tooltip: AppLocalizations.of(context)?.btn_post ?? "Post",
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onPressed: accessToken == null ? null : () => onPressed(context, ref),
+    );
+  }
+
+  void onPressed(BuildContext context, WidgetRef ref) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: NewStatusForm(onPost: (schema) => onPost(context, ref, schema)),
+        );
+      },
+    );
+  }
+
+  void onPost(BuildContext context, WidgetRef ref, NewStatusSchema status) async {
+    final ServerSchema? schema = ref.watch(currentServerProvider);
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
+
+    if (schema == null || accessToken == null) {
+      final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? "No server selected";
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(text),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+      return;
+    }
+
+    await status.create(schema: schema, accessToken: accessToken);
+    if (context.mounted) {
+      logger.d("completed create a new status");
+      context.pop();
+    }
+  }
+}
+
+// The form of the new status that user can fill in to create a new status.
+class NewStatusForm extends ConsumerStatefulWidget {
+  final double maxWidth;
+  final ValueChanged<NewStatusSchema>? onPost;
+
+  const NewStatusForm({
+    super.key,
+    this.maxWidth = 600,
+    this.onPost,
+  });
+
+  @override
+  ConsumerState<NewStatusForm> createState() => _NewStatusFormState();
+}
+
+class _NewStatusFormState extends ConsumerState<NewStatusForm> {
+  final TextEditingController controller = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  VisibilityType vtype = VisibilityType.public;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: widget.maxWidth,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: buildContent(),
+        ),
+      ),
+    );
+  }
+
+  Widget buildContent() {
+    final ServerSchema? schema = ref.watch(currentServerProvider);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextFormField(
+          controller: controller,
+          maxLines: 10,
+          minLines: 10,
+          maxLength: schema?.config.statuses.maxCharacters ?? 500,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Flexible(child: buildActions()),
+      ],
+    );
+  }
+
+  Widget buildActions() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        VisibilitySelector(type: vtype, onChanged: (type) => setState(() => vtype = type)),
+        const Spacer(),
+        TextButton.icon(
+          icon: Icon(Icons.chat),
+          label: Text(AppLocalizations.of(context)?.btn_post ?? "Post"),
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.primary,
+          ),
+          onPressed: onPost,
+        ),
+      ],
+    );
+  }
+
+  void onPost() async {
+    if (controller.text.isEmpty) {
+      // empty content, do nothing
+      return;
+    }
+
+    final NewStatusSchema schema = NewStatusSchema(
+      status: controller.text,
+      mediaIDs: [],
+      pollIDs: [],
+      visibility: vtype,
+    );
+
+    widget.onPost?.call(schema);
   }
 }
 

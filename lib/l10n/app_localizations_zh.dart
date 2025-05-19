@@ -93,5 +93,29 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_favourites_timeline => '收藏';
 
   @override
+  String get btn_reply => '回覆';
+
+  @override
+  String get btn_reblog => '轉嘟';
+
+  @override
+  String get btn_favourite => '最愛';
+
+  @override
+  String get btn_bookmark => '書籤';
+
+  @override
+  String get btn_share => '分享';
+
+  @override
+  String get btn_mute => '禁音';
+
+  @override
+  String get btn_block => '封鎖';
+
+  @override
+  String get btn_delete => '刪除';
+
+  @override
   String get dots => '...';
 }

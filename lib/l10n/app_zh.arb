@@ -28,5 +28,13 @@
   "btn_public_timeline": "公開",
   "btn_bookmarks_timeline": "書籤",
   "btn_favourites_timeline": "收藏",
+  "btn_reply": "回覆",
+  "btn_reblog": "轉嘟",
+  "btn_favourite": "最愛",
+  "btn_bookmark": "書籤",
+  "btn_share": "分享",
+  "btn_mute": "禁音",
+  "btn_block": "封鎖",
+  "btn_delete": "刪除",
   "dots": "..."
 }

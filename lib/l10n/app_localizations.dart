@@ -275,6 +275,54 @@ abstract class AppLocalizations {
   /// **'Favourites'**
   String get btn_favourites_timeline;
 
+  /// No description provided for @btn_reply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get btn_reply;
+
+  /// No description provided for @btn_reblog.
+  ///
+  /// In en, this message translates to:
+  /// **'Reblog'**
+  String get btn_reblog;
+
+  /// No description provided for @btn_favourite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite'**
+  String get btn_favourite;
+
+  /// No description provided for @btn_bookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark'**
+  String get btn_bookmark;
+
+  /// No description provided for @btn_share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get btn_share;
+
+  /// No description provided for @btn_mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get btn_mute;
+
+  /// No description provided for @btn_block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get btn_block;
+
+  /// No description provided for @btn_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get btn_delete;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

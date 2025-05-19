@@ -8,7 +8,9 @@ enum StatusInteraction {
   favourite,
   bookmark,
   share,
-  more;
+  mute,
+  block,
+  delete;
 
   IconData get icon {
     switch (this) {
@@ -22,8 +24,12 @@ enum StatusInteraction {
         return Icons.bookmark_outline;
       case share:
         return Icons.share_outlined;
-    case more:
-      return Icons.more_horiz;
+      case mute:
+        return Icons.volume_off_outlined;
+      case block:
+        return Icons.block_outlined;
+      case delete:
+        return Icons.delete_outline;
     }
   }
 
@@ -39,15 +45,29 @@ enum StatusInteraction {
         return Icons.bookmark;
       case share:
         return Icons.share;
-      case more:
-        return Icons.more_horiz;
+      case mute:
+        return Icons.volume_off;
+      case block:
+        return Icons.block;
+      case delete:
+        return Icons.delete;
     }
   }
 
   bool get supportAnonymous {
     switch (this) {
       case share:
-      case more:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  bool get isDangerous {
+    switch (this) {
+      case mute:
+      case block:
+      case delete:
         return true;
       default:
         return false;
