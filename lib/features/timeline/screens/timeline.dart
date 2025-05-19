@@ -170,7 +170,10 @@ class _TimelineState extends State<Timeline> {
       itemCount: statuses.length,
       itemBuilder: (context, index) {
         final StatusSchema status = statuses[index];
-        return Status(schema: status);
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Status(schema: status),
+        );
       },
     );
   }

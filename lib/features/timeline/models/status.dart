@@ -1,6 +1,8 @@
 // The Timeline Status data schema.
 import 'dart:convert';
 
+import 'account.dart';
+
 // The timeline status data schema that is the toots from the current
 // selected Mastodon server.
 class StatusSchema {
@@ -8,6 +10,7 @@ class StatusSchema {
   final String content;                     // HTML-encoded status content.
   final bool sensitive;                     // Is this status marked as sensitive content?
   final String spoiler;                     // Subject or summary line, below which status content is collapsed.
+  final AccountSchema account;              // The account that authored this status.
   final String uri;                         // URI of the status used for federation.
   final String? url;                        // A link to the status's HTML representation.
   final String? inReplyToID;                // The ID of the status this status is replying to.
@@ -29,6 +32,7 @@ class StatusSchema {
     required this.content,
     required this.sensitive,
     required this.spoiler,
+    required this.account,
     required this.uri,
     this.url,
     this.inReplyToID,
@@ -57,6 +61,7 @@ class StatusSchema {
       content: json['content'] as String,
       sensitive: json['sensitive'] as bool,
       spoiler: json['spoiler_text'] as String,
+      account: AccountSchema.fromJson(json['account'] as Map<String, dynamic>),
       uri: json['uri'] as String,
       url: json['url'] as String?,
       inReplyToID: json['in_reply_to_id'] as String?,

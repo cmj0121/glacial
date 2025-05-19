@@ -47,6 +47,7 @@ dependencies:
   shared_preferences: ^2.5.3
   flutter_riverpod: ^2.6.1
   flutter_html: ^3.0.0
+  timeago: ^3.7.1
 
 dev_dependencies:
   flutter_test:

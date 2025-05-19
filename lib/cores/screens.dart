@@ -96,27 +96,33 @@ class _SlideTabViewState extends State<SlideTabView> with SingleTickerProviderSt
       children: [
         buildHeader(),
         Flexible(
-          child: Dismissible(
-            key: ValueKey<String>('SlideTabView-content-${controller.index}'),
-            onDismissed: (direction) {
-              final int offset = direction == DismissDirection.startToEnd ? 1 : -1;
-              int index = (controller.index + offset) % widget.tabs.length;
-
-              while (widget.tabBuilder?.call(index) == false) {
-                index = (index + offset) % widget.tabs.length;
-              }
-
-              setState(() {
-                controller.animateTo(index);
-              });
-            },
-            child: Container(
-              key: ValueKey<String>('SlideTabView-content-${controller.index}'),
-              child: widget.itemBuilder(context, controller.index),
-            ),
+          child: ClipRRect(
+            child: buildSlidableContent(),
           ),
         ),
       ],
+    );
+  }
+
+  Widget buildSlidableContent() {
+    return Dismissible(
+      key: ValueKey<String>('SlideTabView-content-${controller.index}'),
+      onDismissed: (direction) {
+        final int offset = direction == DismissDirection.startToEnd ? 1 : -1;
+        int index = (controller.index + offset) % widget.tabs.length;
+
+        while (widget.tabBuilder?.call(index) == false) {
+          index = (index + offset) % widget.tabs.length;
+        }
+
+        setState(() {
+          controller.animateTo(index);
+        });
+      },
+      child: Container(
+        key: ValueKey<String>('SlideTabView-content-${controller.index}'),
+        child: widget.itemBuilder(context, controller.index),
+      ),
     );
   }
 

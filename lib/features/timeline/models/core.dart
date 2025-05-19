@@ -1,5 +1,7 @@
 // The exposed library for timeline related data schema
 
+export 'account.dart';
+export 'interaction.dart';
 export 'status.dart';
 export 'timeline.dart';
 
