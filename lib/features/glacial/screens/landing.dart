@@ -24,7 +24,7 @@ class LandingPage extends ConsumerStatefulWidget {
 
 class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProviderStateMixin {
   final Storage storage = Storage();
-  static const int _engineerModeClickThreshold = 5;
+  static final int engineerModeClickThreshold = 5;
 
   late final AnimationController controller;
   late final Animation<double> animation;
@@ -113,7 +113,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
       ref.read(currentServerProvider.notifier).state = schema;
       ref.read(currentAccessTokenProvider.notifier).state = accessToken;
 
-      if (clickCount >= engineerModeClickCount) {
+      if (clickCount >= engineerModeClickThreshold) {
         logger.i("entering engineer mode ...");
         context.go(RoutePath.engineer.path);
         return;
