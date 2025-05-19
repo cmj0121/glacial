@@ -69,4 +69,26 @@ extension StatusLoaderExtensions on ServerSchema {
   }
 }
 
+// The extension to post the new status to the server.
+extension PostStatusExtensions on NewStatusSchema {
+  Future<StatusSchema> create({ServerSchema? schema, String? accessToken}) async {
+    if (schema == null || accessToken == null) {
+      logger.w("schema and access token are required");
+      throw MissingAuth("schema and access token are required");
+    }
+
+    final Uri uri = Uri.parse("https://${schema.domain}/api/v1/statuses");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final Map<String, dynamic> body = toJson();
+    final response = await post(uri, headers: headers, body: jsonEncode(body));
+
+    logger.i("complete create a new status: ${response.statusCode}");
+    return StatusSchema.fromString(response.body);
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

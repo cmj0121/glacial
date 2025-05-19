@@ -85,4 +85,62 @@ class StatusSchema {
   }
 }
 
+// The new status data schema.
+class NewStatusSchema {
+  final String status;             // The text content of the status. If media_ids is provided, this becomes optional.
+  final List<String> mediaIDs;     // Attachment IDs to be attached as media. If provided, status becomes optional, and poll cannot be used.
+  final List<String> pollIDs;      // Possible answers to the poll.
+  final bool sensitive;            // Mark status and attached media as sensitive? Defaults to false.
+  final String? spoiler;           // Text to show when the status is marked as sensitive.
+  final VisibilityType visibility; // The visibility of the status. Defaults to public.
+  final String? inReplyToID;       // ID of the status being replied to, if status is a reply.
+
+  const NewStatusSchema({
+    required this.status,
+    required this.mediaIDs,
+    required this.pollIDs,
+    this.sensitive = false,
+    this.spoiler,
+    this.visibility = VisibilityType.public,
+    this.inReplyToID,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> json = {
+      'status': status,
+      'media_ids': mediaIDs,
+      'poll_ids': pollIDs,
+      'sensitive': sensitive,
+      'spoiler_text': spoiler,
+      'visibility': visibility.name,
+      'in_reply_to_id': inReplyToID,
+    };
+
+    // only return the non-null values
+    return json
+      ..removeWhere((key, value) => value == null)
+      ..removeWhere((key, value) => value is String && value.isEmpty);
+  }
+
+  NewStatusSchema copyWith({
+    String? status,
+    List<String>? mediaIDs,
+    List<String>? pollIDs,
+    bool? sensitive,
+    String? spoiler,
+    VisibilityType? visibility,
+    String? inReplyToID,
+  }) {
+    return NewStatusSchema(
+      status: status ?? this.status,
+      mediaIDs: mediaIDs ?? this.mediaIDs,
+      pollIDs: pollIDs ?? this.pollIDs,
+      sensitive: sensitive ?? this.sensitive,
+      spoiler: spoiler ?? this.spoiler,
+      visibility: visibility ?? this.visibility,
+      inReplyToID: inReplyToID ?? this.inReplyToID,
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

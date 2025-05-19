@@ -98,11 +98,11 @@ class NewStatus extends ConsumerWidget {
       tooltip: AppLocalizations.of(context)?.btn_post ?? "Post",
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
-      onPressed: accessToken == null ? null : () => onPressed(context),
+      onPressed: accessToken == null ? null : () => onPressed(context, ref),
     );
   }
 
-  void onPressed(BuildContext context) async {
+  void onPressed(BuildContext context, WidgetRef ref) async {
     showDialog(
       context: context,
       builder: (context) {
@@ -110,20 +110,45 @@ class NewStatus extends ConsumerWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          child: NewStatusForm(),
+          child: NewStatusForm(onPost: (schema) => onPost(context, ref, schema)),
         );
       },
     );
+  }
+
+  void onPost(BuildContext context, WidgetRef ref, NewStatusSchema status) async {
+    final ServerSchema? schema = ref.watch(currentServerProvider);
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
+
+    if (schema == null || accessToken == null) {
+      final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? "No server selected";
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(text),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+      return;
+    }
+
+    await status.create(schema: schema, accessToken: accessToken);
+    if (context.mounted) {
+      logger.d("completed create a new status");
+      context.pop();
+    }
   }
 }
 
 // The form of the new status that user can fill in to create a new status.
 class NewStatusForm extends ConsumerStatefulWidget {
   final double maxWidth;
+  final ValueChanged<NewStatusSchema>? onPost;
 
   const NewStatusForm({
     super.key,
     this.maxWidth = 600,
+    this.onPost,
   });
 
   @override
@@ -178,7 +203,7 @@ class _NewStatusFormState extends ConsumerState<NewStatusForm> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        VisibilitySelector(),
+        VisibilitySelector(type: vtype, onChanged: (type) => setState(() => vtype = type)),
         const Spacer(),
         TextButton.icon(
           icon: Icon(Icons.chat),
@@ -197,6 +222,15 @@ class _NewStatusFormState extends ConsumerState<NewStatusForm> {
       // empty content, do nothing
       return;
     }
+
+    final NewStatusSchema schema = NewStatusSchema(
+      status: controller.text,
+      mediaIDs: [],
+      pollIDs: [],
+      visibility: vtype,
+    );
+
+    widget.onPost?.call(schema);
   }
 }
 
