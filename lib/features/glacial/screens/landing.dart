@@ -24,7 +24,7 @@ class LandingPage extends ConsumerStatefulWidget {
 
 class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProviderStateMixin {
   final Storage storage = Storage();
-  final int engineerModeClickCount = 5;
+  static const int _engineerModeClickThreshold = 5;
 
   late final AnimationController controller;
   late final Animation<double> animation;
