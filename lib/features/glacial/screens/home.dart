@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/routes.dart';
 import 'package:glacial/features/glacial/models/server.dart';
+import 'package:glacial/features/auth/screens/core.dart';
 import 'package:glacial/features/timeline/screens/core.dart';
 
 // The possible actions in sidebar and used to interact with the current server.
@@ -107,7 +108,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
               ),
             ),
             actions: [
-              buildSignIn(),
+              SignIn(),
               const SizedBox(width: 8),
             ],
           ),
@@ -216,17 +217,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         ref.read(currentServerProvider.notifier).state = null;
         context.go(RoutePath.explorer.path);
       },
-    );
-  }
-
-  // The sign in button to sign in to the current server.
-  Widget buildSignIn() {
-    return IconButton(
-      icon: Icon(Icons.login_outlined),
-      tooltip: AppLocalizations.of(context)?.btn_sign_in ?? "Sign In",
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      onPressed: () {},
     );
   }
 
