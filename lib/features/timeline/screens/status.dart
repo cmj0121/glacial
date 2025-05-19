@@ -8,6 +8,7 @@ import 'package:glacial/features/timeline/models/core.dart';
 
 import 'account.dart';
 import 'interaction.dart';
+import 'visibility.dart';
 
 // The single Status widget that contains the status information.
 class Status extends ConsumerStatefulWidget {
@@ -71,7 +72,7 @@ class _StatusState extends ConsumerState<Status> {
 
         Text(duration, style: const TextStyle(color: Colors.grey)),
         const SizedBox(width: 4),
-        Icon(Icons.public, color: Colors.grey, size: 16),
+        StatusVisibility(type: schema.visibility, size: 16),
       ],
     );
   }

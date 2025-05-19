@@ -33,6 +33,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_server_rules => 'サーバールール';
 
   @override
+  String get txt_public => '公開';
+
+  @override
+  String get txt_unlisted => '未掲載';
+
+  @override
+  String get txt_private => 'フォロワー限定';
+
+  @override
+  String get txt_direct => 'ダイレクト';
+
+  @override
   String get btn_clean_all => 'すべて削除';
 
   @override

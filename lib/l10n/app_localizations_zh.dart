@@ -33,6 +33,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_server_rules => '伺服器規則';
 
   @override
+  String get txt_public => '公開';
+
+  @override
+  String get txt_unlisted => '不公開';
+
+  @override
+  String get txt_private => '追隨';
+
+  @override
+  String get txt_direct => '私訊';
+
+  @override
   String get btn_clean_all => '清除全部';
 
   @override

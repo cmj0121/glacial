@@ -2,12 +2,14 @@
 import 'dart:convert';
 
 import 'account.dart';
+import 'visibility.dart';
 
 // The timeline status data schema that is the toots from the current
 // selected Mastodon server.
 class StatusSchema {
   final String id;                          // ID of the status in the database.
   final String content;                     // HTML-encoded status content.
+  final VisibilityType visibility;          // The visibility of the status.
   final bool sensitive;                     // Is this status marked as sensitive content?
   final String spoiler;                     // Subject or summary line, below which status content is collapsed.
   final AccountSchema account;              // The account that authored this status.
@@ -30,6 +32,7 @@ class StatusSchema {
   const StatusSchema({
     required this.id,
     required this.content,
+    required this.visibility,
     required this.sensitive,
     required this.spoiler,
     required this.account,
@@ -59,6 +62,7 @@ class StatusSchema {
     return StatusSchema(
       id: json['id'] as String,
       content: json['content'] as String,
+      visibility: VisibilityType.fromString(json['visibility'] as String),
       sensitive: json['sensitive'] as bool,
       spoiler: json['spoiler_text'] as String,
       account: AccountSchema.fromJson(json['account'] as Map<String, dynamic>),

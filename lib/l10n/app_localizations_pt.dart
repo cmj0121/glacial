@@ -33,6 +33,18 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_server_rules => 'Regras do servidor';
 
   @override
+  String get txt_public => 'Público';
+
+  @override
+  String get txt_unlisted => 'Não listado';
+
+  @override
+  String get txt_private => 'Privado (seguidores)';
+
+  @override
+  String get txt_direct => 'Direta';
+
+  @override
   String get btn_clean_all => 'Limpar tudo';
 
   @override

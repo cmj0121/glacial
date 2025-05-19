@@ -155,6 +155,30 @@ abstract class AppLocalizations {
   /// **'Server Rules'**
   String get txt_server_rules;
 
+  /// No description provided for @txt_public.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get txt_public;
+
+  /// No description provided for @txt_unlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlisted'**
+  String get txt_unlisted;
+
+  /// No description provided for @txt_private.
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get txt_private;
+
+  /// No description provided for @txt_direct.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct'**
+  String get txt_direct;
+
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:

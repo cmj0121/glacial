@@ -33,6 +33,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_server_rules => 'Server Rules';
 
   @override
+  String get txt_public => 'Public';
+
+  @override
+  String get txt_unlisted => 'Unlisted';
+
+  @override
+  String get txt_private => 'Private';
+
+  @override
+  String get txt_direct => 'Direct';
+
+  @override
   String get btn_clean_all => 'Clean All';
 
   @override
