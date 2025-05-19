@@ -169,6 +169,7 @@ class _InteractionState extends ConsumerState<Interaction> {
     return ListTile(
       leading: Icon(icon, color: color, size: widget.iconSize),
       title: Text(text, style: style),
+      onTap: isEnabled ? onPressed : null,
     );
   }
 

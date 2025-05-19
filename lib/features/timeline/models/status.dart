@@ -87,7 +87,7 @@ class StatusSchema {
 
 // The new status data schema.
 class NewStatusSchema {
-  final String status;             // The text content of the status. If media_ids is provided, this becomes optional.
+  final String? status;            // The text content of the status. If media_ids is provided, this becomes optional.
   final List<String> mediaIDs;     // Attachment IDs to be attached as media. If provided, status becomes optional, and poll cannot be used.
   final List<String> pollIDs;      // Possible answers to the poll.
   final bool sensitive;            // Mark status and attached media as sensitive? Defaults to false.
