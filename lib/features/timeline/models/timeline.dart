@@ -8,7 +8,7 @@ enum TimelineType implements SlideTab {
   home,          // The home timeline for the logged in user.
   local,         // The local timeline for the current server.
   federal,       // The federated timeline for the current server.
-  public,        // The public timeline for the connnected server.
+  public,        // The public timeline for the connected server.
   favourites,    // The favourite timeline for the logged in user.
   bookmarks;     // The bookmark timeline for the logged in user.
 
