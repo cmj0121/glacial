@@ -95,7 +95,7 @@ class _SlideTabViewState extends State<SlideTabView> with SingleTickerProviderSt
       mainAxisSize: MainAxisSize.min,
       children: [
         buildHeader(),
-        Expanded(
+        Flexible(
           child: Dismissible(
             key: ValueKey<String>('SlideTabView-content-${controller.index}'),
             onDismissed: (direction) {

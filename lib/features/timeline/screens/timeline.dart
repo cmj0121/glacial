@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/timeline/models/timeline.dart';
+import 'package:glacial/features/timeline/models/core.dart';
+import 'status.dart';
 
 // The timeline type button to show the timeline type in the tab bar.
 class TimelineTypeButton extends StatelessWidget {
@@ -83,9 +84,129 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
       tabBuilder: (index) => types[index].supportAnonymous,
       itemBuilder: (context, index) {
         final TimelineType type = types[index];
-        return Text("${type.name} Timeline");
+        return Timeline.builder(schema: schema, type: type);
       },
     );
+  }
+}
+
+// The timeline widget that contains the status from the current selected
+// Mastodon server.
+class Timeline extends StatefulWidget {
+  final ServerSchema schema;
+  final TimelineType type;
+  final List<StatusSchema> statuses;
+
+  const Timeline({
+    super.key,
+    required this.schema,
+    required this.type,
+    this.statuses = const [],
+  });
+
+  @override
+  State<Timeline> createState() => _TimelineState();
+
+  static builder({required ServerSchema schema, required TimelineType type}) {
+    return FutureBuilder(
+      future: schema.fetchTimeline(type: type),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LinearProgressIndicator();
+        } else if (snapshot.hasError) {
+          final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${schema.domain}';
+          return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
+        }
+
+        final List<StatusSchema> statuses = snapshot.data as List<StatusSchema>;
+        return Timeline(schema: schema, type: type, statuses: statuses);
+      },
+    );
+  }
+}
+
+class _TimelineState extends State<Timeline> {
+  final ScrollController controller = ScrollController();
+  final Storage storage = Storage();
+  final double loadingThreshold = 180;
+
+  bool isLoading = false;
+  bool isCompleted = false;
+  late List<StatusSchema> statuses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    statuses = widget.statuses;
+    controller.addListener(onScroll);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          isLoading ? LinearProgressIndicator() : const SizedBox.shrink(),
+          Flexible(child: buildContent()),
+        ],
+      ),
+    );
+  }
+
+  // Build the list of the statuses in the current selected Mastodon server and
+  // timeline type.
+  Widget buildContent() {
+    return ListView.builder(
+      controller: controller,
+      shrinkWrap: true,
+      itemCount: statuses.length,
+      itemBuilder: (context, index) {
+        final StatusSchema status = statuses[index];
+        return Status(schema: status);
+      },
+    );
+  }
+
+
+  // Detect the scroll event and load more statuses when the user scrolls to the
+  // almost bottom of the list.
+  void onScroll() async {
+    if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
+      onLoad();
+    }
+  }
+
+  // Load the statuses from the current selected Mastodon server.
+  void onLoad() async {
+    if (isLoading || isCompleted) {
+      return;
+    }
+
+    setState(() => isLoading = true);
+    final String? maxId = statuses.isNotEmpty ? statuses.last.id : null;
+    final List<StatusSchema> newStatuses = await widget.schema.fetchTimeline(
+      type: widget.type,
+      maxId: maxId,
+    );
+
+    setState(() {
+      isLoading = false;
+
+      if (newStatuses.isEmpty) {
+        isCompleted = true;
+        return;
+      }
+
+      statuses.addAll(newStatuses);
+    });
   }
 }
 
