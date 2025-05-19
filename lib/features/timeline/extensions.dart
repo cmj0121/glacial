@@ -56,6 +56,7 @@ extension StatusLoaderExtensions on ServerSchema {
     }
 
     if (!type.supportAnonymous && accessToken == null) {
+      logger.w("access token is required for $this");
       throw MissingAuth("access token is required for $this");
     }
 

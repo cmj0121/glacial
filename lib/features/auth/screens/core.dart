@@ -1,6 +1,7 @@
 // The SignIn button to navigate to the sign-in page of the Master server.
 import 'dart:async';
 
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -36,6 +37,7 @@ class _SignInState extends ConsumerState<SignIn> {
     super.initState();
 
     state = Uuid().v4();
+    sub = AppLinks().uriLinkStream.listen(onHandleSignIn);
   }
 
   @override
@@ -52,6 +54,8 @@ class _SignInState extends ConsumerState<SignIn> {
     );
   }
 
+  // The sign-in button is pressed, navigate to the sign-in page of the
+  // Mastodon server.
   void onSignIn() async {
     final OAuth2Info info = await storage.getOAuth2Info(widget.schema.domain);
     final Map<String, dynamic> query = {
@@ -66,6 +70,34 @@ class _SignInState extends ConsumerState<SignIn> {
     if (mounted) {
       final Uri uri = Uri.https(widget.schema.domain, "/oauth/authorize", query);
       context.push(RoutePath.webview.path, extra: uri);
+    }
+  }
+
+  // The sign-in page is loaded, handle the sign-in process.
+  void onHandleSignIn(Uri uri) async {
+    final ServerSchema? schema = ref.read(currentServerProvider);
+    final String? code = uri.queryParameters["code"];
+    final String? state = uri.queryParameters["state"];
+
+    if (schema == null || code == null) {
+      logger.w("expected: schema, code, got: $schema, $code");
+      return;
+    }
+
+    if (state != this.state) {
+      logger.w("state mismatch, expected: $this.state, got: $state");
+      return;
+    }
+
+    final OAuth2Info info = await storage.getOAuth2Info(schema.domain);
+    final String? accessToken = await info.getAccessToken(schema.domain, code);
+
+    if (mounted && accessToken != null) {
+      storage.saveAccessToken(schema.domain, accessToken);
+      ref.read(currentAccessTokenProvider.notifier).state = accessToken;
+
+      logger.i("completed sign-in and gain the access token");
+      context.go(RoutePath.home.path);
     }
   }
 }

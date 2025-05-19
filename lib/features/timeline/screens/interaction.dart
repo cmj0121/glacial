@@ -1,6 +1,8 @@
 // The possible interactions of the timeline' status
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 
 class InteractionBar extends StatelessWidget {
@@ -22,7 +24,7 @@ class InteractionBar extends StatelessWidget {
   }
 }
 
-class Interaction extends StatefulWidget {
+class Interaction extends ConsumerStatefulWidget {
   final StatusSchema schema;
   final StatusInteraction action;
 
@@ -33,15 +35,19 @@ class Interaction extends StatefulWidget {
   });
 
   @override
-  State<Interaction> createState() => _InteractionState();
+  ConsumerState<Interaction> createState() => _InteractionState();
 }
 
-class _InteractionState extends State<Interaction> {
+class _InteractionState extends ConsumerState<Interaction> {
   @override
   Widget build(BuildContext context) {
+    final String? accessToken = ref.read(currentAccessTokenProvider);
+    final bool isEnabled = accessToken != null || widget.action.supportAnonymous;
+
+
     return IconButton(
       icon: Icon(widget.action.icon),
-      onPressed: widget.action.supportAnonymous ? () {} : null,
+      onPressed: isEnabled ? () {} : null,
     );
   }
 }

@@ -72,6 +72,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
+    final String? accessToken = ref.read(currentAccessTokenProvider);
     final ServerSchema? schema = ref.read(currentServerProvider);
 
     if (schema == null) {
@@ -81,10 +82,10 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
 
     return SlideTabView(
       tabs: types,
-      tabBuilder: (index) => types[index].supportAnonymous,
+      tabBuilder: (index) => (accessToken != null || types[index].supportAnonymous),
       itemBuilder: (context, index) {
         final TimelineType type = types[index];
-        return Timeline.builder(schema: schema, type: type);
+        return Timeline.builder(schema: schema, type: type, accessToken: accessToken);
       },
     );
   }
@@ -95,21 +96,23 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
 class Timeline extends StatefulWidget {
   final ServerSchema schema;
   final TimelineType type;
+  final String? accessToken;
   final List<StatusSchema> statuses;
 
   const Timeline({
     super.key,
     required this.schema,
     required this.type,
+    this.accessToken,
     this.statuses = const [],
   });
 
   @override
   State<Timeline> createState() => _TimelineState();
 
-  static builder({required ServerSchema schema, required TimelineType type}) {
+  static builder({required ServerSchema schema, required TimelineType type, String? accessToken}) {
     return FutureBuilder(
-      future: schema.fetchTimeline(type: type),
+      future: schema.fetchTimeline(type: type, accessToken: accessToken),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LinearProgressIndicator();
@@ -119,7 +122,7 @@ class Timeline extends StatefulWidget {
         }
 
         final List<StatusSchema> statuses = snapshot.data as List<StatusSchema>;
-        return Timeline(schema: schema, type: type, statuses: statuses);
+        return Timeline(schema: schema, type: type, statuses: statuses, accessToken: accessToken);
       },
     );
   }
@@ -197,6 +200,7 @@ class _TimelineState extends State<Timeline> {
     final String? maxId = statuses.isNotEmpty ? statuses.last.id : null;
     final List<StatusSchema> newStatuses = await widget.schema.fetchTimeline(
       type: widget.type,
+      accessToken: widget.accessToken,
       maxId: maxId,
     );
 

@@ -190,9 +190,12 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   }
 
   List<Widget> buildActions() {
+    final String? accessToken = ref.read(currentAccessTokenProvider);
+
     return actions.map((action) {
         final int index = actions.indexOf(action);
         final bool isSelected = selectedIndex == index;
+        final bool isEnabled = accessToken != null || action.supportAnonymous;
 
         return IconButton(
           key: ValueKey<int>(index),
@@ -201,7 +204,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           tooltip: actionTooltip(action),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: action.supportAnonymous ? () => onSelect(index) : null,
+          onPressed: isEnabled ? () => onSelect(index) : null,
         );
       }).toList();
   }
@@ -215,6 +218,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       focusColor: Colors.transparent,
       onPressed: () {
         ref.read(currentServerProvider.notifier).state = null;
+        ref.read(currentAccessTokenProvider.notifier).state = null;
         context.go(RoutePath.explorer.path);
       },
     );

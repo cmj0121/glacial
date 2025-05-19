@@ -214,7 +214,7 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
   }
 
   // The callback when user clicks the mastodon server.
-  void onSelect(ServerSchema schema) {
+  void onSelect(ServerSchema schema) async {
     logger.i("onTap: ${schema.domain}");
 
     setState(() {
@@ -224,10 +224,15 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
       }
     });
 
-    storage.saveLastServer(schema.domain);
-    ref.read(currentServerProvider.notifier).state = schema;
-    logger.i("save current server: ${schema.domain}");
-    GoRouter.of(context).push(RoutePath.home.path);
+    final String? accessToken = await storage.loadAccessToken(schema.domain);
+
+    if (mounted) {
+      storage.saveLastServer(schema.domain);
+      ref.read(currentServerProvider.notifier).state = schema;
+      ref.read(currentAccessTokenProvider.notifier).state = accessToken;
+      logger.i("save current server: ${schema.domain}");
+      GoRouter.of(context).push(RoutePath.home.path);
+    }
   }
 
   // Reorder the history list when the user drags the item.

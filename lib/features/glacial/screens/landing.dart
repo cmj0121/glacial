@@ -93,6 +93,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
   // if completed
   void preload() async {
     final String? server = await storage.loadLastServer();
+    final String? accessToken = await storage.loadAccessToken(server);
     late ServerSchema? schema;
 
     schema = server == null ? null : await fetch(server);
@@ -103,6 +104,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
       logger.i("completely preloaded ...");
 
       ref.read(currentServerProvider.notifier).state = schema;
+      ref.read(currentAccessTokenProvider.notifier).state = accessToken;
       context.go(schema == null ? RoutePath.explorer.path : RoutePath.home.path);
     }
   }
