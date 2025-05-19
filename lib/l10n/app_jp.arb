@@ -12,6 +12,7 @@
   "txt_unlisted": "未掲載",
   "txt_private": "フォロワー限定",
   "txt_direct": "ダイレクト",
+  "txt_copied_to_clipboard": "クリップボードにコピーしました",
   "btn_clean_all": "すべて削除",
   "btn_back_to_explorer": "検索ページに戻る",
   "btn_sign_in": "サインイン",

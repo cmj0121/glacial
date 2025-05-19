@@ -179,6 +179,12 @@ abstract class AppLocalizations {
   /// **'Direct'**
   String get txt_direct;
 
+  /// No description provided for @txt_copied_to_clipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy to Clipboard'**
+  String get txt_copied_to_clipboard;
+
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:

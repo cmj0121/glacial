@@ -1,5 +1,6 @@
 // The possible interactions of the timeline' status
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
@@ -55,7 +56,7 @@ class _InteractionState extends ConsumerState<Interaction> {
     return TextButton.icon(
       label: count != null ? Text("$count", style: style) : const SizedBox.shrink(),
       icon: Icon(icon, color: color, size: widget.iconSize),
-      onPressed: isEnabled ? () {} : null,
+      onPressed: isEnabled ? onPressed : null,
     );
   }
 
@@ -99,6 +100,23 @@ class _InteractionState extends ConsumerState<Interaction> {
         return widget.schema.favouritesCount;
       default:
         return null;
+    }
+  }
+
+  // Interactive with the current status
+  void onPressed() async {
+    switch (widget.action) {
+      case StatusInteraction.share:
+        final String text = AppLocalizations.of(context)?.txt_copied_to_clipboard ?? "Copy to clipboard";
+
+        Clipboard.setData(ClipboardData(text: widget.schema.uri));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(text),
+          ),
+        );
+      default:
+        logger.i('not implemented yet');
     }
   }
 }

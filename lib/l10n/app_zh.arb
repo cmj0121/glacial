@@ -12,6 +12,7 @@
   "txt_unlisted": "不公開",
   "txt_private": "追隨",
   "txt_direct": "私訊",
+  "txt_copied_to_clipboard": "複製到剪貼簿",
   "btn_clean_all": "清除全部",
   "btn_back_to_explorer": "回到搜尋頁",
   "btn_sign_in": "登入",

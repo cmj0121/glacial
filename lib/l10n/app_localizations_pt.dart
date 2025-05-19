@@ -45,6 +45,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_direct => 'Direta';
 
   @override
+  String get txt_copied_to_clipboard => 'Copiado para a área de transferência';
+
+  @override
   String get btn_clean_all => 'Limpar tudo';
 
   @override

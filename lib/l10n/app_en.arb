@@ -12,6 +12,7 @@
   "txt_unlisted": "Unlisted",
   "txt_private": "Private",
   "txt_direct": "Direct",
+  "txt_copied_to_clipboard": "Copy to Clipboard",
   "btn_clean_all": "Clean All",
   "btn_back_to_explorer": "Back to Explorer",
   "btn_sign_in": "Sign In",

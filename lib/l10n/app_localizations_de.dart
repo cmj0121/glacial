@@ -45,6 +45,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_direct => 'Direkt';
 
   @override
+  String get txt_copied_to_clipboard => 'In die Zwischenablage kopiert';
+
+  @override
   String get btn_clean_all => 'Alles löschen';
 
   @override

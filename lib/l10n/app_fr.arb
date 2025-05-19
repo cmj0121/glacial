@@ -12,6 +12,7 @@
   "txt_unlisted": "Non listé",
   "txt_private": "Privé (abonnés)",
   "txt_direct": "Direct",
+  "txt_copied_to_clipboard": "Copié dans le presse-papiers",
   "btn_clean_all": "Tout effacer",
   "btn_back_to_explorer": "Retour à l'explorateur",
   "btn_sign_in": "Se connecter",

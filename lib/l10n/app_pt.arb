@@ -12,6 +12,7 @@
   "txt_unlisted": "Não listado",
   "txt_private": "Privado (seguidores)",
   "txt_direct": "Direta",
+  "txt_copied_to_clipboard": "Copiado para a área de transferência",
   "btn_clean_all": "Limpar tudo",
   "btn_back_to_explorer": "Voltar para a exploração",
   "btn_sign_in": "Entrar",

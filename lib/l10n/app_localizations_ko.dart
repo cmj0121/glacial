@@ -45,6 +45,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_direct => '다이렉트';
 
   @override
+  String get txt_copied_to_clipboard => '클립보드에 복사됨';
+
+  @override
   String get btn_clean_all => '모두 지우기';
 
   @override
