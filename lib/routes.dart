@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/engineer/screens/core.dart';
 import 'package:glacial/features/glacial/screens/core.dart';
 import 'package:glacial/features/webview/screens/core.dart';
 
@@ -25,6 +26,7 @@ class WIP extends StatelessWidget {
 
 enum RoutePath {
   landing,    // The landing page of the app when user opens it.
+  engineer,   // The engineer page of the app.
   explorer,   // The server explorer page of the app.
   webview,    // The in-app webview page of the app.
   home;       // The home page of the app to show the server explorer.
@@ -34,6 +36,8 @@ enum RoutePath {
     switch (this) {
       case RoutePath.landing:
         return '/';
+      case RoutePath.engineer:
+        return '/engineer';
       case RoutePath.explorer:
         return '/explorer';
       case RoutePath.webview:
@@ -50,6 +54,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: RoutePath.landing.path,
       builder: (BuildContext context, GoRouterState state) => const LandingPage(),
+    ),
+    GoRoute(
+      path: RoutePath.engineer.path,
+      builder: (BuildContext context, GoRouterState state) => const EnginnerMode(),
     ),
     GoRoute(
       path: RoutePath.explorer.path,

@@ -24,11 +24,13 @@ class LandingPage extends ConsumerStatefulWidget {
 
 class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProviderStateMixin {
   final Storage storage = Storage();
+  static const int _engineerModeClickThreshold = 5;
 
   late final AnimationController controller;
   late final Animation<double> animation;
 
   bool flipX = true;
+  int clickCount = 0;
 
   @override
   void initState() {
@@ -65,7 +67,12 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
     return Scaffold(
       body: SafeArea(
         child: Center(
-          child: buildContent(),
+          // The callback when the user clicks the icon, and may entry to the
+          // engineer mode.
+          child: InkWellDone(
+            onTap: () => setState(() => clickCount++),
+            child: buildContent(),
+          ),
         ),
       ),
     );
@@ -105,6 +112,12 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
 
       ref.read(currentServerProvider.notifier).state = schema;
       ref.read(currentAccessTokenProvider.notifier).state = accessToken;
+
+      if (clickCount >= engineerModeClickCount) {
+        logger.i("entering engineer mode ...");
+        context.go(RoutePath.engineer.path);
+        return;
+      }
       context.go(schema == null ? RoutePath.explorer.path : RoutePath.home.path);
     }
   }

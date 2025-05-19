@@ -15,6 +15,12 @@ class Storage {
     }
   }
 
+  // Purge the storage.
+  Future<void> purge() async {
+    await _prefs?.clear();
+    await _secureStorage.deleteAll();
+  }
+
   // Get the raw string value from the storage.
   Future<String?> getString(String key, {bool secure = false}) async {
     return secure ? await _secureStorage.read(key: key) : _prefs?.getString(key);
