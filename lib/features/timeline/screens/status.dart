@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/glacial/models/server.dart';
 
 import 'account.dart';
 import 'interaction.dart';
@@ -72,9 +74,129 @@ class _StatusState extends ConsumerState<Status> {
 
         Text(duration, style: const TextStyle(color: Colors.grey)),
         const SizedBox(width: 4),
-        StatusVisibility(type: schema.visibility, size: 16),
+        StatusVisibility(type: schema.visibility, size: 16, isCompact: true),
       ],
     );
+  }
+}
+
+// The new status button to create a new status.
+class NewStatus extends ConsumerWidget {
+  final double size;
+
+  const NewStatus({
+    super.key,
+    this.size = 32,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
+
+    return IconButton.filledTonal(
+      icon: Icon(Icons.post_add_outlined, size: size),
+      tooltip: AppLocalizations.of(context)?.btn_post ?? "Post",
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onPressed: accessToken == null ? null : () => onPressed(context),
+    );
+  }
+
+  void onPressed(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: NewStatusForm(),
+        );
+      },
+    );
+  }
+}
+
+// The form of the new status that user can fill in to create a new status.
+class NewStatusForm extends ConsumerStatefulWidget {
+  final double maxWidth;
+
+  const NewStatusForm({
+    super.key,
+    this.maxWidth = 600,
+  });
+
+  @override
+  ConsumerState<NewStatusForm> createState() => _NewStatusFormState();
+}
+
+class _NewStatusFormState extends ConsumerState<NewStatusForm> {
+  final TextEditingController controller = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  VisibilityType vtype = VisibilityType.public;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: widget.maxWidth,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: buildContent(),
+        ),
+      ),
+    );
+  }
+
+  Widget buildContent() {
+    final ServerSchema? schema = ref.watch(currentServerProvider);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextFormField(
+          controller: controller,
+          maxLines: 10,
+          minLines: 10,
+          maxLength: schema?.config.statuses.maxCharacters ?? 500,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Flexible(child: buildActions()),
+      ],
+    );
+  }
+
+  Widget buildActions() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        VisibilitySelector(),
+        const Spacer(),
+        TextButton.icon(
+          icon: Icon(Icons.chat),
+          label: Text(AppLocalizations.of(context)?.btn_post ?? "Post"),
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.primary,
+          ),
+          onPressed: onPost,
+        ),
+      ],
+    );
+  }
+
+  void onPost() async {
+    if (controller.text.isEmpty) {
+      // empty content, do nothing
+      return;
+    }
   }
 }
 
