@@ -1,10 +1,16 @@
 // The extensions implementation for the glacial feature.
+import 'dart:async';
 
 import 'package:glacial/core.dart';
 
 final keyServerHistory = 'server_history';
+final keyLastServer = 'last_server';
 
 extension ServerExtensions on Storage {
+  // Get and Set the last used server
+  Future<String?> loadLastServer() async => await getString(keyLastServer);
+  void saveLastServer(String server) => setString(keyLastServer, server);
+
   // get the history of the used servers
   List<String> get serverHistory => getStringList(keyServerHistory);
 

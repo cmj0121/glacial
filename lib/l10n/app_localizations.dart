@@ -155,11 +155,125 @@ abstract class AppLocalizations {
   /// **'Server Rules'**
   String get txt_server_rules;
 
+  /// No description provided for @txt_public.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get txt_public;
+
+  /// No description provided for @txt_unlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlisted'**
+  String get txt_unlisted;
+
+  /// No description provided for @txt_private.
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get txt_private;
+
+  /// No description provided for @txt_direct.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct'**
+  String get txt_direct;
+
+  /// No description provided for @txt_copied_to_clipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy to Clipboard'**
+  String get txt_copied_to_clipboard;
+
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:
   /// **'Clean All'**
   String get btn_clean_all;
+
+  /// No description provided for @btn_back_to_explorer.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Explorer'**
+  String get btn_back_to_explorer;
+
+  /// No description provided for @btn_sign_in.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get btn_sign_in;
+
+  /// No description provided for @btn_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get btn_timeline;
+
+  /// No description provided for @btn_trending.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending'**
+  String get btn_trending;
+
+  /// No description provided for @btn_notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get btn_notifications;
+
+  /// No description provided for @btn_explore.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get btn_explore;
+
+  /// No description provided for @btn_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get btn_settings;
+
+  /// No description provided for @btn_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get btn_post;
+
+  /// No description provided for @btn_home_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get btn_home_timeline;
+
+  /// No description provided for @btn_local_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get btn_local_timeline;
+
+  /// No description provided for @btn_federal_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Federal'**
+  String get btn_federal_timeline;
+
+  /// No description provided for @btn_public_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get btn_public_timeline;
+
+  /// No description provided for @btn_bookmarks_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks'**
+  String get btn_bookmarks_timeline;
+
+  /// No description provided for @btn_favourites_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourites'**
+  String get btn_favourites_timeline;
 
   /// No description provided for @dots.
   ///

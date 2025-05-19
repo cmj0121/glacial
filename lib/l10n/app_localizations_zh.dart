@@ -33,7 +33,64 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_server_rules => '伺服器規則';
 
   @override
+  String get txt_public => '公開';
+
+  @override
+  String get txt_unlisted => '不公開';
+
+  @override
+  String get txt_private => '追隨';
+
+  @override
+  String get txt_direct => '私訊';
+
+  @override
+  String get txt_copied_to_clipboard => '複製到剪貼簿';
+
+  @override
   String get btn_clean_all => '清除全部';
+
+  @override
+  String get btn_back_to_explorer => '回到搜尋頁';
+
+  @override
+  String get btn_sign_in => '登入';
+
+  @override
+  String get btn_timeline => '時間軸';
+
+  @override
+  String get btn_trending => '趨勢';
+
+  @override
+  String get btn_notifications => '通知';
+
+  @override
+  String get btn_explore => '搜尋';
+
+  @override
+  String get btn_settings => '設定';
+
+  @override
+  String get btn_post => '嘟文';
+
+  @override
+  String get btn_home_timeline => '首頁';
+
+  @override
+  String get btn_local_timeline => '本站';
+
+  @override
+  String get btn_federal_timeline => '聯邦';
+
+  @override
+  String get btn_public_timeline => '公開';
+
+  @override
+  String get btn_bookmarks_timeline => '書籤';
+
+  @override
+  String get btn_favourites_timeline => '收藏';
 
   @override
   String get dots => '...';

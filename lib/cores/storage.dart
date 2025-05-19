@@ -1,20 +1,23 @@
 // The shared library to access the data in local storage, which
 // may be the shared preferences or security storage.
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Storage {
   static SharedPreferences? _prefs;
+  static final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   static Future<void> init({bool purge = false}) async {
     _prefs = await SharedPreferences.getInstance();
     if (purge) {
       await _prefs?.clear();
+      await _secureStorage.deleteAll();
     }
   }
 
   // Get the raw string value from the storage.
   Future<String?> getString(String key, {bool secure = false}) async {
-    return _prefs?.getString(key);
+    return secure ? await _secureStorage.read(key: key) : _prefs?.getString(key);
   }
 
   // Get the list of string from the storage.
@@ -24,7 +27,14 @@ class Storage {
 
   // Set the raw string value to the storage.
   Future<void> setString(String key, String value, {bool secure = false}) async {
-    await _prefs?.setString(key, value);
+    switch (secure) {
+      case true:
+        await _secureStorage.write(key: key, value: value);
+        break;
+      case false:
+        await _prefs?.setString(key, value);
+        break;
+    }
   }
 
   // Set the list of string to the storage.

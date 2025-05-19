@@ -2,12 +2,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/routes.dart';
+import 'package:glacial/features/glacial/models/server.dart';
+import 'server.dart';
 
 // The landing page that shows the icon of the app and flips intermittently.
-class LandingPage extends StatefulWidget {
+class LandingPage extends ConsumerStatefulWidget {
   final Duration duration;
 
   const LandingPage({
@@ -16,10 +19,12 @@ class LandingPage extends StatefulWidget {
   });
 
   @override
-  State<LandingPage> createState() => _LandingPageState();
+  ConsumerState<LandingPage> createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
+class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProviderStateMixin {
+  final Storage storage = Storage();
+
   late final AnimationController controller;
   late final Animation<double> animation;
 
@@ -87,11 +92,20 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
   // preload the necessary resources and navigate to the home page
   // if completed
   void preload() async {
-    await Future.delayed(const Duration(milliseconds: 2000));
+    final String? server = await storage.loadLastServer();
+    final String? accessToken = await storage.loadAccessToken(server);
+    late ServerSchema? schema;
 
+    schema = server == null ? null : await fetch(server);
+    logger.i("preloading server schema from $server to $schema ...");
+
+    await Future.delayed(const Duration(milliseconds: 1200));
     if (mounted) {
       logger.i("completely preloaded ...");
-      context.go(RoutePath.home.path);
+
+      ref.read(currentServerProvider.notifier).state = schema;
+      ref.read(currentAccessTokenProvider.notifier).state = accessToken;
+      context.go(schema == null ? RoutePath.explorer.path : RoutePath.home.path);
     }
   }
 }

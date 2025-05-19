@@ -33,7 +33,64 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_server_rules => 'Reglas del servidor';
 
   @override
+  String get txt_public => 'Público';
+
+  @override
+  String get txt_unlisted => 'No listado';
+
+  @override
+  String get txt_private => 'Privado (seguidores)';
+
+  @override
+  String get txt_direct => 'Directo';
+
+  @override
+  String get txt_copied_to_clipboard => 'Copiado al portapapeles';
+
+  @override
   String get btn_clean_all => 'Borrar todo';
+
+  @override
+  String get btn_back_to_explorer => 'Volver al explorador';
+
+  @override
+  String get btn_sign_in => 'Iniciar sesión';
+
+  @override
+  String get btn_timeline => 'Línea de tiempo';
+
+  @override
+  String get btn_trending => 'Tendencias';
+
+  @override
+  String get btn_notifications => 'Notificaciones';
+
+  @override
+  String get btn_explore => 'Explorar';
+
+  @override
+  String get btn_settings => 'Configuración';
+
+  @override
+  String get btn_post => 'Publicar';
+
+  @override
+  String get btn_home_timeline => 'Inicio';
+
+  @override
+  String get btn_local_timeline => 'Local';
+
+  @override
+  String get btn_federal_timeline => 'Federal';
+
+  @override
+  String get btn_public_timeline => 'Público';
+
+  @override
+  String get btn_bookmarks_timeline => 'Marcadores';
+
+  @override
+  String get btn_favourites_timeline => 'Favoritos';
 
   @override
   String get dots => '...';

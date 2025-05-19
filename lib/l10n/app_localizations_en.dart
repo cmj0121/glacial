@@ -33,7 +33,64 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_server_rules => 'Server Rules';
 
   @override
+  String get txt_public => 'Public';
+
+  @override
+  String get txt_unlisted => 'Unlisted';
+
+  @override
+  String get txt_private => 'Private';
+
+  @override
+  String get txt_direct => 'Direct';
+
+  @override
+  String get txt_copied_to_clipboard => 'Copy to Clipboard';
+
+  @override
   String get btn_clean_all => 'Clean All';
+
+  @override
+  String get btn_back_to_explorer => 'Back to Explorer';
+
+  @override
+  String get btn_sign_in => 'Sign In';
+
+  @override
+  String get btn_timeline => 'Timeline';
+
+  @override
+  String get btn_trending => 'Trending';
+
+  @override
+  String get btn_notifications => 'Notification';
+
+  @override
+  String get btn_explore => 'Explore';
+
+  @override
+  String get btn_settings => 'Settings';
+
+  @override
+  String get btn_post => 'Post';
+
+  @override
+  String get btn_home_timeline => 'Home';
+
+  @override
+  String get btn_local_timeline => 'Local';
+
+  @override
+  String get btn_federal_timeline => 'Federal';
+
+  @override
+  String get btn_public_timeline => 'Public';
+
+  @override
+  String get btn_bookmarks_timeline => 'Bookmarks';
+
+  @override
+  String get btn_favourites_timeline => 'Favourites';
 
   @override
   String get dots => '...';

@@ -32,5 +32,18 @@
 	<string>public.app-category.utilities</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>dev.mini-poc.glacial</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>glacial</string>
+			</array>
+		</dict>
+	</array>
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
 </dict>
 </plist>
