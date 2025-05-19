@@ -70,7 +70,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
           // The callback when the user clicks the icon, and may entry to the
           // engineer mode.
           child: InkWellDone(
-            onTap: () => clickCount = clickCount + 1,
+            onTap: () => setState(() => clickCount++),
             child: buildContent(),
           ),
         ),
