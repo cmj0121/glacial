@@ -58,7 +58,7 @@ class _StatusState extends ConsumerState<Status> {
         Html(data: schema.content),
 
         const SizedBox(height: 8),
-        InteractionBar(schema: schema),
+        InteractionBar(schema: schema, onReload: onReload),
       ],
     );
   }
@@ -77,6 +77,12 @@ class _StatusState extends ConsumerState<Status> {
         StatusVisibility(type: schema.visibility, size: 16, isCompact: true),
       ],
     );
+  }
+
+  // reload the status when the user interacts with it.
+  void onReload(StatusSchema schema) async {
+    // fetch the status again from the server, and update the status
+    setState(() => this.schema = schema);
   }
 }
 

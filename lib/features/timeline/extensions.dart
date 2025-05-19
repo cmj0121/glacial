@@ -91,4 +91,94 @@ extension PostStatusExtensions on NewStatusSchema {
   }
 }
 
+// The future function to interact with the status.
+typedef InteractIt = Future<StatusSchema> Function({required String domain, required String accessToken});
+
+// The extension of the current status to update the status.
+extension InteractiveStatusExtensions on StatusSchema {
+  // Reblog the status to the Mastodon server
+  Future<StatusSchema> reblogIt({required String domain, required String accessToken}) async {
+    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/reblog");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final String body = await sendPostRequest(uri, headers: headers);
+    return StatusSchema.fromString(body);
+  }
+
+  // Unreblog the status to the Mastodon server
+  Future<StatusSchema> unreblogIt({required String domain, required String accessToken}) async {
+    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/unreblog");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final String body = await sendPostRequest(uri, headers: headers);
+    return StatusSchema.fromString(body);
+  }
+
+  // Favourite the status to the Mastodon server
+  Future<StatusSchema> favouriteIt({required String domain, required String accessToken}) async {
+    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/favourite");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final String body = await sendPostRequest(uri, headers: headers);
+    return StatusSchema.fromString(body);
+  }
+
+  // Unfavourite the status to the Mastodon server
+  Future<StatusSchema> unfavouriteIt({required String domain, required String accessToken}) async {
+    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/unfavourite");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final String body = await sendPostRequest(uri, headers: headers);
+    return StatusSchema.fromString(body);
+  }
+
+  // Bookmark the status to the Mastodon server
+  Future<StatusSchema> bookmarkIt({required String domain, required String accessToken}) async {
+    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/bookmark");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final String body = await sendPostRequest(uri, headers: headers);
+    return StatusSchema.fromString(body);
+  }
+
+  // Unbookmark the status to the Mastodon server
+  Future<StatusSchema> unbookmarkIt({required String domain, required String accessToken}) async {
+    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/unbookmark");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final String body = await sendPostRequest(uri, headers: headers);
+    return StatusSchema.fromString(body);
+  }
+
+  Future<String> sendPostRequest(Uri uri, {Map<String, String>? headers, Map<String, String>? body}) async {
+    final response = await post(uri, headers: headers, body: jsonEncode(body));
+    switch (response.statusCode) {
+      case 200:
+        logger.i("call status action from $uri");
+        return response.body;
+      default:
+        logger.e("failed to unbookmark $this from $uri: ${response.statusCode}");
+        throw Exception("failed to unbookmark $this from $uri: ${response.statusCode}");
+    }
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/glacial/models/server.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 
 // The interaction bar that shows the all the possible actions for the current
@@ -14,11 +15,13 @@ import 'package:glacial/features/timeline/models/core.dart';
 class InteractionBar extends StatelessWidget {
   final StatusSchema schema;
   final double itemWidth;
+  final ValueChanged<StatusSchema>? onReload;
 
   const InteractionBar({
     super.key,
     required this.schema,
     this.itemWidth = 68,
+    this.onReload,
   });
 
   @override
@@ -43,12 +46,14 @@ class InteractionBar extends StatelessWidget {
                 action: action,
                 maxWidth: itemWidth,
                 isCompact: true,
+                onReload: onReload,
               );
             }),
             InteractionMore(
               schema: schema,
               actions: moreActions,
               itemWidth: itemWidth,
+              onReload: onReload,
             ),
           ],
         );
@@ -62,12 +67,14 @@ class InteractionMore extends StatelessWidget {
   final StatusSchema schema;
   final List<StatusInteraction> actions;
   final double itemWidth;
+  final ValueChanged<StatusSchema>? onReload;
 
   const InteractionMore({
     super.key,
     required this.schema,
     required this.actions,
     this.itemWidth = 68,
+    this.onReload,
   });
 
   @override
@@ -106,6 +113,7 @@ class Interaction extends ConsumerStatefulWidget {
   final double iconSize;
   final bool isCompact;
   final VoidCallback? onPressed;
+  final ValueChanged<StatusSchema>? onReload;
 
   const Interaction({
     super.key,
@@ -115,6 +123,7 @@ class Interaction extends ConsumerStatefulWidget {
     this.iconSize = 24,
     this.isCompact = false,
     this.onPressed,
+    this.onReload,
   });
 
   @override
@@ -234,7 +243,20 @@ class _InteractionState extends ConsumerState<Interaction> {
 
   // Interactive with the current status
   void onPressed() async {
+    final ServerSchema? server = ref.read(currentServerProvider);
+    final String? accessToken = ref.read(currentAccessTokenProvider);
+    InteractIt? fn;
+
     switch (widget.action) {
+      case StatusInteraction.reblog:
+        fn = widget.schema.reblogged == true ? widget.schema.unreblogIt : widget.schema.reblogIt;
+        break;
+      case StatusInteraction.favourite:
+        fn = widget.schema.favourited == true ? widget.schema.unfavouriteIt : widget.schema.favouriteIt;
+        break;
+      case StatusInteraction.bookmark:
+        fn = widget.schema.bookmarked == true ? widget.schema.unbookmarkIt : widget.schema.bookmarkIt;
+        break;
       case StatusInteraction.share:
         final String text = AppLocalizations.of(context)?.txt_copied_to_clipboard ?? "Copy to clipboard";
 
@@ -244,8 +266,15 @@ class _InteractionState extends ConsumerState<Interaction> {
             content: Text(text),
           ),
         );
+        break;
       default:
-        logger.i('not implemented yet');
+        fn = null;
+        break;
+    }
+
+    if (fn != null && server != null && accessToken != null) {
+      final StatusSchema schema = await fn(domain: server.domain, accessToken: accessToken);
+      widget.onReload?.call(schema);
     }
 
     widget.onPressed?.call();
