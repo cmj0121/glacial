@@ -93,5 +93,29 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_favourites_timeline => 'お気に入り';
 
   @override
+  String get btn_reply => '返信';
+
+  @override
+  String get btn_reblog => '再投稿';
+
+  @override
+  String get btn_favourite => 'お気に入り';
+
+  @override
+  String get btn_bookmark => 'ブックマーク';
+
+  @override
+  String get btn_share => '共有';
+
+  @override
+  String get btn_mute => 'ミュート';
+
+  @override
+  String get btn_block => 'ブロック';
+
+  @override
+  String get btn_delete => '削除';
+
+  @override
   String get dots => '...';
 }

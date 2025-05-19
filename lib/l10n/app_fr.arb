@@ -28,5 +28,13 @@
   "btn_public_timeline": "Public",
   "btn_bookmarks_timeline": "Favoris",
   "btn_favourites_timeline": "Favoris",
+  "btn_reply": "Répondre",
+  "btn_reblog": "Rebloguer",
+  "btn_favourite": "Favori",
+  "btn_bookmark": "Signet",
+  "btn_share": "Partager",
+  "btn_mute": "Muet",
+  "btn_block": "Bloquer",
+  "btn_delete": "Supprimer",
   "dots": "..."
 }

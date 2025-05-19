@@ -93,5 +93,29 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btn_favourites_timeline => 'Favoritos';
 
   @override
+  String get btn_reply => 'Responder';
+
+  @override
+  String get btn_reblog => 'Rebloguear';
+
+  @override
+  String get btn_favourite => 'Favorito';
+
+  @override
+  String get btn_bookmark => 'Marcador';
+
+  @override
+  String get btn_share => 'Compartir';
+
+  @override
+  String get btn_mute => 'Silenciar';
+
+  @override
+  String get btn_block => 'Bloquear';
+
+  @override
+  String get btn_delete => 'Eliminar';
+
+  @override
   String get dots => '...';
 }

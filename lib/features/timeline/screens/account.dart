@@ -71,7 +71,7 @@ class Account extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildDisplayName(),
-        Text('@${schema.acct}', style: const TextStyle(color: Colors.grey)),
+        Text('@${schema.acct}', style: const TextStyle(color: Colors.grey), overflow: TextOverflow.ellipsis),
       ],
     );
   }
