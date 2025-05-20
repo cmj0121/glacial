@@ -69,7 +69,7 @@ class _UserProfileState extends ConsumerState<UserProfile> {
       return Icon(Icons.help_outlined, size: widget.size);
     }
 
-    final AccountSchema? account = ref.read(currentUserProvider);
+    final AccountSchema? account = ref.watch(currentUserProvider);
     return account == null ? Icon(Icons.error, size: widget.size) : buildUserAvatar(account);
   }
 
