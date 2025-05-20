@@ -65,35 +65,38 @@ class _UserProfileState extends ConsumerState<UserProfile> {
     final ServerSchema? schema = ref.read(currentServerProvider);
 
     if (accessToken == null || schema == null) {
-      return Icon(Icons.person, size: widget.size);
+      return Icon(Icons.help_outlined, size: widget.size);
     }
 
-    return FutureBuilder(
-      future: schema.getAuthUser(accessToken),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox.shrink();
-        }
+    return InkWellDone(
+      onDoubleTap: onSignOut,
+      child: FutureBuilder(
+        future: schema.getAuthUser(accessToken),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox.shrink();
+          }
 
-        if (snapshot.hasError) {
-          return Icon(Icons.error, size: widget.size);
-        }
+          if (snapshot.hasError) {
+            return Icon(Icons.error, size: widget.size);
+          }
 
-        final AccountSchema? account = snapshot.data;
-        if (account == null) {
-          return Icon(Icons.error, size: widget.size);
-        }
-        return ClipOval(
-          child: CachedNetworkImage(
-            width: widget.size,
-            height: widget.size,
-            imageUrl: account.avatar,
-            placeholder: (context, url) => const SizedBox.shrink(),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-            fit: BoxFit.cover,
-          ),
-        );
-      },
+          final AccountSchema? account = snapshot.data;
+          if (account == null) {
+            return Icon(Icons.error, size: widget.size);
+          }
+          return ClipOval(
+            child: CachedNetworkImage(
+              width: widget.size,
+              height: widget.size,
+              imageUrl: account.avatar,
+              placeholder: (context, url) => const SizedBox.shrink(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              fit: BoxFit.cover,
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -116,8 +119,27 @@ class _UserProfileState extends ConsumerState<UserProfile> {
     }
   }
 
+  // The sign-up button is pressed, clean-up the authorization code and
+  // refresh the page.
+  void onSignOut() async {
+    final DateTime now = DateTime.now();
+    final ServerSchema? schema = ref.read(currentServerProvider);
+
+    if (schema == null) {
+      logger.w("expected: schema, got: $schema");
+      return;
+    }
+
+    storage.saveAccessToken(schema.domain, null);
+    ref.read(currentAccessTokenProvider.notifier).state = null;
+    if (mounted) {
+      context.go(RoutePath.home.path, extra: now);
+    }
+  }
+
   // The sign-in page is loaded, handle the sign-in process.
   void onHandleSignIn(Uri uri) async {
+    final DateTime now = DateTime.now();
     final ServerSchema? schema = ref.read(currentServerProvider);
     final String? code = uri.queryParameters["code"];
     final String? state = uri.queryParameters["state"];
@@ -135,9 +157,10 @@ class _UserProfileState extends ConsumerState<UserProfile> {
     final OAuth2Info info = await storage.getOAuth2Info(schema.domain);
     final String? accessToken = await info.getAccessToken(schema.domain, code);
 
+    storage.saveAccessToken(schema.domain, accessToken);
+    ref.read(currentAccessTokenProvider.notifier).state = accessToken;
+
     if (mounted && accessToken != null) {
-      storage.saveAccessToken(schema.domain, accessToken);
-      ref.read(currentAccessTokenProvider.notifier).state = accessToken;
 
       logger.i("completed sign-in and gain the access token");
       if (Platform.isIOS) {
@@ -146,7 +169,7 @@ class _UserProfileState extends ConsumerState<UserProfile> {
           logger.w("Failed to launch URL: $uri");
         }
       } else {
-        context.go(RoutePath.home.path);
+        context.go(RoutePath.home.path, extra: now);
       }
     }
   }

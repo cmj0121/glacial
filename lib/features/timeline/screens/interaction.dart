@@ -144,31 +144,34 @@ class _InteractionState extends ConsumerState<Interaction> {
   Widget buildContent() {
     final String? accessToken = ref.read(currentAccessTokenProvider);
     final bool isEnabled = accessToken != null || widget.action.supportAnonymous;
-    final Color color = iconColor ?? Theme.of(context).colorScheme.secondary;
-    final TextStyle? style = Theme.of(context).textTheme.bodySmall?.copyWith(
-      color: color,
-      fontSize: 12,
-      fontWeight: FontWeight.bold,
-    );
 
-    if (widget.isCompact) {
-      return Tooltip(
-        message: text,
-        child: TextButton.icon(
-          label: count != null ? Text("$count", style: style) : const SizedBox.shrink(),
-          icon: Icon(icon, color: color, size: widget.iconSize),
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.transparent,
-            overlayColor: Colors.transparent,
-          ),
-          onPressed: isEnabled ? onPressed : null,
-        ),
-      );
-    }
+    return widget.isCompact ? buildCompactIcon(isEnabled) : buildNormalIcon(isEnabled);
+  }
+
+  // Build the compact icon for the interaction that only show the icon and the
+  // count of the interaction.
+  Widget buildCompactIcon(bool isEnabled) {
+    final Widget counter = count == null ? const SizedBox.shrink() : Text("$count");
+
+    return Tooltip(
+      message: text,
+      child: TextButton.icon(
+        label: counter,
+        icon: Icon(icon, color: isEnabled ? iconColor : null, size: widget.iconSize),
+        onPressed: isEnabled ? onPressed : null,
+      ),
+    );
+  }
+
+  // Build the normal icon for the interaction that shows the icon and the
+  // action text.
+  Widget buildNormalIcon(bool isEnabled) {
 
     return ListTile(
-      leading: Icon(icon, color: color, size: widget.iconSize),
-      title: Text(text, style: style),
+      leading: Icon(icon, size: widget.iconSize),
+      title: Text(text),
+      textColor: iconColor,
+      iconColor: iconColor,
       onTap: isEnabled ? onPressed : null,
     );
   }
@@ -189,21 +192,28 @@ class _InteractionState extends ConsumerState<Interaction> {
 
   // Get the color of the icon based on the action and the status
   // interaction state.
-  Color? get iconColor {
+  Color get iconColor {
+    Color? color;
+
     if (widget.action.isDangerous) {
       return Theme.of(context).colorScheme.error;
     }
 
     switch (widget.action) {
       case StatusInteraction.reblog:
-        return (widget.schema.reblogged ?? false) ? Theme.of(context).colorScheme.tertiary : null;
+        color = (widget.schema.reblogged ?? false) ? Theme.of(context).colorScheme.tertiary : null;
+        break;
       case StatusInteraction.favourite:
-        return (widget.schema.favourited ?? false) ? Theme.of(context).colorScheme.tertiary : null;
+        color = (widget.schema.favourited ?? false) ? Theme.of(context).colorScheme.tertiary : null;
+        break;
       case StatusInteraction.bookmark:
-        return (widget.schema.bookmarked ?? false) ? Theme.of(context).colorScheme.tertiary : null;
+        color = (widget.schema.bookmarked ?? false) ? Theme.of(context).colorScheme.tertiary : null;
+        break;
       default:
-        return null;
+        break;
     }
+
+    return color ?? Theme.of(context).colorScheme.onSurface;
   }
 
   // Get the count of interaction based on the action.

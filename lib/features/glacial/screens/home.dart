@@ -198,7 +198,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   }
 
   List<Widget> buildActions() {
-    final String? accessToken = ref.read(currentAccessTokenProvider);
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
 
     return actions.map((action) {
         final int index = actions.indexOf(action);
