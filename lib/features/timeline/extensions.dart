@@ -95,7 +95,7 @@ extension StatusLoaderExtensions on ServerSchema {
 // The in-memory AccountSchema cache
 Map<ServerSchema, Map<String, AccountSchema>> accountCache = {};
 
-// The in-momory account cache to store the account data.
+// The in-memory account cache to store the account data.
 extension AccountLoaderExtensions on ServerSchema {
   Future<AccountSchema?> loadAccount(String? accountID) async {
     return accountCache[this]?[accountID];
