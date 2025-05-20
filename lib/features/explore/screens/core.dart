@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/explore/models/explorer.dart';
+import 'package:glacial/features/glacial/models/server.dart';
+import 'package:glacial/features/timeline/screens/core.dart';
 
 // The general search widget to search for a Mastodon server, may return the account, status, or hashtag.
 class Explorer extends ConsumerStatefulWidget {
@@ -87,13 +89,21 @@ class _ExplorerState extends ConsumerState<Explorer> {
   }
 
   void onSearch() async {
-    setState(() => content = ExplorerTab());
+    final String keyword = controller.text.trim();
+    if (keyword.isEmpty) {
+      return;
+    }
+
+    setState(() => content = ExplorerTab(keyword: keyword));
   }
 }
 
 class ExplorerTab extends ConsumerStatefulWidget {
+  final String keyword;
+
   const ExplorerTab({
     super.key,
+    required this.keyword,
   });
 
   @override
@@ -104,8 +114,6 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
   final List<ExplorerResultType> types = ExplorerResultType.values;
   late final TabController controller;
 
-  Widget? content;
-
   @override
   void initState() {
     super.initState();
@@ -114,6 +122,31 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
+    final ServerSchema? server = ref.watch(currentServerProvider);
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
+
+    if (server == null) {
+      logger.w("No server selected, but it's required to show the explorer.");
+      return const SizedBox.shrink();
+    }
+
+    return FutureBuilder(
+      future: server.search(keyword: widget.keyword, accessToken: accessToken),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LinearProgressIndicator();
+        } else if (snapshot.hasError) {
+          final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${server.domain}';
+          return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
+        }
+
+        final SearchResultSchema schema = snapshot.data!;
+        return buildContent(schema);
+      }
+    );
+  }
+
+  Widget buildContent(SearchResultSchema schema) {
     return SlideTabView(
       controller: controller,
       tabs: types,
@@ -125,14 +158,48 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
             final int offset = direction == DismissDirection.startToEnd ? -1 : 1;
             controller.index = (controller.index + offset) % types.length;
           },
-          child: buildContent(index),
+          child: buildTabContent(schema, index),
         );
       },
     );
   }
 
-  Widget buildContent(int index) {
-    return Text('$index');
+  Widget buildTabContent(SearchResultSchema schema, int index) {
+    final ExplorerResultType type = types[index];
+    late final int count;
+
+    switch (type) {
+      case ExplorerResultType.account:
+        count = schema.accounts.length;
+        break;
+      case ExplorerResultType.status:
+        count = schema.statuses.length;
+        break;
+      case ExplorerResultType.hashtag:
+        count = schema.hashtags.length;
+        break;
+    }
+
+    return ListView.builder(
+      itemCount: count,
+      itemBuilder: (context, index) {
+        final Widget content;
+
+        switch (type) {
+          case ExplorerResultType.account:
+            content = Account(schema: schema.accounts[index]);
+          case ExplorerResultType.status:
+            content = Status(schema: schema.statuses[index]);
+          case ExplorerResultType.hashtag:
+            content = Text(schema.hashtags[index].name);
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: content,
+        );
+      },
+    );
   }
 }
 
