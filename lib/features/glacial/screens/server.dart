@@ -70,9 +70,9 @@ class _MastodonServerState extends State<MastodonServer> {
             children: [
               Flexible(child: buildThumbnail()),
               const SizedBox(height: 16),
-              Text(widget.schema.title, style: Theme.of(context).textTheme.headlineLarge),
+              Text(widget.schema.title, style: Theme.of(context).textTheme.titleMedium, overflow: TextOverflow.ellipsis),
               const SizedBox(height: 16),
-              Text(widget.schema.desc, style: Theme.of(context).textTheme.bodyLarge),
+              Text(widget.schema.desc, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 6),
 
               Expanded(child: buildExtraContent()),
