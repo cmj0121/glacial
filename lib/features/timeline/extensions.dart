@@ -64,8 +64,12 @@ extension StatusLoaderExtensions on ServerSchema {
     final response = await get(uri, headers: type.supportAnonymous ? {} : headers);
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
 
-    logger.i("fetch $this from $uri");
-    return json.map((e) => StatusSchema.fromJson(e)).toList();
+    final ServerSchema server = this;
+    final List<StatusSchema> schemas = json.map((e) => StatusSchema.fromJson(e)).toList();
+
+    // Save the status to the in-memory cache.
+    schemas.map((s) => server.saveAccount(s.account)).toList();
+    return schemas;
   }
 
   // Get the authenticated user account.
@@ -84,6 +88,25 @@ extension StatusLoaderExtensions on ServerSchema {
 
     final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
     return AccountSchema.fromJson(json);
+  }
+}
+
+// The in-memory AccountSchema cache
+Map<ServerSchema, Map<String, AccountSchema>> accountCache = {};
+
+// The in-momory account cache to store the account data.
+extension AccountLoaderExtensions on ServerSchema {
+  Future<AccountSchema?> loadAccount(String? accountID) async {
+    return accountCache[this]?[accountID];
+  }
+
+  Future<void> saveAccount(AccountSchema? account) async {
+    if (account == null) {
+      return;
+    }
+
+    accountCache[this] ??= {};
+    accountCache[this]![account.id] = account;
   }
 }
 

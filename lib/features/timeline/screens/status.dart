@@ -15,10 +15,14 @@ import 'visibility.dart';
 // The single Status widget that contains the status information.
 class Status extends ConsumerStatefulWidget {
   final StatusSchema schema;
+  final AccountSchema? reblogFrom;
+  final String? replyToAccountID;
 
   const Status({
     super.key,
     required this.schema,
+    this.reblogFrom,
+    this.replyToAccountID,
   });
 
   @override
@@ -26,6 +30,8 @@ class Status extends ConsumerStatefulWidget {
 }
 
 class _StatusState extends ConsumerState<Status> {
+  final double metadataHeight = 22;
+
   late StatusSchema schema;
 
   @override
@@ -53,6 +59,7 @@ class _StatusState extends ConsumerState<Status> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        buildMetadata(),
         buildHeader(),
         const SizedBox(height: 8),
         Html(data: schema.content),
@@ -60,6 +67,46 @@ class _StatusState extends ConsumerState<Status> {
         const SizedBox(height: 8),
         InteractionBar(schema: schema, onReload: onReload),
       ],
+    );
+  }
+
+  // The optional metadata of the status, including the status reply or reblog
+  // from the user.
+  Widget buildMetadata() {
+    if (widget.reblogFrom == null && widget.replyToAccountID == null) {
+      return SizedBox.shrink();
+    }
+
+
+    final ServerSchema? schema = ref.read(currentServerProvider);
+    return FutureBuilder(
+      future: schema?.loadAccount(widget.reblogFrom?.id ?? widget.replyToAccountID),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SizedBox.shrink();
+        }
+
+        if (snapshot.hasError) {
+          return SizedBox.shrink();
+        }
+
+        final IconData icon = widget.reblogFrom != null ? StatusInteraction.reblog.activeIcon : StatusInteraction.reply.activeIcon;
+        final AccountSchema? account = snapshot.data;
+        if (account == null) {
+          return SizedBox.shrink();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.grey, size: metadataHeight),
+              const SizedBox(width: 4),
+              Account(schema: account, maxHeight: metadataHeight),
+            ],
+          ),
+        );
+      },
     );
   }
 

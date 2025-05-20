@@ -23,7 +23,7 @@ class Account extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          if (constraints.maxHeight < maxHeight) {
+          if (constraints.maxHeight < 24) {
             return Row(
               children: [
                 buildAvatar(),

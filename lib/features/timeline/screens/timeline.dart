@@ -176,11 +176,14 @@ class _TimelineState extends State<Timeline> {
       itemCount: statuses.length,
       itemBuilder: (context, index) {
         final StatusSchema status = statuses[index];
-        return Status(schema: status);
+        return Status(
+          schema: status.reblog ?? status,
+          reblogFrom: status.reblog != null ? status.account : null,
+          replyToAccountID: status.inReplyToAccountID,
+        );
       },
     );
   }
-
 
   // Detect the scroll event and load more statuses when the user scrolls to the
   // almost bottom of the list.
