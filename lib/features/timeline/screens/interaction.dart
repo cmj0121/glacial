@@ -12,7 +12,7 @@ import 'package:glacial/features/timeline/models/core.dart';
 // The interaction bar that shows the all the possible actions for the current
 // status, and wraps the interaction more button if there are more actions
 // than the available space.
-class InteractionBar extends StatelessWidget {
+class InteractionBar extends ConsumerWidget {
   final StatusSchema schema;
   final double itemWidth;
   final ValueChanged<StatusSchema>? onReload;
@@ -25,8 +25,11 @@ class InteractionBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final List<StatusInteraction> actions = StatusInteraction.values;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AccountSchema? account = ref.read(currentUserProvider);
+    final List<StatusInteraction> actions = StatusInteraction.values.where((v) {
+      return v != StatusInteraction.delete || (schema.account.id == account?.id);
+    }).toList();
 
     return LayoutBuilder(
       builder: (context, constraints) {
