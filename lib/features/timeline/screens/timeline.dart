@@ -88,7 +88,11 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
       tabBuilder: (index) => (accessToken != null || types[index].supportAnonymous),
       itemBuilder: (context, index) {
         final TimelineType type = types[index];
-        return Timeline.builder(schema: schema, type: type, accessToken: accessToken);
+        return Timeline.builder(
+          schema: schema,
+          type: type,
+          accessToken: accessToken,
+        );
       },
     );
   }
@@ -96,7 +100,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
 
 // The timeline widget that contains the status from the current selected
 // Mastodon server.
-class Timeline extends StatefulWidget {
+class Timeline extends ConsumerStatefulWidget {
   final ServerSchema schema;
   final TimelineType type;
   final String? accessToken;
@@ -111,9 +115,13 @@ class Timeline extends StatefulWidget {
   });
 
   @override
-  State<Timeline> createState() => _TimelineState();
+  ConsumerState<Timeline> createState() => _TimelineState();
 
-  static builder({required ServerSchema schema, required TimelineType type, String? accessToken}) {
+  static builder({
+    required ServerSchema schema,
+    required TimelineType type,
+    String? accessToken,
+  }) {
     return FutureBuilder(
       future: schema.fetchTimeline(type: type, accessToken: accessToken),
       builder: (context, snapshot) {
@@ -125,13 +133,18 @@ class Timeline extends StatefulWidget {
         }
 
         final List<StatusSchema> statuses = snapshot.data as List<StatusSchema>;
-        return Timeline(schema: schema, type: type, statuses: statuses, accessToken: accessToken);
+        return Timeline(
+          schema: schema,
+          type: type,
+          statuses: statuses,
+          accessToken: accessToken,
+        );
       },
     );
   }
 }
 
-class _TimelineState extends State<Timeline> {
+class _TimelineState extends ConsumerState<Timeline> {
   final ScrollController controller = ScrollController();
   final Storage storage = Storage();
   final double loadingThreshold = 180;
@@ -176,11 +189,15 @@ class _TimelineState extends State<Timeline> {
       itemCount: statuses.length,
       itemBuilder: (context, index) {
         final StatusSchema status = statuses[index];
-        return Status(schema: status);
+        return Status(
+          schema: status.reblog ?? status,
+          reblogFrom: status.reblog != null ? status.account : null,
+          replyToAccountID: status.inReplyToAccountID,
+          onDeleted: () => onDeleted(index),
+        );
       },
     );
   }
-
 
   // Detect the scroll event and load more statuses when the user scrolls to the
   // almost bottom of the list.
@@ -214,6 +231,18 @@ class _TimelineState extends State<Timeline> {
 
       statuses.addAll(newStatuses);
     });
+  }
+
+  // Reload the timeline when the status is deleted.
+  void onDeleted(int index) async {
+    final ServerSchema? server = ref.read(currentServerProvider);
+    final String? accessToken = ref.read(currentAccessTokenProvider);
+    final StatusSchema status = statuses[index];
+
+    if (server != null && accessToken != null) {
+      await status.deleteIt(domain: server.domain, accessToken: accessToken);
+      setState(() => statuses.removeAt(index));
+    }
   }
 }
 

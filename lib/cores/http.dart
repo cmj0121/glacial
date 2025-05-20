@@ -42,4 +42,16 @@ Future<http.Response> post(Uri url, {Map<String, String>? headers, Object? body,
   return http.post(url, headers: headers, body: body, encoding: encoding);
 }
 
+// The wrapper of the HTTP request and add the package info as the user agent
+Future<http.Response> delete(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
+  final PackageInfo? info = Info().info;
+
+  if (info != null ){
+    headers = headers ?? <String, String>{};
+    headers['User-Agent'] = userAgent;
+  }
+
+  return http.delete(url, headers: headers, body: body, encoding: encoding);
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

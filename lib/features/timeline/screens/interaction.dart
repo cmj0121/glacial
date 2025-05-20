@@ -12,21 +12,26 @@ import 'package:glacial/features/timeline/models/core.dart';
 // The interaction bar that shows the all the possible actions for the current
 // status, and wraps the interaction more button if there are more actions
 // than the available space.
-class InteractionBar extends StatelessWidget {
+class InteractionBar extends ConsumerWidget {
   final StatusSchema schema;
   final double itemWidth;
   final ValueChanged<StatusSchema>? onReload;
+  final VoidCallback? onDeleted;
 
   const InteractionBar({
     super.key,
     required this.schema,
     this.itemWidth = 68,
     this.onReload,
+    this.onDeleted,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final List<StatusInteraction> actions = StatusInteraction.values;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AccountSchema? account = ref.read(currentUserProvider);
+    final List<StatusInteraction> actions = StatusInteraction.values.where((v) {
+      return v != StatusInteraction.delete || (schema.account.id == account?.id);
+    }).toList();
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -44,16 +49,16 @@ class InteractionBar extends StatelessWidget {
             return Interaction(
                 schema: schema,
                 action: action,
-                maxWidth: itemWidth,
                 isCompact: true,
                 onReload: onReload,
+                onDeleted: onDeleted,
               );
             }),
             InteractionMore(
               schema: schema,
               actions: moreActions,
-              itemWidth: itemWidth,
               onReload: onReload,
+              onDeleted: onDeleted,
             ),
           ],
         );
@@ -66,15 +71,15 @@ class InteractionBar extends StatelessWidget {
 class InteractionMore extends StatelessWidget {
   final StatusSchema schema;
   final List<StatusInteraction> actions;
-  final double itemWidth;
   final ValueChanged<StatusSchema>? onReload;
+  final VoidCallback? onDeleted;
 
   const InteractionMore({
     super.key,
     required this.schema,
     required this.actions,
-    this.itemWidth = 68,
     this.onReload,
+    this.onDeleted,
   });
 
   @override
@@ -93,9 +98,9 @@ class InteractionMore extends StatelessWidget {
             child: Interaction(
               schema: schema,
               action: action,
-              maxWidth: itemWidth,
               isCompact: false,
               onPressed: () => Navigator.pop(context),
+              onDeleted: onDeleted,
             ),
           );
         }).toList();
@@ -109,21 +114,21 @@ class InteractionMore extends StatelessWidget {
 class Interaction extends ConsumerStatefulWidget {
   final StatusSchema schema;
   final StatusInteraction action;
-  final double maxWidth;
   final double iconSize;
   final bool isCompact;
   final VoidCallback? onPressed;
   final ValueChanged<StatusSchema>? onReload;
+  final VoidCallback? onDeleted;
 
   const Interaction({
     super.key,
     required this.schema,
     required this.action,
-    this.maxWidth = 68,
     this.iconSize = 24,
     this.isCompact = false,
     this.onPressed,
     this.onReload,
+    this.onDeleted,
   });
 
   @override
@@ -133,15 +138,6 @@ class Interaction extends ConsumerStatefulWidget {
 class _InteractionState extends ConsumerState<Interaction> {
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxWidth: widget.maxWidth,
-      ),
-      child: buildContent(),
-    );
-  }
-
-  Widget buildContent() {
     final String? accessToken = ref.read(currentAccessTokenProvider);
     final bool isEnabled = accessToken != null || widget.action.supportAnonymous;
 
@@ -157,7 +153,10 @@ class _InteractionState extends ConsumerState<Interaction> {
       message: text,
       child: TextButton.icon(
         label: counter,
-        icon: Icon(icon, color: isEnabled ? iconColor : null, size: widget.iconSize),
+        icon: Icon(icon, size: widget.iconSize),
+        style: TextButton.styleFrom(
+          foregroundColor: isEnabled ? iconColor : null,
+        ),
         onPressed: isEnabled ? onPressed : null,
       ),
     );
@@ -166,7 +165,6 @@ class _InteractionState extends ConsumerState<Interaction> {
   // Build the normal icon for the interaction that shows the icon and the
   // action text.
   Widget buildNormalIcon(bool isEnabled) {
-
     return ListTile(
       leading: Icon(icon, size: widget.iconSize),
       title: Text(text),
@@ -277,6 +275,9 @@ class _InteractionState extends ConsumerState<Interaction> {
             content: Text(text),
           ),
         );
+        break;
+      case StatusInteraction.delete:
+        widget.onDeleted?.call();
         break;
       default:
         fn = null;

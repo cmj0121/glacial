@@ -4,14 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/engineer/screens/core.dart';
 import 'package:glacial/features/glacial/screens/core.dart';
+import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/timeline/screens/core.dart';
 import 'package:glacial/features/webview/screens/core.dart';
 
 class WIP extends StatelessWidget {
-  const WIP({super.key});
+  final bool allowBack;
+
+  const WIP({
+    super.key,
+    this.allowBack = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: allowBack ? AppBar() : null,
       body: SafeArea(
         child: Center(
           child: Text(
@@ -25,11 +33,17 @@ class WIP extends StatelessWidget {
 }
 
 enum RoutePath {
-  landing,    // The landing page of the app when user opens it.
-  engineer,   // The engineer page of the app.
-  explorer,   // The server explorer page of the app.
-  webview,    // The in-app webview page of the app.
-  home;       // The home page of the app to show the server explorer.
+  landing,           // The landing page of the app when user opens it.
+  engineer,          // The engineer page of the app.
+  explorer,          // The server explorer page of the app.
+  webview,           // The in-app webview page of the app.
+  statusContext,     // The status context page of the app.
+  homeTimeline,      // The timeline page of the app.
+  homeTrends,        // The trends page of the app.
+  homeExplore,       // The explore page of the app.
+  homeNotifications, // The notifications page of the app.
+  homeSettings,      // The settings page of the app.
+  home;              // The home page of the app to show the server explorer.
 
   // Get the string path for the route.
   String get path {
@@ -42,6 +56,18 @@ enum RoutePath {
         return '/explorer';
       case RoutePath.webview:
         return '/webview';
+      case RoutePath.statusContext:
+        return '/home/status/context';
+      case RoutePath.homeTimeline:
+        return '/home/timeline';
+      case RoutePath.homeTrends:
+        return '/home/trends';
+      case RoutePath.homeExplore:
+        return '/home/explore';
+      case RoutePath.homeNotifications:
+        return '/home/notifications';
+      case RoutePath.homeSettings:
+        return '/home/settings';
       case RoutePath.home:
         return '/home';
     }
@@ -63,9 +89,132 @@ final GoRouter router = GoRouter(
       path: RoutePath.explorer.path,
       builder: (BuildContext context, GoRouterState state) => const ServerExplorer(),
     ),
-    GoRoute(
-      path: RoutePath.home.path,
-      builder: (BuildContext context, GoRouterState state) => const GlacialHome(),
+    ShellRoute(
+      builder: (BuildContext context, GoRouterState state, Widget child) {
+        final SidebarButtonType? active = state.extra is SidebarButtonType ? state.extra as SidebarButtonType? : null;
+
+        return GlacialHome(active: active, child: child);
+      },
+      routes: [
+        GoRoute(
+          path: RoutePath.home.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const TimelineTab(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
+        ),
+        GoRoute(
+          path: RoutePath.homeTimeline.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const TimelineTab(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
+        ),
+        GoRoute(
+          path: RoutePath.homeTrends.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const WIP(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
+        ),
+        GoRoute(
+          path: RoutePath.homeExplore.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const WIP(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
+        ),
+        GoRoute(
+          path: RoutePath.homeNotifications.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const WIP(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
+        ),
+        GoRoute(
+          path: RoutePath.homeSettings.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const WIP(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
+        ),
+        GoRoute(
+          path: RoutePath.statusContext.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final StatusSchema status = state.extra as StatusSchema;
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: StatusContext(schema: status),
+            );
+          },
+        ),
+      ],
     ),
     GoRoute(
       path: RoutePath.webview.path,

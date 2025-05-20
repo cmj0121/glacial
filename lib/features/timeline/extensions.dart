@@ -64,8 +64,13 @@ extension StatusLoaderExtensions on ServerSchema {
     final response = await get(uri, headers: type.supportAnonymous ? {} : headers);
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
 
-    logger.i("fetch $this from $uri");
-    return json.map((e) => StatusSchema.fromJson(e)).toList();
+    final ServerSchema server = this;
+    final List<StatusSchema> schemas = json.map((e) => StatusSchema.fromJson(e)).toList();
+
+    // Save the status to the in-memory cache.
+    final List<Future<void>> saveFutures = schemas.map((s) => server.saveAccount(s.account)).toList();
+    await Future.wait(saveFutures);
+    return schemas;
   }
 
   // Get the authenticated user account.
@@ -84,6 +89,25 @@ extension StatusLoaderExtensions on ServerSchema {
 
     final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
     return AccountSchema.fromJson(json);
+  }
+}
+
+// The in-memory AccountSchema cache
+Map<ServerSchema, Map<String, AccountSchema>> accountCache = {};
+
+// The in-memory account cache to store the account data.
+extension AccountLoaderExtensions on ServerSchema {
+  Future<AccountSchema?> loadAccount(String? accountID) async {
+    return accountCache[this]?[accountID];
+  }
+
+  Future<void> saveAccount(AccountSchema? account) async {
+    if (account == null) {
+      return;
+    }
+
+    accountCache[this] ??= {};
+    accountCache[this]![account.id] = account;
   }
 }
 
@@ -114,6 +138,20 @@ typedef InteractIt = Future<StatusSchema> Function({required String domain, requ
 
 // The extension of the current status to update the status.
 extension InteractiveStatusExtensions on StatusSchema {
+  // Get statuses above and below this status in the thread.
+  Future<StatusContextSchema> context({
+    required String domain,
+    String? accessToken,
+  }) async {
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/context");
+    final response = await get(uri, headers: accessToken == null ? {} : headers);
+    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+
+    logger.i("fetch context for $this from $uri");
+    return StatusContextSchema.fromJson(json);
+  }
+
   // Reblog the status to the Mastodon server
   Future<StatusSchema> reblogIt({required String domain, required String accessToken}) async {
     final Uri uri = Uri.https(domain, "/api/v1/statuses/$id/reblog");
@@ -184,6 +222,17 @@ extension InteractiveStatusExtensions on StatusSchema {
 
     final String body = await sendPostRequest(uri, headers: headers);
     return StatusSchema.fromString(body);
+  }
+
+  // Delete the status to the Mastodon server
+  Future<void> deleteIt({required String domain, required String accessToken}) async {
+    final Uri uri = Uri.https(domain, "/api/v1/statuses/$id");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    await delete(uri, headers: headers);
   }
 
   Future<String> sendPostRequest(Uri uri, {Map<String, String>? headers, Map<String, String>? body}) async {

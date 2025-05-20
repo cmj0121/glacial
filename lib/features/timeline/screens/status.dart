@@ -5,6 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
+import 'package:glacial/routes.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 import 'package:glacial/features/glacial/models/server.dart';
 
@@ -15,10 +16,18 @@ import 'visibility.dart';
 // The single Status widget that contains the status information.
 class Status extends ConsumerStatefulWidget {
   final StatusSchema schema;
+  final int indent;
+  final AccountSchema? reblogFrom;
+  final String? replyToAccountID;
+  final VoidCallback? onDeleted;
 
   const Status({
     super.key,
     required this.schema,
+    this.indent = 0,
+    this.reblogFrom,
+    this.replyToAccountID,
+    this.onDeleted,
   });
 
   @override
@@ -26,6 +35,8 @@ class Status extends ConsumerStatefulWidget {
 }
 
 class _StatusState extends ConsumerState<Status> {
+  final double metadataHeight = 22;
+
   late StatusSchema schema;
 
   @override
@@ -42,7 +53,11 @@ class _StatusState extends ConsumerState<Status> {
       ),
       child: Padding(
         padding: const EdgeInsets.only(top: 16),
-        child: buildContent(),
+        child: InkWellDone(
+          // View statuses above and below this status in the thread.
+          onTap: () => onShowStatusContext(widget.schema),
+          child: buildContent(),
+        ),
       ),
     );
   }
@@ -53,13 +68,62 @@ class _StatusState extends ConsumerState<Status> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        buildMetadata(),
         buildHeader(),
         const SizedBox(height: 8),
-        Html(data: schema.content),
+        Indent(
+          indent: widget.indent,
+          child: Column(
+            children: [
+              Html(data: schema.content),
+
+            ],
+          ),
+        ),
 
         const SizedBox(height: 8),
-        InteractionBar(schema: schema, onReload: onReload),
+        InteractionBar(schema: schema, onReload: onReload, onDeleted: widget.onDeleted),
       ],
+    );
+  }
+
+  // The optional metadata of the status, including the status reply or reblog
+  // from the user.
+  Widget buildMetadata() {
+    if (widget.reblogFrom == null && widget.replyToAccountID == null) {
+      return SizedBox.shrink();
+    }
+
+
+    final ServerSchema? schema = ref.read(currentServerProvider);
+    return FutureBuilder(
+      future: schema?.loadAccount(widget.reblogFrom?.id ?? widget.replyToAccountID),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SizedBox.shrink();
+        }
+
+        if (snapshot.hasError) {
+          return SizedBox.shrink();
+        }
+
+        final IconData icon = widget.reblogFrom != null ? StatusInteraction.reblog.activeIcon : StatusInteraction.reply.activeIcon;
+        final AccountSchema? account = snapshot.data;
+        if (account == null) {
+          return SizedBox.shrink();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.grey, size: metadataHeight),
+              const SizedBox(width: 4),
+              Account(schema: account, maxHeight: metadataHeight),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -83,6 +147,19 @@ class _StatusState extends ConsumerState<Status> {
   void onReload(StatusSchema schema) async {
     // fetch the status again from the server, and update the status
     setState(() => this.schema = schema);
+  }
+
+  // View statuses above and below this status in the thread.
+  void onShowStatusContext(StatusSchema schema) async {
+    final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
+
+    if (path == RoutePath.statusContext) {
+      // already in the status context, replace it
+      context.replace(RoutePath.statusContext.path, extra: schema);
+      return;
+    }
+
+    context.push(RoutePath.statusContext.path, extra: schema);
   }
 }
 
@@ -237,6 +314,97 @@ class _NewStatusFormState extends ConsumerState<NewStatusForm> {
     );
 
     widget.onPost?.call(schema);
+  }
+}
+
+// The single Status widget that contains the status information.
+class StatusContext extends ConsumerWidget {
+  final StatusSchema schema;
+
+  const StatusContext({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ServerSchema? server = ref.watch(currentServerProvider);
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
+
+    if (server == null || accessToken == null) {
+      return const SizedBox.shrink();
+    }
+
+    return FutureBuilder(
+      future: schema.context(domain: server.domain, accessToken: accessToken),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Align(
+            alignment: Alignment.topCenter,
+            child: LinearProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${server.domain}';
+          return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
+        }
+
+        final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
+        return Dismissible(
+          key: ValueKey<String>('StatusContext-${schema.id}'),
+          direction: DismissDirection.horizontal,
+          onDismissed: (direction) => context.pop(),
+          child: buildContent(context, ctx),
+        );
+      }
+    );
+  }
+
+  Widget buildContent(BuildContext context, StatusContextSchema ctx) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        buildBackButton(context),
+        const Divider(),
+        Flexible(child: buildContextList(ctx)),
+      ],
+    );
+  }
+
+  Widget buildContextList(StatusContextSchema ctx) {
+    Map<String, int> indents = {schema.id: 1};
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...ctx.ancestors.map((StatusSchema status) {
+            final int indent = indents[status.inReplyToID] ?? 1;
+
+            indents[status.id] = indent + 1;
+            return Status(schema: status, indent: indent);
+          }),
+
+          Status(schema: schema),
+
+          ...ctx.descendants.map((StatusSchema status) {
+            final int indent = indents[status.inReplyToID] ?? 1;
+
+            indents[status.id] = indent + 1;
+            return Status(schema: status, indent: indent);
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget buildBackButton(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () => context.pop(),
+      ),
+    );
   }
 }
 
