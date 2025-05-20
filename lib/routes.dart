@@ -98,33 +98,120 @@ final GoRouter router = GoRouter(
       routes: [
         GoRoute(
           path: RoutePath.home.path,
-          builder: (BuildContext context, GoRouterState state) => const TimelineTab(),
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const TimelineTab(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
         ),
         GoRoute(
           path: RoutePath.homeTimeline.path,
-          builder: (BuildContext context, GoRouterState state) => const TimelineTab(),
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const TimelineTab(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
         ),
         GoRoute(
           path: RoutePath.homeTrends.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const WIP(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
         ),
         GoRoute(
           path: RoutePath.homeExplore.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const WIP(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
         ),
         GoRoute(
           path: RoutePath.homeNotifications.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const WIP(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
         ),
         GoRoute(
           path: RoutePath.homeSettings.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const WIP(),
+              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+                return ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  )),
+                  child: child,
+                );
+              },
+            );
+          },
         ),
         GoRoute(
           path: RoutePath.statusContext.path,
-          builder: (BuildContext context, GoRouterState state) {
+          pageBuilder: (BuildContext context, GoRouterState state) {
             final StatusSchema status = state.extra as StatusSchema;
-            return StatusContext(schema: status);
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: StatusContext(schema: status),
+            );
           },
         ),
       ],

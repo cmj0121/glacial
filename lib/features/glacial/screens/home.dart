@@ -141,20 +141,13 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   // The main content of the home page, shows the server timeline and other
   // features.
   Widget buildContent({required bool isMobile}) {
-    final Widget animatedContent = AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      transitionBuilder: (Widget child, Animation<double> animation) {
-        return ScaleTransition(scale: animation, child: child);
-      },
-      child: Align(
-        key: ValueKey<int>(selectedIndex), // Ensure actually changing the widget identity
-        alignment: Alignment.topCenter,
-        child: widget.child,
-      ),
+    final Widget content = Align(
+      alignment: Alignment.topCenter,
+      child: widget.child,
     );
 
     if (isMobile) {
-      return animatedContent;
+      return content;
     }
 
     return Row(
@@ -164,7 +157,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       children: [
         buildSidebar(),
         const VerticalDivider(),
-        Flexible(child: animatedContent),
+        Flexible(child: content),
       ],
     );
   }

@@ -317,7 +317,10 @@ class StatusContext extends ConsumerWidget {
       future: schema.context(domain: server.domain, accessToken: accessToken),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox.shrink();
+          return Align(
+            alignment: Alignment.topCenter,
+            child: LinearProgressIndicator(),
+          );
         } else if (snapshot.hasError) {
           final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${server.domain}';
           return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
@@ -343,6 +346,7 @@ class StatusContext extends ConsumerWidget {
   Widget buildContextList(StatusContextSchema ctx) {
     return SingleChildScrollView(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           ...ctx.ancestors.map((StatusSchema status) {
             return Status(schema: status);
