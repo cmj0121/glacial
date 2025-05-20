@@ -137,6 +137,20 @@ typedef InteractIt = Future<StatusSchema> Function({required String domain, requ
 
 // The extension of the current status to update the status.
 extension InteractiveStatusExtensions on StatusSchema {
+  // Get statuses above and below this status in the thread.
+  Future<StatusContextSchema> context({
+    required String domain,
+    String? accessToken,
+  }) async {
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/context");
+    final response = await get(uri, headers: accessToken == null ? {} : headers);
+    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+
+    logger.i("fetch context for $this from $uri");
+    return StatusContextSchema.fromJson(json);
+  }
+
   // Reblog the status to the Mastodon server
   Future<StatusSchema> reblogIt({required String domain, required String accessToken}) async {
     final Uri uri = Uri.https(domain, "/api/v1/statuses/$id/reblog");

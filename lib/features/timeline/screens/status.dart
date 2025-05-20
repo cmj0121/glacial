@@ -295,4 +295,78 @@ class _NewStatusFormState extends ConsumerState<NewStatusForm> {
   }
 }
 
+// The single Status widget that contains the status information.
+class StatusContext extends ConsumerWidget {
+  final StatusSchema schema;
+
+  const StatusContext({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ServerSchema? server = ref.watch(currentServerProvider);
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
+
+    if (server == null || accessToken == null) {
+      return const SizedBox.shrink();
+    }
+
+    return FutureBuilder(
+      future: schema.context(domain: server.domain, accessToken: accessToken),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox.shrink();
+        } else if (snapshot.hasError) {
+          final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${server.domain}';
+          return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
+        }
+
+        final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
+        return buildContent(context, ctx);
+      }
+    );
+  }
+
+  Widget buildContent(BuildContext context, StatusContextSchema ctx) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        buildBackButton(context),
+        const Divider(),
+        Flexible(child: buildContextList(ctx)),
+      ],
+    );
+  }
+
+  Widget buildContextList(StatusContextSchema ctx) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          ...ctx.ancestors.map((StatusSchema status) {
+            return Status(schema: status);
+          }),
+
+          Status(schema: schema),
+
+          ...ctx.descendants.map((StatusSchema status) {
+            return Status(schema: status);
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget buildBackButton(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () => context.pop(),
+      ),
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

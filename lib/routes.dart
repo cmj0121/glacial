@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/engineer/screens/core.dart';
 import 'package:glacial/features/glacial/screens/core.dart';
+import 'package:glacial/features/timeline/models/core.dart';
 import 'package:glacial/features/timeline/screens/core.dart';
 import 'package:glacial/features/webview/screens/core.dart';
 
@@ -121,7 +122,10 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: RoutePath.statusContext.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(allowBack: true),
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema status = state.extra as StatusSchema;
+            return StatusContext(schema: status);
+          },
         ),
       ],
     ),
