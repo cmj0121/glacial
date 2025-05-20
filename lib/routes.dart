@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/engineer/screens/core.dart';
+import 'package:glacial/features/explore/screens/core.dart';
 import 'package:glacial/features/glacial/screens/core.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 import 'package:glacial/features/timeline/screens/core.dart';
@@ -155,7 +156,7 @@ final GoRouter router = GoRouter(
           pageBuilder: (BuildContext context, GoRouterState state) {
             return CustomTransitionPage(
               key: state.pageKey,
-              child: const WIP(),
+              child: const Explorer(),
               transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
                 return ScaleTransition(
                   scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
