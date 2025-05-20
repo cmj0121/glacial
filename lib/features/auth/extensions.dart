@@ -50,7 +50,7 @@ extension OAuth2Extension on Storage {
   }
 
   // Save the AccessToken to the storage based on the domain.
-  void saveAccessToken(String domain, String? token) async {
+  Future<void> saveAccessToken(String domain, String? token) async {
     final Map<String, dynamic> json = jsonDecode(await getString(prefsAccessTokenKey, secure: true) ?? '{}');
 
     if (token == null) {
