@@ -1,8 +1,10 @@
-// The SignIn button to navigate to the sign-in page of the Master server.
+// The User button to navigate to the sign-in page of the Master server, or show
+// the user profile page if already signed in.
 import 'dart:async';
 import 'dart:io';
 
 import 'package:app_links/app_links.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,26 +12,28 @@ import 'package:uuid/uuid.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/routes.dart';
-import 'package:glacial/features/glacial/models/server.dart';
 import 'package:glacial/features/auth/models/oauth.dart';
+import 'package:glacial/features/glacial/models/server.dart';
+import 'package:glacial/features/timeline/models/core.dart';
 
 // The Sign In widget is used to sign in to the Mastodon server.
-class SignIn extends ConsumerStatefulWidget {
+class UserProfile extends ConsumerStatefulWidget {
   final ServerSchema schema;
   final double size;
 
-  const SignIn({
+  const UserProfile({
     super.key,
     required this.schema,
-    this.size = 24,
+    this.size = 28,
   });
 
   @override
-  ConsumerState<SignIn> createState() => _SignInState();
+  ConsumerState<UserProfile> createState() => _UserProfileState();
 }
 
-class _SignInState extends ConsumerState<SignIn> {
+class _UserProfileState extends ConsumerState<UserProfile> {
   final Storage storage = Storage();
+  final Debouncer debouncer = Debouncer();
 
   late final StreamSubscription<Uri?> sub;
   late final String state;
@@ -50,9 +54,39 @@ class _SignInState extends ConsumerState<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
+
     return IconButton(
-      icon: Icon( Icons.login, size: widget.size),
-      onPressed: onSignIn,
+      icon: buildAvatar(accessToken),
+      onPressed: accessToken == null ? () => debouncer.call(onSignIn) : null,
+    );
+  }
+
+  Widget buildAvatar(String? accessToken) {
+    final ServerSchema? schema = ref.read(currentServerProvider);
+
+    if (accessToken == null || schema == null) {
+      return Icon(Icons.help_outlined, size: widget.size);
+    }
+
+    final AccountSchema? account = ref.watch(currentUserProvider);
+    return account == null ? Icon(Icons.error, size: widget.size) : buildUserAvatar(account);
+  }
+
+  // Build the user avartar with the size of the widget.
+  Widget buildUserAvatar(AccountSchema account) {
+    return InkWellDone(
+      onDoubleTap: onSignOut,
+      child: ClipOval(
+        child: CachedNetworkImage(
+          width: widget.size,
+          height: widget.size,
+          imageUrl: account.avatar,
+          placeholder: (context, url) => const SizedBox.shrink(),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 
@@ -75,8 +109,28 @@ class _SignInState extends ConsumerState<SignIn> {
     }
   }
 
+  // The sign-up button is pressed, clean-up the authorization code and
+  // refresh the page.
+  void onSignOut() async {
+    final DateTime now = DateTime.now();
+    final ServerSchema? schema = ref.read(currentServerProvider);
+
+    if (schema == null) {
+      logger.w("expected: schema, got: $schema");
+      return;
+    }
+
+    storage.saveAccessToken(schema.domain, null);
+    ref.read(currentAccessTokenProvider.notifier).state = null;
+    ref.read(currentUserProvider.notifier).state = null;
+    if (mounted) {
+      context.go(RoutePath.home.path, extra: now);
+    }
+  }
+
   // The sign-in page is loaded, handle the sign-in process.
   void onHandleSignIn(Uri uri) async {
+    final DateTime now = DateTime.now();
     final ServerSchema? schema = ref.read(currentServerProvider);
     final String? code = uri.queryParameters["code"];
     final String? state = uri.queryParameters["state"];
@@ -94,10 +148,11 @@ class _SignInState extends ConsumerState<SignIn> {
     final OAuth2Info info = await storage.getOAuth2Info(schema.domain);
     final String? accessToken = await info.getAccessToken(schema.domain, code);
 
-    if (mounted && accessToken != null) {
-      storage.saveAccessToken(schema.domain, accessToken);
-      ref.read(currentAccessTokenProvider.notifier).state = accessToken;
+    storage.saveAccessToken(schema.domain, accessToken);
+    ref.read(currentAccessTokenProvider.notifier).state = accessToken;
+    ref.read(currentUserProvider.notifier).state = await schema.getAuthUser(accessToken);
 
+    if (mounted && accessToken != null) {
       logger.i("completed sign-in and gain the access token");
       if (Platform.isIOS) {
         final bool launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -105,7 +160,7 @@ class _SignInState extends ConsumerState<SignIn> {
           logger.w("Failed to launch URL: $uri");
         }
       } else {
-        context.go(RoutePath.home.path);
+        context.go(RoutePath.home.path, extra: now);
       }
     }
   }

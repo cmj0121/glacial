@@ -15,7 +15,7 @@ extension StatusLoaderExtensions on ServerSchema {
         final Map<String, String> query = {};
         query["max_id"] = maxId ?? "";
 
-        uri = Uri.parse("https://$domain/api/v1/timelines/home").replace(queryParameters: query);
+        uri = Uri.https(domain, "/api/v1/timelines/home").replace(queryParameters: query);
         break;
       case TimelineType.local:
         final Map<String, String> query = {};
@@ -23,7 +23,7 @@ extension StatusLoaderExtensions on ServerSchema {
         query["max_id"] = maxId ?? "";
         query["local"] = "true";
         query["remote"] = "false";
-        uri = Uri.parse("https://$domain/api/v1/timelines/public").replace(queryParameters: query);
+        uri = Uri.https(domain, "/api/v1/timelines/public").replace(queryParameters: query);
         break;
       case TimelineType.federal:
         final Map<String, String> query = {};
@@ -31,7 +31,7 @@ extension StatusLoaderExtensions on ServerSchema {
         query["max_id"] = maxId ?? "";
         query["local"] = "false";
         query["remote"] = "true";
-        uri = Uri.parse("https://$domain/api/v1/timelines/public").replace(queryParameters: query);
+        uri = Uri.https(domain, "/api/v1/timelines/public").replace(queryParameters: query);
         break;
       case TimelineType.public:
         final Map<String, String> query = {};
@@ -39,19 +39,19 @@ extension StatusLoaderExtensions on ServerSchema {
         query["max_id"] = maxId ?? "";
         query["local"] = "false";
         query["remote"] = "false";
-        uri = Uri.parse("https://$domain/api/v1/timelines/public").replace(queryParameters: query);
+        uri = Uri.https(domain, "/api/v1/timelines/public").replace(queryParameters: query);
         break;
       case TimelineType.bookmarks:
         final Map<String, String> query = {};
 
         query["max_id"] = maxId ?? "";
-        uri = Uri.parse("https://$domain/api/v1/bookmarks").replace(queryParameters: query);
+        uri = Uri.https(domain, "/api/v1/bookmarks").replace(queryParameters: query);
         break;
       case TimelineType.favourites:
         final Map<String, String> query = {};
 
         query["max_id"] = maxId ?? "";
-        uri = Uri.parse("https://$domain/api/v1/favourites").replace(queryParameters: query);
+        uri = Uri.https(domain, "/api/v1/favourites").replace(queryParameters: query);
         break;
     }
 
@@ -67,6 +67,24 @@ extension StatusLoaderExtensions on ServerSchema {
     logger.i("fetch $this from $uri");
     return json.map((e) => StatusSchema.fromJson(e)).toList();
   }
+
+  // Get the authenticated user account.
+  Future<AccountSchema?> getAuthUser(String? token) async {
+    if (token == null) {
+      return null;
+    }
+
+    final Uri uri = Uri.https(domain, "/api/v1/accounts/verify_credentials");
+    final Map<String, String> headers = {"Authorization": "Bearer $token"};
+    final response = await get(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+    return AccountSchema.fromJson(json);
+  }
 }
 
 // The extension to post the new status to the server.
@@ -77,7 +95,7 @@ extension PostStatusExtensions on NewStatusSchema {
       throw MissingAuth("schema and access token are required");
     }
 
-    final Uri uri = Uri.parse("https://${schema.domain}/api/v1/statuses");
+    final Uri uri = Uri.https(schema.domain, "/api/v1/statuses");
     final Map<String, String> headers = {
       "Authorization": "Bearer $accessToken",
       "Content-Type": "application/json",
@@ -98,7 +116,7 @@ typedef InteractIt = Future<StatusSchema> Function({required String domain, requ
 extension InteractiveStatusExtensions on StatusSchema {
   // Reblog the status to the Mastodon server
   Future<StatusSchema> reblogIt({required String domain, required String accessToken}) async {
-    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/reblog");
+    final Uri uri = Uri.https(domain, "/api/v1/statuses/$id/reblog");
     final Map<String, String> headers = {
       "Authorization": "Bearer $accessToken",
       "Content-Type": "application/json",
@@ -110,7 +128,7 @@ extension InteractiveStatusExtensions on StatusSchema {
 
   // Unreblog the status to the Mastodon server
   Future<StatusSchema> unreblogIt({required String domain, required String accessToken}) async {
-    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/unreblog");
+    final Uri uri = Uri.https(domain, "/api/v1/statuses/$id/unreblog");
     final Map<String, String> headers = {
       "Authorization": "Bearer $accessToken",
       "Content-Type": "application/json",
@@ -122,7 +140,7 @@ extension InteractiveStatusExtensions on StatusSchema {
 
   // Favourite the status to the Mastodon server
   Future<StatusSchema> favouriteIt({required String domain, required String accessToken}) async {
-    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/favourite");
+    final Uri uri = Uri.https(domain, "/api/v1/statuses/$id/favourite");
     final Map<String, String> headers = {
       "Authorization": "Bearer $accessToken",
       "Content-Type": "application/json",
@@ -134,7 +152,7 @@ extension InteractiveStatusExtensions on StatusSchema {
 
   // Unfavourite the status to the Mastodon server
   Future<StatusSchema> unfavouriteIt({required String domain, required String accessToken}) async {
-    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/unfavourite");
+    final Uri uri = Uri.https(domain, "/api/v1/statuses/$id/unfavourite");
     final Map<String, String> headers = {
       "Authorization": "Bearer $accessToken",
       "Content-Type": "application/json",
@@ -146,7 +164,7 @@ extension InteractiveStatusExtensions on StatusSchema {
 
   // Bookmark the status to the Mastodon server
   Future<StatusSchema> bookmarkIt({required String domain, required String accessToken}) async {
-    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/bookmark");
+    final Uri uri = Uri.https(domain, "/api/v1/statuses/$id/bookmark");
     final Map<String, String> headers = {
       "Authorization": "Bearer $accessToken",
       "Content-Type": "application/json",
@@ -158,7 +176,7 @@ extension InteractiveStatusExtensions on StatusSchema {
 
   // Unbookmark the status to the Mastodon server
   Future<StatusSchema> unbookmarkIt({required String domain, required String accessToken}) async {
-    final Uri uri = Uri.parse("https://$domain/api/v1/statuses/$id/unbookmark");
+    final Uri uri = Uri.https(domain, "/api/v1/statuses/$id/unbookmark");
     final Map<String, String> headers = {
       "Authorization": "Bearer $accessToken",
       "Content-Type": "application/json",

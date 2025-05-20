@@ -44,12 +44,14 @@ class SlideTabView extends StatefulWidget {
   final List<SlideTab> tabs;
   final IndexedWidgetBuilder itemBuilder;
   final ValueCallback<bool>? tabBuilder;
+  final TabController? controller;
 
   const SlideTabView({
     super.key,
     required this.tabs,
     required this.itemBuilder,
     this.tabBuilder,
+    this.controller,
   });
 
   @override
@@ -62,7 +64,7 @@ class _SlideTabViewState extends State<SlideTabView> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    controller = TabController(length: widget.tabs.length, vsync: this);
+    controller = widget.controller ?? TabController(length: widget.tabs.length, vsync: this);
 
     if (widget.tabBuilder != null) {
       for (int i = 0; i < widget.tabs.length; i++) {

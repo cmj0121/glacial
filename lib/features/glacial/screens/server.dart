@@ -9,7 +9,7 @@ import 'package:glacial/features/glacial/models/server.dart';
 Future<ServerSchema> fetch(String domain) async {
   logger.i('search the mastodon server: $domain');
 
-  final Uri url = Uri.parse('https://$domain/api/v2/instance');
+  final Uri url = Uri.https(domain, '/api/v2/instance');
   final response = await get(url);
 
   if (response.statusCode != 200) {

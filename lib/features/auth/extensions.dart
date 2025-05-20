@@ -50,10 +50,14 @@ extension OAuth2Extension on Storage {
   }
 
   // Save the AccessToken to the storage based on the domain.
-  void saveAccessToken(String domain, String token) async {
+  Future<void> saveAccessToken(String domain, String? token) async {
     final Map<String, dynamic> json = jsonDecode(await getString(prefsAccessTokenKey, secure: true) ?? '{}');
 
-    json[domain] = token;
+    if (token == null) {
+      json.remove(domain);
+    } else {
+      json[domain] = token;
+    }
     setString(prefsAccessTokenKey, jsonEncode(json), secure: true);
   }
 }
@@ -70,7 +74,7 @@ extension AccessTokenExtension on OAuth2Info {
     }
         ..removeWhere((key, value) => value == null);
 
-    final Uri uri = Uri.parse("https://$domain/oauth/token");
+    final Uri uri = Uri.https(domain, "/oauth/token");
     final response = await post(uri, body: jsonEncode(body), headers: {
       "Content-Type": "application/json",
     });

@@ -60,27 +60,30 @@ class TimelineTab extends ConsumerStatefulWidget {
 
 class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProviderStateMixin {
   final List<TimelineType> types = TimelineType.values;
+  late final TabController controller;
   late final ServerSchema? schema;
-
-  int selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     schema = ref.read(currentServerProvider);
+    controller = TabController(length: types.length, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
-    final String? accessToken = ref.read(currentAccessTokenProvider);
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
     final ServerSchema? schema = ref.read(currentServerProvider);
 
     if (schema == null) {
       logger.w("No server selected, but it's required to show the timeline.");
-      throw Exception("No server selected");
+      return const SizedBox.shrink();
     }
 
+    controller.index = accessToken == null ? TimelineType.local.index : TimelineType.home.index;
+
     return SlideTabView(
+      controller: controller,
       tabs: types,
       tabBuilder: (index) => (accessToken != null || types[index].supportAnonymous),
       itemBuilder: (context, index) {

@@ -69,6 +69,7 @@ class GlacialHome extends ConsumerStatefulWidget {
 }
 
 class _GlacialHomeState extends ConsumerState<GlacialHome> {
+  final double appBarHeight = 44;
   final double sidebarSize = 32;
   final List<SidebarButtonType> actions = SidebarButtonType.values;
   late final ServerSchema schema;
@@ -96,21 +97,28 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         final bool isMobile = constraints.maxWidth < 600;
 
         return Scaffold(
-          appBar: AppBar(
-            leading: buildBackButton(),
-            title: Center(
-              child: Tooltip(
-                message: schema.desc,
-                child: Text(
-                  schema.title,
-                  style: Theme.of(context).textTheme.headlineSmall,
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(appBarHeight),
+            child: AppBar(
+              leading: const SizedBox.shrink(),
+              title: Align(
+                alignment: Alignment.center,
+                child: Tooltip(
+                  message: schema.desc,
+                  child: InkWellDone(
+                    onDoubleTap: onBack,
+                    child: Text(
+                      schema.title,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ),
                 ),
               ),
+              actions: [
+                UserProfile(schema: schema),
+                const SizedBox(width: 8),
+              ],
             ),
-            actions: [
-              SignIn(schema: schema),
-              const SizedBox(width: 8),
-            ],
           ),
           body: SafeArea(
             child: Padding(
@@ -190,7 +198,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   }
 
   List<Widget> buildActions() {
-    final String? accessToken = ref.read(currentAccessTokenProvider);
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
 
     return actions.map((action) {
         final int index = actions.indexOf(action);
@@ -209,21 +217,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       }).toList();
   }
 
-  // Back to the explorer page.
-  Widget buildBackButton() {
-    return IconButton(
-      icon: Icon(Icons.account_tree_outlined),
-      tooltip: AppLocalizations.of(context)?.btn_back_to_explorer ?? "Back to Explorer",
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      onPressed: () {
-        ref.read(currentServerProvider.notifier).state = null;
-        ref.read(currentAccessTokenProvider.notifier).state = null;
-        context.go(RoutePath.explorer.path);
-      },
-    );
-  }
-
   // The list of actions could be performed in the sidebar.
   String actionTooltip(SidebarButtonType action) {
     switch (action) {
@@ -238,6 +231,13 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       case SidebarButtonType.settings:
         return AppLocalizations.of(context)?.btn_settings ?? "Settings";
     }
+  }
+
+  // Back to the explorer page.
+  void onBack() {
+    ref.read(currentServerProvider.notifier).state = null;
+    ref.read(currentAccessTokenProvider.notifier).state = null;
+    context.go(RoutePath.explorer.path);
   }
 
   // Select the action in the sidebar and show the corresponding content.
