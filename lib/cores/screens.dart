@@ -186,7 +186,7 @@ class _SlideTabViewState extends State<SlideTabView> with SingleTickerProviderSt
   }
 }
 
-// The indent warpper widget to show the indent of the content.
+// The indent wrapper widget to show the indent of the content.
 class Indent extends StatelessWidget {
   final int indent;
   final Widget child;
