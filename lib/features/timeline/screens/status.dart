@@ -5,6 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
+import 'package:glacial/routes.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 import 'package:glacial/features/glacial/models/server.dart';
 
@@ -15,17 +16,17 @@ import 'visibility.dart';
 // The single Status widget that contains the status information.
 class Status extends ConsumerStatefulWidget {
   final StatusSchema schema;
+  final int indent;
   final AccountSchema? reblogFrom;
   final String? replyToAccountID;
-  final ValueChanged<StatusSchema>? onShowStatusContext;
   final VoidCallback? onDeleted;
 
   const Status({
     super.key,
     required this.schema,
+    this.indent = 0,
     this.reblogFrom,
     this.replyToAccountID,
-    this.onShowStatusContext,
     this.onDeleted,
   });
 
@@ -54,7 +55,7 @@ class _StatusState extends ConsumerState<Status> {
         padding: const EdgeInsets.only(top: 16),
         child: InkWellDone(
           // View statuses above and below this status in the thread.
-          onTap: () => widget.onShowStatusContext?.call(widget.schema),
+          onTap: () => onShowStatusContext(widget.schema),
           child: buildContent(),
         ),
       ),
@@ -70,7 +71,15 @@ class _StatusState extends ConsumerState<Status> {
         buildMetadata(),
         buildHeader(),
         const SizedBox(height: 8),
-        Html(data: schema.content),
+        Indent(
+          indent: widget.indent,
+          child: Column(
+            children: [
+              Html(data: schema.content),
+
+            ],
+          ),
+        ),
 
         const SizedBox(height: 8),
         InteractionBar(schema: schema, onReload: onReload, onDeleted: widget.onDeleted),
@@ -138,6 +147,19 @@ class _StatusState extends ConsumerState<Status> {
   void onReload(StatusSchema schema) async {
     // fetch the status again from the server, and update the status
     setState(() => this.schema = schema);
+  }
+
+  // View statuses above and below this status in the thread.
+  void onShowStatusContext(StatusSchema schema) async {
+    final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
+
+    if (path == RoutePath.statusContext) {
+      // already in the status context, replace it
+      context.replace(RoutePath.statusContext.path, extra: schema);
+      return;
+    }
+
+    context.push(RoutePath.statusContext.path, extra: schema);
   }
 }
 
@@ -344,18 +366,26 @@ class StatusContext extends ConsumerWidget {
   }
 
   Widget buildContextList(StatusContextSchema ctx) {
+    Map<String, int> indents = {schema.id: 1};
+
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ...ctx.ancestors.map((StatusSchema status) {
-            return Status(schema: status);
+            final int indent = indents[status.inReplyToID] ?? 1;
+
+            indents[status.id] = indent + 1;
+            return Status(schema: status, indent: indent);
           }),
 
           Status(schema: schema),
 
           ...ctx.descendants.map((StatusSchema status) {
-            return Status(schema: status);
+            final int indent = indents[status.inReplyToID] ?? 1;
+
+            indents[status.id] = indent + 1;
+            return Status(schema: status, indent: indent);
           }),
         ],
       ),

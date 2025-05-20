@@ -186,4 +186,50 @@ class _SlideTabViewState extends State<SlideTabView> with SingleTickerProviderSt
   }
 }
 
+// The indent warpper widget to show the indent of the content.
+class Indent extends StatelessWidget {
+  final int indent;
+  final Widget child;
+  final double size;
+
+  const Indent({
+    super.key,
+    required this.indent,
+    required this.child,
+    this.size = 10,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    switch (indent) {
+    case 0:
+      return child;
+    case 1:
+      return buildContent(context);
+    default:
+      return Indent(indent: indent - 1, child: buildContent(context));
+    }
+  }
+
+  Widget buildContent(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: size),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(
+              color: Theme.of(context).dividerColor,
+              width: 2,
+            ),
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.only(left: size),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

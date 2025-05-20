@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/routes.dart';
 import 'package:glacial/features/glacial/models/server.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 import 'status.dart';
@@ -93,15 +92,9 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
           schema: schema,
           type: type,
           accessToken: accessToken,
-          onShowStatusContext: onShowStatusContext,
         );
       },
     );
-  }
-
-  // View statuses above and below this status in the thread.
-  void onShowStatusContext(StatusSchema schema) async {
-    context.push(RoutePath.statusContext.path, extra: schema);
   }
 }
 
@@ -112,7 +105,6 @@ class Timeline extends ConsumerStatefulWidget {
   final TimelineType type;
   final String? accessToken;
   final List<StatusSchema> statuses;
-  final ValueChanged<StatusSchema>? onShowStatusContext;
 
   const Timeline({
     super.key,
@@ -120,7 +112,6 @@ class Timeline extends ConsumerStatefulWidget {
     required this.type,
     this.accessToken,
     this.statuses = const [],
-    this.onShowStatusContext,
   });
 
   @override
@@ -130,7 +121,6 @@ class Timeline extends ConsumerStatefulWidget {
     required ServerSchema schema,
     required TimelineType type,
     String? accessToken,
-    ValueChanged<StatusSchema>? onShowStatusContext,
   }) {
     return FutureBuilder(
       future: schema.fetchTimeline(type: type, accessToken: accessToken),
@@ -148,7 +138,6 @@ class Timeline extends ConsumerStatefulWidget {
           type: type,
           statuses: statuses,
           accessToken: accessToken,
-          onShowStatusContext: onShowStatusContext,
         );
       },
     );
@@ -204,7 +193,6 @@ class _TimelineState extends ConsumerState<Timeline> {
           schema: status.reblog ?? status,
           reblogFrom: status.reblog != null ? status.account : null,
           replyToAccountID: status.inReplyToAccountID,
-          onShowStatusContext: widget.onShowStatusContext,
           onDeleted: () => onDeleted(index),
         );
       },
