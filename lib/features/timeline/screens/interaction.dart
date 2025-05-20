@@ -47,7 +47,6 @@ class InteractionBar extends ConsumerWidget {
             return Interaction(
                 schema: schema,
                 action: action,
-                maxWidth: itemWidth,
                 isCompact: true,
                 onReload: onReload,
               );
@@ -55,7 +54,6 @@ class InteractionBar extends ConsumerWidget {
             InteractionMore(
               schema: schema,
               actions: moreActions,
-              itemWidth: itemWidth,
               onReload: onReload,
             ),
           ],
@@ -69,14 +67,12 @@ class InteractionBar extends ConsumerWidget {
 class InteractionMore extends StatelessWidget {
   final StatusSchema schema;
   final List<StatusInteraction> actions;
-  final double itemWidth;
   final ValueChanged<StatusSchema>? onReload;
 
   const InteractionMore({
     super.key,
     required this.schema,
     required this.actions,
-    this.itemWidth = 68,
     this.onReload,
   });
 
@@ -96,7 +92,6 @@ class InteractionMore extends StatelessWidget {
             child: Interaction(
               schema: schema,
               action: action,
-              maxWidth: itemWidth,
               isCompact: false,
               onPressed: () => Navigator.pop(context),
             ),
@@ -112,7 +107,6 @@ class InteractionMore extends StatelessWidget {
 class Interaction extends ConsumerStatefulWidget {
   final StatusSchema schema;
   final StatusInteraction action;
-  final double maxWidth;
   final double iconSize;
   final bool isCompact;
   final VoidCallback? onPressed;
@@ -122,7 +116,6 @@ class Interaction extends ConsumerStatefulWidget {
     super.key,
     required this.schema,
     required this.action,
-    this.maxWidth = 68,
     this.iconSize = 24,
     this.isCompact = false,
     this.onPressed,
@@ -136,15 +129,6 @@ class Interaction extends ConsumerStatefulWidget {
 class _InteractionState extends ConsumerState<Interaction> {
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxWidth: widget.maxWidth,
-      ),
-      child: buildContent(),
-    );
-  }
-
-  Widget buildContent() {
     final String? accessToken = ref.read(currentAccessTokenProvider);
     final bool isEnabled = accessToken != null || widget.action.supportAnonymous;
 
@@ -160,7 +144,10 @@ class _InteractionState extends ConsumerState<Interaction> {
       message: text,
       child: TextButton.icon(
         label: counter,
-        icon: Icon(icon, color: isEnabled ? iconColor : null, size: widget.iconSize),
+        icon: Icon(icon, size: widget.iconSize),
+        style: TextButton.styleFrom(
+          foregroundColor: isEnabled ? iconColor : null,
+        ),
         onPressed: isEnabled ? onPressed : null,
       ),
     );
@@ -169,7 +156,6 @@ class _InteractionState extends ConsumerState<Interaction> {
   // Build the normal icon for the interaction that shows the icon and the
   // action text.
   Widget buildNormalIcon(bool isEnabled) {
-
     return ListTile(
       leading: Icon(icon, size: widget.iconSize),
       title: Text(text),
