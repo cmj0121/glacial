@@ -69,34 +69,23 @@ class _UserProfileState extends ConsumerState<UserProfile> {
       return Icon(Icons.help_outlined, size: widget.size);
     }
 
+    final AccountSchema? account = ref.read(currentUserProvider);
+    return account == null ? Icon(Icons.error, size: widget.size) : buildUserAvatar(account);
+  }
+
+  // Build the user avartar with the size of the widget.
+  Widget buildUserAvatar(AccountSchema account) {
     return InkWellDone(
       onDoubleTap: onSignOut,
-      child: FutureBuilder(
-        future: schema.getAuthUser(accessToken),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SizedBox.shrink();
-          }
-
-          if (snapshot.hasError) {
-            return Icon(Icons.error, size: widget.size);
-          }
-
-          final AccountSchema? account = snapshot.data;
-          if (account == null) {
-            return Icon(Icons.error, size: widget.size);
-          }
-          return ClipOval(
-            child: CachedNetworkImage(
-              width: widget.size,
-              height: widget.size,
-              imageUrl: account.avatar,
-              placeholder: (context, url) => const SizedBox.shrink(),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-              fit: BoxFit.cover,
-            ),
-          );
-        },
+      child: ClipOval(
+        child: CachedNetworkImage(
+          width: widget.size,
+          height: widget.size,
+          imageUrl: account.avatar,
+          placeholder: (context, url) => const SizedBox.shrink(),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -133,6 +122,7 @@ class _UserProfileState extends ConsumerState<UserProfile> {
 
     storage.saveAccessToken(schema.domain, null);
     ref.read(currentAccessTokenProvider.notifier).state = null;
+    ref.read(currentUserProvider.notifier).state = null;
     if (mounted) {
       context.go(RoutePath.home.path, extra: now);
     }
@@ -160,9 +150,9 @@ class _UserProfileState extends ConsumerState<UserProfile> {
 
     storage.saveAccessToken(schema.domain, accessToken);
     ref.read(currentAccessTokenProvider.notifier).state = accessToken;
+    ref.read(currentUserProvider.notifier).state = await schema.getAuthUser(accessToken);
 
     if (mounted && accessToken != null) {
-
       logger.i("completed sign-in and gain the access token");
       if (Platform.isIOS) {
         final bool launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
