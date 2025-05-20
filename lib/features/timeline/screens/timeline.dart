@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/routes.dart';
 import 'package:glacial/features/glacial/models/server.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 import 'status.dart';
@@ -88,9 +89,19 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
       tabBuilder: (index) => (accessToken != null || types[index].supportAnonymous),
       itemBuilder: (context, index) {
         final TimelineType type = types[index];
-        return Timeline.builder(schema: schema, type: type, accessToken: accessToken);
+        return Timeline.builder(
+          schema: schema,
+          type: type,
+          accessToken: accessToken,
+          onShowStatusContext: onShowStatusContext,
+        );
       },
     );
+  }
+
+  // View statuses above and below this status in the thread.
+  void onShowStatusContext(StatusSchema schema) async {
+    context.push(RoutePath.statusContext.path, extra: schema);
   }
 }
 
@@ -101,6 +112,7 @@ class Timeline extends StatefulWidget {
   final TimelineType type;
   final String? accessToken;
   final List<StatusSchema> statuses;
+  final ValueChanged<StatusSchema>? onShowStatusContext;
 
   const Timeline({
     super.key,
@@ -108,12 +120,18 @@ class Timeline extends StatefulWidget {
     required this.type,
     this.accessToken,
     this.statuses = const [],
+    this.onShowStatusContext,
   });
 
   @override
   State<Timeline> createState() => _TimelineState();
 
-  static builder({required ServerSchema schema, required TimelineType type, String? accessToken}) {
+  static builder({
+    required ServerSchema schema,
+    required TimelineType type,
+    String? accessToken,
+    ValueChanged<StatusSchema>? onShowStatusContext,
+  }) {
     return FutureBuilder(
       future: schema.fetchTimeline(type: type, accessToken: accessToken),
       builder: (context, snapshot) {
@@ -125,7 +143,13 @@ class Timeline extends StatefulWidget {
         }
 
         final List<StatusSchema> statuses = snapshot.data as List<StatusSchema>;
-        return Timeline(schema: schema, type: type, statuses: statuses, accessToken: accessToken);
+        return Timeline(
+          schema: schema,
+          type: type,
+          statuses: statuses,
+          accessToken: accessToken,
+          onShowStatusContext: onShowStatusContext,
+        );
       },
     );
   }
@@ -180,6 +204,7 @@ class _TimelineState extends State<Timeline> {
           schema: status.reblog ?? status,
           reblogFrom: status.reblog != null ? status.account : null,
           replyToAccountID: status.inReplyToAccountID,
+          onShowStatusContext: widget.onShowStatusContext,
         );
       },
     );

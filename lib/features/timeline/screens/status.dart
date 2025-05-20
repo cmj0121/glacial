@@ -17,12 +17,14 @@ class Status extends ConsumerStatefulWidget {
   final StatusSchema schema;
   final AccountSchema? reblogFrom;
   final String? replyToAccountID;
+  final ValueChanged<StatusSchema>? onShowStatusContext;
 
   const Status({
     super.key,
     required this.schema,
     this.reblogFrom,
     this.replyToAccountID,
+    this.onShowStatusContext,
   });
 
   @override
@@ -48,7 +50,11 @@ class _StatusState extends ConsumerState<Status> {
       ),
       child: Padding(
         padding: const EdgeInsets.only(top: 16),
-        child: buildContent(),
+        child: InkWellDone(
+          // View statuses above and below this status in the thread.
+          onTap: () => widget.onShowStatusContext?.call(widget.schema),
+          child: buildContent(),
+        ),
       ),
     );
   }

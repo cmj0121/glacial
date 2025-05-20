@@ -62,7 +62,14 @@ enum SidebarButtonType {
 // The main home page of the app, interacts with the current server and show the
 // server timeline and other features.
 class GlacialHome extends ConsumerStatefulWidget {
-  const GlacialHome({super.key});
+  final Widget child;
+  final SidebarButtonType? active;
+
+  const GlacialHome({
+    super.key,
+    required this.child,
+    this.active,
+  });
 
   @override
   ConsumerState<GlacialHome> createState() => _GlacialHomeState();
@@ -72,10 +79,9 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   final double appBarHeight = 44;
   final double sidebarSize = 32;
   final List<SidebarButtonType> actions = SidebarButtonType.values;
-  late final ServerSchema schema;
 
-  late int selectedIndex;
-  late Widget content;
+  late final ServerSchema schema;
+  late final int selectedIndex;
 
   @override
   void initState() {
@@ -87,7 +93,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     }
 
     this.schema = schema;
-    onSelect(SidebarButtonType.timeline.index);
+    selectedIndex = widget.active == null ? -1 : actions.indexOf(widget.active!);
   }
 
   @override
@@ -143,7 +149,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       child: Align(
         key: ValueKey<int>(selectedIndex), // Ensure actually changing the widget identity
         alignment: Alignment.topCenter,
-        child: content,
+        child: widget.child,
       ),
     );
 
@@ -242,27 +248,28 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
   // Select the action in the sidebar and show the corresponding content.
   void onSelect(int index) {
-    setState(() {
-      selectedIndex = index;
+    final SidebarButtonType action = actions[index];
+    if (action == widget.active) {
+      return;
+    }
 
-      switch (actions[index]) {
-        case SidebarButtonType.timeline:
-          content = const TimelineTab();
-          break;
-        case SidebarButtonType.trending:
-          content = const WIP();
-          break;
-        case SidebarButtonType.explore:
-          content = const WIP();
-          break;
-        case SidebarButtonType.notifications:
-          content = const WIP();
-          break;
-        case SidebarButtonType.settings:
-          content = const WIP();
-          break;
-      }
-    });
+    switch (action) {
+      case SidebarButtonType.timeline:
+        context.go(RoutePath.homeTimeline.path, extra: action);
+        break;
+      case SidebarButtonType.trending:
+        context.go(RoutePath.homeTrends.path, extra: action);
+        break;
+      case SidebarButtonType.explore:
+        context.go(RoutePath.homeExplore.path, extra: action);
+        break;
+      case SidebarButtonType.notifications:
+        context.go(RoutePath.homeNotifications.path, extra: action);
+        break;
+      case SidebarButtonType.settings:
+        context.go(RoutePath.homeSettings.path, extra: action);
+        break;
+    }
   }
 }
 
