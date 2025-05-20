@@ -33,6 +33,7 @@ class UserProfile extends ConsumerStatefulWidget {
 
 class _UserProfileState extends ConsumerState<UserProfile> {
   final Storage storage = Storage();
+  final Debouncer debouncer = Debouncer();
 
   late final StreamSubscription<Uri?> sub;
   late final String state;
@@ -57,7 +58,7 @@ class _UserProfileState extends ConsumerState<UserProfile> {
 
     return IconButton(
       icon: buildAvatar(accessToken),
-      onPressed: accessToken == null ? onSignIn : null,
+      onPressed: accessToken == null ? () => debouncer.call(onSignIn) : null,
     );
   }
 
