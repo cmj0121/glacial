@@ -331,7 +331,7 @@ class StatusContext extends ConsumerWidget {
     final ServerSchema? server = ref.watch(currentServerProvider);
     final String? accessToken = ref.watch(currentAccessTokenProvider);
 
-    if (server == null || accessToken == null) {
+    if (server == null) {
       return const SizedBox.shrink();
     }
 
