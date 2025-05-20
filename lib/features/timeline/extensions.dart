@@ -209,6 +209,17 @@ extension InteractiveStatusExtensions on StatusSchema {
     return StatusSchema.fromString(body);
   }
 
+  // Delete the status to the Mastodon server
+  Future<void> deleteIt({required String domain, required String accessToken}) async {
+    final Uri uri = Uri.https(domain, "/api/v1/statuses/$id");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    await delete(uri, headers: headers);
+  }
+
   Future<String> sendPostRequest(Uri uri, {Map<String, String>? headers, Map<String, String>? body}) async {
     final response = await post(uri, headers: headers, body: jsonEncode(body));
     switch (response.statusCode) {

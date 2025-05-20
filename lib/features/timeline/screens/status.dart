@@ -18,6 +18,7 @@ class Status extends ConsumerStatefulWidget {
   final AccountSchema? reblogFrom;
   final String? replyToAccountID;
   final ValueChanged<StatusSchema>? onShowStatusContext;
+  final VoidCallback? onDeleted;
 
   const Status({
     super.key,
@@ -25,6 +26,7 @@ class Status extends ConsumerStatefulWidget {
     this.reblogFrom,
     this.replyToAccountID,
     this.onShowStatusContext,
+    this.onDeleted,
   });
 
   @override
@@ -71,7 +73,7 @@ class _StatusState extends ConsumerState<Status> {
         Html(data: schema.content),
 
         const SizedBox(height: 8),
-        InteractionBar(schema: schema, onReload: onReload),
+        InteractionBar(schema: schema, onReload: onReload, onDeleted: widget.onDeleted),
       ],
     );
   }

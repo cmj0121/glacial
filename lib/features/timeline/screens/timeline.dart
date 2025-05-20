@@ -107,7 +107,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
 
 // The timeline widget that contains the status from the current selected
 // Mastodon server.
-class Timeline extends StatefulWidget {
+class Timeline extends ConsumerStatefulWidget {
   final ServerSchema schema;
   final TimelineType type;
   final String? accessToken;
@@ -124,7 +124,7 @@ class Timeline extends StatefulWidget {
   });
 
   @override
-  State<Timeline> createState() => _TimelineState();
+  ConsumerState<Timeline> createState() => _TimelineState();
 
   static builder({
     required ServerSchema schema,
@@ -155,7 +155,7 @@ class Timeline extends StatefulWidget {
   }
 }
 
-class _TimelineState extends State<Timeline> {
+class _TimelineState extends ConsumerState<Timeline> {
   final ScrollController controller = ScrollController();
   final Storage storage = Storage();
   final double loadingThreshold = 180;
@@ -205,6 +205,7 @@ class _TimelineState extends State<Timeline> {
           reblogFrom: status.reblog != null ? status.account : null,
           replyToAccountID: status.inReplyToAccountID,
           onShowStatusContext: widget.onShowStatusContext,
+          onDeleted: () => onDeleted(index),
         );
       },
     );
@@ -242,6 +243,18 @@ class _TimelineState extends State<Timeline> {
 
       statuses.addAll(newStatuses);
     });
+  }
+
+  // Reload the timeline when the status is deleted.
+  void onDeleted(int index) async {
+    final ServerSchema? server = ref.read(currentServerProvider);
+    final String? accessToken = ref.read(currentAccessTokenProvider);
+    final StatusSchema status = statuses[index];
+
+    if (server != null && accessToken != null) {
+      await status.deleteIt(domain: server.domain, accessToken: accessToken);
+      setState(() => statuses.removeAt(index));
+    }
   }
 }
 

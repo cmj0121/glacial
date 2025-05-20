@@ -16,12 +16,14 @@ class InteractionBar extends ConsumerWidget {
   final StatusSchema schema;
   final double itemWidth;
   final ValueChanged<StatusSchema>? onReload;
+  final VoidCallback? onDeleted;
 
   const InteractionBar({
     super.key,
     required this.schema,
     this.itemWidth = 68,
     this.onReload,
+    this.onDeleted,
   });
 
   @override
@@ -49,12 +51,14 @@ class InteractionBar extends ConsumerWidget {
                 action: action,
                 isCompact: true,
                 onReload: onReload,
+                onDeleted: onDeleted,
               );
             }),
             InteractionMore(
               schema: schema,
               actions: moreActions,
               onReload: onReload,
+              onDeleted: onDeleted,
             ),
           ],
         );
@@ -68,12 +72,14 @@ class InteractionMore extends StatelessWidget {
   final StatusSchema schema;
   final List<StatusInteraction> actions;
   final ValueChanged<StatusSchema>? onReload;
+  final VoidCallback? onDeleted;
 
   const InteractionMore({
     super.key,
     required this.schema,
     required this.actions,
     this.onReload,
+    this.onDeleted,
   });
 
   @override
@@ -94,6 +100,7 @@ class InteractionMore extends StatelessWidget {
               action: action,
               isCompact: false,
               onPressed: () => Navigator.pop(context),
+              onDeleted: onDeleted,
             ),
           );
         }).toList();
@@ -111,6 +118,7 @@ class Interaction extends ConsumerStatefulWidget {
   final bool isCompact;
   final VoidCallback? onPressed;
   final ValueChanged<StatusSchema>? onReload;
+  final VoidCallback? onDeleted;
 
   const Interaction({
     super.key,
@@ -120,6 +128,7 @@ class Interaction extends ConsumerStatefulWidget {
     this.isCompact = false,
     this.onPressed,
     this.onReload,
+    this.onDeleted,
   });
 
   @override
@@ -266,6 +275,9 @@ class _InteractionState extends ConsumerState<Interaction> {
             content: Text(text),
           ),
         );
+        break;
+      case StatusInteraction.delete:
+        widget.onDeleted?.call();
         break;
       default:
         fn = null;
