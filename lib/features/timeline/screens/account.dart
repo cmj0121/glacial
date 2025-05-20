@@ -12,7 +12,7 @@ class Account extends StatelessWidget {
   const Account({
     super.key,
     required this.schema,
-    this.maxHeight = 48,
+    this.maxHeight = 52,
   });
 
   @override
