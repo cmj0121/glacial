@@ -349,7 +349,12 @@ class StatusContext extends ConsumerWidget {
         }
 
         final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
-        return buildContent(context, ctx);
+        return Dismissible(
+          key: ValueKey<String>('StatusContext-${schema.id}'),
+          direction: DismissDirection.horizontal,
+          onDismissed: (direction) => context.pop(),
+          child: buildContent(context, ctx),
+        );
       }
     );
   }
