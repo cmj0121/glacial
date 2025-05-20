@@ -69,6 +69,7 @@ class GlacialHome extends ConsumerStatefulWidget {
 }
 
 class _GlacialHomeState extends ConsumerState<GlacialHome> {
+  final double appBarHeight = 44;
   final double sidebarSize = 32;
   final List<SidebarButtonType> actions = SidebarButtonType.values;
   late final ServerSchema schema;
@@ -97,7 +98,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
         return Scaffold(
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(36.0),
+            preferredSize: Size.fromHeight(appBarHeight),
             child: AppBar(
               leading: const SizedBox.shrink(),
               title: Align(
@@ -114,7 +115,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
                 ),
               ),
               actions: [
-                SignIn(schema: schema),
+                UserProfile(schema: schema),
                 const SizedBox(width: 8),
               ],
             ),

@@ -1,8 +1,10 @@
-// The SignIn button to navigate to the sign-in page of the Master server.
+// The User button to navigate to the sign-in page of the Master server, or show
+// the user profile page if already signed in.
 import 'dart:async';
 import 'dart:io';
 
 import 'package:app_links/app_links.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,25 +12,26 @@ import 'package:uuid/uuid.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/routes.dart';
-import 'package:glacial/features/glacial/models/server.dart';
 import 'package:glacial/features/auth/models/oauth.dart';
+import 'package:glacial/features/glacial/models/server.dart';
+import 'package:glacial/features/timeline/models/core.dart';
 
 // The Sign In widget is used to sign in to the Mastodon server.
-class SignIn extends ConsumerStatefulWidget {
+class UserProfile extends ConsumerStatefulWidget {
   final ServerSchema schema;
   final double size;
 
-  const SignIn({
+  const UserProfile({
     super.key,
     required this.schema,
-    this.size = 24,
+    this.size = 28,
   });
 
   @override
-  ConsumerState<SignIn> createState() => _SignInState();
+  ConsumerState<UserProfile> createState() => _UserProfileState();
 }
 
-class _SignInState extends ConsumerState<SignIn> {
+class _UserProfileState extends ConsumerState<UserProfile> {
   final Storage storage = Storage();
 
   late final StreamSubscription<Uri?> sub;
@@ -50,9 +53,47 @@ class _SignInState extends ConsumerState<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
+
     return IconButton(
-      icon: Icon( Icons.login, size: widget.size),
-      onPressed: onSignIn,
+      icon: buildAvatar(accessToken),
+      onPressed: accessToken == null ? onSignIn : null,
+    );
+  }
+
+  Widget buildAvatar(String? accessToken) {
+    final ServerSchema? schema = ref.read(currentServerProvider);
+
+    if (accessToken == null || schema == null) {
+      return Icon(Icons.person, size: widget.size);
+    }
+
+    return FutureBuilder(
+      future: schema.getAuthUser(accessToken),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox.shrink();
+        }
+
+        if (snapshot.hasError) {
+          return Icon(Icons.error, size: widget.size);
+        }
+
+        final AccountSchema? account = snapshot.data;
+        if (account == null) {
+          return Icon(Icons.error, size: widget.size);
+        }
+        return ClipOval(
+          child: CachedNetworkImage(
+            width: widget.size,
+            height: widget.size,
+            imageUrl: account.avatar,
+            placeholder: (context, url) => const SizedBox.shrink(),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+            fit: BoxFit.cover,
+          ),
+        );
+      },
     );
   }
 
