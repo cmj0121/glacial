@@ -68,7 +68,8 @@ extension StatusLoaderExtensions on ServerSchema {
     final List<StatusSchema> schemas = json.map((e) => StatusSchema.fromJson(e)).toList();
 
     // Save the status to the in-memory cache.
-    schemas.map((s) => server.saveAccount(s.account)).toList();
+    final List<Future<void>> saveFutures = schemas.map((s) => server.saveAccount(s.account)).toList();
+    await Future.wait(saveFutures);
     return schemas;
   }
 
