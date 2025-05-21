@@ -61,6 +61,8 @@ class TimelineTab extends ConsumerStatefulWidget {
 }
 
 class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProviderStateMixin {
+  // Exclude TimelineType.hashtag from the timeline tab as hashtag timelines are handled differently
+  // or are not supported in the current implementation.
   final List<TimelineType> types = TimelineType.values.where((type) => type != TimelineType.hashtag).toList();
   late final TabController controller;
   late final ServerSchema? schema;
