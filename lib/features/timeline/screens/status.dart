@@ -74,6 +74,7 @@ class _StatusState extends ConsumerState<Status> {
           indent: widget.indent,
           child: buildSensitiveView(),
         ),
+        Application(schema: schema.application),
 
         const SizedBox(height: 8),
         InteractionBar(schema: schema, onReload: onReload, onDeleted: widget.onDeleted),

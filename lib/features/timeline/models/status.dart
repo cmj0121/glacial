@@ -27,6 +27,7 @@ class StatusSchema {
   final bool? muted;                        // Have you muted this status?
   final bool? bookmarked;                   // Have you bookmarked this status?
   final bool? pinned;                       // Have you pinned this status?
+  final ApplicationSchema? application;     // The application used to post the status.
   final DateTime createdAt;                 // The date when this status was created.
   final DateTime? editedAt;                 // Timestamp of when the status was last edited.
 
@@ -52,6 +53,7 @@ class StatusSchema {
     this.muted,
     this.bookmarked,
     this.pinned,
+    this.application,
     required this.createdAt,
     this.editedAt,
   });
@@ -88,6 +90,7 @@ class StatusSchema {
       muted: json['muted'] as bool?,
       bookmarked: json['bookmarked'] as bool?,
       pinned: json['pinned'] as bool?,
+      application: json['application'] == null ? null : ApplicationSchema.fromJson(json['application'] as Map<String, dynamic>),
       createdAt: DateTime.parse(json['created_at'] as String),
       editedAt: json['edited_at'] == null ? null : DateTime.parse(json['edited_at'] as String),
     );
