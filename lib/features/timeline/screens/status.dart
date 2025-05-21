@@ -7,11 +7,9 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:glacial/core.dart';
 import 'package:glacial/routes.dart';
 import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/timeline/screens/core.dart';
 import 'package:glacial/features/glacial/models/server.dart';
 
-import 'account.dart';
-import 'interaction.dart';
-import 'visibility.dart';
 
 // The single Status widget that contains the status information.
 class Status extends ConsumerStatefulWidget {
@@ -36,6 +34,7 @@ class Status extends ConsumerStatefulWidget {
 
 class _StatusState extends ConsumerState<Status> {
   final double metadataHeight = 22;
+  final Storage storage = Storage();
 
   late StatusSchema schema;
 
@@ -73,13 +72,9 @@ class _StatusState extends ConsumerState<Status> {
         const SizedBox(height: 8),
         Indent(
           indent: widget.indent,
-          child: Column(
-            children: [
-              Html(data: schema.content),
-
-            ],
-          ),
+          child: buildSensitiveView(),
         ),
+        Application(schema: schema.application),
 
         const SizedBox(height: 8),
         InteractionBar(schema: schema, onReload: onReload, onDeleted: widget.onDeleted),
@@ -143,6 +138,38 @@ class _StatusState extends ConsumerState<Status> {
     );
   }
 
+  // Build the possible sensitive content of the status, including the
+  // spoiler text and the media attachments.
+  Widget buildSensitiveView() {
+    final Widget content = Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Html(
+          data: storage.replaceEmojiToHTML(schema.content, emojis: schema.emojis),
+          style: {
+            'a': Style(
+              color: Theme.of(context).colorScheme.secondary,
+              textDecoration: TextDecoration.underline,
+            ),
+          },
+          onLinkTap: onLinkTap,
+        ),
+        Attachments(schemas: schema.attachments),
+      ],
+    );
+
+    if (!schema.sensitive) {
+      return content;
+    }
+
+    return SensitiveView(
+      spoiler: schema.spoiler,
+      child: content,
+    );
+  }
+
   // reload the status when the user interacts with it.
   void onReload(StatusSchema schema) async {
     // fetch the status again from the server, and update the status
@@ -160,6 +187,27 @@ class _StatusState extends ConsumerState<Status> {
     }
 
     context.push(RoutePath.statusContext.path, extra: schema);
+  }
+
+  // Handle the link tap event, and open the link in the in-app webview.
+  void onLinkTap(String? url, Map<String, String> attributes, _) {
+    final Uri baseUri = Uri.parse(schema.uri);
+    final Uri? uri = url == null ? null : Uri.parse(url.toLowerCase());
+    if (uri == null) {
+      return;
+    }
+
+    // check if the url is the tag from the Mastodon server
+    if (schema.tags.any((tag) => uri == baseUri.replace(path: '/tags/${tag.name}'))) {
+      // navigate to the tag timeline
+      final String path = Uri.decodeFull(uri.path);
+      final String tag = path.substring(path.lastIndexOf('/') + 1);
+
+      context.push(RoutePath.hashtagTimeline.path, extra: tag);
+      return;
+    }
+
+    context.push(RoutePath.webview.path, extra: uri);
   }
 }
 

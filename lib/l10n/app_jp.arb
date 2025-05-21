@@ -14,6 +14,8 @@
   "txt_direct": "ダイレクト",
   "txt_copied_to_clipboard": "クリップボードにコピーしました",
   "txt_trends_uses": "過去数日間で{uses}回使用されました",
+  "txt_show_less": "表示を減らす",
+  "txt_show_more": "もっと表示",
   "btn_clean_all": "すべて削除",
   "btn_back_to_explorer": "検索ページに戻る",
   "btn_sign_in": "サインイン",

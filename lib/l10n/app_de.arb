@@ -14,6 +14,8 @@
   "txt_direct": "Direkt",
   "txt_copied_to_clipboard": "In die Zwischenablage kopiert",
   "txt_trends_uses": "{uses} Mal in den letzten Tagen verwendet",
+  "txt_show_less": "Weniger anzeigen",
+  "txt_show_more": "Mehr anzeigen",
   "btn_clean_all": "Alles löschen",
   "btn_back_to_explorer": "Zurück zum Explorer",
   "btn_sign_in": "Anmelden",

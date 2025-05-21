@@ -53,6 +53,12 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get txt_show_less => '顯示更少';
+
+  @override
+  String get txt_show_more => '顯示更多';
+
+  @override
   String get btn_clean_all => '清除全部';
 
   @override

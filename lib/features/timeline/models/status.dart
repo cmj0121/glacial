@@ -1,8 +1,7 @@
 // The Timeline Status data schema.
 import 'dart:convert';
 
-import 'account.dart';
-import 'visibility.dart';
+import 'package:glacial/features/timeline/models/core.dart';
 
 // The timeline status data schema that is the toots from the current
 // selected Mastodon server.
@@ -15,6 +14,10 @@ class StatusSchema {
   final AccountSchema account;              // The account that authored this status.
   final String uri;                         // URI of the status used for federation.
   final String? url;                        // A link to the status's HTML representation.
+  final List<AttachmentSchema> attachments; // Media that is attached to this status.
+  final List<MentionSchema> mentions;       // Mentions of users within the status content.
+  final List<TagSchema> tags;               // Hashtags used within the status content.
+  final List<EmojiSchema> emojis;           // Custom emoji to be used when rendering status content.
   final String? inReplyToID;                // The ID of the status this status is replying to.
   final String? inReplyToAccountID;         // The ID of the account this status is replying to.
   final StatusSchema? reblog;               // The status being reblogged.
@@ -26,6 +29,7 @@ class StatusSchema {
   final bool? muted;                        // Have you muted this status?
   final bool? bookmarked;                   // Have you bookmarked this status?
   final bool? pinned;                       // Have you pinned this status?
+  final ApplicationSchema? application;     // The application used to post the status.
   final DateTime createdAt;                 // The date when this status was created.
   final DateTime? editedAt;                 // Timestamp of when the status was last edited.
 
@@ -38,6 +42,10 @@ class StatusSchema {
     required this.account,
     required this.uri,
     this.url,
+    this.attachments = const [],
+    this.mentions = const [],
+    this.tags = const [],
+    this.emojis = const [],
     this.inReplyToID,
     this.inReplyToAccountID,
     this.reblog,
@@ -49,6 +57,7 @@ class StatusSchema {
     this.muted,
     this.bookmarked,
     this.pinned,
+    this.application,
     required this.createdAt,
     this.editedAt,
   });
@@ -68,6 +77,18 @@ class StatusSchema {
       account: AccountSchema.fromJson(json['account'] as Map<String, dynamic>),
       uri: json['uri'] as String,
       url: json['url'] as String?,
+      attachments: (json['media_attachments'] as List<dynamic>)
+        .map((e) => AttachmentSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      mentions: (json['mentions'] as List<dynamic>)
+        .map((e) => MentionSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      tags: (json['tags'] as List<dynamic>)
+        .map((e) => TagSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      emojis: (json['emojis'] as List<dynamic>)
+        .map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
       inReplyToID: json['in_reply_to_id'] as String?,
       inReplyToAccountID: json['in_reply_to_account_id'] as String?,
       reblog: json['reblog'] == null ? null : StatusSchema.fromJson(json['reblog'] as Map<String, dynamic>),
@@ -79,6 +100,7 @@ class StatusSchema {
       muted: json['muted'] as bool?,
       bookmarked: json['bookmarked'] as bool?,
       pinned: json['pinned'] as bool?,
+      application: json['application'] == null ? null : ApplicationSchema.fromJson(json['application'] as Map<String, dynamic>),
       createdAt: DateTime.parse(json['created_at'] as String),
       editedAt: json['edited_at'] == null ? null : DateTime.parse(json['edited_at'] as String),
     );
@@ -161,6 +183,48 @@ class StatusContextSchema {
       descendants: (json['descendants'] as List<dynamic>)
         .map((e) => StatusSchema.fromJson(e as Map<String, dynamic>))
         .toList(),
+    );
+  }
+}
+
+// The hashtags used within the status content.
+class TagSchema {
+  final String name;
+  final String url;
+
+  const TagSchema({
+    required this.name,
+    required this.url,
+  });
+
+  factory TagSchema.fromJson(Map<String, dynamic> json) {
+    return TagSchema(
+      name: json['name'] as String,
+      url: json['url'] as String,
+    );
+  }
+}
+
+// The mentions of users within the status content
+class MentionSchema {
+  final String id;                  // The ID of the account mentioned.
+  final String username;            // The username of the account mentioned.
+  final String url;                 // The URL of the account mentioned.
+  final String acct;                // The webfinger acct: URI of the mentioned user.
+
+  const MentionSchema({
+    required this.id,
+    required this.username,
+    required this.url,
+    required this.acct,
+  });
+
+  factory MentionSchema.fromJson(Map<String, dynamic> json) {
+    return MentionSchema(
+      id: json['id'] as String,
+      username: json['username'] as String,
+      url: json['url'] as String,
+      acct: json['acct'] as String,
     );
   }
 }

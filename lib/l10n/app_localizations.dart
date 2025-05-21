@@ -191,6 +191,18 @@ abstract class AppLocalizations {
   /// **'{uses} used in the past days'**
   String txt_trends_uses(Object uses);
 
+  /// No description provided for @txt_show_less.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get txt_show_less;
+
+  /// No description provided for @txt_show_more.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get txt_show_more;
+
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:
