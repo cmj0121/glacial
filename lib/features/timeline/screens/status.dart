@@ -146,7 +146,16 @@ class _StatusState extends ConsumerState<Status> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Html(data: storage.replaceEmojiToHTML(schema.content, emojis: schema.emojis)),
+        Html(
+          data: storage.replaceEmojiToHTML(schema.content, emojis: schema.emojis),
+          style: {
+            'a': Style(
+              color: Theme.of(context).colorScheme.secondary,
+              textDecoration: TextDecoration.underline,
+            ),
+          },
+          onLinkTap: onLinkTap,
+        ),
         Attachments(schemas: schema.attachments),
       ],
     );
@@ -178,6 +187,16 @@ class _StatusState extends ConsumerState<Status> {
     }
 
     context.push(RoutePath.statusContext.path, extra: schema);
+  }
+
+  // Handle the link tap event, and open the link in the in-app webview.
+  void onLinkTap(String? url, _, _) async {
+    final Uri? uri = url == null ? null : Uri.parse(url);
+    if (uri == null) {
+      return;
+    }
+
+    context.push(RoutePath.webview.path, extra: uri);
   }
 }
 

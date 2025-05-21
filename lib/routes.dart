@@ -287,6 +287,7 @@ final GoRouter router = GoRouter(
       path: RoutePath.webview.path,
       builder: (BuildContext context, GoRouterState state) {
         final Uri url = state.extra as Uri;
+        logger.d("opening webview: $url");
         return WebViewPage(url: url);
       },
     ),
