@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 
-// The pretty view of the media attachmens.
+// The pretty view of the media attachments.
 class Attachments extends StatelessWidget {
   final List<AttachmentSchema> schemas;
   final double maxHeight;
