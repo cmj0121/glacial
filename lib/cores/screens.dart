@@ -79,7 +79,10 @@ class _SlideTabViewState extends State<SlideTabView> with SingleTickerProviderSt
 
   @override
   void dispose() {
-    controller.dispose();
+    if (widget.controller == null) {
+      // only dispose the controller if it is not passed from outside
+      controller.dispose();
+    }
     super.dispose();
   }
 

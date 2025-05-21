@@ -35,6 +35,8 @@ class TimelineTypeButton extends StatelessWidget {
     switch (type) {
       case TimelineType.home:
         return Icons.home_outlined;
+      case TimelineType.hashtag:
+        return Icons.tag_outlined;
       case TimelineType.local:
         return Icons.groups_outlined;
       case TimelineType.federal:
@@ -59,7 +61,9 @@ class TimelineTab extends ConsumerStatefulWidget {
 }
 
 class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProviderStateMixin {
-  final List<TimelineType> types = TimelineType.values;
+  // Exclude TimelineType.hashtag from the timeline tab as hashtag timelines are handled differently
+  // or are not supported in the current implementation.
+  final List<TimelineType> types = TimelineType.values.where((type) => type != TimelineType.hashtag).toList();
   late final TabController controller;
   late final ServerSchema? schema;
 
@@ -88,42 +92,34 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
       tabBuilder: (index) => (accessToken != null || types[index].supportAnonymous),
       itemBuilder: (context, index) {
         final TimelineType type = types[index];
-        return Timeline.builder(
-          schema: schema,
-          type: type,
-          accessToken: accessToken,
-        );
+        return TimelineBuilder(type: type);
       },
     );
   }
 }
 
-// The timeline widget that contains the status from the current selected
-// Mastodon server.
-class Timeline extends ConsumerStatefulWidget {
-  final ServerSchema schema;
+class TimelineBuilder extends ConsumerWidget {
   final TimelineType type;
-  final String? accessToken;
-  final List<StatusSchema> statuses;
+  final String? keyword;
 
-  const Timeline({
+  const TimelineBuilder({
     super.key,
-    required this.schema,
     required this.type,
-    this.accessToken,
-    this.statuses = const [],
+    this.keyword,
   });
 
   @override
-  ConsumerState<Timeline> createState() => _TimelineState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ServerSchema? schema = ref.read(currentServerProvider);
+    final String? accessToken = ref.read(currentAccessTokenProvider);
 
-  static builder({
-    required ServerSchema schema,
-    required TimelineType type,
-    String? accessToken,
-  }) {
+    if (schema == null) {
+      logger.w("No server selected, but it's required to show the timeline.");
+      return const SizedBox.shrink();
+    }
+
     return FutureBuilder(
-      future: schema.fetchTimeline(type: type, accessToken: accessToken),
+      future: schema.fetchTimeline(type: type, accessToken: accessToken, keyword: keyword),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LinearProgressIndicator();
@@ -135,16 +131,38 @@ class Timeline extends ConsumerStatefulWidget {
         final List<StatusSchema> statuses = snapshot.data as List<StatusSchema>;
         return Timeline(
           schema: schema,
+          accessToken: accessToken,
           type: type,
           statuses: statuses,
-          accessToken: accessToken,
         );
       },
     );
   }
 }
 
-class _TimelineState extends ConsumerState<Timeline> {
+// The timeline widget that contains the status from the current selected
+// Mastodon server.
+class Timeline extends StatefulWidget {
+  final ServerSchema schema;
+  final TimelineType type;
+  final String? accessToken;
+  final String? keyword;
+  final List<StatusSchema> statuses;
+
+  const Timeline({
+    super.key,
+    required this.schema,
+    required this.type,
+    this.accessToken,
+    this.keyword,
+    this.statuses = const [],
+  });
+
+  @override
+  State<Timeline> createState() => _TimelineState();
+}
+
+class _TimelineState extends State<Timeline> {
   final ScrollController controller = ScrollController();
   final Storage storage = Storage();
   final double loadingThreshold = 180;
@@ -235,12 +253,10 @@ class _TimelineState extends ConsumerState<Timeline> {
 
   // Reload the timeline when the status is deleted.
   void onDeleted(int index) async {
-    final ServerSchema? server = ref.read(currentServerProvider);
-    final String? accessToken = ref.read(currentAccessTokenProvider);
     final StatusSchema status = statuses[index];
 
-    if (server != null && accessToken != null) {
-      await status.deleteIt(domain: server.domain, accessToken: accessToken);
+    if (widget.accessToken != null) {
+      await status.deleteIt(domain: widget.schema.domain, accessToken: widget.accessToken!);
       setState(() => statuses.removeAt(index));
     }
   }

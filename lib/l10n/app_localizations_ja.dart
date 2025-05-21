@@ -48,6 +48,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_copied_to_clipboard => 'クリップボードにコピーしました';
 
   @override
+  String txt_trends_uses(Object uses) {
+    return '過去数日間で$uses回使用されました';
+  }
+
+  @override
   String get btn_clean_all => 'すべて削除';
 
   @override
@@ -91,6 +96,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get btn_favourites_timeline => 'お気に入り';
+
+  @override
+  String get btn_hashtag_timeline => 'ハッシュタグ';
 
   @override
   String get btn_reply => '返信';

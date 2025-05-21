@@ -6,6 +6,7 @@ import 'package:glacial/core.dart';
 // The type list for the timeline, based on the Mastodon API.
 enum TimelineType implements SlideTab {
   home,          // The home timeline for the logged in user.
+  hashtag,       // The hashtag timeline for the current server.
   local,         // The local timeline for the current server.
   federal,       // The federated timeline for the current server.
   public,        // The public timeline for the connected server.
@@ -17,6 +18,8 @@ enum TimelineType implements SlideTab {
     switch (this) {
       case TimelineType.home:
         return AppLocalizations.of(context)?.btn_home_timeline ?? 'Home';
+      case TimelineType.hashtag:
+        return AppLocalizations.of(context)?.btn_hashtag_timeline ?? 'Hashtag';
       case TimelineType.local:
         return AppLocalizations.of(context)?.btn_local_timeline ?? 'Local';
       case TimelineType.federal:
@@ -35,6 +38,8 @@ enum TimelineType implements SlideTab {
     switch (this) {
       case home:
         return Icons.home_outlined;
+      case hashtag:
+        return Icons.tag_outlined;
       case local:
         return Icons.groups_outlined;
       case federal:
@@ -53,6 +58,8 @@ enum TimelineType implements SlideTab {
     switch (this) {
       case home:
         return Icons.home;
+      case hashtag:
+        return Icons.tag;
       case local:
         return Icons.groups;
       case federal:

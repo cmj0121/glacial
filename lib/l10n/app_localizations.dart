@@ -185,6 +185,12 @@ abstract class AppLocalizations {
   /// **'Copy to Clipboard'**
   String get txt_copied_to_clipboard;
 
+  /// No description provided for @txt_trends_uses.
+  ///
+  /// In en, this message translates to:
+  /// **'{uses} used in the past days'**
+  String txt_trends_uses(Object uses);
+
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:
@@ -274,6 +280,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Favourites'**
   String get btn_favourites_timeline;
+
+  /// No description provided for @btn_hashtag_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Hashtag'**
+  String get btn_hashtag_timeline;
 
   /// No description provided for @btn_reply.
   ///

@@ -48,6 +48,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_copied_to_clipboard => '複製到剪貼簿';
 
   @override
+  String txt_trends_uses(Object uses) {
+    return '$uses 人於過去幾天';
+  }
+
+  @override
   String get btn_clean_all => '清除全部';
 
   @override
@@ -91,6 +96,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get btn_favourites_timeline => '收藏';
+
+  @override
+  String get btn_hashtag_timeline => '主題標籤';
 
   @override
   String get btn_reply => '回覆';
