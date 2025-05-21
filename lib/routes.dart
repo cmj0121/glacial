@@ -81,6 +81,7 @@ enum RoutePath {
   explorer,          // The server explorer page of the app.
   webview,           // The in-app webview page of the app.
   statusContext,     // The status context page of the app.
+  hashtagTimeline,   // The timeline with the specified hashtag.
   homeTimeline,      // The timeline page of the app.
   homeTrends,        // The trends page of the app.
   homeExplore,       // The explore page of the app.
@@ -99,6 +100,8 @@ enum RoutePath {
         return '/explorer';
       case RoutePath.webview:
         return '/webview';
+      case RoutePath.hashtagTimeline:
+        return '/hashtag';
       case RoutePath.statusContext:
         return '/home/status/context';
       case RoutePath.homeTimeline:
@@ -247,6 +250,7 @@ final GoRouter router = GoRouter(
             );
           },
         ),
+
         GoRoute(
           path: RoutePath.statusContext.path,
           pageBuilder: (BuildContext context, GoRouterState state) {
@@ -256,6 +260,23 @@ final GoRouter router = GoRouter(
               child: RouteBackWrapper(
                 title: AppLocalizations.of(context)?.btn_post ?? "Post",
                 child: StatusContext(schema: status),
+              ),
+            );
+          },
+        ),
+
+        GoRoute(
+          path: RoutePath.hashtagTimeline.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final String tag = state.extra as String;
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: RouteBackWrapper(
+                title: AppLocalizations.of(context)?.btn_hashtag_timeline ?? "Hashtag",
+                child: TimelineBuilder(
+                  type: TimelineType.hashtag,
+                  keyword: tag,
+                ),
               ),
             );
           },

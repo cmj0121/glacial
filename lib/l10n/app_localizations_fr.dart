@@ -98,6 +98,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_favourites_timeline => 'Favoris';
 
   @override
+  String get btn_hashtag_timeline => 'Hashtag';
+
+  @override
   String get btn_reply => 'Répondre';
 
   @override

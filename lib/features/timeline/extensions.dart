@@ -7,7 +7,12 @@ import 'package:glacial/features/timeline/models/core.dart';
 // The extension to the TimelineType enum to list the statuses per timeline type.
 extension StatusLoaderExtensions on ServerSchema {
   // Fetch the timeline statuss from the server.
-  Future<List<StatusSchema>> fetchTimeline({required TimelineType type, String? accessToken, String? maxId}) async {
+  Future<List<StatusSchema>> fetchTimeline({
+    required TimelineType type,
+    String? accessToken,
+    String? maxId,
+    String? keyword,
+  }) async {
     late final Uri uri;
 
     switch (type) {
@@ -16,6 +21,14 @@ extension StatusLoaderExtensions on ServerSchema {
         query["max_id"] = maxId ?? "";
 
         uri = Uri.https(domain, "/api/v1/timelines/home").replace(queryParameters: query);
+        break;
+      case TimelineType.hashtag:
+        final Map<String, String> query = {};
+
+        query["max_id"] = maxId ?? "";
+        query["local"] = "true";
+        query["remote"] = "true";
+        uri = Uri.https(domain, "/api/v1/timelines/tag/$keyword").replace(queryParameters: query);
         break;
       case TimelineType.local:
         final Map<String, String> query = {};

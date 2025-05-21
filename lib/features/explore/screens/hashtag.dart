@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/routes.dart';
 import 'package:glacial/features/explore/models/hashtag.dart';
 
 // The trends of the links that have been shared more than others.
@@ -22,7 +23,10 @@ class HashTag extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
-        child: buildContent(context),
+        child: InkWellDone(
+          onTap: () => context.push(RoutePath.hashtagTimeline.path, extra: schema.name),
+          child: buildContent(context),
+        ),
       ),
     );
   }

@@ -98,6 +98,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_favourites_timeline => '收藏';
 
   @override
+  String get btn_hashtag_timeline => '主題標籤';
+
+  @override
   String get btn_reply => '回覆';
 
   @override

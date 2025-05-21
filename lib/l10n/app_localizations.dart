@@ -281,6 +281,12 @@ abstract class AppLocalizations {
   /// **'Favourites'**
   String get btn_favourites_timeline;
 
+  /// No description provided for @btn_hashtag_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Hashtag'**
+  String get btn_hashtag_timeline;
+
   /// No description provided for @btn_reply.
   ///
   /// In en, this message translates to:

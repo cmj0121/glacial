@@ -98,6 +98,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_favourites_timeline => '즐겨찾기';
 
   @override
+  String get btn_hashtag_timeline => '해시태그';
+
+  @override
   String get btn_reply => '답글';
 
   @override
