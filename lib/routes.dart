@@ -269,10 +269,11 @@ final GoRouter router = GoRouter(
           path: RoutePath.hashtagTimeline.path,
           pageBuilder: (BuildContext context, GoRouterState state) {
             final String tag = state.extra as String;
+            final String text = AppLocalizations.of(context)?.btn_hashtag_timeline ?? "Hashtag";
             return NoTransitionPage(
               key: state.pageKey,
               child: RouteBackWrapper(
-                title: AppLocalizations.of(context)?.btn_hashtag_timeline ?? "Hashtag",
+                title: '$text: $tag',
                 child: TimelineBuilder(
                   type: TimelineType.hashtag,
                   keyword: tag,
