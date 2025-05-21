@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 
 // The account widget to show the account information.
@@ -78,8 +79,10 @@ class Account extends StatelessWidget {
 
   // Build display name with the emoji
   Widget buildDisplayName() {
+    final Storage storage = Storage();
     final String text = schema.displayName.isEmpty ? schema.username : schema.displayName;
-    return Text(text, overflow: TextOverflow.ellipsis);
+
+    return storage.replaceEmojiToWidget(text, emojis: schema.emojis);
   }
 }
 // vim: set ts=2 sw=2 sts=2 et:

@@ -34,6 +34,7 @@ class Status extends ConsumerStatefulWidget {
 
 class _StatusState extends ConsumerState<Status> {
   final double metadataHeight = 22;
+  final Storage storage = Storage();
 
   late StatusSchema schema;
 
@@ -144,7 +145,7 @@ class _StatusState extends ConsumerState<Status> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Html(data: schema.content),
+        Html(data: storage.replaceEmojiToHTML(schema.content, emojis: schema.emojis)),
         Attachments(schemas: schema.attachments),
       ],
     );

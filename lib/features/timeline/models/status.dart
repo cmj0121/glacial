@@ -1,9 +1,7 @@
 // The Timeline Status data schema.
 import 'dart:convert';
 
-import 'account.dart';
-import 'attachment.dart';
-import 'visibility.dart';
+import 'package:glacial/features/timeline/models/core.dart';
 
 // The timeline status data schema that is the toots from the current
 // selected Mastodon server.
@@ -17,6 +15,7 @@ class StatusSchema {
   final String uri;                         // URI of the status used for federation.
   final String? url;                        // A link to the status's HTML representation.
   final List<AttachmentSchema> attachments; // Media that is attached to this status.
+  final List<EmojiSchema> emojis;           // Custom emoji to be used when rendering status content.
   final String? inReplyToID;                // The ID of the status this status is replying to.
   final String? inReplyToAccountID;         // The ID of the account this status is replying to.
   final StatusSchema? reblog;               // The status being reblogged.
@@ -41,6 +40,7 @@ class StatusSchema {
     required this.uri,
     this.url,
     this.attachments = const [],
+    this.emojis = const [],
     this.inReplyToID,
     this.inReplyToAccountID,
     this.reblog,
@@ -73,6 +73,9 @@ class StatusSchema {
       url: json['url'] as String?,
       attachments: (json['media_attachments'] as List<dynamic>)
         .map((e) => AttachmentSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      emojis: (json['emojis'] as List<dynamic>)
+        .map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>))
         .toList(),
       inReplyToID: json['in_reply_to_id'] as String?,
       inReplyToAccountID: json['in_reply_to_account_id'] as String?,
