@@ -280,7 +280,7 @@ extension EmojiExtensions on Storage {
     }
 
     return parts.reduce((String value, String part) {
-      final String shortcode = part.substring(1, part.length - 1);
+      final String shortcode = part.length > 2 ? part.substring(1, part.length - 1) : part;
       final EmojiSchema? emoji = (
         emojiCache[shortcode] ??
         emojis?.cast<EmojiSchema?>().firstWhere((e) => e?.shortcode == shortcode, orElse: () => null)
