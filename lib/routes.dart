@@ -33,6 +33,48 @@ class WIP extends StatelessWidget {
   }
 }
 
+class RouteBackWrapper extends StatelessWidget {
+  final Widget child;
+  final String title;
+
+  const RouteBackWrapper({
+    super.key,
+    required this.child,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        buildBackButton(context),
+        const Divider(),
+        Flexible(child: child),
+      ],
+    );
+  }
+
+  Widget buildBackButton(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+        Expanded(
+          child: Center(
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 enum RoutePath {
   landing,           // The landing page of the app when user opens it.
   engineer,          // The engineer page of the app.
@@ -211,7 +253,10 @@ final GoRouter router = GoRouter(
             final StatusSchema status = state.extra as StatusSchema;
             return NoTransitionPage(
               key: state.pageKey,
-              child: StatusContext(schema: status),
+              child: RouteBackWrapper(
+                title: AppLocalizations.of(context)?.btn_post ?? "Post",
+                child: StatusContext(schema: status),
+              ),
             );
           },
         ),

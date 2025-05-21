@@ -48,6 +48,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_copied_to_clipboard => 'Copy to Clipboard';
 
   @override
+  String txt_trends_uses(Object uses) {
+    return '$uses used in the past days';
+  }
+
+  @override
   String get btn_clean_all => 'Clean All';
 
   @override

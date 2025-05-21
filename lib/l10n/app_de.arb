@@ -13,6 +13,7 @@
   "txt_private": "Privat (Follower)",
   "txt_direct": "Direkt",
   "txt_copied_to_clipboard": "In die Zwischenablage kopiert",
+  "txt_trends_uses": "{uses} Mal in den letzten Tagen verwendet",
   "btn_clean_all": "Alles löschen",
   "btn_back_to_explorer": "Zurück zum Explorer",
   "btn_sign_in": "Anmelden",

@@ -48,6 +48,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_copied_to_clipboard => '클립보드에 복사됨';
 
   @override
+  String txt_trends_uses(Object uses) {
+    return '최근 며칠 동안 $uses회 사용됨';
+  }
+
+  @override
   String get btn_clean_all => '모두 지우기';
 
   @override

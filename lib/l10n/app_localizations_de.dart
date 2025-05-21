@@ -48,6 +48,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_copied_to_clipboard => 'In die Zwischenablage kopiert';
 
   @override
+  String txt_trends_uses(Object uses) {
+    return '$uses Mal in den letzten Tagen verwendet';
+  }
+
+  @override
   String get btn_clean_all => 'Alles löschen';
 
   @override

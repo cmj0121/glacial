@@ -185,6 +185,12 @@ abstract class AppLocalizations {
   /// **'Copy to Clipboard'**
   String get txt_copied_to_clipboard;
 
+  /// No description provided for @txt_trends_uses.
+  ///
+  /// In en, this message translates to:
+  /// **'{uses} used in the past days'**
+  String txt_trends_uses(Object uses);
+
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:

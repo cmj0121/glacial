@@ -353,24 +353,13 @@ class StatusContext extends ConsumerWidget {
           key: ValueKey<String>('StatusContext-${schema.id}'),
           direction: DismissDirection.horizontal,
           onDismissed: (direction) => context.pop(),
-          child: buildContent(context, ctx),
+          child: buildContent(ctx),
         );
       }
     );
   }
 
-  Widget buildContent(BuildContext context, StatusContextSchema ctx) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        buildBackButton(context),
-        const Divider(),
-        Flexible(child: buildContextList(ctx)),
-      ],
-    );
-  }
-
-  Widget buildContextList(StatusContextSchema ctx) {
+  Widget buildContent(StatusContextSchema ctx) {
     Map<String, int> indents = {schema.id: 1};
 
     return SingleChildScrollView(
@@ -393,16 +382,6 @@ class StatusContext extends ConsumerWidget {
             return Status(schema: status, indent: indent);
           }),
         ],
-      ),
-    );
-  }
-
-  Widget buildBackButton(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: IconButton(
-        icon: Icon(Icons.arrow_back),
-        onPressed: () => context.pop(),
       ),
     );
   }

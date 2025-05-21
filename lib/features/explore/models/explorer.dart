@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/timeline/models/core.dart';
-import 'tag.dart';
+import 'hashtag.dart';
 
 // The possible types of results that can be returned from the explorer.
 enum ExplorerResultType implements SlideTab {
@@ -47,7 +47,7 @@ enum ExplorerResultType implements SlideTab {
 class SearchResultSchema {
 		final List<AccountSchema> accounts;
 		final List<StatusSchema> statuses;
-    final List<TagSchema> hashtags;
+    final List<HashTagSchema> hashtags;
 
     const SearchResultSchema({
       required this.accounts,
@@ -67,8 +67,8 @@ class SearchResultSchema {
       final List<StatusSchema> statuses = (json['statuses'] as List<dynamic>)
           .map((e) => StatusSchema.fromJson(e))
           .toList();
-      final List<TagSchema> hashtags = (json['hashtags'] as List<dynamic>)
-          .map((e) => TagSchema.fromJson(e))
+      final List<HashTagSchema> hashtags = (json['hashtags'] as List<dynamic>)
+          .map((e) => HashTagSchema.fromJson(e))
           .toList();
 
       return SearchResultSchema(

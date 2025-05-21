@@ -48,6 +48,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_copied_to_clipboard => 'Copiado para a área de transferência';
 
   @override
+  String txt_trends_uses(Object uses) {
+    return 'Utilisé $uses fois ces derniers jours';
+  }
+
+  @override
   String get btn_clean_all => 'Limpar tudo';
 
   @override

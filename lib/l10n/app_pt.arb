@@ -13,6 +13,7 @@
   "txt_private": "Privado (seguidores)",
   "txt_direct": "Direta",
   "txt_copied_to_clipboard": "Copiado para a área de transferência",
+  "txt_trends_uses": "Utilisé {uses} fois ces derniers jours",
   "btn_clean_all": "Limpar tudo",
   "btn_back_to_explorer": "Voltar para a exploração",
   "btn_sign_in": "Entrar",
