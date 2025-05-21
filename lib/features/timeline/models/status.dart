@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'account.dart';
+import 'attachment.dart';
 import 'visibility.dart';
 
 // The timeline status data schema that is the toots from the current
@@ -15,6 +16,7 @@ class StatusSchema {
   final AccountSchema account;              // The account that authored this status.
   final String uri;                         // URI of the status used for federation.
   final String? url;                        // A link to the status's HTML representation.
+  final List<AttachmentSchema> attachments; // Media that is attached to this status.
   final String? inReplyToID;                // The ID of the status this status is replying to.
   final String? inReplyToAccountID;         // The ID of the account this status is replying to.
   final StatusSchema? reblog;               // The status being reblogged.
@@ -38,6 +40,7 @@ class StatusSchema {
     required this.account,
     required this.uri,
     this.url,
+    this.attachments = const [],
     this.inReplyToID,
     this.inReplyToAccountID,
     this.reblog,
@@ -68,6 +71,9 @@ class StatusSchema {
       account: AccountSchema.fromJson(json['account'] as Map<String, dynamic>),
       uri: json['uri'] as String,
       url: json['url'] as String?,
+      attachments: (json['media_attachments'] as List<dynamic>)
+        .map((e) => AttachmentSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
       inReplyToID: json['in_reply_to_id'] as String?,
       inReplyToAccountID: json['in_reply_to_account_id'] as String?,
       reblog: json['reblog'] == null ? null : StatusSchema.fromJson(json['reblog'] as Map<String, dynamic>),

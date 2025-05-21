@@ -7,11 +7,9 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:glacial/core.dart';
 import 'package:glacial/routes.dart';
 import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/timeline/screens/core.dart';
 import 'package:glacial/features/glacial/models/server.dart';
 
-import 'account.dart';
-import 'interaction.dart';
-import 'visibility.dart';
 
 // The single Status widget that contains the status information.
 class Status extends ConsumerStatefulWidget {
@@ -73,12 +71,7 @@ class _StatusState extends ConsumerState<Status> {
         const SizedBox(height: 8),
         Indent(
           indent: widget.indent,
-          child: Column(
-            children: [
-              Html(data: schema.content),
-
-            ],
-          ),
+          child: buildSensitiveView(),
         ),
 
         const SizedBox(height: 8),
@@ -140,6 +133,29 @@ class _StatusState extends ConsumerState<Status> {
         const SizedBox(width: 4),
         StatusVisibility(type: schema.visibility, size: 16, isCompact: true),
       ],
+    );
+  }
+
+  // Build the possible sensitive content of the status, including the
+  // spoiler text and the media attachments.
+  Widget buildSensitiveView() {
+    final Widget content = Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Html(data: schema.content),
+        Attachments(schemas: schema.attachments),
+      ],
+    );
+
+    if (!schema.sensitive) {
+      return content;
+    }
+
+    return SensitiveView(
+      spoiler: schema.spoiler,
+      child: content,
     );
   }
 

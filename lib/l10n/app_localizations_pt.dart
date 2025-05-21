@@ -53,6 +53,12 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get txt_show_less => 'Mostrar menos';
+
+  @override
+  String get txt_show_more => 'Mostrar mais';
+
+  @override
   String get btn_clean_all => 'Limpar tudo';
 
   @override

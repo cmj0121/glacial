@@ -1,5 +1,8 @@
 // The miscellaneous widget library of the app.
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:glacial/core.dart';
 
 // The InkWell wrapper that is no any animation and color.
 class InkWellDone extends StatelessWidget {
@@ -232,6 +235,193 @@ class Indent extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// The hero media that show the media and show to full-screen when tap on it.
+class MediaHero extends StatelessWidget {
+  final Widget child;
+
+  const MediaHero({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWellDone(
+      onTap: () {
+        // Pop-up the media as full-screen and blur the background.
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: buildHero(context),
+            );
+          },
+        );
+      },
+      child: child,
+    );
+  }
+
+  // The hero-like media with full-screen and blur the background.
+  Widget buildHero(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Stack(
+        children: [
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: InkWellDone(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+          Center(
+            child: InteractiveViewer(
+              child: child,
+            ),
+          ),
+          Positioned(
+            top: 16,
+            right: 16,
+            child: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// The sensitive view widget that hide the content and only show the icon
+// when the content is not visible.
+class SensitiveView extends StatefulWidget {
+  final Widget child;
+  final String? spoiler;
+
+  const SensitiveView({
+    super.key,
+    required this.child,
+    this.spoiler,
+  });
+
+  @override
+  State<SensitiveView> createState() => _SensitiveViewState();
+}
+
+class _SensitiveViewState extends State<SensitiveView> {
+  bool isVisible = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.spoiler == null ? buildWithBlur() : buildWithSpoiler();
+  }
+
+  Widget buildWithSpoiler() {
+    return InkWellDone(
+      onTap: onTap,
+      child: Column(
+        children: [
+          const SizedBox(height: 8),
+    buildSpoiler(),
+          Visibility(
+            visible: isVisible,
+            child: widget.child,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildSpoiler() {
+    final List<Widget> texts = widget.spoiler?.isNotEmpty == true ? [
+      Text(widget.spoiler ?? ""),
+      const SizedBox(height: 8),
+    ] : [];
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        border: Border.all(
+          width: 2,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...texts,
+            buildHint(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildHint() {
+    return Text(
+      (isVisible ? AppLocalizations.of(context)?.txt_show_less : AppLocalizations.of(context)?.txt_show_more) ?? "...",
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.primary,
+      ),
+    );
+  }
+
+  Widget buildWithBlur() {
+    final double blur = isVisible ? 0 : 15;
+
+    return InkWellDone(
+      onTap: isVisible ? null : onTap,
+      child: ClipRect(
+        child: Stack(
+          children: [
+            ImageFiltered(
+              imageFilter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+              child: widget.child,
+            ),
+            buildCover(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildCover() {
+    if (isVisible) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.95),
+      width: double.infinity,
+      height: double.infinity,
+      child: Center(
+        child: Icon(
+          Icons.visibility_off,
+          color: Theme.of(context).colorScheme.onError,
+          size: 32,
+        ),
+      ),
+    );
+  }
+
+  void onTap() async {
+    setState(() {
+      isVisible = !isVisible;
+    });
   }
 }
 

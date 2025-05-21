@@ -53,6 +53,12 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get txt_show_less => '간단히 보기';
+
+  @override
+  String get txt_show_more => '자세히 보기';
+
+  @override
   String get btn_clean_all => '모두 지우기';
 
   @override
