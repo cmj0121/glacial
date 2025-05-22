@@ -119,7 +119,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
         context.go(RoutePath.engineer.path);
         return;
       }
-      context.go(schema == null ? RoutePath.explorer.path : RoutePath.homeTimeline.path);
+      context.go(schema == null ? RoutePath.serverExplorer.path : RoutePath.timeline.path);
     }
   }
 }

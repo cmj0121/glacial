@@ -1,18 +1,20 @@
 // The routes.dart file defines the routes for the app.
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 enum RoutePath {
   landing,           // The landing page of the app when user opens it.
   engineer,          // The engineer page of the app.
-  explorer,          // The server explorer page of the app.
+  serverExplorer,    // The server explorer page of the app.
   webview,           // The in-app webview page of the app.
   userProfile,       // The user profile page of the app.
   statusContext,     // The status context page of the app.
   hashtagTimeline,   // The timeline with the specified hashtag.
-  homeTimeline,      // The timeline page of the app.
-  homeTrends,        // The trends page of the app.
-  homeExplore,       // The explore page of the app.
-  homeNotifications, // The notifications page of the app.
-  homeSettings,      // The settings page of the app.
+  timeline,          // The timeline page of the app.
+  trends,            // The trends page of the app.
+  explorer,          // The explorer page of the app for the current server.
+  notifications,     // The notifications page of the app.
+  settings,          // The settings page of the app.
   wip;               // The work-in-progress page of the app.
 
   // Get the string path for the route.
@@ -22,7 +24,7 @@ enum RoutePath {
         return '/';
       case RoutePath.engineer:
         return '/engineer';
-      case RoutePath.explorer:
+      case RoutePath.serverExplorer:
         return '/explorer';
       case RoutePath.webview:
         return '/webview';
@@ -32,19 +34,31 @@ enum RoutePath {
         return '/hashtag';
       case RoutePath.statusContext:
         return '/home/status/context';
-      case RoutePath.homeTimeline:
-        return '/home/timeline';
-      case RoutePath.homeTrends:
-        return '/home/trends';
-      case RoutePath.homeExplore:
-        return '/home/explore';
-      case RoutePath.homeNotifications:
-        return '/home/notifications';
-      case RoutePath.homeSettings:
-        return '/home/settings';
+      case RoutePath.timeline:
+        return '/glacial/timeline';
+      case RoutePath.trends:
+        return '/glacial/trends';
+      case RoutePath.explorer:
+        return '/glacial/explorer';
+      case RoutePath.notifications:
+        return '/glacial/notifications';
+      case RoutePath.settings:
+        return '/glacial/settings';
       case RoutePath.wip:
         return '/wip';
     }
+  }
+}
+
+// The extension and convert from the GoRouter to the RoutePath.
+extension RoutePathExtension on GoRouter {
+  RoutePath? routePath(BuildContext context) {
+    final String path = ModalRoute.of(context)?.settings.name ?? '';
+
+    return RoutePath.values.cast<RoutePath?>().firstWhere(
+      (RoutePath? route) => route?.path == path,
+      orElse: () => null,
+    );
   }
 }
 

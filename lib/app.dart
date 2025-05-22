@@ -85,12 +85,73 @@ class GlacialApp extends StatelessWidget {
             );
           }
         ),
+        // The server explorer page to search and show the available servers
+        // @animation: FadeTransition
+        GoRoute(
+          path: RoutePath.serverExplorer.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const ServerExplorer(),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+            );
+          }
+        ),
+
+        // The core glacial page and show the possible operations
+        glacialRoutes(),
       ],
       // The fallback page, show the WIP screen if the route is not found
       errorBuilder: (BuildContext context, GoRouterState state) {
         logger.w("the route ${state.uri} does not implement yet ...");
         return const WIP();
       }
+    );
+  }
+
+  // Build the glacial home page with the sidebar and the main content
+  RouteBase glacialRoutes() {
+    return ShellRoute(
+      builder: (BuildContext context, GoRouterState state, Widget child) {
+        return GlacialHome(child: child);
+      },
+      routes: [
+        // The glacial timeline page to show the server timeline in the selected
+        // Mastodon server
+        GoRoute(
+          path: RoutePath.timeline.path,
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
+        ),
+        // The glacial trends page to show the server trends in the selected
+        // Mastodon server
+        GoRoute(
+          path: RoutePath.trends.path,
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
+        ),
+        // The glacial search page to show the server search in the selected
+        // Mastodon server
+        GoRoute(
+          path: RoutePath.explorer.path,
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
+        ),
+        // The glacial notifications page to show the server notifications in the
+        // selected Mastodon server
+        GoRoute(
+          path: RoutePath.notifications.path,
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
+        ),
+        // The glacial settings page to show the server settings in the selected
+        // Mastodon server
+        GoRoute(
+          path: RoutePath.settings.path,
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
+        ),
+      ],
     );
   }
 }

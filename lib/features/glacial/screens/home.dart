@@ -56,18 +56,31 @@ enum SidebarButtonType {
         return Icons.settings;
     }
   }
+
+  RoutePath get route {
+    switch (this) {
+      case timeline:
+        return RoutePath.timeline;
+      case trending:
+        return RoutePath.trends;
+      case explore:
+        return RoutePath.explorer;
+      case notifications:
+        return RoutePath.notifications;
+      case settings:
+        return RoutePath.settings;
+    }
+  }
 }
 
 // The main home page of the app, interacts with the current server and show the
 // server timeline and other features.
 class GlacialHome extends ConsumerStatefulWidget {
   final Widget child;
-  final SidebarButtonType? active;
 
   const GlacialHome({
     super.key,
     required this.child,
-    this.active,
   });
 
   @override
@@ -80,7 +93,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   final List<SidebarButtonType> actions = SidebarButtonType.values;
 
   late final ServerSchema schema;
-  late final int selectedIndex;
 
   @override
   void initState() {
@@ -90,9 +102,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     if (schema == null) {
       throw Exception("No server schema found, please select a server.");
     }
-
     this.schema = schema;
-    selectedIndex = widget.active == null ? -1 : actions.indexOf(widget.active!);
   }
 
   @override
@@ -197,10 +207,12 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
   List<Widget> buildActions() {
     final String? accessToken = ref.watch(currentAccessTokenProvider);
+    final String path = GoRouter.of(context).state.uri.toString();
+    final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
 
     return actions.map((action) {
         final int index = actions.indexOf(action);
-        final bool isSelected = selectedIndex == index;
+        final bool isSelected = action.route == route;
         final bool isEnabled = accessToken != null || action.supportAnonymous;
 
         return IconButton(
@@ -235,31 +247,28 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   void onBack() {
     ref.read(currentServerProvider.notifier).state = null;
     ref.read(currentAccessTokenProvider.notifier).state = null;
-    context.go(RoutePath.explorer.path);
+    context.go(RoutePath.serverExplorer.path);
   }
 
   // Select the action in the sidebar and show the corresponding content.
   void onSelect(int index) {
     final SidebarButtonType action = actions[index];
-    if (action == widget.active) {
-      return;
-    }
 
     switch (action) {
       case SidebarButtonType.timeline:
-        context.go(RoutePath.homeTimeline.path, extra: action);
+        context.go(RoutePath.timeline.path, extra: action);
         break;
       case SidebarButtonType.trending:
-        context.go(RoutePath.homeTrends.path, extra: action);
+        context.go(RoutePath.trends.path, extra: action);
         break;
       case SidebarButtonType.explore:
-        context.go(RoutePath.homeExplore.path, extra: action);
+        context.go(RoutePath.explorer.path, extra: action);
         break;
       case SidebarButtonType.notifications:
-        context.go(RoutePath.homeNotifications.path, extra: action);
+        context.go(RoutePath.notifications.path, extra: action);
         break;
       case SidebarButtonType.settings:
-        context.go(RoutePath.homeSettings.path, extra: action);
+        context.go(RoutePath.settings.path, extra: action);
         break;
     }
   }
