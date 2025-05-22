@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/routes.dart';
-import 'package:glacial/features/glacial/screens/core.dart';
+import 'package:glacial/features/core.dart';
 
 // The placeholder for the app's Work-In-Progress screen
 class WIP extends StatelessWidget {
@@ -69,15 +68,29 @@ class GlacialApp extends StatelessWidget {
           path: RoutePath.landing.path,
           builder: (_, _) => const LandingPage(),
         ),
-
-        // The final and working-in-progress page
+        // The engineering mode to show the app's internal information and settings
+        // @animation: FadeTransition
         GoRoute(
-          path: RoutePath.wip.path,
-          builder: (_, _) => const WIP(),
+          path: RoutePath.engineer.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const EnginnerMode(),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+            );
+          }
         ),
       ],
       // The fallback page, show the WIP screen if the route is not found
-      errorBuilder: (_, _) => const WIP(),
+      errorBuilder: (BuildContext context, GoRouterState state) {
+        logger.w("the route ${state.uri} does not implement yet ...");
+        return const WIP();
+      }
     );
   }
 }

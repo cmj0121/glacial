@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/routes.dart';
 import 'package:glacial/features/glacial/models/server.dart';
 import 'package:glacial/features/auth/screens/core.dart';
 import 'package:glacial/features/timeline/screens/core.dart';

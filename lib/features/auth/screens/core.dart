@@ -11,7 +11,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/routes.dart';
 import 'package:glacial/features/auth/models/oauth.dart';
 import 'package:glacial/features/glacial/models/server.dart';
 import 'package:glacial/features/timeline/models/core.dart';

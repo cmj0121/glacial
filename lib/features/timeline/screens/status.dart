@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
-import 'package:glacial/routes.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 import 'package:glacial/features/timeline/screens/core.dart';
 import 'package:glacial/features/glacial/models/server.dart';
