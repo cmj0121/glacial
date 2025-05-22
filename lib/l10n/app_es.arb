@@ -16,6 +16,7 @@
   "txt_trends_uses": "{uses} veces en los últimos días",
   "txt_show_less": "Mostrar menos",
   "txt_show_more": "Mostrar más",
+  "txt_user_profile": "Perfil del usuario {text}",
   "btn_clean_all": "Borrar todo",
   "btn_back_to_explorer": "Volver al explorador",
   "btn_sign_in": "Iniciar sesión",

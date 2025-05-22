@@ -231,7 +231,7 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
       ref.read(currentServerProvider.notifier).state = schema;
       ref.read(currentAccessTokenProvider.notifier).state = accessToken;
       logger.i("save current server: ${schema.domain}");
-      GoRouter.of(context).push(RoutePath.home.path);
+      GoRouter.of(context).push(RoutePath.homeTimeline.path);
     }
   }
 

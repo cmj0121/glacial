@@ -1,8 +1,11 @@
 // The miscellaneous widget library of the app.
 import 'dart:ui';
 
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
+
 import 'package:glacial/core.dart';
+import 'package:glacial/features/timeline/models/core.dart';
 
 // The InkWell wrapper that is no any animation and color.
 class InkWellDone extends StatelessWidget {
@@ -422,6 +425,36 @@ class _SensitiveViewState extends State<SensitiveView> {
     setState(() {
       isVisible = !isVisible;
     });
+  }
+}
+
+// The customize HTML render
+class HtmlDone extends StatelessWidget {
+  final String html;
+  final List<EmojiSchema> emojis;
+  final OnTap? onLinkTap;
+
+  const HtmlDone({
+    super.key,
+    required this.html,
+    this.emojis = const [],
+    this.onLinkTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Storage storage = Storage();
+
+    return Html(
+      data: storage.replaceEmojiToHTML(html, emojis: emojis),
+      style: {
+        'a': Style(
+          color: Theme.of(context).colorScheme.secondary,
+          textDecoration: TextDecoration.underline,
+        ),
+      },
+      onLinkTap: onLinkTap,
+    );
   }
 }
 

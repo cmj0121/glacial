@@ -35,12 +35,15 @@ class WIP extends StatelessWidget {
 
 class RouteBackWrapper extends StatelessWidget {
   final Widget child;
-  final String title;
+  final String? label;
+  final Widget? title;
+
 
   const RouteBackWrapper({
     super.key,
     required this.child,
-    required this.title,
+    this.title,
+    this.label,
   });
 
   @override
@@ -56,6 +59,11 @@ class RouteBackWrapper extends StatelessWidget {
   }
 
   Widget buildBackButton(BuildContext context) {
+    final Widget text = (
+      title ??
+      (label == null ? const SizedBox.shrink() : Text(label!, style: Theme.of(context).textTheme.titleMedium))
+    );
+
     return Row(
       children: [
         IconButton(
@@ -63,12 +71,7 @@ class RouteBackWrapper extends StatelessWidget {
           onPressed: () => context.pop(),
         ),
         Expanded(
-          child: Center(
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
+          child: Center(child: text),
         ),
       ],
     );
@@ -76,10 +79,10 @@ class RouteBackWrapper extends StatelessWidget {
 }
 
 enum RoutePath {
-  landing,           // The landing page of the app when user opens it.
   engineer,          // The engineer page of the app.
   explorer,          // The server explorer page of the app.
   webview,           // The in-app webview page of the app.
+  userProfile,       // The user profile page of the app.
   statusContext,     // The status context page of the app.
   hashtagTimeline,   // The timeline with the specified hashtag.
   homeTimeline,      // The timeline page of the app.
@@ -87,7 +90,7 @@ enum RoutePath {
   homeExplore,       // The explore page of the app.
   homeNotifications, // The notifications page of the app.
   homeSettings,      // The settings page of the app.
-  home;              // The home page of the app to show the server explorer.
+  landing;           // The landing page of the app when user opens it.
 
   // Get the string path for the route.
   String get path {
@@ -100,6 +103,8 @@ enum RoutePath {
         return '/explorer';
       case RoutePath.webview:
         return '/webview';
+      case RoutePath.userProfile:
+        return '/user';
       case RoutePath.hashtagTimeline:
         return '/hashtag';
       case RoutePath.statusContext:
@@ -114,8 +119,6 @@ enum RoutePath {
         return '/home/notifications';
       case RoutePath.homeSettings:
         return '/home/settings';
-      case RoutePath.home:
-        return '/home';
     }
   }
 }
@@ -142,24 +145,6 @@ final GoRouter router = GoRouter(
         return GlacialHome(active: active, child: child);
       },
       routes: [
-        GoRoute(
-          path: RoutePath.home.path,
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const TimelineTab(),
-              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-                return ScaleTransition(
-                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeInOut,
-                  )),
-                  child: child,
-                );
-              },
-            );
-          },
-        ),
         GoRoute(
           path: RoutePath.homeTimeline.path,
           pageBuilder: (BuildContext context, GoRouterState state) {
@@ -258,7 +243,7 @@ final GoRouter router = GoRouter(
             return NoTransitionPage(
               key: state.pageKey,
               child: RouteBackWrapper(
-                title: AppLocalizations.of(context)?.btn_post ?? "Post",
+                label: AppLocalizations.of(context)?.btn_post ?? "Post",
                 child: StatusContext(schema: status),
               ),
             );
@@ -273,11 +258,26 @@ final GoRouter router = GoRouter(
             return NoTransitionPage(
               key: state.pageKey,
               child: RouteBackWrapper(
-                title: '$text: $tag',
+                label: '$text: $tag',
                 child: TimelineBuilder(
                   type: TimelineType.hashtag,
                   keyword: tag,
                 ),
+              ),
+            );
+          },
+        ),
+        GoRoute(
+          path: RoutePath.userProfile.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final AccountSchema schema = state.extra as AccountSchema;
+            final Storage storage = Storage();
+
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: RouteBackWrapper(
+                title: storage.replaceEmojiToWidget(schema.displayName, emojis: schema.emojis),
+                child: AccountProfile(schema: schema),
               ),
             );
           },

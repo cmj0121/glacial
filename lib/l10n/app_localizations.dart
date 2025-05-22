@@ -203,6 +203,12 @@ abstract class AppLocalizations {
   /// **'Show more'**
   String get txt_show_more;
 
+  /// No description provided for @txt_user_profile.
+  ///
+  /// In en, this message translates to:
+  /// **'User {text} Profile'**
+  String txt_user_profile(Object text);
+
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:

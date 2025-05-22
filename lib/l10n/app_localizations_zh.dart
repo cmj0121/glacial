@@ -59,6 +59,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_show_more => '顯示更多';
 
   @override
+  String txt_user_profile(Object text) {
+    return '使用者 $text 資料';
+  }
+
+  @override
   String get btn_clean_all => '清除全部';
 
   @override

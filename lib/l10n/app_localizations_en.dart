@@ -59,6 +59,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_show_more => 'Show more';
 
   @override
+  String txt_user_profile(Object text) {
+    return 'User $text Profile';
+  }
+
+  @override
   String get btn_clean_all => 'Clean All';
 
   @override
