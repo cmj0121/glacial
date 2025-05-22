@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/core.dart';
 import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/auth/screens/core.dart';
-import 'package:glacial/features/timeline/screens/core.dart';
 
 // The possible actions in sidebar and used to interact with the current server.
 enum SidebarButtonType {
@@ -115,7 +114,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(appBarHeight),
             child: AppBar(
-              leading: const SizedBox.shrink(),
+              leading: UserAvatar(schema: schema),
               title: Align(
                 alignment: Alignment.center,
                 child: Tooltip(
@@ -129,15 +128,11 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
                   ),
                 ),
               ),
-              actions: [
-                UserAvatar(schema: schema),
-                const SizedBox(width: 8),
-              ],
             ),
           ),
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: buildContent(isMobile: isMobile),
             ),
           ),
@@ -252,24 +247,13 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
   // Select the action in the sidebar and show the corresponding content.
   void onSelect(int index) {
+    final String path = GoRouter.of(context).state.uri.toString();
+    final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
     final SidebarButtonType action = actions[index];
 
-    switch (action) {
-      case SidebarButtonType.timeline:
-        context.go(RoutePath.timeline.path, extra: action);
-        break;
-      case SidebarButtonType.trending:
-        context.go(RoutePath.trends.path, extra: action);
-        break;
-      case SidebarButtonType.explore:
-        context.go(RoutePath.explorer.path, extra: action);
-        break;
-      case SidebarButtonType.notifications:
-        context.go(RoutePath.notifications.path, extra: action);
-        break;
-      case SidebarButtonType.settings:
-        context.go(RoutePath.settings.path, extra: action);
-        break;
+    if (action.route != route) {
+      logger.i("selected action: ${action.name} -> ${action.route.path}");
+      context.go(action.route.path, extra: action);
     }
   }
 }

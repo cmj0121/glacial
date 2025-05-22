@@ -26,6 +26,39 @@ class WIP extends StatelessWidget {
   }
 }
 
+// The global animation for child that fade-out the current page and fade-in
+// the new page
+CustomTransitionPage fadeTransitionPage({required Widget child, required GoRouterState state}) {
+  return CustomTransitionPage(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    },
+  );
+}
+
+// The global animation for child that scale the current page and fade-in
+// the new page
+CustomTransitionPage scaleTransitionPage({required Widget child, required GoRouterState state}) {
+  return CustomTransitionPage(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return ScaleTransition(
+        scale: Tween<double>(begin: 0.8, end: 1.0).animate(animation),
+        child: FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
 class GlacialApp extends StatelessWidget {
   const GlacialApp({super.key});
 
@@ -72,35 +105,19 @@ class GlacialApp extends StatelessWidget {
         // @animation: FadeTransition
         GoRoute(
           path: RoutePath.engineer.path,
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const EnginnerMode(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-            );
-          }
+          pageBuilder: (BuildContext context, GoRouterState state) => fadeTransitionPage(
+            state: state,
+            child: const EngineeringMode(),
+          ),
         ),
         // The server explorer page to search and show the available servers
         // @animation: FadeTransition
         GoRoute(
           path: RoutePath.serverExplorer.path,
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const ServerExplorer(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-            );
-          }
+          pageBuilder: (BuildContext context, GoRouterState state) => fadeTransitionPage(
+            state: state,
+            child: const ServerExplorer(),
+          ),
         ),
 
         // The core glacial page and show the possible operations
@@ -125,31 +142,46 @@ class GlacialApp extends StatelessWidget {
         // Mastodon server
         GoRoute(
           path: RoutePath.timeline.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
+          pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
+            state: state,
+            child: const WIP(),
+          ),
         ),
         // The glacial trends page to show the server trends in the selected
         // Mastodon server
         GoRoute(
           path: RoutePath.trends.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
+          pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
+            state: state,
+            child: const WIP(),
+          ),
         ),
         // The glacial search page to show the server search in the selected
         // Mastodon server
         GoRoute(
           path: RoutePath.explorer.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
+          pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
+            state: state,
+            child: const WIP(),
+          ),
         ),
         // The glacial notifications page to show the server notifications in the
         // selected Mastodon server
         GoRoute(
           path: RoutePath.notifications.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
+          pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
+            state: state,
+            child: const WIP(),
+          ),
         ),
         // The glacial settings page to show the server settings in the selected
         // Mastodon server
         GoRoute(
           path: RoutePath.settings.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
+          pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
+            state: state,
+            child: const WIP(),
+          ),
         ),
       ],
     );

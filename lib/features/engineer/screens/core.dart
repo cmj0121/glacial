@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
 
-class EnginnerMode extends StatelessWidget {
-  const EnginnerMode({super.key});
+class EngineeringMode extends StatelessWidget {
+  const EngineeringMode({super.key});
 
   @override
   Widget build(BuildContext context) {
