@@ -150,7 +150,6 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
 
   Widget buildContent(SearchResultSchema schema) {
     return SlideTabView(
-      controller: controller,
       tabs: types,
       itemBuilder: (context, index) {
         return Dismissible(

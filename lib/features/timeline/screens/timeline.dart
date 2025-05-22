@@ -68,7 +68,6 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
     controller.index = accessToken == null ? TimelineType.local.index : TimelineType.home.index;
 
     return SlideTabView(
-      controller: controller,
       tabs: types,
       tabBuilder: (index) => (accessToken != null || types[index].supportAnonymous),
       itemBuilder: (context, index) {
