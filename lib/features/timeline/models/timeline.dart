@@ -7,6 +7,7 @@ import 'package:glacial/core.dart';
 enum TimelineType implements SlideTab {
   home,          // The home timeline for the logged in user.
   hashtag,       // The hashtag timeline for the current server.
+  user,          // The statuses posted from the given user.
   local,         // The local timeline for the current server.
   federal,       // The federated timeline for the current server.
   public,        // The public timeline for the connected server.
@@ -18,6 +19,8 @@ enum TimelineType implements SlideTab {
     switch (this) {
       case TimelineType.home:
         return AppLocalizations.of(context)?.btn_home_timeline ?? 'Home';
+      case TimelineType.user:
+        return 'User';
       case TimelineType.hashtag:
         return AppLocalizations.of(context)?.btn_hashtag_timeline ?? 'Hashtag';
       case TimelineType.local:
@@ -38,6 +41,8 @@ enum TimelineType implements SlideTab {
     switch (this) {
       case home:
         return Icons.home_outlined;
+      case user:
+        return Icons.person_outline;
       case hashtag:
         return Icons.tag_outlined;
       case local:
@@ -58,6 +63,8 @@ enum TimelineType implements SlideTab {
     switch (this) {
       case home:
         return Icons.home;
+      case user:
+        return Icons.person;
       case hashtag:
         return Icons.tag;
       case local:
@@ -81,6 +88,16 @@ enum TimelineType implements SlideTab {
         return true;
       default:
         return false;
+    }
+  }
+
+  bool get isPublicView {
+    switch (this) {
+      case hashtag:
+      case user:
+        return false;
+      default:
+        return true;
     }
   }
 }

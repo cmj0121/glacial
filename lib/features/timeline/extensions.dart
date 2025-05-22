@@ -15,6 +15,7 @@ extension StatusLoaderExtensions on ServerSchema {
   // Fetch the timeline statuss from the server.
   Future<List<StatusSchema>> fetchTimeline({
     required TimelineType type,
+    AccountSchema? account,
     String? accessToken,
     String? maxId,
     String? keyword,
@@ -27,6 +28,12 @@ extension StatusLoaderExtensions on ServerSchema {
         query["max_id"] = maxId ?? "";
 
         uri = Uri.https(domain, "/api/v1/timelines/home").replace(queryParameters: query);
+        break;
+      case TimelineType.user:
+        final Map<String, String> query = {};
+        query["max_id"] = maxId ?? "";
+
+        uri = Uri.https(domain, "/api/v1/accounts/${account?.id ?? '-'}/statuses").replace(queryParameters: query);
         break;
       case TimelineType.hashtag:
         final Map<String, String> query = {};
@@ -79,6 +86,7 @@ extension StatusLoaderExtensions on ServerSchema {
       throw MissingAuth("access token is required for $this");
     }
 
+    logger.i("try to fetch the timeline from $uri");
     final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
     final response = await get(uri, headers: type.supportAnonymous ? {} : headers);
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;

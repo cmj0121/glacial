@@ -23,31 +23,12 @@ class TimelineTypeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(icon,size: size),
+      icon: Icon(type.icon, size: size),
       tooltip: type.name,
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
       onPressed: onPressed,
     );
-  }
-
-  IconData get icon {
-    switch (type) {
-      case TimelineType.home:
-        return Icons.home_outlined;
-      case TimelineType.hashtag:
-        return Icons.tag_outlined;
-      case TimelineType.local:
-        return Icons.groups_outlined;
-      case TimelineType.federal:
-        return Icons.account_tree_outlined;
-      case TimelineType.public:
-        return Icons.public_outlined;
-      case TimelineType.bookmarks:
-        return Icons.bookmarks_outlined;
-      case TimelineType.favourites:
-        return Icons.star_outline_outlined;
-    }
   }
 }
 
@@ -63,7 +44,7 @@ class TimelineTab extends ConsumerStatefulWidget {
 class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProviderStateMixin {
   // Exclude TimelineType.hashtag from the timeline tab as hashtag timelines are handled differently
   // or are not supported in the current implementation.
-  final List<TimelineType> types = TimelineType.values.where((type) => type != TimelineType.hashtag).toList();
+  final List<TimelineType> types = TimelineType.values.where((type) => type.isPublicView).toList();
   late final TabController controller;
   late final ServerSchema? schema;
 
@@ -101,11 +82,13 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
 class TimelineBuilder extends ConsumerWidget {
   final TimelineType type;
   final String? keyword;
+  final AccountSchema? account;
 
   const TimelineBuilder({
     super.key,
     required this.type,
     this.keyword,
+    this.account,
   });
 
   @override
@@ -119,7 +102,7 @@ class TimelineBuilder extends ConsumerWidget {
     }
 
     return FutureBuilder(
-      future: schema.fetchTimeline(type: type, accessToken: accessToken, keyword: keyword),
+      future: schema.fetchTimeline(type: type, accessToken: accessToken, keyword: keyword, account: account),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LinearProgressIndicator();
@@ -134,6 +117,7 @@ class TimelineBuilder extends ConsumerWidget {
           accessToken: accessToken,
           type: type,
           statuses: statuses,
+          account: account,
         );
       },
     );
@@ -147,6 +131,7 @@ class Timeline extends StatefulWidget {
   final TimelineType type;
   final String? accessToken;
   final String? keyword;
+  final AccountSchema? account;
   final List<StatusSchema> statuses;
 
   const Timeline({
@@ -155,6 +140,7 @@ class Timeline extends StatefulWidget {
     required this.type,
     this.accessToken,
     this.keyword,
+    this.account,
     this.statuses = const [],
   });
 
@@ -237,6 +223,7 @@ class _TimelineState extends State<Timeline> {
       type: widget.type,
       accessToken: widget.accessToken,
       maxId: maxId,
+      account: widget.account,
     );
 
     setState(() {

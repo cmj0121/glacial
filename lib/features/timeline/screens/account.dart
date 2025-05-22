@@ -5,7 +5,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/routes.dart';
+import 'package:glacial/features/glacial/models/server.dart';
 import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/timeline/screens/core.dart';
 
 // The account widget to show the account information.
 class Account extends StatelessWidget {
@@ -110,31 +112,58 @@ class AccountProfile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        buildBanner(context),
-        Expanded(child: buildContent(context)),
-      ],
-    );
-  }
-
-  Widget buildContent(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          HtmlDone(
-            html: schema.note,
-            emojis: schema.emojis,
-          ),
+          buildBanner(context),
+          const SizedBox(height: 16),
+          buildContent(context, ref),
         ],
       ),
     );
   }
 
+  Widget buildContent(BuildContext context, WidgetRef ref) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        buildName(context, ref),
+        HtmlDone(
+          html: schema.note,
+          emojis: schema.emojis,
+        ),
+        const Divider(),
+        TimelineBuilder(type: TimelineType.user, account: schema),
+      ],
+    );
+  }
+
+  // Show the user name and the account name.
+  Widget buildName(BuildContext context, WidgetRef ref) {
+    final ServerSchema? server = ref.watch(currentServerProvider);
+
+    final String acct = schema.acct.contains('@') ? schema.acct : '${schema.username}@${server?.domain ?? '-'}';
+
+    return Row(
+      children: [
+        // The location of the user and show as the badge.
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(acct),
+        ),
+      ],
+    );
+  }
+
+  // Build the fixed banner of the account profile and the avatar.
+  // It will be fixed in the top of the screen.
   Widget buildBanner(BuildContext context) {
     return SizedBox(
       height: bannerHeight,
@@ -162,10 +191,6 @@ class AccountProfile extends ConsumerWidget {
 
   // Build the header of the account profile, as the part of the banner.
   Widget buildHeader(BuildContext context) {
-    if (schema.header.isEmpty) {
-      const SizedBox.shrink();
-    }
-
     final Widget banner = CachedNetworkImage(
       imageUrl: schema.header,
       placeholder: (context, url) => const CircularProgressIndicator(),
