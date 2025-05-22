@@ -59,6 +59,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_show_more => 'もっと表示';
 
   @override
+  String txt_user_profile(Object text) {
+    return 'ユーザー $text のプロフィール';
+  }
+
+  @override
   String get btn_clean_all => 'すべて削除';
 
   @override

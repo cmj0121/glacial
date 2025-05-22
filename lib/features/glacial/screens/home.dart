@@ -121,7 +121,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
                 ),
               ),
               actions: [
-                UserProfile(schema: schema),
+                UserAvatar(schema: schema),
                 const SizedBox(width: 8),
               ],
             ),

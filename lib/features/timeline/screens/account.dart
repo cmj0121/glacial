@@ -1,8 +1,10 @@
 // The Status widget to show the toots from user.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/routes.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 
 // The account widget to show the account information.
@@ -24,17 +26,24 @@ class Account extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
+          late Widget content;
+
           if (constraints.maxHeight < 24) {
-            return Row(
+            content = Row(
               children: [
                 buildAvatar(),
                 const SizedBox(width: 6),
                 buildDisplayName(),
               ]
             );
+          } else {
+            content = buildContent();
           }
 
-          return buildContent();
+          return InkWellDone(
+            onTap: () => context.push(RoutePath.userProfile.path, extra: schema),
+            child: content,
+          );
         },
       ),
     );
@@ -85,4 +94,117 @@ class Account extends StatelessWidget {
     return storage.replaceEmojiToWidget(text, emojis: schema.emojis);
   }
 }
+
+// The account profile to show the details of the user.
+class AccountProfile extends ConsumerWidget {
+  final AccountSchema schema;
+  final double bannerHeight;
+  final double avatarSize;
+
+  const AccountProfile({
+    super.key,
+    required this.schema,
+    this.bannerHeight = 200,
+    this.avatarSize = 80,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        buildBanner(context),
+        Expanded(child: buildContent(context)),
+      ],
+    );
+  }
+
+  Widget buildContent(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          HtmlDone(
+            html: schema.note,
+            emojis: schema.emojis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildBanner(BuildContext context) {
+    return SizedBox(
+      height: bannerHeight,
+      child: buildBannerContent(context),
+    );
+  }
+
+  // Build the banner of the account profile, including the header, the
+  // avatar and the metadata.
+  Widget buildBannerContent(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        buildHeader(context),
+        Positioned(
+          left: 0,
+          bottom: 0,
+          width: avatarSize,
+          height: avatarSize,
+          child: buildAvatar(context),
+        ),
+      ],
+    );
+  }
+
+  // Build the header of the account profile, as the part of the banner.
+  Widget buildHeader(BuildContext context) {
+    if (schema.header.isEmpty) {
+      const SizedBox.shrink();
+    }
+
+    final Widget banner = CachedNetworkImage(
+      imageUrl: schema.header,
+      placeholder: (context, url) => const CircularProgressIndicator(),
+      errorWidget: (context, url, error) => const Icon(Icons.error),
+    );
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: OverflowBox(
+        alignment: Alignment.center,
+        maxWidth: double.infinity,
+        maxHeight: double.infinity,
+        child: MediaHero(child: banner),
+      ),
+    );
+  }
+
+  // Build the Avatar of the user.
+  Widget buildAvatar(BuildContext context) {
+    final Widget avatar = CachedNetworkImage(
+      imageUrl: schema.avatar,
+      placeholder: (context, url) => const CircularProgressIndicator(),
+      errorWidget: (context, url, error) => const Icon(Icons.error),
+      fit: BoxFit.cover,
+    );
+
+    return Container(
+      width: avatarSize,
+      height: avatarSize,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        shape: BoxShape.circle,
+      ),
+      child: ClipOval(
+        child: MediaHero(child: avatar),
+      ),
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

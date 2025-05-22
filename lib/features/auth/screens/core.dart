@@ -17,21 +17,21 @@ import 'package:glacial/features/glacial/models/server.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 
 // The Sign In widget is used to sign in to the Mastodon server.
-class UserProfile extends ConsumerStatefulWidget {
+class UserAvatar extends ConsumerStatefulWidget {
   final ServerSchema schema;
   final double size;
 
-  const UserProfile({
+  const UserAvatar({
     super.key,
     required this.schema,
     this.size = 28,
   });
 
   @override
-  ConsumerState<UserProfile> createState() => _UserProfileState();
+  ConsumerState<UserAvatar> createState() => _UserAvatarState();
 }
 
-class _UserProfileState extends ConsumerState<UserProfile> {
+class _UserAvatarState extends ConsumerState<UserAvatar> {
   final Storage storage = Storage();
   final Debouncer debouncer = Debouncer();
 
@@ -76,6 +76,7 @@ class _UserProfileState extends ConsumerState<UserProfile> {
   // Build the user avartar with the size of the widget.
   Widget buildUserAvatar(AccountSchema account) {
     return InkWellDone(
+      onTap: () => context.push(RoutePath.userProfile.path, extra: account),
       onDoubleTap: onSignOut,
       child: ClipOval(
         child: CachedNetworkImage(

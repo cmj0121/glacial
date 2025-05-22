@@ -1,7 +1,6 @@
 // The Status widget to show the toots from user.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
@@ -146,14 +145,9 @@ class _StatusState extends ConsumerState<Status> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Html(
-          data: storage.replaceEmojiToHTML(schema.content, emojis: schema.emojis),
-          style: {
-            'a': Style(
-              color: Theme.of(context).colorScheme.secondary,
-              textDecoration: TextDecoration.underline,
-            ),
-          },
+        HtmlDone(
+          html: schema.content,
+          emojis: schema.emojis,
           onLinkTap: onLinkTap,
         ),
         Attachments(schemas: schema.attachments),

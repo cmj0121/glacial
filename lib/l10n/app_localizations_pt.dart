@@ -59,6 +59,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_show_more => 'Mostrar mais';
 
   @override
+  String txt_user_profile(Object text) {
+    return 'Perfil do usuário $text';
+  }
+
+  @override
   String get btn_clean_all => 'Limpar tudo';
 
   @override

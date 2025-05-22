@@ -59,6 +59,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_show_more => '자세히 보기';
 
   @override
+  String txt_user_profile(Object text) {
+    return '사용자 $text 프로필';
+  }
+
+  @override
   String get btn_clean_all => '모두 지우기';
 
   @override
