@@ -125,7 +125,7 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
     ref.read(currentAccessTokenProvider.notifier).state = null;
     ref.read(currentUserProvider.notifier).state = null;
     if (mounted) {
-      context.go(RoutePath.home.path, extra: now);
+      context.go(RoutePath.homeTimeline.path, extra: now);
     }
   }
 
@@ -161,7 +161,7 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
           logger.w("Failed to launch URL: $uri");
         }
       } else {
-        context.go(RoutePath.home.path, extra: now);
+        context.go(RoutePath.homeTimeline.path, extra: now);
       }
     }
   }

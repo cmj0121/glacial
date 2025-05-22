@@ -79,7 +79,6 @@ class RouteBackWrapper extends StatelessWidget {
 }
 
 enum RoutePath {
-  landing,           // The landing page of the app when user opens it.
   engineer,          // The engineer page of the app.
   explorer,          // The server explorer page of the app.
   webview,           // The in-app webview page of the app.
@@ -91,7 +90,7 @@ enum RoutePath {
   homeExplore,       // The explore page of the app.
   homeNotifications, // The notifications page of the app.
   homeSettings,      // The settings page of the app.
-  home;              // The home page of the app to show the server explorer.
+  landing;           // The landing page of the app when user opens it.
 
   // Get the string path for the route.
   String get path {
@@ -120,8 +119,6 @@ enum RoutePath {
         return '/home/notifications';
       case RoutePath.homeSettings:
         return '/home/settings';
-      case RoutePath.home:
-        return '/home';
     }
   }
 }
@@ -148,24 +145,6 @@ final GoRouter router = GoRouter(
         return GlacialHome(active: active, child: child);
       },
       routes: [
-        GoRoute(
-          path: RoutePath.home.path,
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const TimelineTab(),
-              transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-                return ScaleTransition(
-                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeInOut,
-                  )),
-                  child: child,
-                );
-              },
-            );
-          },
-        ),
         GoRoute(
           path: RoutePath.homeTimeline.path,
           pageBuilder: (BuildContext context, GoRouterState state) {
