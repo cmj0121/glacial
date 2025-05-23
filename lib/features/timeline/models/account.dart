@@ -7,7 +7,7 @@ class AccountSchema {
   final String id;                  // The account id.
   final String username;            // The username of the account, not including domain.
   final String acct;                // Equal to username for local users, or username@domain for remote users.
-  final String uri;                 // The location of the user’s profile page.
+  final String? uri;                // The location of the user’s profile page.
   final String url;                 // The user’s ActivityPub actor identifier.
   final String displayName;         // The profile's display name.
   final String note;                // The profile’s bio or description (HTML).
@@ -29,7 +29,7 @@ class AccountSchema {
     required this.id,
     required this.username,
     required this.acct,
-    required this.uri,
+    this.uri,
     required this.url,
     required this.displayName,
     required this.note,
@@ -53,7 +53,7 @@ class AccountSchema {
       id: json['id'] as String,
       username: json['username'] as String,
       acct: json['acct'] as String,
-      uri: json['uri'] as String,
+      uri: json['uri'] as String?,
       url: json['url'] as String,
       displayName: json['display_name'] as String,
       note: json['note'] as String,
