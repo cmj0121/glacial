@@ -149,20 +149,21 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
   }
 
   Widget buildContent(SearchResultSchema schema) {
-    return SlideTabView(
-      tabs: types,
-      itemBuilder: (context, index) {
-        return Dismissible(
-          key: ValueKey('ExplorerTab-$index'),
-          direction: DismissDirection.horizontal,
-          onDismissed: (direction) {
-            final int offset = direction == DismissDirection.startToEnd ? -1 : 1;
-            controller.index = (controller.index + offset) % types.length;
-          },
-          child: buildTabContent(schema, index),
-        );
-      },
-    );
+    return const SizedBox.shrink();
+    // return SlideTabView(
+    //   tabs: types,
+    //   itemBuilder: (context, index) {
+    //     return Dismissible(
+    //       key: ValueKey('ExplorerTab-$index'),
+    //       direction: DismissDirection.horizontal,
+    //       onDismissed: (direction) {
+    //         final int offset = direction == DismissDirection.startToEnd ? -1 : 1;
+    //         controller.index = (controller.index + offset) % types.length;
+    //       },
+    //       child: buildTabContent(schema, index),
+    //     );
+    //   },
+    // );
   }
 
   Widget buildTabContent(SearchResultSchema schema, int index) {

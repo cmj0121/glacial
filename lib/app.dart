@@ -144,7 +144,7 @@ class GlacialApp extends StatelessWidget {
           path: RoutePath.timeline.path,
           pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
             state: state,
-            child: const WIP(),
+            child: const TimelineTab(),
           ),
         ),
         // The glacial trends page to show the server trends in the selected

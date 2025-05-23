@@ -7,30 +7,6 @@ import 'package:glacial/features/glacial/models/server.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 import 'status.dart';
 
-// The timeline type button to show the timeline type in the tab bar.
-class TimelineTypeButton extends StatelessWidget {
-  final TimelineType type;
-  final double size;
-  final VoidCallback? onPressed;
-
-  const TimelineTypeButton({
-    super.key,
-    required this.type,
-    this.size = 32,
-    this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(type.icon, size: size),
-      tooltip: type.name,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      onPressed: onPressed,
-    );
-  }
-}
 
 // The timeline tab that shows the all possible timelines in the current
 // selected Mastodon server.
@@ -41,10 +17,11 @@ class TimelineTab extends ConsumerStatefulWidget {
   ConsumerState<TimelineTab> createState() => _TimelineTabState();
 }
 
-class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProviderStateMixin {
+class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderStateMixin {
   // Exclude TimelineType.hashtag from the timeline tab as hashtag timelines are handled differently
   // or are not supported in the current implementation.
   final List<TimelineType> types = TimelineType.values.where((type) => type.isPublicView).toList();
+
   late final TabController controller;
   late final ServerSchema? schema;
 
@@ -52,28 +29,43 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with SingleTickerProv
   void initState() {
     super.initState();
     schema = ref.read(currentServerProvider);
-    controller = TabController(length: types.length, vsync: this);
+
+    final String? accessToken = ref.read(currentAccessTokenProvider);
+    final TimelineType initType = accessToken == null ? TimelineType.local : TimelineType.home;
+
+    controller = TabController(
+      length: types.length,
+      initialIndex: types.indexWhere((type) => type == initType),
+      vsync: this,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final String? accessToken = ref.watch(currentAccessTokenProvider);
-    final ServerSchema? schema = ref.read(currentServerProvider);
 
     if (schema == null) {
       logger.w("No server selected, but it's required to show the timeline.");
       return const SizedBox.shrink();
     }
 
-    controller.index = accessToken == null ? TimelineType.local.index : TimelineType.home.index;
-
-    return SlideTabView(
-      tabs: types,
-      tabBuilder: (index) => (accessToken != null || types[index].supportAnonymous),
-      itemBuilder: (context, index) {
+    return SwipeTabView(
+      tabController: controller,
+      itemCount: types.length,
+      tabBuilder: (context, index) {
         final TimelineType type = types[index];
-        return TimelineBuilder(type: type);
+        final bool isSelected = controller.index == index;
+        final bool isActive = accessToken != null || type.supportAnonymous;
+        final Color color = isActive ?
+            (isSelected ?
+              Theme.of(context).colorScheme.primary :
+              Theme.of(context).colorScheme.onSurface
+            ) : Theme.of(context).disabledColor;
+
+        return Icon(isSelected ? type.activeIcon : type.icon, color: color);
       },
+      itemBuilder: (context, index) => TimelineBuilder(key: ValueKey(types[index]), type: types[index]),
+      onTabTappable: (index) => accessToken != null || types[index].supportAnonymous,
     );
   }
 }
@@ -104,10 +96,19 @@ class TimelineBuilder extends ConsumerWidget {
       future: schema.fetchTimeline(type: type, accessToken: accessToken, keyword: keyword, account: account),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LinearProgressIndicator();
+          return Align(
+            alignment: Alignment.topCenter,
+            child: LinearProgressIndicator(
+              color: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            ),
+          );
         } else if (snapshot.hasError) {
           final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${schema.domain}';
-          return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
+          return Align(
+            alignment: Alignment.topCenter,
+            child: Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red)),
+          );
         }
 
         final List<StatusSchema> statuses = snapshot.data as List<StatusSchema>;
