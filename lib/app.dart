@@ -175,14 +175,17 @@ class GlacialApp extends StatelessWidget {
             child: const WIP(),
           ),
         ),
-        // The glacial search page to show the server search in the selected
-        // Mastodon server
+        // The explorer page to search and show the target accounts, links, and
+        // hashtags in the selected Mastodon server
         GoRoute(
           path: RoutePath.explorer.path,
-          pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
-            state: state,
-            child: const WIP(),
-          ),
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final String keyword = state.extra as String;
+            return scaleTransitionPage(
+              state: state,
+              child: ExplorerTab(keyword: keyword),
+            );
+          },
         ),
         // The glacial notifications page to show the server notifications in the
         // selected Mastodon server
@@ -202,7 +205,6 @@ class GlacialApp extends StatelessWidget {
             child: const WIP(),
           ),
         ),
-
         // The sub-route to show the context of the status, including the previous
         // and next statuses related to the current status
         GoRoute(

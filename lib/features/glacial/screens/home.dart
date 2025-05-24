@@ -10,7 +10,6 @@ import 'package:glacial/features/glacial/models/server.dart';
 enum SidebarButtonType {
   timeline,
   trending,
-  explore,
   notifications,
   settings;
 
@@ -18,7 +17,6 @@ enum SidebarButtonType {
     switch (this) {
       case timeline:
       case trending:
-      case explore:
         return true;
       case notifications:
       case settings:
@@ -32,8 +30,6 @@ enum SidebarButtonType {
         return Icons.view_list_outlined;
       case trending:
         return Icons.trending_up_outlined;
-      case explore:
-        return Icons.search_outlined;
       case notifications:
         return Icons.notifications_outlined;
       case settings:
@@ -47,8 +43,6 @@ enum SidebarButtonType {
         return Icons.view_list;
       case trending:
         return Icons.bar_chart;
-      case explore:
-        return Icons.manage_search;
       case notifications:
         return Icons.notifications;
       case settings:
@@ -62,8 +56,6 @@ enum SidebarButtonType {
         return RoutePath.timeline;
       case trending:
         return RoutePath.trends;
-      case explore:
-        return RoutePath.explorer;
       case notifications:
         return RoutePath.notifications;
       case settings:
@@ -128,6 +120,9 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
                   ),
                 ),
               ),
+              actions: [
+                Explorer(),
+              ],
             ),
           ),
           body: SafeArea(
@@ -229,8 +224,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         return AppLocalizations.of(context)?.btn_timeline ?? "Timeline";
       case SidebarButtonType.trending:
         return AppLocalizations.of(context)?.btn_trending ?? "Trending";
-      case SidebarButtonType.explore:
-        return AppLocalizations.of(context)?.btn_explore ?? "Explore";
       case SidebarButtonType.notifications:
         return AppLocalizations.of(context)?.btn_notifications ?? "Notifications";
       case SidebarButtonType.settings:

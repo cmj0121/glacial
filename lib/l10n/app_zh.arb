@@ -17,6 +17,7 @@
   "txt_show_less": "顯示更少",
   "txt_show_more": "顯示更多",
   "txt_user_profile": "使用者 {text} 資料",
+  "txt_no_results_found": "搜尋 {keyword} 無結果",
   "btn_clean_all": "清除全部",
   "btn_back_to_explorer": "回到搜尋頁",
   "btn_sign_in": "登入",
