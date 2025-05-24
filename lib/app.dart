@@ -202,6 +202,17 @@ class GlacialApp extends StatelessWidget {
             child: const WIP(),
           ),
         ),
+
+        // The sub-route to show the context of the status, including the previous
+        // and next statuses related to the current status
+        GoRoute(
+          path: RoutePath.statusContext.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema status = state.extra as StatusSchema;
+
+            return StatusContext(schema: status);
+          },
+        ),
       ],
     );
   }
