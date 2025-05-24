@@ -28,7 +28,9 @@ class _WebViewPageState extends State<WebViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: WebViewWidget(controller: controller),
+      body: InteractiveViewer(
+        child: WebViewWidget(controller: controller),
+      ),
     );
   }
 }
