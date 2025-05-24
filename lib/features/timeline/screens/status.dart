@@ -185,7 +185,7 @@ class _StatusState extends ConsumerState<Status> {
   // Handle the link tap event, and open the link in the in-app webview.
   void onLinkTap(String? url, Map<String, String> attributes, _) {
     final Uri baseUri = Uri.parse(schema.uri);
-    final Uri? uri = url == null ? null : Uri.parse(url.toLowerCase());
+    final Uri? uri = url == null ? null : Uri.parse(url);
     if (uri == null) {
       return;
     }

@@ -187,19 +187,22 @@ class _TimelineState extends State<Timeline> {
   // Build the list of the statuses in the current selected Mastodon server and
   // timeline type.
   Widget buildContent() {
-    return ListView.builder(
-      controller: controller,
-      shrinkWrap: true,
-      itemCount: statuses.length,
-      itemBuilder: (context, index) {
-        final StatusSchema status = statuses[index];
-        return Status(
-          schema: status.reblog ?? status,
-          reblogFrom: status.reblog != null ? status.account : null,
-          replyToAccountID: status.inReplyToAccountID,
-          onDeleted: () => onDeleted(index),
-        );
-      },
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView.builder(
+        controller: controller,
+        shrinkWrap: true,
+        itemCount: statuses.length,
+        itemBuilder: (context, index) {
+          final StatusSchema status = statuses[index];
+          return Status(
+            schema: status.reblog ?? status,
+            reblogFrom: status.reblog != null ? status.account : null,
+            replyToAccountID: status.inReplyToAccountID,
+            onDeleted: () => onDeleted(index),
+          );
+        },
+      ),
     );
   }
 
@@ -211,8 +214,18 @@ class _TimelineState extends State<Timeline> {
     }
   }
 
+  // Clean-up and refresh the timeline when the user pulls down the list.
+  Future<void> onRefresh() async {
+    setState(() {
+      isLoading = false;
+      isCompleted = false;
+      statuses.clear();
+    });
+    await onLoad();
+  }
+
   // Load the statuses from the current selected Mastodon server.
-  void onLoad() async {
+  Future<void> onLoad() async {
     if (isLoading || isCompleted) {
       return;
     }
