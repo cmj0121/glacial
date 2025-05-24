@@ -209,8 +209,25 @@ class GlacialApp extends StatelessWidget {
           path: RoutePath.statusContext.path,
           builder: (BuildContext context, GoRouterState state) {
             final StatusSchema status = state.extra as StatusSchema;
+            final Widget content = StatusContext(schema: status);
 
-            return StatusContext(schema: status);
+            return BackableView(
+              title: AppLocalizations.of(context)?.btn_post ?? "Post",
+              child: content,
+            );
+          },
+        ),
+        // The sub-route to show the user profile page with the specified user
+        GoRoute(
+          path: RoutePath.userProfile.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final AccountSchema schema = state.extra as AccountSchema;
+            final Widget content = AccountProfile(schema: schema);
+
+            return BackableView(
+              title: schema.displayName,
+              child: content,
+            );
           },
         ),
       ],

@@ -373,8 +373,7 @@ class StatusContext extends ConsumerWidget {
     final String? accessToken = ref.watch(currentAccessTokenProvider);
 
     if (server == null) {
-      final Widget content = const SizedBox.shrink();
-      return buildLayout(context: context, child: content);
+      return const SizedBox.shrink();
     }
 
     return FutureBuilder(
@@ -391,47 +390,13 @@ class StatusContext extends ConsumerWidget {
         }
 
         final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
-        final Widget content = Dismissible(
+        return Dismissible(
           key: ValueKey<String>('StatusContext-${schema.id}'),
           direction: DismissDirection.horizontal,
           onDismissed: (direction) => context.pop(),
           child: buildContent(ctx),
         );
-        return buildLayout(context: context, child: content);
       }
-    );
-  }
-
-  Widget buildLayout({required BuildContext context, required Widget child}) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        buildHeader(context),
-        const SizedBox(height: 8),
-        Flexible(child: child),
-      ],
-    );
-  }
-
-  // Build the back button to navigate back to the previous screen.
-  Widget buildHeader(BuildContext context) {
-    final String text = AppLocalizations.of(context)?.btn_post ?? "Post";
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-        Expanded(
-          child: Center(
-            child: Text(text, style: Theme.of(context).textTheme.headlineSmall),
-          ),
-        ),
-      ],
     );
   }
 
