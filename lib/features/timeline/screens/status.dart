@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
-import 'package:glacial/routes.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 import 'package:glacial/features/timeline/screens/core.dart';
 import 'package:glacial/features/glacial/models/server.dart';
@@ -186,7 +185,7 @@ class _StatusState extends ConsumerState<Status> {
   // Handle the link tap event, and open the link in the in-app webview.
   void onLinkTap(String? url, Map<String, String> attributes, _) {
     final Uri baseUri = Uri.parse(schema.uri);
-    final Uri? uri = url == null ? null : Uri.parse(url.toLowerCase());
+    final Uri? uri = url == null ? null : Uri.parse(url);
     if (uri == null) {
       return;
     }
@@ -401,6 +400,8 @@ class StatusContext extends ConsumerWidget {
     );
   }
 
+  // The main content of the status context, including the current status
+  // the previous statuses and the next statuses.
   Widget buildContent(StatusContextSchema ctx) {
     Map<String, int> indents = {schema.id: 1};
 

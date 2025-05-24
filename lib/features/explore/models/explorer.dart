@@ -77,6 +77,10 @@ class SearchResultSchema {
         hashtags: hashtags,
       );
     }
+
+    bool get isEmpty {
+      return accounts.isEmpty && statuses.isEmpty && hashtags.isEmpty;
+    }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/routes.dart';
 import 'package:glacial/features/glacial/models/server.dart';
 import 'server.dart';
 
@@ -231,7 +230,7 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
       ref.read(currentServerProvider.notifier).state = schema;
       ref.read(currentAccessTokenProvider.notifier).state = accessToken;
       logger.i("save current server: ${schema.domain}");
-      GoRouter.of(context).push(RoutePath.homeTimeline.path);
+      GoRouter.of(context).push(RoutePath.timeline.path);
     }
   }
 

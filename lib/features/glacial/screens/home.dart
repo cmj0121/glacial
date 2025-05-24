@@ -3,16 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/routes.dart';
+import 'package:glacial/features/core.dart';
 import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/auth/screens/core.dart';
-import 'package:glacial/features/timeline/screens/core.dart';
 
 // The possible actions in sidebar and used to interact with the current server.
 enum SidebarButtonType {
   timeline,
   trending,
-  explore,
   notifications,
   settings;
 
@@ -20,7 +17,6 @@ enum SidebarButtonType {
     switch (this) {
       case timeline:
       case trending:
-      case explore:
         return true;
       case notifications:
       case settings:
@@ -34,8 +30,6 @@ enum SidebarButtonType {
         return Icons.view_list_outlined;
       case trending:
         return Icons.trending_up_outlined;
-      case explore:
-        return Icons.search_outlined;
       case notifications:
         return Icons.notifications_outlined;
       case settings:
@@ -49,12 +43,23 @@ enum SidebarButtonType {
         return Icons.view_list;
       case trending:
         return Icons.bar_chart;
-      case explore:
-        return Icons.manage_search;
       case notifications:
         return Icons.notifications;
       case settings:
         return Icons.settings;
+    }
+  }
+
+  RoutePath get route {
+    switch (this) {
+      case timeline:
+        return RoutePath.timeline;
+      case trending:
+        return RoutePath.trends;
+      case notifications:
+        return RoutePath.notifications;
+      case settings:
+        return RoutePath.settings;
     }
   }
 }
@@ -63,12 +68,10 @@ enum SidebarButtonType {
 // server timeline and other features.
 class GlacialHome extends ConsumerStatefulWidget {
   final Widget child;
-  final SidebarButtonType? active;
 
   const GlacialHome({
     super.key,
     required this.child,
-    this.active,
   });
 
   @override
@@ -81,7 +84,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   final List<SidebarButtonType> actions = SidebarButtonType.values;
 
   late final ServerSchema schema;
-  late final int selectedIndex;
 
   @override
   void initState() {
@@ -91,9 +93,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     if (schema == null) {
       throw Exception("No server schema found, please select a server.");
     }
-
     this.schema = schema;
-    selectedIndex = widget.active == null ? -1 : actions.indexOf(widget.active!);
   }
 
   @override
@@ -106,7 +106,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(appBarHeight),
             child: AppBar(
-              leading: const SizedBox.shrink(),
+              leading: UserAvatar(schema: schema),
               title: Align(
                 alignment: Alignment.center,
                 child: Tooltip(
@@ -121,14 +121,13 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
                 ),
               ),
               actions: [
-                UserAvatar(schema: schema),
-                const SizedBox(width: 8),
+                Explorer(),
               ],
             ),
           ),
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: buildContent(isMobile: isMobile),
             ),
           ),
@@ -198,10 +197,12 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
   List<Widget> buildActions() {
     final String? accessToken = ref.watch(currentAccessTokenProvider);
+    final String path = GoRouter.of(context).state.uri.toString();
+    final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
 
     return actions.map((action) {
         final int index = actions.indexOf(action);
-        final bool isSelected = selectedIndex == index;
+        final bool isSelected = action.route == route;
         final bool isEnabled = accessToken != null || action.supportAnonymous;
 
         return IconButton(
@@ -223,8 +224,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         return AppLocalizations.of(context)?.btn_timeline ?? "Timeline";
       case SidebarButtonType.trending:
         return AppLocalizations.of(context)?.btn_trending ?? "Trending";
-      case SidebarButtonType.explore:
-        return AppLocalizations.of(context)?.btn_explore ?? "Explore";
       case SidebarButtonType.notifications:
         return AppLocalizations.of(context)?.btn_notifications ?? "Notifications";
       case SidebarButtonType.settings:
@@ -236,32 +235,18 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   void onBack() {
     ref.read(currentServerProvider.notifier).state = null;
     ref.read(currentAccessTokenProvider.notifier).state = null;
-    context.go(RoutePath.explorer.path);
+    context.go(RoutePath.serverExplorer.path);
   }
 
   // Select the action in the sidebar and show the corresponding content.
   void onSelect(int index) {
+    final String path = GoRouter.of(context).state.uri.toString();
+    final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
     final SidebarButtonType action = actions[index];
-    if (action == widget.active) {
-      return;
-    }
 
-    switch (action) {
-      case SidebarButtonType.timeline:
-        context.go(RoutePath.homeTimeline.path, extra: action);
-        break;
-      case SidebarButtonType.trending:
-        context.go(RoutePath.homeTrends.path, extra: action);
-        break;
-      case SidebarButtonType.explore:
-        context.go(RoutePath.homeExplore.path, extra: action);
-        break;
-      case SidebarButtonType.notifications:
-        context.go(RoutePath.homeNotifications.path, extra: action);
-        break;
-      case SidebarButtonType.settings:
-        context.go(RoutePath.homeSettings.path, extra: action);
-        break;
+    if (action.route != route) {
+      logger.i("selected action: ${action.name} -> ${action.route.path}");
+      context.go(action.route.path, extra: action);
     }
   }
 }

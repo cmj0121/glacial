@@ -17,6 +17,7 @@
   "txt_show_less": "Weniger anzeigen",
   "txt_show_more": "Mehr anzeigen",
   "txt_user_profile": "Profil von Benutzer {text}",
+  "txt_no_results_found": "Keine Ergebnisse für {keyword} gefunden",
   "btn_clean_all": "Alles löschen",
   "btn_back_to_explorer": "Zurück zum Explorer",
   "btn_sign_in": "Anmelden",

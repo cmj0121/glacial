@@ -11,7 +11,14 @@ import 'hashtag.dart';
 
 // The general search widget to search for a Mastodon server, may return the account, status, or hashtag.
 class Explorer extends ConsumerStatefulWidget {
-  const Explorer({super.key});
+  final double size;
+  final double maxWidth;
+
+  const Explorer({
+    super.key,
+    this.size = 22,
+    this.maxWidth = 300,
+  });
 
   @override
   ConsumerState<Explorer> createState() => _ExplorerState();
@@ -20,7 +27,7 @@ class Explorer extends ConsumerStatefulWidget {
 class _ExplorerState extends ConsumerState<Explorer> {
   final TextEditingController controller = TextEditingController();
 
-  Widget? content;
+  bool showInput = false;
 
   @override
   void dispose() {
@@ -30,19 +37,22 @@ class _ExplorerState extends ConsumerState<Explorer> {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: widget.maxWidth),
       child: buildContent(),
     );
   }
 
   Widget buildContent() {
-    return Column(
-      children: [
-        buildSearchBar(),
-        const SizedBox(height: 8),
-        Flexible(child: content ?? const SizedBox.shrink()),
-      ],
+    final Widget icon = IconButton(
+      icon: Icon(Icons.search, size: widget.size),
+      onPressed: onShowSearch,
+    );
+
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      child: showInput ? buildSearchBar() : icon,
     );
   }
 
@@ -52,19 +62,15 @@ class _ExplorerState extends ConsumerState<Explorer> {
       controller: controller,
       decoration: InputDecoration(
         prefixIcon: IconButton(
-          icon: Icon(Icons.search),
+          icon: Icon(Icons.search, size: widget.size),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
           onPressed: () => onSearch(),
         ),
         suffixIcon: buildCleanButton(),
 
-        helperText: AppLocalizations.of(context)?.txt_search_helper ?? 'Search for something interesting',
-
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          borderSide: BorderSide(color: Colors.grey, width: 1),
-        ),
+        hintText: AppLocalizations.of(context)?.txt_search_helper ?? 'Search for something interesting',
+        hintStyle: TextStyle(color: Theme.of(context).colorScheme.surfaceBright),
       ),
 
       onChanged: (string) => setState(() {}),
@@ -74,29 +80,31 @@ class _ExplorerState extends ConsumerState<Explorer> {
 
   // The clean-up button to clear the text field.
   Widget buildCleanButton() {
-    final bool isEmpty = controller.text.isEmpty;
-    if (isEmpty) {
-      return const SizedBox.shrink();
-    }
-
     return  IconButton(
-      icon: Icon(Icons.clear),
+      icon: Icon(Icons.clear, size: widget.size),
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
       onPressed: () {
         controller.clear();
-        setState(() => content = null);
+        setState(() => showInput = false);
       },
     );
+  }
+
+  void onShowSearch() async {
+    setState(() => showInput = true);
   }
 
   void onSearch() async {
     final String keyword = controller.text.trim();
     if (keyword.isEmpty) {
+      logger.w("Search keyword is empty, ignoring search request.");
       return;
     }
 
-    setState(() => content = ExplorerTab(keyword: keyword));
+    controller.clear();
+    setState(() => showInput = false);
+    context.push(RoutePath.explorer.path, extra: keyword);
   }
 }
 
@@ -123,6 +131,12 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ServerSchema? server = ref.watch(currentServerProvider);
     final String? accessToken = ref.watch(currentAccessTokenProvider);
@@ -136,7 +150,10 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
       future: server.search(keyword: widget.keyword, accessToken: accessToken),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LinearProgressIndicator();
+          return Align(
+            alignment: Alignment.topCenter,
+            child: const LinearProgressIndicator(),
+          );
         } else if (snapshot.hasError) {
           final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${server.domain}';
           return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
@@ -149,20 +166,61 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
   }
 
   Widget buildContent(SearchResultSchema schema) {
-    return SlideTabView(
-      controller: controller,
-      tabs: types,
-      itemBuilder: (context, index) {
-        return Dismissible(
-          key: ValueKey('ExplorerTab-$index'),
-          direction: DismissDirection.horizontal,
-          onDismissed: (direction) {
-            final int offset = direction == DismissDirection.startToEnd ? -1 : 1;
-            controller.index = (controller.index + offset) % types.length;
-          },
-          child: buildTabContent(schema, index),
-        );
+    if (schema.isEmpty) {
+      final String? text = AppLocalizations.of(context)?.txt_no_results_found(widget.keyword);
+      final Widget message = Text(
+        text ?? 'No results found for "${widget.keyword}"',
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: Theme.of(context).colorScheme.error,
+        ),
+      );
+
+      return Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: message,
+        ),
+      );
+    }
+
+    return SwipeTabView(
+      tabController: controller,
+      itemCount: types.length,
+      tabBuilder: (context, index) {
+        final ExplorerResultType type = types[index];
+        final bool isSelected = controller.index == index;
+        late final bool isActive;
+
+        switch (type) {
+          case ExplorerResultType.account:
+            isActive = schema.accounts.isNotEmpty;
+          case ExplorerResultType.status:
+            isActive = schema.statuses.isNotEmpty;
+          case ExplorerResultType.hashtag:
+            isActive = schema.hashtags.isNotEmpty;
+        }
+
+        final Color color = isActive ?
+            (isSelected ?
+              Theme.of(context).colorScheme.primary :
+              Theme.of(context).colorScheme.onSurface
+            ) : Theme.of(context).disabledColor;
+
+        return Icon(isSelected ? type.activeIcon : type.icon, color: color);
       },
+      itemBuilder: (context, index) => buildTabContent(schema, index),
+      onTabTappable: (index) {
+        final ExplorerResultType type = types[index];
+        switch (type) {
+          case ExplorerResultType.account:
+            return schema.accounts.isNotEmpty;
+          case ExplorerResultType.status:
+            return schema.statuses.isNotEmpty;
+          case ExplorerResultType.hashtag:
+            return schema.hashtags.isNotEmpty;
+        }
+      }
     );
   }
 

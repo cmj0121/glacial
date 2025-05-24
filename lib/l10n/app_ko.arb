@@ -17,6 +17,7 @@
   "txt_show_less": "간단히 보기",
   "txt_show_more": "자세히 보기",
   "txt_user_profile": "사용자 {text} 프로필",
+  "txt_no_results_found": "{keyword}에 대한 결과가 없습니다",
   "btn_clean_all": "모두 지우기",
   "btn_back_to_explorer": "탐색 페이지로 돌아가기",
   "btn_sign_in": "로그인",

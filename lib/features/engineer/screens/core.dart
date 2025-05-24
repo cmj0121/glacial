@@ -2,10 +2,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/routes.dart';
 
-class EnginnerMode extends StatelessWidget {
-  const EnginnerMode({super.key});
+class EngineeringMode extends StatelessWidget {
+  const EngineeringMode({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +22,6 @@ class EnginnerMode extends StatelessWidget {
   }
 
   Widget buildContent(BuildContext context) {
-    final Storage storage = Storage();
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -33,7 +30,7 @@ class EnginnerMode extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.delete),
           title: const Text("Clean-up Storage"),
-          onTap: () async => await storage.purge(),
+          onTap: () => onPurgeStorage(context),
         ),
 
         const Spacer(),
@@ -44,6 +41,19 @@ class EnginnerMode extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void onPurgeStorage(BuildContext context) async {
+    final Storage storage = Storage();
+    final String text = "Completely purged the storage";
+
+    await storage.purge();
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text)),
+      );
+    }
   }
 }
 

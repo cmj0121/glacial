@@ -11,7 +11,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/routes.dart';
 import 'package:glacial/features/auth/models/oauth.dart';
 import 'package:glacial/features/glacial/models/server.dart';
 import 'package:glacial/features/timeline/models/core.dart';
@@ -125,7 +124,7 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
     ref.read(currentAccessTokenProvider.notifier).state = null;
     ref.read(currentUserProvider.notifier).state = null;
     if (mounted) {
-      context.go(RoutePath.homeTimeline.path, extra: now);
+      context.go(RoutePath.timeline.path, extra: now);
     }
   }
 
@@ -161,7 +160,7 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
           logger.w("Failed to launch URL: $uri");
         }
       } else {
-        context.go(RoutePath.homeTimeline.path, extra: now);
+        context.go(RoutePath.timeline.path, extra: now);
       }
     }
   }
