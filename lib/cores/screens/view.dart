@@ -202,7 +202,10 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
 
   @override
   void dispose() {
-    tabController.dispose();
+    if (widget.tabController == null) {
+      // If the tabController is not provided, dispose it to avoid memory leak.
+      tabController.dispose();
+    }
     pageController.dispose();
     super.dispose();
   }

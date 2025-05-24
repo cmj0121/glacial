@@ -131,6 +131,12 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ServerSchema? server = ref.watch(currentServerProvider);
     final String? accessToken = ref.watch(currentAccessTokenProvider);
