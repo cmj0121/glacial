@@ -119,6 +119,25 @@ class GlacialApp extends StatelessWidget {
             child: const ServerExplorer(),
           ),
         ),
+        // The webview page to show the in-app webview with specified URL
+        // @animation: FadeTransition
+        GoRoute(
+          path: RoutePath.webview.path,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final Uri? url = state.extra as Uri?;
+            final Widget child = url == null ? const SizedBox.shrink() : WebViewPage(url: url);
+
+            if (url == null) {
+              logger.w("the url is null, cannot open the webview");
+              context.pop();
+            }
+
+            return fadeTransitionPage(
+              state: state,
+              child: child,
+            );
+          },
+        ),
 
         // The core glacial page and show the possible operations
         glacialRoutes(),
