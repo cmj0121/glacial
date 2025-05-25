@@ -85,6 +85,7 @@ enum TimelineType implements SlideTab {
       case local:
       case federal:
       case public:
+      case user:
         return true;
       default:
         return false;
