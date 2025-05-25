@@ -4,9 +4,13 @@ import 'dart:convert';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/auth/models/oauth.dart';
+import 'package:glacial/features/glacial/models/server.dart';
 
 final String prefsOAuthInfoKey = "mastodon_server_oauth2_info";
 final String prefsAccessTokenKey = "access_token";
+
+// The OAuth sign-in in-memory cache.
+Map <String, ServerSchema> stateCache = {};
 
 // Extend the Storage that can be used to access the Mastodon server by get/set servers.
 extension OAuth2Extension on Storage {
@@ -59,6 +63,40 @@ extension OAuth2Extension on Storage {
       json[domain] = token;
     }
     setString(prefsAccessTokenKey, jsonEncode(json), secure: true);
+  }
+
+  // The sign-in page is loaded, handle the sign-in process.
+  Future<String?> gainAccessToken(Uri uri) async {
+    final String? code = uri.queryParameters["code"];
+    final String? state = uri.queryParameters["state"];
+
+    final Storage storage = Storage();
+    final ServerSchema? schema = storage.loadFromOAuthState(state);
+
+    if (schema == null || code == null) {
+      logger.w("expected: schema, code, got: $schema, $code");
+      return null;
+    }
+
+    final OAuth2Info info = await storage.getOAuth2Info(schema.domain);
+    final String? accessToken = await info.getAccessToken(schema.domain, code);
+
+    storage.saveAccessToken(schema.domain, accessToken);
+    return accessToken;
+  }
+
+  // Save the state to the cache for the OAuth2 sign-in process.
+  void saveToOAuthState(String state, ServerSchema schema) {
+    stateCache[state] = schema;
+  }
+
+  // Load the state from the cache for the OAuth2 sign-in process.
+  ServerSchema? loadFromOAuthState(String? state) {
+    final ServerSchema? schema = stateCache[state];
+    if (schema != null) {
+      stateCache.remove(state);
+    }
+    return schema;
   }
 }
 

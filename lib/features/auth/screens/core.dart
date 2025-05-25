@@ -1,13 +1,10 @@
 // The User button to navigate to the sign-in page of the Master server, or show
 // the user profile page if already signed in.
 import 'dart:async';
-import 'dart:io';
 
-import 'package:app_links/app_links.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:glacial/core.dart';
@@ -42,7 +39,6 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
     super.initState();
 
     state = Uuid().v4();
-    sub = AppLinks().uriLinkStream.listen(onHandleSignIn);
   }
 
   @override
@@ -103,6 +99,7 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
     }
         ..removeWhere((key, value) => value == null);
 
+    storage.saveToOAuthState(state, widget.schema);
     if (mounted) {
       final Uri uri = Uri.https(widget.schema.domain, "/oauth/authorize", query);
       context.push(RoutePath.webview.path, extra: uri);
@@ -128,42 +125,6 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
       context.go(RoutePath.timeline.path, extra: now);
     }
   }
-
-  // The sign-in page is loaded, handle the sign-in process.
-  void onHandleSignIn(Uri uri) async {
-    final DateTime now = DateTime.now();
-    final ServerSchema? schema = ref.read(currentServerProvider);
-    final String? code = uri.queryParameters["code"];
-    final String? state = uri.queryParameters["state"];
-
-    if (schema == null || code == null) {
-      logger.w("expected: schema, code, got: $schema, $code");
-      return;
-    }
-
-    if (state != this.state) {
-      logger.w("state mismatch, expected: $this.state, got: $state");
-      return;
-    }
-
-    final OAuth2Info info = await storage.getOAuth2Info(schema.domain);
-    final String? accessToken = await info.getAccessToken(schema.domain, code);
-
-    storage.saveAccessToken(schema.domain, accessToken);
-    ref.read(currentAccessTokenProvider.notifier).state = accessToken;
-    ref.read(currentUserProvider.notifier).state = await schema.getAuthUser(accessToken);
-
-    if (mounted && accessToken != null) {
-      logger.i("completed sign-in and gain the access token");
-      if (Platform.isIOS) {
-        final bool launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
-        if (!launched) {
-          logger.w("Failed to launch URL: $uri");
-        }
-      } else {
-        context.go(RoutePath.timeline.path, extra: now);
-      }
-    }
-  }
 }
+
 // vim: set ts=2 sw=2 sts=2 et:
