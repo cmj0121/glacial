@@ -1,5 +1,6 @@
 // The Trends link that have been shared more than others.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import 'package:glacial/core.dart';
@@ -7,7 +8,7 @@ import 'package:glacial/features/explore/models/hashtag.dart';
 import 'package:glacial/features/trends/models/history.dart';
 
 // The trends of the links that have been shared more than others.
-class HashTag extends StatelessWidget {
+class HashTag extends ConsumerWidget {
   final HashTagSchema schema;
 
   const HashTag({
@@ -16,7 +17,9 @@ class HashTag extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String? accessToken = ref.read(currentAccessTokenProvider);
+
     return Container(
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
@@ -24,7 +27,7 @@ class HashTag extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
         child: InkWellDone(
-          onTap: () => context.push(RoutePath.hashtagTimeline.path, extra: schema),
+          onTap: accessToken == null ? null : () => context.push(RoutePath.hashtagTimeline.path, extra: schema),
           child: buildContent(context),
         ),
       ),
