@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/explore/models/hashtag.dart';
+import 'package:glacial/features/trends/models/history.dart';
 
 // The trends of the links that have been shared more than others.
 class HashTag extends StatelessWidget {
