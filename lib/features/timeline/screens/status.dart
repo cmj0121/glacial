@@ -385,7 +385,7 @@ class StatusContext extends ConsumerWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Align(
             alignment: Alignment.topCenter,
-            child: LinearProgressIndicator(),
+            child: ClockProgressIndicator(),
           );
         } else if (snapshot.hasError) {
           final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${server.domain}';

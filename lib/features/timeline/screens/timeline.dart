@@ -98,10 +98,7 @@ class TimelineBuilder extends ConsumerWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Align(
             alignment: Alignment.topCenter,
-            child: LinearProgressIndicator(
-              color: Theme.of(context).colorScheme.primary,
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            ),
+            child: ClockProgressIndicator(),
           );
         } else if (snapshot.hasError) {
           final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${schema.domain}';
@@ -177,7 +174,7 @@ class _TimelineState extends State<Timeline> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          isLoading ? LinearProgressIndicator() : const SizedBox.shrink(),
+          isLoading ? ClockProgressIndicator() : const SizedBox.shrink(),
           Flexible(child: buildContent()),
         ],
       ),
