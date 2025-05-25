@@ -172,7 +172,7 @@ class GlacialApp extends StatelessWidget {
           path: RoutePath.trends.path,
           pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
             state: state,
-            child: const WIP(),
+            child: const TrendsTab(),
           ),
         ),
         // The explorer page to search and show the target accounts, links, and

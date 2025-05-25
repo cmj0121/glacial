@@ -42,5 +42,8 @@
   "btn_mute": "음소거",
   "btn_block": "차단",
   "btn_delete": "삭제",
+  "btn_trends_links": "인기 뉴스",
+  "btn_trends_statuses": "상태",
+  "btn_trends_tags": "태그",
   "dots": "..."
 }

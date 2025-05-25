@@ -42,5 +42,8 @@
   "btn_mute": "Stumm",
   "btn_block": "Blockieren",
   "btn_delete": "Löschen",
+  "btn_trends_links": "Aktuelle Nachrichten",
+  "btn_trends_statuses": "Beiträge",
+  "btn_trends_tags": "Schlagwörter",
   "dots": "..."
 }

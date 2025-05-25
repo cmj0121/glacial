@@ -15,5 +15,6 @@ export 'features/auth/extensions.dart';
 export 'features/explore/extensions.dart';
 export 'features/glacial/extensions.dart';
 export 'features/timeline/extensions.dart';
+export 'features/trends/extensions.dart';
 
 // vim: set ts=2 sw=2 sts=2 et:

@@ -141,5 +141,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_delete => '삭제';
 
   @override
+  String get btn_trends_links => '인기 뉴스';
+
+  @override
+  String get btn_trends_statuses => '상태';
+
+  @override
+  String get btn_trends_tags => '태그';
+
+  @override
   String get dots => '...';
 }

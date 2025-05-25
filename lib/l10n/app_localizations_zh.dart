@@ -141,5 +141,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_delete => '刪除';
 
   @override
+  String get btn_trends_links => '最新消息';
+
+  @override
+  String get btn_trends_statuses => '嘟文';
+
+  @override
+  String get btn_trends_tags => '主題標籤';
+
+  @override
   String get dots => '...';
 }

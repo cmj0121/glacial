@@ -359,6 +359,24 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get btn_delete;
 
+  /// No description provided for @btn_trends_links.
+  ///
+  /// In en, this message translates to:
+  /// **'Hot News'**
+  String get btn_trends_links;
+
+  /// No description provided for @btn_trends_statuses.
+  ///
+  /// In en, this message translates to:
+  /// **'Statuses'**
+  String get btn_trends_statuses;
+
+  /// No description provided for @btn_trends_tags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get btn_trends_tags;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

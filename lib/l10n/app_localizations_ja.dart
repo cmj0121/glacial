@@ -141,5 +141,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_delete => '削除';
 
   @override
+  String get btn_trends_links => '注目ニュース';
+
+  @override
+  String get btn_trends_statuses => '投稿';
+
+  @override
+  String get btn_trends_tags => 'タグ';
+
+  @override
   String get dots => '...';
 }

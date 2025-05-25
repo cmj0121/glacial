@@ -42,5 +42,8 @@
   "btn_mute": "Mute",
   "btn_block": "Block",
   "btn_delete": "Delete",
+  "btn_trends_links": "Hot News",
+  "btn_trends_statuses": "Statuses",
+  "btn_trends_tags": "Tags",
   "dots": "..."
 }
