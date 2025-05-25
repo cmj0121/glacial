@@ -30,12 +30,9 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
     super.initState();
     schema = ref.read(currentServerProvider);
 
-    final String? accessToken = ref.read(currentAccessTokenProvider);
-    final TimelineType initType = accessToken == null ? TimelineType.local : TimelineType.home;
-
     controller = TabController(
       length: types.length,
-      initialIndex: types.indexWhere((type) => type == initType),
+      initialIndex: 0,
       vsync: this,
     );
   }
@@ -43,11 +40,14 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     final String? accessToken = ref.watch(currentAccessTokenProvider);
+    final TimelineType initType = accessToken == null ? TimelineType.local : TimelineType.home;
 
     if (schema == null) {
       logger.w("No server selected, but it's required to show the timeline.");
       return const SizedBox.shrink();
     }
+
+    controller.index = types.indexWhere((type) => type == initType);
 
     return SwipeTabView(
       tabController: controller,
@@ -98,10 +98,7 @@ class TimelineBuilder extends ConsumerWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Align(
             alignment: Alignment.topCenter,
-            child: LinearProgressIndicator(
-              color: Theme.of(context).colorScheme.primary,
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            ),
+            child: ClockProgressIndicator(),
           );
         } else if (snapshot.hasError) {
           final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${schema.domain}';
@@ -177,7 +174,7 @@ class _TimelineState extends State<Timeline> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          isLoading ? LinearProgressIndicator() : const SizedBox.shrink(),
+          isLoading ? ClockProgressIndicator() : const SizedBox.shrink(),
           Flexible(child: buildContent()),
         ],
       ),

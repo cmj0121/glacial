@@ -41,7 +41,7 @@ class MastodonServer extends StatefulWidget {
       future: fetch(domain),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LinearProgressIndicator();
+          return const ClockProgressIndicator();
         } else if (snapshot.hasError) {
           final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: $domain';
           return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));

@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/core.dart';
 import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/explore/models/core.dart';
 import 'package:glacial/features/trends/models/core.dart';
 
 // Show the possible timeline tab per timeline type.
@@ -82,7 +81,7 @@ class Trends extends StatefulWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Align(
             alignment: Alignment.topCenter,
-            child: const LinearProgressIndicator(),
+            child: const ClockProgressIndicator(),
           );
         } else if (snapshot.hasError) {
           return const Text('Error loading trends');
@@ -128,7 +127,7 @@ class _TrendsState extends State<Trends> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        isLoading ? LinearProgressIndicator() : const SizedBox.shrink(),
+        isLoading ? ClockProgressIndicator() : const SizedBox.shrink(),
         Flexible(child: buildContent()),
       ],
     );

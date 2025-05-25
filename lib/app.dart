@@ -154,56 +154,58 @@ class GlacialApp extends StatelessWidget {
   RouteBase glacialRoutes() {
     return ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        return GlacialHome(child: child);
+        return GlacialHome(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return ScaleTransition(
+                scale: Tween<double>(begin: 0.8, end: 1.0).animate(animation),
+                child: FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            },
+            child: KeyedSubtree(
+              key: ValueKey(state.fullPath),
+              child: child,
+            ),
+          ),
+        );
       },
       routes: [
         // The glacial timeline page to show the server timeline in the selected
         // Mastodon server
         GoRoute(
           path: RoutePath.timeline.path,
-          pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
-            state: state,
-            child: const TimelineTab(),
-          ),
+          builder: (BuildContext context, GoRouterState state) =>const TimelineTab(),
         ),
         // The glacial trends page to show the server trends in the selected
         // Mastodon server
         GoRoute(
           path: RoutePath.trends.path,
-          pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
-            state: state,
-            child: const TrendsTab(),
-          ),
+          builder: (BuildContext context, GoRouterState state) => const TrendsTab(),
         ),
         // The explorer page to search and show the target accounts, links, and
         // hashtags in the selected Mastodon server
         GoRoute(
           path: RoutePath.explorer.path,
-          pageBuilder: (BuildContext context, GoRouterState state) {
+          builder: (BuildContext context, GoRouterState state) {
             final String keyword = state.extra as String;
-            return scaleTransitionPage(
-              state: state,
-              child: ExplorerTab(keyword: keyword),
-            );
+            return ExplorerTab(keyword: keyword);
           },
         ),
         // The glacial notifications page to show the server notifications in the
         // selected Mastodon server
         GoRoute(
           path: RoutePath.notifications.path,
-          pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
-            state: state,
-            child: const WIP(),
-          ),
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
         ),
         // The glacial settings page to show the server settings in the selected
         // Mastodon server
         GoRoute(
           path: RoutePath.settings.path,
-          pageBuilder: (BuildContext context, GoRouterState state) => scaleTransitionPage(
-            state: state,
-            child: const WIP(),
-          ),
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
         ),
         // The sub-route to show the context of the status, including the previous
         // and next statuses related to the current status
@@ -228,6 +230,22 @@ class GlacialApp extends StatelessWidget {
 
             return BackableView(
               title: schema.displayName,
+              child: content,
+            );
+          },
+        ),
+        // Show the timeline based on the specified hashtag
+        GoRoute(
+          path: RoutePath.hashtagTimeline.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final HashTagSchema schema = state.extra as HashTagSchema;
+            final Widget content = TimelineBuilder(
+              type: TimelineType.hashtag,
+              keyword: schema.name,
+            );
+
+            return BackableView(
+              title: '#${schema.name}',
               child: content,
             );
           },

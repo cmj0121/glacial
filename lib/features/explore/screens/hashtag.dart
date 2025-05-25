@@ -24,7 +24,7 @@ class HashTag extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
         child: InkWellDone(
-          onTap: () => context.push(RoutePath.hashtagTimeline.path, extra: schema.name),
+          onTap: () => context.push(RoutePath.hashtagTimeline.path, extra: schema),
           child: buildContent(context),
         ),
       ),

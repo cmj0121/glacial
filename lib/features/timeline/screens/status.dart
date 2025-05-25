@@ -125,7 +125,10 @@ class _StatusState extends ConsumerState<Status> {
 
     return Row(
       children: [
-        Account(schema: schema.account),
+        Expanded(
+          flex: 10,
+          child: Account(schema: schema.account),
+        ),
 
         const Spacer(),
 
@@ -382,7 +385,7 @@ class StatusContext extends ConsumerWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Align(
             alignment: Alignment.topCenter,
-            child: LinearProgressIndicator(),
+            child: ClockProgressIndicator(),
           );
         } else if (snapshot.hasError) {
           final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${server.domain}';

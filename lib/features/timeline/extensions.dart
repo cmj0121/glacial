@@ -288,8 +288,8 @@ extension EmojiExtensions on Storage {
     }
 
     return parts.reduce((String value, String part) {
-      final String shortcode = (part.startsWith(':') && part.endsWith(':')) 
-          ? part.substring(1, part.length - 1) 
+      final String shortcode = (part.startsWith(':') && part.endsWith(':'))
+          ? part.substring(1, part.length - 1)
           : part;
       final EmojiSchema? emoji = (
         emojiCache[shortcode] ??
@@ -322,7 +322,7 @@ extension EmojiExtensions on Storage {
         );
 
         if (emoji == null) {
-          return Text(part);
+          return Text(part, overflow: TextOverflow.ellipsis);
         }
 
         return Image.network(

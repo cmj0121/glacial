@@ -51,13 +51,18 @@ class Account extends StatelessWidget {
   }
 
   Widget buildContent() {
-    return Row(
+    final Widget content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         buildAvatar(),
         const SizedBox(width: 16),
         buildName(),
       ],
+    );
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: content,
     );
   }
 

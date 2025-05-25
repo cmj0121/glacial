@@ -124,6 +124,7 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
     ref.read(currentAccessTokenProvider.notifier).state = null;
     ref.read(currentUserProvider.notifier).state = null;
     if (mounted) {
+      logger.i("sign out and clean up the access token");
       context.go(RoutePath.timeline.path, extra: now);
     }
   }
