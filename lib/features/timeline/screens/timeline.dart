@@ -30,12 +30,9 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
     super.initState();
     schema = ref.read(currentServerProvider);
 
-    final String? accessToken = ref.read(currentAccessTokenProvider);
-    final TimelineType initType = accessToken == null ? TimelineType.local : TimelineType.home;
-
     controller = TabController(
       length: types.length,
-      initialIndex: types.indexWhere((type) => type == initType),
+      initialIndex: 0,
       vsync: this,
     );
   }
@@ -43,11 +40,14 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     final String? accessToken = ref.watch(currentAccessTokenProvider);
+    final TimelineType initType = accessToken == null ? TimelineType.local : TimelineType.home;
 
     if (schema == null) {
       logger.w("No server selected, but it's required to show the timeline.");
       return const SizedBox.shrink();
     }
+
+    controller.index = types.indexWhere((type) => type == initType);
 
     return SwipeTabView(
       tabController: controller,
