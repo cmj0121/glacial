@@ -232,6 +232,22 @@ class GlacialApp extends StatelessWidget {
             );
           },
         ),
+        // Show the timeline based on the specified hashtag
+        GoRoute(
+          path: RoutePath.hashtagTimeline.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final HashTagSchema schema = state.extra as HashTagSchema;
+            final Widget content = TimelineBuilder(
+              type: TimelineType.hashtag,
+              keyword: schema.name,
+            );
+
+            return BackableView(
+              title: '#${schema.name}',
+              child: content,
+            );
+          },
+        ),
       ],
     );
   }
