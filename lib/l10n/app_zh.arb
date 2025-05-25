@@ -42,5 +42,8 @@
   "btn_mute": "禁音",
   "btn_block": "封鎖",
   "btn_delete": "刪除",
+  "btn_trends_links": "最新消息",
+  "btn_trends_statuses": "嘟文",
+  "btn_trends_tags": "主題標籤",
   "dots": "..."
 }

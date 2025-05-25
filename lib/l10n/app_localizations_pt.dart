@@ -141,5 +141,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_delete => 'Excluir';
 
   @override
+  String get btn_trends_links => 'Notícias quentes';
+
+  @override
+  String get btn_trends_statuses => 'Status';
+
+  @override
+  String get btn_trends_tags => 'Etiquetas';
+
+  @override
   String get dots => '...';
 }

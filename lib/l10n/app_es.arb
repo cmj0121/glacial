@@ -42,5 +42,8 @@
   "btn_mute": "Silenciar",
   "btn_block": "Bloquear",
   "btn_delete": "Eliminar",
+  "btn_trends_links": "Noticias destacadas",
+  "btn_trends_statuses": "Estados",
+  "btn_trends_tags": "Etiquetas",
   "dots": "..."
 }

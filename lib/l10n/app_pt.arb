@@ -42,5 +42,8 @@
   "btn_mute": "Silenciar",
   "btn_block": "Bloquear",
   "btn_delete": "Excluir",
+  "btn_trends_links": "Notícias quentes",
+  "btn_trends_statuses": "Status",
+  "btn_trends_tags": "Etiquetas",
   "dots": "..."
 }

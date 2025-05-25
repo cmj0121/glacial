@@ -42,5 +42,8 @@
   "btn_mute": "ミュート",
   "btn_block": "ブロック",
   "btn_delete": "削除",
+  "btn_trends_links": "注目ニュース",
+  "btn_trends_statuses": "投稿",
+  "btn_trends_tags": "タグ",
   "dots": "..."
 }
