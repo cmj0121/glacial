@@ -125,7 +125,10 @@ class _StatusState extends ConsumerState<Status> {
 
     return Row(
       children: [
-        Account(schema: schema.account),
+        Expanded(
+          flex: 10,
+          child: Account(schema: schema.account),
+        ),
 
         const Spacer(),
 
