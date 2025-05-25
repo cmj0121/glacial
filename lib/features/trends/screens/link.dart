@@ -1,7 +1,6 @@
 // The Trends link that have been shared more than others.
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/trends/models/core.dart';
@@ -31,7 +30,7 @@ class TrendsLink extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
         child: InkWellDone(
-          onTap: () => launchUrl(Uri.parse(schema.url)),
+          onTap: () => context.push(RoutePath.webview.path, extra: Uri.parse(schema.url)),
           child: buildContent(context),
         ),
       ),
@@ -103,7 +102,7 @@ class TrendsLink extends StatelessWidget {
     }
 
     return InkWell(
-      onTap: () => launchUrl(uri),
+      onTap: () => context.push(RoutePath.webview.path, extra: uri),
       child: author,
     );
   }
