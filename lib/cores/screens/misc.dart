@@ -188,7 +188,7 @@ class ClockProgressIndicator extends StatefulWidget {
     this.size = 40.0,
     this.barHeight = 10.0,
     this.barWidth = 3.75,
-    this.duration = const Duration(milliseconds: 1200),
+    this.duration = const Duration(milliseconds: 650),
     this.color,
   });
 
@@ -243,7 +243,7 @@ class _ClockProgressIndicatorState extends State<ClockProgressIndicator> with Si
 
         final double x = radius + radius * 0.8 * cos(angle);
         final double y = radius + radius * 0.8 * sin(angle);
-        final double progress = (animation.value + index * 2) % 255;
+        final double progress = ((animation.value * 12) - index) % 12 / 12;
         final Color barColor = color.withValues(alpha: progress);
 
         return Positioned(
