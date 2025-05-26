@@ -162,6 +162,9 @@ class AccountProfile extends ConsumerWidget {
           ),
           child: Text(acct),
         ),
+
+        const Spacer(),
+        Relationship(schema: schema),
       ],
     );
   }
@@ -232,6 +235,70 @@ class AccountProfile extends ConsumerWidget {
       child: ClipOval(
         child: MediaHero(child: avatar),
       ),
+    );
+  }
+}
+
+// The relationship between accounts, such as following / blocking / muting / etc
+class Relationship extends ConsumerWidget {
+  final AccountSchema schema;
+
+  const Relationship({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AccountSchema? currentUser = ref.watch(currentUserProvider);
+
+    if (schema.id == currentUser?.id) {
+      return const SizedBox.shrink(); // No relationship with self
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        buildMoreActions(context),
+        const SizedBox(width: 8),
+        TextButton(
+          onPressed: null,
+          child: const Text("TODO"),
+        ),
+      ],
+    );
+  }
+
+  Widget buildMoreActions(BuildContext context) {
+    return PopupMenuButton(
+      icon: Icon(Icons.more_horiz, color: Theme.of(context).colorScheme.onSurface),
+      tooltip: '', // for disabling the tooltip
+      itemBuilder: (context) {
+        final List<Widget> items = [
+          TextButton.icon(
+            icon: Icon(Icons.volume_off),
+            label: Text('Mute'),
+            onPressed: null,
+          ),
+          TextButton.icon(
+            icon: Icon(Icons.block_outlined),
+            label: Text('Block'),
+            onPressed: null,
+          ),
+          TextButton.icon(
+            icon: Icon(Icons.flag, color: Theme.of(context).colorScheme.error),
+            label: Text('Report'),
+            onPressed: null,
+          ),
+        ];
+
+        return items.map((item) {
+          return PopupMenuItem(
+            value: item,
+            child: item,
+          );
+        }).toList();
+      },
     );
   }
 }

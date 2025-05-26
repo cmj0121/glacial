@@ -1,4 +1,5 @@
 // The Account data schema that is the user account info.
+import 'dart:convert';
 
 import 'package:glacial/features/timeline/models/core.dart';
 
@@ -130,5 +131,65 @@ class RoleSchema {
     );
   }
 }
+
+// The relationship between accounts, such as following / blocking / muting / etc
+class RelationshipSchema {
+  final bool following;           // Are you following this user?
+  final bool followedBy;          // Are you followed by this user?
+  final bool blocking;            // Are you blocking this user?
+  final bool blockedBy;           // Is this user blocking you?
+  final bool muting;              // Are you muting this user?
+  final bool mutingNotifications; // Are you muting notifications from this user?
+  final bool requested;           // Are you following this user, but your follow request is pending?
+  final bool requestedBy;         // Has this user requested to follow you?
+  final bool domainBlocking;      // Are you blocking this user’s domain?
+  final bool endorsed;            // Are you featuring this user on your profile?
+  final String note;              // This user’s profile bio
+  final bool showingReblogs;      // Are you receiving this user’s boosts in your home timeline?
+  final bool notifying;           // Have you enabled notifications for this user?
+  final List<String> languages;   // Which languages are you following from this user?
+
+  const RelationshipSchema({
+    required this.following,
+    required this.followedBy,
+    required this.blocking,
+    required this.blockedBy,
+    required this.muting,
+    required this.mutingNotifications,
+    required this.requested,
+    required this.requestedBy,
+    required this.domainBlocking,
+    required this.endorsed,
+    required this.note,
+    required this.showingReblogs,
+    required this.notifying,
+    this.languages = const [],
+  });
+
+  factory RelationshipSchema.fromString(String str) {
+    final Map<String, dynamic> json = jsonDecode(str) as Map<String, dynamic>;
+    return RelationshipSchema.fromJson(json);
+  }
+
+  factory RelationshipSchema.fromJson(Map<String, dynamic> json) {
+    return RelationshipSchema(
+      following: json['following'] as bool,
+      followedBy: json['followed_by'] as bool,
+      blocking: json['blocking'] as bool,
+      blockedBy: json['blocked_by'] as bool,
+      muting: json['muting'] as bool,
+      mutingNotifications: json['muting_notifications'] as bool,
+      requested: json['requested'] as bool,
+      requestedBy: json['requested_by'] as bool,
+      domainBlocking: json['domain_blocking'] as bool,
+      endorsed: json['endorsed'] as bool,
+      note: json['note'] as String,
+      showingReblogs: json['showing_reblogs'] as bool,
+      notifying: json['notifying'] as bool,
+      languages: (json['languages'] as List<dynamic>).map((e) => e as String).toList(),
+    );
+  }
+}
+
 
 // vim: set ts=2 sw=2 sts=2 et:
