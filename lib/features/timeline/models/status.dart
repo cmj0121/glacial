@@ -1,7 +1,7 @@
 // The Timeline Status data schema.
 import 'dart:convert';
 
-import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/core.dart';
 
 // The timeline status data schema that is the toots from the current
 // selected Mastodon server.

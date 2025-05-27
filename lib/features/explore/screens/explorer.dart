@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/explore/models/explorer.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/timeline/screens/core.dart';
-
-import 'hashtag.dart';
+import 'package:glacial/features/core.dart';
 
 // The general search widget to search for a Mastodon server, may return the account, status, or hashtag.
 class Explorer extends ConsumerStatefulWidget {

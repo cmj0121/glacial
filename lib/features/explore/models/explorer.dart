@@ -4,8 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/timeline/models/core.dart';
-import 'hashtag.dart';
+import 'package:glacial/features/core.dart';
 
 // The possible types of results that can be returned from the explorer.
 enum ExplorerResultType implements SlideTab {

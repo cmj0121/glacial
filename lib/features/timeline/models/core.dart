@@ -1,6 +1,5 @@
 // The exposed library for timeline related data schema
 
-export 'account.dart';
 export 'application.dart';
 export 'attachment.dart';
 export 'emoji.dart';

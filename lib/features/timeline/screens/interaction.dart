@@ -6,8 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/core.dart';
 
 // The interaction bar that shows the all the possible actions for the current
 // status, and wraps the interaction more button if there are more actions

@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/core.dart';
 
 // The in-memory AccountSchema and EmojiSchema cache
 Map<String, EmojiSchema> emojiCache = {};
