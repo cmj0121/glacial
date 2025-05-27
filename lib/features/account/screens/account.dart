@@ -4,12 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/account/models/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/timeline/models/core.dart';
-import 'package:glacial/features/timeline/screens/core.dart';
-
-import 'relationship.dart';
+import 'package:glacial/features/core.dart';
 
 // The account widget to show the account information.
 class Account extends StatelessWidget {
@@ -167,7 +162,7 @@ class AccountProfile extends ConsumerWidget {
         ),
 
         const Spacer(),
-        Relationship(schema: schema),
+        RelationshipBuilder(schema: schema),
       ],
     );
   }

@@ -12,6 +12,7 @@ export 'cores/storage.dart';
 export 'l10n/app_localizations.dart';
 
 export 'features/auth/extensions.dart';
+export 'features/account/extensions.dart';
 export 'features/explore/extensions.dart';
 export 'features/glacial/extensions.dart';
 export 'features/timeline/extensions.dart';
