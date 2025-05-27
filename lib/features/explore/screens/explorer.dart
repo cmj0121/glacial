@@ -22,12 +22,14 @@ class Explorer extends ConsumerStatefulWidget {
 
 class _ExplorerState extends ConsumerState<Explorer> {
   final TextEditingController controller = TextEditingController();
+  final FocusNode focusNode = FocusNode();
 
   bool showInput = false;
 
   @override
   void dispose() {
     controller.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -56,6 +58,7 @@ class _ExplorerState extends ConsumerState<Explorer> {
   Widget buildSearchBar() {
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       decoration: InputDecoration(
         prefixIcon: IconButton(
           icon: Icon(Icons.search, size: widget.size),
@@ -89,6 +92,7 @@ class _ExplorerState extends ConsumerState<Explorer> {
 
   void onShowSearch() async {
     setState(() => showInput = true);
+    focusNode.requestFocus();
   }
 
   void onSearch() async {
