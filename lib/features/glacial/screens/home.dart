@@ -240,8 +240,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
   // Back to the explorer page.
   void onBack() {
-    ref.read(currentServerProvider.notifier).state = null;
-    ref.read(currentAccessTokenProvider.notifier).state = null;
+    clearProvider(ref);
     context.go(RoutePath.serverExplorer.path);
   }
 

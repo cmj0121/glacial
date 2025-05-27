@@ -60,11 +60,11 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
       return Icon(Icons.help_outlined, size: widget.size);
     }
 
-    final AccountSchema? account = ref.watch(currentUserProvider);
+    final AccountSchema? account = ref.read(currentUserProvider);
     return account == null ? Icon(Icons.error, size: widget.size) : buildUserAvatar(account);
   }
 
-  // Build the user avartar with the size of the widget.
+  // Build the user avatar with the size of the widget.
   Widget buildUserAvatar(AccountSchema account) {
     return InkWellDone(
       onTap: () => context.push(RoutePath.userProfile.path, extra: account),
@@ -113,9 +113,7 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
       return;
     }
 
-    storage.saveAccessToken(schema.domain, null);
-    ref.read(currentAccessTokenProvider.notifier).state = null;
-    ref.read(currentUserProvider.notifier).state = null;
+    await clearProvider(ref);
     if (mounted) {
       logger.i("sign out and clean up the access token");
       context.go(RoutePath.timeline.path, extra: now);

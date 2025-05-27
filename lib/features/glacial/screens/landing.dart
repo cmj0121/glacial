@@ -107,9 +107,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
     logger.i("preloading server schema from $server to $schema ...");
 
     await Future.delayed(waitToPreload);
-    ref.read(currentServerProvider.notifier).state = schema;
-    ref.read(currentAccessTokenProvider.notifier).state = accessToken;
-    ref.read(currentUserProvider.notifier).state = await schema?.getAuthUser(accessToken);
+    await onLoading(ref, schema, accessToken);
 
     if (mounted) {
       logger.i("completely preloaded and click $clickCount ...");
