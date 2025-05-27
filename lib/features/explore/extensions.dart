@@ -5,7 +5,7 @@ import 'package:glacial/features/explore/models/explorer.dart';
 extension ExploreExtensions on ServerSchema {
   Future<SearchResultSchema> search({required String keyword, String? accessToken}) async {
     final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
-    final Uri url = Uri.https(domain, '/api/v2/search').replace(
+    final Uri url = UriEx.handle(domain, '/api/v2/search').replace(
       queryParameters: {
         'q': keyword,
       },

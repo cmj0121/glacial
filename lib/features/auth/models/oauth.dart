@@ -68,7 +68,7 @@ class OAuth2Info {
       "website": dotenv.env['OAUTH_WEBSITE_URL'],
     };
 
-    final Uri uri = Uri.https(domain, "/api/v1/apps");
+    final Uri uri = UriEx.handle(domain, "/api/v1/apps");
     final Map<String, String> headers = {"Content-Type": "application/json"};
     final response = await post(uri, body: jsonEncode(body), headers: headers);
 

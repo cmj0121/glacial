@@ -15,13 +15,13 @@ extension TrendsExtension on TrendsType {
 
     switch (this) {
       case TrendsType.statuses:
-        uri = Uri.https(server.domain, '/api/v1/trends/statuses');
+        uri = UriEx.handle(server.domain, '/api/v1/trends/statuses');
         break;
       case TrendsType.tags:
-        uri = Uri.https(server.domain, '/api/v1/trends/tags');
+        uri = UriEx.handle(server.domain, '/api/v1/trends/tags');
         break;
       case TrendsType.links:
-        uri = Uri.https(server.domain, '/api/v1/trends/links');
+        uri = UriEx.handle(server.domain, '/api/v1/trends/links');
         break;
     }
 

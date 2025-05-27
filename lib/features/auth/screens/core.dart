@@ -101,7 +101,7 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
 
     storage.saveToOAuthState(state, widget.schema);
     if (mounted) {
-      final Uri uri = Uri.https(widget.schema.domain, "/oauth/authorize", query);
+      final Uri uri = UriEx.handle(widget.schema.domain, "/oauth/authorize", query);
       context.push(RoutePath.webview.path, extra: uri);
     }
   }
