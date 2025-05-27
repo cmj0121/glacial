@@ -165,5 +165,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_follow => 'フォロー';
 
   @override
+  String get btn_unblock => 'ブロック解除';
+
+  @override
+  String get btn_unmute => 'ミュート解除';
+
+  @override
+  String get btn_report => '報告';
+
+  @override
   String get dots => '...';
 }

@@ -50,5 +50,10 @@
   "btn_following": "팔로잉 중",
   "btn_followed_by": "팔로워",
   "btn_follow": "팔로우",
+  "btn_block": "차단",
+  "btn_unblock": "차단 해제",
+  "btn_mute": "음소거",
+  "btn_unmute": "음소거 해제",
+  "btn_report": "신고",
   "dots": "..."
 }

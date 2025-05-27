@@ -50,5 +50,10 @@
   "btn_following": "フォロー中",
   "btn_followed_by": "フォロワー",
   "btn_follow": "フォロー",
+  "btn_block": "ブロック",
+  "btn_unblock": "ブロック解除",
+  "btn_mute": "ミュート",
+  "btn_unmute": "ミュート解除",
+  "btn_report": "報告",
   "dots": "..."
 }

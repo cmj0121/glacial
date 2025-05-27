@@ -132,7 +132,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_share => 'Teilen';
 
   @override
-  String get btn_mute => 'Stumm';
+  String get btn_mute => 'Stummschalten';
 
   @override
   String get btn_block => 'Blockieren';
@@ -163,6 +163,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get btn_follow => 'Folgen';
+
+  @override
+  String get btn_unblock => 'Entblocken';
+
+  @override
+  String get btn_unmute => 'Stumm aus';
+
+  @override
+  String get btn_report => 'Melden';
 
   @override
   String get dots => '...';

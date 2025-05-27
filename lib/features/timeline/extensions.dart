@@ -415,6 +415,70 @@ extension AccountsExtensions on AccountSchema {
 
     return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
+
+  // Block the account from the Mastodon server.
+  Future<RelationshipSchema> block({required String domain, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/$id/block");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  // Unblock the account from the Mastodon server.
+  Future<RelationshipSchema> unblock({required String domain, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/$id/unblock");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  // Mute the account from the Mastodon server.
+  Future<RelationshipSchema> mute({required String domain, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/$id/mute");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  // Unmute the account from the Mastodon server.
+  Future<RelationshipSchema> unmute({required String domain, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/$id/unmute");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

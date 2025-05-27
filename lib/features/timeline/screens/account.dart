@@ -239,6 +239,13 @@ class AccountProfile extends ConsumerWidget {
   }
 }
 
+// The relationship action enum, used for the relationship actions.
+enum RelationshipAction {
+  mute,
+  block,
+  report;
+}
+
 // The relationship between accounts, such as following / blocking / muting / etc
 class Relationship extends ConsumerStatefulWidget {
   final AccountSchema schema;
@@ -312,6 +319,7 @@ class _RelationshipState extends ConsumerState<Relationship> {
   }
 
   Widget buildContent(RelationshipSchema rel) {
+    final bool canFollow = !rel.blocking;
     late final String text;
 
     if (rel.following && rel.followedBy) {
@@ -331,12 +339,14 @@ class _RelationshipState extends ConsumerState<Relationship> {
         const SizedBox(width: 8),
         TextButton(
           style: TextButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.onSurface,
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            foregroundColor: canFollow ? Theme.of(context).colorScheme.onSurface : null,
+            backgroundColor: canFollow ? Theme.of(context).colorScheme.inversePrimary : null,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
-          onPressed: () => onFollowToggle(rel),
-          child: Text(text, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white)),
+          onPressed: canFollow ? () => onFollowToggle(rel) : null,
+          child: Text(text, style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: canFollow ? Colors.white : Theme.of(context).colorScheme.secondary,
+          )),
         ),
         const SizedBox(width: 8),
       ],
@@ -347,34 +357,89 @@ class _RelationshipState extends ConsumerState<Relationship> {
     return PopupMenuButton(
       icon: Icon(Icons.more_horiz, color: Theme.of(context).colorScheme.onSurface),
       tooltip: '', // for disabling the tooltip
-      itemBuilder: (context) {
-        final List<Widget> items = [
-          TextButton.icon(
-            icon: Icon(rel.muting ? Icons.volume_up_outlined : Icons.volume_off),
-            label: Text('Mute'),
-            onPressed: null,
-          ),
-          TextButton.icon(
-            icon: Icon(rel.blocking ? Icons.lock_open : Icons.block_outlined),
-            label: Text('Block'),
-            onPressed: null,
-          ),
-          TextButton.icon(
-            icon: Icon(Icons.flag, color: Theme.of(context).colorScheme.error),
-            label: Text('Report'),
-            onPressed: null,
-          ),
-        ];
+      onSelected: (value) {
+        final RelationshipAction action = RelationshipAction.values.firstWhere((e) => e.name == value);
 
-        return items.map((item) {
-          return PopupMenuItem(
-            child: item,
-          );
+        switch (action) {
+          case RelationshipAction.mute:
+            onMuteToggle(rel);
+            break;
+          case RelationshipAction.block:
+            onBlockToggle(rel);
+            break;
+          case RelationshipAction.report:
+            onReport();
+            break;
+        }
+      },
+      itemBuilder: (context) {
+        return RelationshipAction.values.map((action) {
+          switch (action) {
+            case RelationshipAction.mute:
+              return PopupMenuItem(
+                value: action.name,
+                child: Row(
+                  children: [
+                    Icon(
+                      rel.muting ? Icons.volume_up_outlined : Icons.volume_off,
+                      color: rel.muting ? null : Theme.of(context).colorScheme.error,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      rel.muting ?
+                      AppLocalizations.of(context)?.btn_unmute ?? "Unmute" :
+                      AppLocalizations.of(context)?.btn_mute ?? "Mute",
+                      style: TextStyle(
+                        color: rel.muting ? null : Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            case RelationshipAction.block:
+              return PopupMenuItem(
+                value: action.name,
+                child: Row(
+                  children: [
+                    Icon(
+                      rel.blocking ? Icons.lock_open : Icons.block_outlined,
+                      color: rel.blocking ? null : Theme.of(context).colorScheme.error,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      rel.blocking ?
+                      AppLocalizations.of(context)?.btn_unblock ?? "Unblock" :
+                      AppLocalizations.of(context)?.btn_block ?? "Block",
+                      style: TextStyle(
+                        color: rel.blocking ? null : Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            case RelationshipAction.report:
+              return PopupMenuItem(
+                value: action.name,
+                child: Row(
+                  children: [
+                    Icon(Icons.flag, color: Theme.of(context).colorScheme.error),
+                    const SizedBox(width: 8),
+                    Text(
+                      AppLocalizations.of(context)?.btn_report ?? "Report",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+          }
         }).toList();
       },
     );
   }
 
+  // Change the following status of the relationship.
   void onFollowToggle(RelationshipSchema rel) async {
     final ServerSchema? server = ref.read(currentServerProvider);
     final String? accessToken = ref.read(currentAccessTokenProvider);
@@ -395,6 +460,63 @@ class _RelationshipState extends ConsumerState<Relationship> {
     }
 
     setState(() => relationship = newRel);
+  }
+
+  // Change the blocking status of the relationship.
+  void onBlockToggle(RelationshipSchema rel) async {
+    final ServerSchema? server = ref.read(currentServerProvider);
+    final String? accessToken = ref.read(currentAccessTokenProvider);
+    late final RelationshipSchema newRel;
+
+    if (server == null || accessToken == null) {
+      logger.w("No server or access token available for block toggle.");
+      return;
+    }
+
+    switch (rel.blocking) {
+      case true:
+        newRel = await widget.schema.unblock(domain: server.domain, accessToken: accessToken);
+        break;
+      case false:
+        newRel = await widget.schema.block(domain: server.domain, accessToken: accessToken);
+        break;
+    }
+
+    setState(() => relationship = newRel);
+  }
+
+  // Change the muting status of the relationship.
+  void onMuteToggle(RelationshipSchema rel) async {
+    final ServerSchema? server = ref.read(currentServerProvider);
+    final String? accessToken = ref.read(currentAccessTokenProvider);
+    late final RelationshipSchema newRel;
+
+    if (server == null || accessToken == null) {
+      logger.w("No server or access token available for mute toggle.");
+      return;
+    }
+
+    switch (rel.muting) {
+      case true:
+        newRel = await widget.schema.unmute(domain: server.domain, accessToken: accessToken);
+        break;
+      case false:
+        newRel = await widget.schema.mute(domain: server.domain, accessToken: accessToken);
+        break;
+    }
+
+    setState(() => relationship = newRel);
+  }
+
+  // Report the user.
+  void onReport() {
+    final ServerSchema? server = ref.read(currentServerProvider);
+    final String? accessToken = ref.read(currentAccessTokenProvider);
+
+    if (server == null || accessToken == null) {
+      logger.w("No server or access token available for reporting.");
+      return;
+    }
   }
 }
 

@@ -165,5 +165,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btn_follow => 'Seguir';
 
   @override
+  String get btn_unblock => 'Desbloquear';
+
+  @override
+  String get btn_unmute => 'Reactivar sonido';
+
+  @override
+  String get btn_report => 'Reportar';
+
+  @override
   String get dots => '...';
 }

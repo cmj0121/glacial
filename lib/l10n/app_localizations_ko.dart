@@ -165,5 +165,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_follow => '팔로우';
 
   @override
+  String get btn_unblock => '차단 해제';
+
+  @override
+  String get btn_unmute => '음소거 해제';
+
+  @override
+  String get btn_report => '신고';
+
+  @override
   String get dots => '...';
 }

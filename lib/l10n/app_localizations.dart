@@ -407,6 +407,24 @@ abstract class AppLocalizations {
   /// **'Follow'**
   String get btn_follow;
 
+  /// No description provided for @btn_unblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get btn_unblock;
+
+  /// No description provided for @btn_unmute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get btn_unmute;
+
+  /// No description provided for @btn_report.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get btn_report;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

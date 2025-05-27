@@ -50,5 +50,10 @@
   "btn_following": "跟隨中",
   "btn_followed_by": "被跟隨",
   "btn_follow": "跟隨",
+  "btn_block": "封鎖",
+  "btn_unblock": "解除封鎖",
+  "btn_mute": "靜音",
+  "btn_unmute": "解除靜音",
+  "btn_report": "檢舉",
   "dots": "..."
 }

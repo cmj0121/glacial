@@ -50,5 +50,10 @@
   "btn_following": "Abonné",
   "btn_followed_by": "Abonné par",
   "btn_follow": "Suivre",
+  "btn_block": "Bloquer",
+  "btn_unblock": "Débloquer",
+  "btn_mute": "Mettre en sourdine",
+  "btn_unmute": "Réactiver le son",
+  "btn_report": "Signaler",
   "dots": "..."
 }

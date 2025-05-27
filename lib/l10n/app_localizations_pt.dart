@@ -165,5 +165,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_follow => 'Seguir';
 
   @override
+  String get btn_unblock => 'Desbloquear';
+
+  @override
+  String get btn_unmute => 'Reativar som';
+
+  @override
+  String get btn_report => 'Denunciar';
+
+  @override
   String get dots => '...';
 }
