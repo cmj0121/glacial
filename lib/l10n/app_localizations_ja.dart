@@ -150,5 +150,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_trends_tags => 'タグ';
 
   @override
+  String get btn_management => '管理（かんり）';
+
+  @override
   String get dots => '...';
 }

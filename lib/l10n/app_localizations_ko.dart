@@ -150,5 +150,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_trends_tags => '태그';
 
   @override
+  String get btn_management => '관리';
+
+  @override
   String get dots => '...';
 }

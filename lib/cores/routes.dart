@@ -15,6 +15,7 @@ enum RoutePath {
   explorer,          // The explorer page of the app for the current server.
   notifications,     // The notifications page of the app.
   settings,          // The settings page of the app.
+  admin,             // The admin page of the app.
   wip;               // The work-in-progress page of the app.
 
   // Get the string path for the route.
@@ -44,6 +45,8 @@ enum RoutePath {
         return '/glacial/notifications';
       case RoutePath.settings:
         return '/glacial/settings';
+      case RoutePath.admin:
+        return '/admin';
       case RoutePath.wip:
         return '/wip';
     }

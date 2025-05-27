@@ -150,5 +150,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_trends_tags => 'Etiquetas';
 
   @override
+  String get btn_management => 'Gerenciamento';
+
+  @override
   String get dots => '...';
 }

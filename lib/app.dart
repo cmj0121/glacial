@@ -249,6 +249,12 @@ class GlacialApp extends StatelessWidget {
             );
           },
         ),
+        // The admin page to show the server management page in the selected
+        // Mastodon server
+        GoRoute(
+          path: RoutePath.admin.path,
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
+        ),
       ],
     );
   }

@@ -377,6 +377,12 @@ abstract class AppLocalizations {
   /// **'Tags'**
   String get btn_trends_tags;
 
+  /// No description provided for @btn_management.
+  ///
+  /// In en, this message translates to:
+  /// **'Management'**
+  String get btn_management;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

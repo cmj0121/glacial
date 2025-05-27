@@ -150,5 +150,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_trends_tags => '主題標籤';
 
   @override
+  String get btn_management => '管理';
+
+  @override
   String get dots => '...';
 }
