@@ -1,7 +1,5 @@
 // The User button to navigate to the sign-in page of the Master server, or show
 // the user profile page if already signed in.
-import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,7 +29,6 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
   final Storage storage = Storage();
   final Debouncer debouncer = Debouncer();
 
-  late final StreamSubscription<Uri?> sub;
   late final String state;
 
   @override
@@ -44,7 +41,6 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
   @override
   void dispose() {
     super.dispose();
-    sub.cancel();
   }
 
   @override
