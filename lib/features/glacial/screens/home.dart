@@ -170,6 +170,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ...buildActions(),
+          buildAdminAction(),
           const Spacer(),
           NewStatus(size: sidebarSize),
         ],
@@ -195,6 +196,8 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     );
   }
 
+  // Build the list of actions in the sidebar for the general user, the actions
+  // may not be available for the anonymous user.
   List<Widget> buildActions() {
     final String? accessToken = ref.watch(currentAccessTokenProvider);
     final String path = GoRouter.of(context).state.uri.toString();
@@ -214,6 +217,11 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           onPressed: isEnabled ? () => onSelect(index) : null,
         );
       }).toList();
+  }
+
+  // Build the admin sidebar action if the current user is an admin.
+  Widget buildAdminAction() {
+    return const SizedBox.shrink();
   }
 
   // The list of actions could be performed in the sidebar.
