@@ -167,7 +167,6 @@ class GlacialApp extends StatelessWidget {
               );
             },
             child: KeyedSubtree(
-              key: ValueKey(state.fullPath),
               child: child,
             ),
           ),

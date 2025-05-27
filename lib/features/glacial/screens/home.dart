@@ -206,7 +206,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         final bool isEnabled = accessToken != null || action.supportAnonymous;
 
         return IconButton(
-          key: ValueKey<int>(index),
           icon: Icon(isSelected ? action.activeIcon : action.icon, size: sidebarSize),
           color: isSelected ? Theme.of(context).colorScheme.primary : null,
           tooltip: actionTooltip(action),
