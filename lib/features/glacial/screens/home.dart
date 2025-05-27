@@ -11,7 +11,8 @@ enum SidebarButtonType {
   timeline,
   trending,
   notifications,
-  settings;
+  settings,
+  admin;
 
   bool get supportAnonymous {
     switch (this) {
@@ -20,6 +21,7 @@ enum SidebarButtonType {
         return true;
       case notifications:
       case settings:
+      case admin:
         return false;
     }
   }
@@ -34,6 +36,8 @@ enum SidebarButtonType {
         return Icons.notifications_outlined;
       case settings:
         return Icons.settings_outlined;
+      case admin:
+        return Icons.admin_panel_settings_outlined;
     }
   }
 
@@ -47,6 +51,8 @@ enum SidebarButtonType {
         return Icons.notifications;
       case settings:
         return Icons.settings;
+      case admin:
+        return Icons.admin_panel_settings;
     }
   }
 
@@ -60,6 +66,8 @@ enum SidebarButtonType {
         return RoutePath.notifications;
       case settings:
         return RoutePath.settings;
+      case admin:
+        return RoutePath.admin;
     }
   }
 }
@@ -81,19 +89,24 @@ class GlacialHome extends ConsumerStatefulWidget {
 class _GlacialHomeState extends ConsumerState<GlacialHome> {
   final double appBarHeight = 44;
   final double sidebarSize = 32;
-  final List<SidebarButtonType> actions = SidebarButtonType.values;
 
+  late final List<SidebarButtonType> actions;
   late final ServerSchema schema;
 
   @override
   void initState() {
     super.initState();
 
+    final AccountSchema? account = ref.read(currentUserProvider);
     final ServerSchema? schema = ref.read(currentServerProvider);
+    final int permissions = int.parse(account?.role?.permissions ?? '0');
+
     if (schema == null) {
       throw Exception("No server schema found, please select a server.");
     }
+
     this.schema = schema;
+    actions = SidebarButtonType.values.where((a) => permissions > 0 || a != SidebarButtonType.admin).toList();
   }
 
   @override
@@ -195,18 +208,19 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     );
   }
 
+  // Build the list of actions in the sidebar for the general user, the actions
+  // may not be available for the anonymous user.
   List<Widget> buildActions() {
-    final String? accessToken = ref.watch(currentAccessTokenProvider);
+    final AccountSchema? account = ref.watch(currentUserProvider);
     final String path = GoRouter.of(context).state.uri.toString();
     final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
 
     return actions.map((action) {
         final int index = actions.indexOf(action);
         final bool isSelected = action.route == route;
-        final bool isEnabled = accessToken != null || action.supportAnonymous;
+        final bool isEnabled = account != null || action.supportAnonymous;
 
         return IconButton(
-          key: ValueKey<int>(index),
           icon: Icon(isSelected ? action.activeIcon : action.icon, size: sidebarSize),
           color: isSelected ? Theme.of(context).colorScheme.primary : null,
           tooltip: actionTooltip(action),
@@ -228,13 +242,14 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         return AppLocalizations.of(context)?.btn_notifications ?? "Notifications";
       case SidebarButtonType.settings:
         return AppLocalizations.of(context)?.btn_settings ?? "Settings";
+      case SidebarButtonType.admin:
+        return AppLocalizations.of(context)?.btn_management ?? "Admin Management";
     }
   }
 
   // Back to the explorer page.
   void onBack() {
-    ref.read(currentServerProvider.notifier).state = null;
-    ref.read(currentAccessTokenProvider.notifier).state = null;
+    clearProvider(ref);
     context.go(RoutePath.serverExplorer.path);
   }
 

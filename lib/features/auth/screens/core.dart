@@ -1,7 +1,5 @@
 // The User button to navigate to the sign-in page of the Master server, or show
 // the user profile page if already signed in.
-import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,7 +29,6 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
   final Storage storage = Storage();
   final Debouncer debouncer = Debouncer();
 
-  late final StreamSubscription<Uri?> sub;
   late final String state;
 
   @override
@@ -44,7 +41,6 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
   @override
   void dispose() {
     super.dispose();
-    sub.cancel();
   }
 
   @override
@@ -64,11 +60,11 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
       return Icon(Icons.help_outlined, size: widget.size);
     }
 
-    final AccountSchema? account = ref.watch(currentUserProvider);
+    final AccountSchema? account = ref.read(currentUserProvider);
     return account == null ? Icon(Icons.error, size: widget.size) : buildUserAvatar(account);
   }
 
-  // Build the user avartar with the size of the widget.
+  // Build the user avatar with the size of the widget.
   Widget buildUserAvatar(AccountSchema account) {
     return InkWellDone(
       onTap: () => context.push(RoutePath.userProfile.path, extra: account),
@@ -101,7 +97,7 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
 
     storage.saveToOAuthState(state, widget.schema);
     if (mounted) {
-      final Uri uri = Uri.https(widget.schema.domain, "/oauth/authorize", query);
+      final Uri uri = UriEx.handle(widget.schema.domain, "/oauth/authorize", query);
       context.push(RoutePath.webview.path, extra: uri);
     }
   }
@@ -117,9 +113,7 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
       return;
     }
 
-    storage.saveAccessToken(schema.domain, null);
-    ref.read(currentAccessTokenProvider.notifier).state = null;
-    ref.read(currentUserProvider.notifier).state = null;
+    await clearProvider(ref);
     if (mounted) {
       logger.i("sign out and clean up the access token");
       context.go(RoutePath.timeline.path, extra: now);

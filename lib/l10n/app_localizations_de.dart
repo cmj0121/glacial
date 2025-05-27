@@ -150,5 +150,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_trends_tags => 'Schlagwörter';
 
   @override
+  String get btn_management => 'Verwaltung';
+
+  @override
   String get dots => '...';
 }

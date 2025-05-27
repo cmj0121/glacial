@@ -54,4 +54,18 @@ Future<http.Response> delete(Uri url, {Map<String, String>? headers, Object? bod
   return http.delete(url, headers: headers, body: body, encoding: encoding);
 }
 
+// Handle the protocol based on the URL scheme, using HTTP if the host is localhost
+class UriEx {
+  static Uri handle(String authority, [String? unencodedPath, Map<String, dynamic>? queryParameters ]) {
+    final String path = unencodedPath ?? '';
+    final bool isLocalhost = authority.startsWith('localhost');
+
+    if (isLocalhost) {
+      return Uri.http(authority, path, queryParameters);
+    } else {
+      return Uri.https(authority, path, queryParameters);
+    }
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

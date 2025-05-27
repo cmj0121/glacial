@@ -9,7 +9,14 @@ final keyLastServer = 'last_server';
 extension ServerExtensions on Storage {
   // Get and Set the last used server
   Future<String?> loadLastServer() async => await getString(keyLastServer);
-  void saveLastServer(String server) => setString(keyLastServer, server);
+  Future<void> saveLastServer(String? server) async {
+    if (server == null || server.isEmpty) {
+      await remove(keyLastServer);
+      return;
+    }
+
+    await setString(keyLastServer, server);
+  }
 
   // get the history of the used servers
   List<String> get serverHistory => getStringList(keyServerHistory);

@@ -26,6 +26,18 @@ class Storage {
     return secure ? await _secureStorage.read(key: key) : _prefs?.getString(key);
   }
 
+  // Remove the raw string value from the storage.
+  Future<void> remove(String key, {bool secure = false}) async {
+    switch (secure) {
+      case true:
+        await _secureStorage.delete(key: key);
+        break;
+      case false:
+        await _prefs?.remove(key);
+        break;
+    }
+  }
+
   // Get the list of string from the storage.
   List<String> getStringList(String key) {
     return _prefs?.getStringList(key) ?? [];

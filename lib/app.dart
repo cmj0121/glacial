@@ -167,7 +167,6 @@ class GlacialApp extends StatelessWidget {
               );
             },
             child: KeyedSubtree(
-              key: ValueKey(state.fullPath),
               child: child,
             ),
           ),
@@ -249,6 +248,12 @@ class GlacialApp extends StatelessWidget {
               child: content,
             );
           },
+        ),
+        // The admin page to show the server management page in the selected
+        // Mastodon server
+        GoRoute(
+          path: RoutePath.admin.path,
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
         ),
       ],
     );

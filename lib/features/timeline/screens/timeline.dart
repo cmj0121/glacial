@@ -64,7 +64,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
 
         return Icon(isSelected ? type.activeIcon : type.icon, color: color);
       },
-      itemBuilder: (context, index) => TimelineBuilder(key: ValueKey(types[index]), type: types[index]),
+      itemBuilder: (context, index) => TimelineBuilder(type: types[index]),
       onTabTappable: (index) => accessToken != null || types[index].supportAnonymous,
     );
   }

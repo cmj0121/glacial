@@ -224,11 +224,9 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
     });
 
     final String? accessToken = await storage.loadAccessToken(schema.domain);
+    await onLoading(ref, schema, accessToken);
 
     if (mounted) {
-      storage.saveLastServer(schema.domain);
-      ref.read(currentServerProvider.notifier).state = schema;
-      ref.read(currentAccessTokenProvider.notifier).state = accessToken;
       logger.i("save current server: ${schema.domain}");
       GoRouter.of(context).push(RoutePath.timeline.path);
     }
