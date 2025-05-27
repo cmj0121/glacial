@@ -153,5 +153,17 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_management => '管理（かんり）';
 
   @override
+  String get btn_follow_mutual => '相互フォロー';
+
+  @override
+  String get btn_following => 'フォロー中';
+
+  @override
+  String get btn_followed_by => 'フォロワー';
+
+  @override
+  String get btn_follow => 'フォロー';
+
+  @override
   String get dots => '...';
 }

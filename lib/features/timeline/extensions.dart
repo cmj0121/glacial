@@ -364,4 +364,57 @@ extension EmojiExtensions on Storage {
   }
 }
 
+// The relationship of the Account to current user.
+extension AccountsExtensions on AccountSchema {
+  Future<List<RelationshipSchema>> relationship({
+    required String domain,
+    required String accessToken,
+    List<String> ids = const [],
+  }) async {
+    final Map<String, String> query = {'id[]': ids.isEmpty ? id : ids.join(',')};
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/relationships").replace(queryParameters: query);
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    return json.map((e) => RelationshipSchema.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  // Follow the account from the Mastodon server.
+  Future<RelationshipSchema> follow({required String domain, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/$id/follow");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  // Unfollow the account from the Mastodon server.
+  Future<RelationshipSchema> unfollow({required String domain, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/$id/unfollow");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

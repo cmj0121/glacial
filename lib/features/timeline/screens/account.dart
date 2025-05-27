@@ -240,48 +240,122 @@ class AccountProfile extends ConsumerWidget {
 }
 
 // The relationship between accounts, such as following / blocking / muting / etc
-class Relationship extends ConsumerWidget {
+class Relationship extends ConsumerStatefulWidget {
   final AccountSchema schema;
+  final RelationshipSchema? relationship;
 
   const Relationship({
     super.key,
     required this.schema,
+    this.relationship,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Relationship> createState() => _RelationshipState();
+}
+
+class _RelationshipState extends ConsumerState<Relationship> {
+  late RelationshipSchema? relationship;
+
+  @override
+  void initState() {
+    super.initState();
+    relationship = widget.relationship;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final AccountSchema? currentUser = ref.watch(currentUserProvider);
 
-    if (schema.id == currentUser?.id) {
-      return const SizedBox.shrink(); // No relationship with self
+    if (widget.schema.id == currentUser?.id) {
+      // No relationship with self
+      return const SizedBox.shrink();
+    }
+
+
+    if (relationship != null) {
+      // If the relationship is already provided, build the content directly
+      return buildContent(relationship!);
+    }
+
+    return buildContentBuilder(currentUser);
+  }
+
+  Widget buildContentBuilder(AccountSchema? currentUser) {
+    final ServerSchema? server = ref.watch(currentServerProvider);
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
+
+    if (currentUser == null || server == null || accessToken == null) {
+      logger.w("No server or access token available for relationship.");
+      return const SizedBox.shrink();
+    }
+
+    return FutureBuilder(
+      future: currentUser.relationship(domain: server.domain, accessToken: accessToken, ids: [widget.schema.id]),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox.shrink();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+
+        final List<RelationshipSchema> relationships = snapshot.data!;
+        final RelationshipSchema? rel = relationships.isNotEmpty ? relationships.first : null;
+
+        if (rel == null) {
+          return const SizedBox.shrink();
+        }
+
+        return buildContent(rel);
+      },
+    );
+  }
+
+  Widget buildContent(RelationshipSchema rel) {
+    late final String text;
+
+    if (rel.following && rel.followedBy) {
+      text = AppLocalizations.of(context)?.btn_follow_mutual ?? "Mutual";
+    } else if (rel.following) {
+      text = AppLocalizations.of(context)?.btn_following ?? "Following";
+    } else if (rel.followedBy) {
+      text = AppLocalizations.of(context)?.btn_followed_by ?? "Followed by";
+    } else {
+      text = AppLocalizations.of(context)?.btn_follow ?? "Follow";
     }
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        buildMoreActions(context),
+        buildMoreActions(rel),
         const SizedBox(width: 8),
         TextButton(
-          onPressed: null,
-          child: const Text("TODO"),
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.onSurface,
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          onPressed: () => onFollowToggle(rel),
+          child: Text(text, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white)),
         ),
+        const SizedBox(width: 8),
       ],
     );
   }
 
-  Widget buildMoreActions(BuildContext context) {
+  Widget buildMoreActions(RelationshipSchema rel) {
     return PopupMenuButton(
       icon: Icon(Icons.more_horiz, color: Theme.of(context).colorScheme.onSurface),
       tooltip: '', // for disabling the tooltip
       itemBuilder: (context) {
         final List<Widget> items = [
           TextButton.icon(
-            icon: Icon(Icons.volume_off),
+            icon: Icon(rel.muting ? Icons.volume_up_outlined : Icons.volume_off),
             label: Text('Mute'),
             onPressed: null,
           ),
           TextButton.icon(
-            icon: Icon(Icons.block_outlined),
+            icon: Icon(rel.blocking ? Icons.lock_open : Icons.block_outlined),
             label: Text('Block'),
             onPressed: null,
           ),
@@ -294,12 +368,33 @@ class Relationship extends ConsumerWidget {
 
         return items.map((item) {
           return PopupMenuItem(
-            value: item,
             child: item,
           );
         }).toList();
       },
     );
+  }
+
+  void onFollowToggle(RelationshipSchema rel) async {
+    final ServerSchema? server = ref.read(currentServerProvider);
+    final String? accessToken = ref.read(currentAccessTokenProvider);
+    late final RelationshipSchema newRel;
+
+    if (server == null || accessToken == null) {
+      logger.w("No server or access token available for follow toggle.");
+      return;
+    }
+
+    switch (rel.following) {
+      case true:
+        newRel = await widget.schema.unfollow(domain: server.domain, accessToken: accessToken);
+        break;
+      case false:
+        newRel = await widget.schema.follow(domain: server.domain, accessToken: accessToken);
+        break;
+    }
+
+    setState(() => relationship = newRel);
   }
 }
 

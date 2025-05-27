@@ -46,5 +46,9 @@
   "btn_trends_statuses": "嘟文",
   "btn_trends_tags": "主題標籤",
   "btn_management": "管理",
+  "btn_follow_mutual": "互相跟隨",
+  "btn_following": "跟隨中",
+  "btn_followed_by": "被跟隨",
+  "btn_follow": "跟隨",
   "dots": "..."
 }

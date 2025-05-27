@@ -46,5 +46,9 @@
   "btn_trends_statuses": "Statuts",
   "btn_trends_tags": "Étiquettes",
   "btn_management": "Gestion",
+  "btn_follow_mutual": "Abonnement mutuel",
+  "btn_following": "Abonné",
+  "btn_followed_by": "Abonné par",
+  "btn_follow": "Suivre",
   "dots": "..."
 }

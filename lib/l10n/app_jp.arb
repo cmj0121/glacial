@@ -46,5 +46,9 @@
   "btn_trends_statuses": "投稿",
   "btn_trends_tags": "タグ",
   "btn_management": "管理（かんり）",
+  "btn_follow_mutual": "相互フォロー",
+  "btn_following": "フォロー中",
+  "btn_followed_by": "フォロワー",
+  "btn_follow": "フォロー",
   "dots": "..."
 }

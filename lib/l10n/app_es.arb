@@ -46,5 +46,9 @@
   "btn_trends_statuses": "Estados",
   "btn_trends_tags": "Etiquetas",
   "btn_management": "Gestión",
+  "btn_follow_mutual": "Mutuo",
+  "btn_following": "Siguiendo",
+  "btn_followed_by": "Seguido por",
+  "btn_follow": "Seguir",
   "dots": "..."
 }

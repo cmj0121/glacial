@@ -153,5 +153,17 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_management => '管理';
 
   @override
+  String get btn_follow_mutual => '互相跟隨';
+
+  @override
+  String get btn_following => '跟隨中';
+
+  @override
+  String get btn_followed_by => '被跟隨';
+
+  @override
+  String get btn_follow => '跟隨';
+
+  @override
   String get dots => '...';
 }

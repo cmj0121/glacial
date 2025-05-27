@@ -153,5 +153,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_management => 'Gestion';
 
   @override
+  String get btn_follow_mutual => 'Abonnement mutuel';
+
+  @override
+  String get btn_following => 'Abonné';
+
+  @override
+  String get btn_followed_by => 'Abonné par';
+
+  @override
+  String get btn_follow => 'Suivre';
+
+  @override
   String get dots => '...';
 }

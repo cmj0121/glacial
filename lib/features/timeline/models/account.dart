@@ -134,6 +134,7 @@ class RoleSchema {
 
 // The relationship between accounts, such as following / blocking / muting / etc
 class RelationshipSchema {
+  final String id;                // The account id of the user this relationship is about.
   final bool following;           // Are you following this user?
   final bool followedBy;          // Are you followed by this user?
   final bool blocking;            // Are you blocking this user?
@@ -150,6 +151,7 @@ class RelationshipSchema {
   final List<String> languages;   // Which languages are you following from this user?
 
   const RelationshipSchema({
+    required this.id,
     required this.following,
     required this.followedBy,
     required this.blocking,
@@ -173,6 +175,7 @@ class RelationshipSchema {
 
   factory RelationshipSchema.fromJson(Map<String, dynamic> json) {
     return RelationshipSchema(
+      id: json['id'] as String,
       following: json['following'] as bool,
       followedBy: json['followed_by'] as bool,
       blocking: json['blocking'] as bool,
@@ -186,10 +189,11 @@ class RelationshipSchema {
       note: json['note'] as String,
       showingReblogs: json['showing_reblogs'] as bool,
       notifying: json['notifying'] as bool,
-      languages: (json['languages'] as List<dynamic>).map((e) => e as String).toList(),
+      languages: (json['languages'] as List<dynamic>?)
+        ?.map((e) => e as String)
+        .toList() ?? const [],
     );
   }
 }
-
 
 // vim: set ts=2 sw=2 sts=2 et:

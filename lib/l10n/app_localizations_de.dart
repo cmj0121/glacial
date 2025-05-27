@@ -153,5 +153,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_management => 'Verwaltung';
 
   @override
+  String get btn_follow_mutual => 'Beidseitig gefolgt';
+
+  @override
+  String get btn_following => 'Folgt';
+
+  @override
+  String get btn_followed_by => 'Gefolgt von';
+
+  @override
+  String get btn_follow => 'Folgen';
+
+  @override
   String get dots => '...';
 }
