@@ -81,6 +81,11 @@ extension OAuth2Extension on Storage {
     final OAuth2Info info = await storage.getOAuth2Info(schema.domain);
     final String? accessToken = await info.getAccessToken(schema.domain, code);
 
+    // confirm the access token work.
+    final Uri verifyUri = UriEx.handle(schema.domain, "/api/v1/apps/verify_credentials");
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    await get(verifyUri, headers: headers);
+
     storage.saveAccessToken(schema.domain, accessToken);
     return accessToken;
   }
