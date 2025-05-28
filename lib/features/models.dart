@@ -1,4 +1,4 @@
-// The global exporter of the feature's screens
+// The global exporter of feature models
 export 'account/models/core.dart';
 export 'auth/models/oauth.dart';
 export 'explore/models/core.dart';
