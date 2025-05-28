@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'server.dart';
+import 'package:glacial/features/core.dart';
 
 // The main search page that shows the search bar and the possible
 // mastodon servers.

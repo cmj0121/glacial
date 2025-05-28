@@ -46,5 +46,15 @@
   "btn_trends_statuses": "Status",
   "btn_trends_tags": "Etiquetas",
   "btn_management": "Gerenciamento",
+  "btn_follow_mutual": "Mútuo",
+  "btn_following": "Seguindo",
+  "btn_followed_by": "Seguido por",
+  "btn_follow": "Seguir",
+  "btn_block": "Bloquear",
+  "btn_unblock": "Desbloquear",
+  "btn_mute": "Silenciar",
+  "btn_unmute": "Reativar som",
+  "btn_report": "Denunciar",
+  "btn_edit_profile": "Editar perfil",
   "dots": "..."
 }

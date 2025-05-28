@@ -1,6 +1,7 @@
 // The Account data schema that is the user account info.
-
 import 'package:glacial/features/timeline/models/core.dart';
+
+import 'relationship.dart';
 
 // The Account data schema that is the user account info.
 class AccountSchema {
@@ -73,60 +74,6 @@ class AccountSchema {
       followersCount: json['followers_count'] as int,
       followingCount: json['following_count'] as int,
       role: json['role'] == null ? null : RoleSchema.fromJson(json['role'] as Map<String, dynamic>),
-    );
-  }
-}
-
-// To determine the permissions available to a certain role
-enum PermissionBitmap {
-  administrator(0x0001),   // Users with this permission bypass all permissions.
-  devops(0x0002),          // Allows users to access Sidekiq and PgHero dashboards.
-  audit(0x0004),           // Allows users to see history of admin actions.
-  dashboard(0x0008),       // Allows users to access the dashboard and various metrics.
-  reports(0x0010),         // Allows users to review reports and perform moderation actions against them.
-  federation(0x0020),      // Allows users to block or allow federation with other domains, and control deliverability.
-  settings(0x0040),        // Allows users to change site settings.
-  blocks(0x0080),          // Allows users to block e-mail providers and IP addresses.
-  taxonomies(0x0100),      // Allows users to review trending content and update hashtag settings
-  appeals(0x0200),         // Allows users to review appeals against moderation actions.
-  users(0x0400),           // Allows users to view other users’ details and perform moderation actions against them.
-  invites(0x0800),         // Allows users to browse and deactivate invite links.
-  rules(0x1000),           // Allows users to change server rules.
-  announcements(0x2000),   // Allows users to manage announcements on the server.
-  emojis(0x4000),          // Allows users to manage custom emojis on the server.
-  webhooks(0x8000),        // Allows users to set up webhooks for administrative events.
-  inviteUsers(0x10000),    // Allows users to invite new people to the server.
-  roles(0x20000),          // Allows users to manage and assign roles below theirs.
-  access(0x40000),         // Allows users to disable other users’ access to the server.
-  deleteUserData(0x80000); // Allows users to delete other users’ data without delay.
-
-  final int bit;
-  const PermissionBitmap(this.bit);
-}
-
-// Represents a custom user role that grants permissions.
-class RoleSchema {
-  final String id;                // The ID of the Role in the database.
-  final String name;              // The name of the role.
-  final String color;             // The hex code assigned to this role. If no hex code is assigned, the string will be empty.
-  final String permissions;       // A bitmask that represents the sum of all permissions granted to the role.
-  final bool highlighted;         // Whether the role is publicly visible as a badge on user profiles.
-
-  const RoleSchema({
-    required this.id,
-    required this.name,
-    required this.color,
-    required this.permissions,
-    required this.highlighted,
-  });
-
-  factory RoleSchema.fromJson(Map<String, dynamic> json) {
-    return RoleSchema(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      color: json['color'] as String,
-      permissions: json['permissions'] as String,
-      highlighted: json['highlighted'] as bool,
     );
   }
 }

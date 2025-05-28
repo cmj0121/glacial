@@ -46,5 +46,15 @@
   "btn_trends_statuses": "Beiträge",
   "btn_trends_tags": "Schlagwörter",
   "btn_management": "Verwaltung",
+  "btn_follow_mutual": "Beidseitig gefolgt",
+  "btn_following": "Folgt",
+  "btn_followed_by": "Gefolgt von",
+  "btn_follow": "Folgen",
+  "btn_block": "Blockieren",
+  "btn_unblock": "Entblocken",
+  "btn_mute": "Stummschalten",
+  "btn_unmute": "Stumm aus",
+  "btn_report": "Melden",
+  "btn_edit_profile": "Profil bearbeiten",
   "dots": "..."
 }

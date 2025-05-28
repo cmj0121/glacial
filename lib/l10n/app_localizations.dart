@@ -383,6 +383,54 @@ abstract class AppLocalizations {
   /// **'Management'**
   String get btn_management;
 
+  /// No description provided for @btn_follow_mutual.
+  ///
+  /// In en, this message translates to:
+  /// **'Mutual'**
+  String get btn_follow_mutual;
+
+  /// No description provided for @btn_following.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get btn_following;
+
+  /// No description provided for @btn_followed_by.
+  ///
+  /// In en, this message translates to:
+  /// **'Followed By'**
+  String get btn_followed_by;
+
+  /// No description provided for @btn_follow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get btn_follow;
+
+  /// No description provided for @btn_unblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get btn_unblock;
+
+  /// No description provided for @btn_unmute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get btn_unmute;
+
+  /// No description provided for @btn_report.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get btn_report;
+
+  /// No description provided for @btn_edit_profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get btn_edit_profile;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

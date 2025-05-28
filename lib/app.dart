@@ -222,14 +222,23 @@ class GlacialApp extends StatelessWidget {
         ),
         // The sub-route to show the user profile page with the specified user
         GoRoute(
-          path: RoutePath.userProfile.path,
+          path: RoutePath.userDetail.path,
           builder: (BuildContext context, GoRouterState state) {
             final AccountSchema schema = state.extra as AccountSchema;
-            final Widget content = AccountProfile(schema: schema);
+            final Widget content = AccountDetail(schema: schema);
 
             return BackableView(
               title: schema.displayName,
               child: content,
+            );
+          },
+        ),
+        // The user profile edit page to edit the user profile
+        GoRoute(
+          path: RoutePath.userProfile.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return BackableView(
+              child: const WIP(),
             );
           },
         ),

@@ -153,5 +153,29 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btn_management => 'Gestión';
 
   @override
+  String get btn_follow_mutual => 'Mutuo';
+
+  @override
+  String get btn_following => 'Siguiendo';
+
+  @override
+  String get btn_followed_by => 'Seguido por';
+
+  @override
+  String get btn_follow => 'Seguir';
+
+  @override
+  String get btn_unblock => 'Desbloquear';
+
+  @override
+  String get btn_unmute => 'Reactivar sonido';
+
+  @override
+  String get btn_report => 'Reportar';
+
+  @override
+  String get btn_edit_profile => 'Editar perfil';
+
+  @override
   String get dots => '...';
 }

@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/core.dart';
 
 // The global state to access resource crossing the modules
 final navigatorKey = GlobalKey<NavigatorState>();

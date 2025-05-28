@@ -46,5 +46,15 @@
   "btn_trends_statuses": "Statuts",
   "btn_trends_tags": "Étiquettes",
   "btn_management": "Gestion",
+  "btn_follow_mutual": "Abonnement mutuel",
+  "btn_following": "Abonné",
+  "btn_followed_by": "Abonné par",
+  "btn_follow": "Suivre",
+  "btn_block": "Bloquer",
+  "btn_unblock": "Débloquer",
+  "btn_mute": "Mettre en sourdine",
+  "btn_unmute": "Réactiver le son",
+  "btn_report": "Signaler",
+  "btn_edit_profile": "Modifier le profil",
   "dots": "..."
 }

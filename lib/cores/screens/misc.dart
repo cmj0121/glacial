@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/core.dart';
 
 
 // The InkWell wrapper that is no any animation and color.

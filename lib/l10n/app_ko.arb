@@ -46,5 +46,15 @@
   "btn_trends_statuses": "상태",
   "btn_trends_tags": "태그",
   "btn_management": "관리",
+  "btn_follow_mutual": "맞팔로우",
+  "btn_following": "팔로잉 중",
+  "btn_followed_by": "팔로워",
+  "btn_follow": "팔로우",
+  "btn_block": "차단",
+  "btn_unblock": "차단 해제",
+  "btn_mute": "음소거",
+  "btn_unmute": "음소거 해제",
+  "btn_report": "신고",
+  "btn_edit_profile": "프로필 편집",
   "dots": "..."
 }

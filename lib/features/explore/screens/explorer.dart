@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/explore/models/explorer.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/timeline/screens/core.dart';
-
-import 'hashtag.dart';
+import 'package:glacial/features/core.dart';
 
 // The general search widget to search for a Mastodon server, may return the account, status, or hashtag.
 class Explorer extends ConsumerStatefulWidget {
@@ -26,12 +22,14 @@ class Explorer extends ConsumerStatefulWidget {
 
 class _ExplorerState extends ConsumerState<Explorer> {
   final TextEditingController controller = TextEditingController();
+  final FocusNode focusNode = FocusNode();
 
   bool showInput = false;
 
   @override
   void dispose() {
     controller.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -60,6 +58,7 @@ class _ExplorerState extends ConsumerState<Explorer> {
   Widget buildSearchBar() {
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       decoration: InputDecoration(
         prefixIcon: IconButton(
           icon: Icon(Icons.search, size: widget.size),
@@ -93,6 +92,7 @@ class _ExplorerState extends ConsumerState<Explorer> {
 
   void onShowSearch() async {
     setState(() => showInput = true);
+    focusNode.requestFocus();
   }
 
   void onSearch() async {
