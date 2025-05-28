@@ -174,5 +174,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_report => '檢舉';
 
   @override
+  String get btn_edit_profile => '編輯個人資料';
+
+  @override
   String get dots => '...';
 }

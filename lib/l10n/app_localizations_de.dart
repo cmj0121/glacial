@@ -174,5 +174,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_report => 'Melden';
 
   @override
+  String get btn_edit_profile => 'Profil bearbeiten';
+
+  @override
   String get dots => '...';
 }

@@ -174,5 +174,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_report => '신고';
 
   @override
+  String get btn_edit_profile => '프로필 편집';
+
+  @override
   String get dots => '...';
 }

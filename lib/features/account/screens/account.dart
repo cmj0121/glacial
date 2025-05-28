@@ -40,7 +40,7 @@ class Account extends StatelessWidget {
           }
 
           return InkWellDone(
-            onTap: () => context.push(RoutePath.userProfile.path, extra: schema),
+            onTap: () => context.push(RoutePath.userDetail.path, extra: schema),
             child: content,
           );
         },
@@ -100,12 +100,12 @@ class Account extends StatelessWidget {
 }
 
 // The account profile to show the details of the user.
-class AccountProfile extends ConsumerWidget {
+class AccountDetail extends ConsumerWidget {
   final AccountSchema schema;
   final double bannerHeight;
   final double avatarSize;
 
-  const AccountProfile({
+  const AccountDetail({
     super.key,
     required this.schema,
     this.bannerHeight = 200,
@@ -146,6 +146,7 @@ class AccountProfile extends ConsumerWidget {
   // Show the user name and the account name.
   Widget buildName(BuildContext context, WidgetRef ref) {
     final ServerSchema? server = ref.watch(currentServerProvider);
+    final AccountSchema? account = ref.watch(currentUserProvider);
 
     final String acct = schema.acct.contains('@') ? schema.acct : '${schema.username}@${server?.domain ?? '-'}';
 
@@ -162,7 +163,7 @@ class AccountProfile extends ConsumerWidget {
         ),
 
         const Spacer(),
-        RelationshipBuilder(schema: schema),
+        account?.id == schema.id ? UserProfileBuilder() : RelationshipBuilder(schema: schema),
       ],
     );
   }

@@ -65,7 +65,7 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
   // Build the user avatar with the size of the widget.
   Widget buildUserAvatar(AccountSchema account) {
     return InkWellDone(
-      onTap: () => context.push(RoutePath.userProfile.path, extra: account),
+      onTap: () => context.push(RoutePath.userDetail.path, extra: account),
       onDoubleTap: onSignOut,
       child: ClipOval(
         child: CachedNetworkImage(

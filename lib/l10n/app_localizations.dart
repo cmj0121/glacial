@@ -425,6 +425,12 @@ abstract class AppLocalizations {
   /// **'Report'**
   String get btn_report;
 
+  /// No description provided for @btn_edit_profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get btn_edit_profile;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

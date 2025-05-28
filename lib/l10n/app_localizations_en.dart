@@ -174,5 +174,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_report => 'Report';
 
   @override
+  String get btn_edit_profile => 'Edit Profile';
+
+  @override
   String get dots => '...';
 }

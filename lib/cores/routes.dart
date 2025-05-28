@@ -7,7 +7,8 @@ enum RoutePath {
   engineer,          // The engineer page of the app.
   serverExplorer,    // The server explorer page of the app.
   webview,           // The in-app webview page of the app.
-  userProfile,       // The user profile page of the app.
+  userDetail,        // The user profile page of the app.
+  userProfile,       // The user profile page for the current user to edit their profile.
   statusContext,     // The status context page of the app.
   hashtagTimeline,   // The timeline with the specified hashtag.
   timeline,          // The timeline page of the app.
@@ -29,8 +30,10 @@ enum RoutePath {
         return '/explorer';
       case RoutePath.webview:
         return '/webview';
+      case RoutePath.userDetail:
+        return '/user-detail';
       case RoutePath.userProfile:
-        return '/user';
+        return '/user-profile';
       case RoutePath.hashtagTimeline:
         return '/hashtag';
       case RoutePath.statusContext:
