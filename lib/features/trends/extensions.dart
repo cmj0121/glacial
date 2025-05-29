@@ -2,10 +2,7 @@
 import 'dart:convert';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/explore/models/core.dart';
-import 'package:glacial/features/timeline/models/core.dart';
-import 'package:glacial/features/trends/models/core.dart';
+import 'package:glacial/features/models.dart';
 
 extension TrendsExtension on TrendsType {
   // Fetch the trends data for the specified server, and return the list of trends.

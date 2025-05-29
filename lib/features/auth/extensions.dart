@@ -3,8 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/auth/models/oauth.dart';
-import 'package:glacial/features/glacial/models/server.dart';
+import 'package:glacial/features/models.dart';
 
 final String prefsOAuthInfoKey = "mastodon_server_oauth2_info";
 final String prefsAccessTokenKey = "access_token";

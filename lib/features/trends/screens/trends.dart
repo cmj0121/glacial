@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/trends/models/core.dart';
 
 // Show the possible timeline tab per timeline type.
 class TrendsTab extends ConsumerStatefulWidget {

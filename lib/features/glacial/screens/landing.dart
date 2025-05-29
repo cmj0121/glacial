@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'server.dart';
+import 'package:glacial/features/core.dart';
 
 // The landing page that shows the icon of the app and flips intermittently.
 class LandingPage extends ConsumerStatefulWidget {

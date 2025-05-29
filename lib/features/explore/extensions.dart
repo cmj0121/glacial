@@ -1,6 +1,5 @@
 import 'package:glacial/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/explore/models/explorer.dart';
+import 'package:glacial/features/models.dart';
 
 extension ExploreExtensions on ServerSchema {
   Future<SearchResultSchema> search({required String keyword, String? accessToken}) async {

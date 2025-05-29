@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
+import 'package:glacial/features/models.dart';
 
 // fetch the server information from the specified domain.
 Future<ServerSchema> fetch(String domain) async {
