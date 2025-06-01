@@ -113,6 +113,7 @@ class MediaHero extends StatelessWidget {
   Widget buildHero(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.all(10),
       child: Stack(
         children: [
           BackdropFilter(

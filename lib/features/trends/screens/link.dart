@@ -14,8 +14,8 @@ class TrendsLink extends StatelessWidget {
   const TrendsLink({
     super.key,
     required this.schema,
-    this.maxHeight = 220,
-    this.imageSize = 180,
+    this.maxHeight = 200,
+    this.imageSize = 120,
   });
 
   @override
