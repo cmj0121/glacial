@@ -11,19 +11,15 @@ class UserProfileBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     final String text = AppLocalizations.of(context)?.btn_edit_profile ?? "Edit Profile";
 
-    return TextButton.icon(
+    return IconButton(
       onPressed: () => context.push(RoutePath.userProfile.path),
-      style: ButtonStyle(
-        foregroundColor: WidgetStateProperty.all<Color>(Theme.of(context).colorScheme.onSurface),
-        backgroundColor: WidgetStateProperty.all<Color>(Theme.of(context).colorScheme.inversePrimary),
-        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-        ),
+      style: IconButton.styleFrom(
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       icon: const Icon(Icons.edit_note_rounded),
-      label: Text(text),
+      tooltip: text,
     );
   }
 }
