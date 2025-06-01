@@ -50,31 +50,32 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
           child: icon,
         );
       },
-      itemBuilder: (context, index) => Trends.builder(schema: server, type: tabs[index]),
+      itemBuilder: (context, index) => TrendsBuilder(type: tabs[index]),
     );
   }
 }
 
-// Get the popular statuses trends in the current Mastodon server.
-class Trends extends StatefulWidget {
-  final ServerSchema schema;
+class TrendsBuilder extends ConsumerWidget {
   final TrendsType type;
-  final List<dynamic> trends;
 
-  const Trends({
+  const TrendsBuilder({
     super.key,
-    required this.schema,
     required this.type,
-    this.trends = const [],
   });
 
-  @override
-  State<Trends> createState() => _TrendsState();
-
   // The builder method to create a Trends instance based on the server schema and trends type.
-  static builder({required ServerSchema schema, required TrendsType type}) {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ServerSchema? schema = ref.watch(currentServerProvider);
+    final String? accessToken = ref.watch(currentAccessTokenProvider);
+
+    if (schema == null) {
+      logger.w("No server selected, but it's required to show the trends.");
+      return const SizedBox.shrink();
+    }
+
     return FutureBuilder(
-      future: type.fetch(server: schema),
+      future: type.fetch(server: schema, accessToken: accessToken),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Align(
@@ -86,10 +87,29 @@ class Trends extends StatefulWidget {
         }
 
         final List<dynamic> trends = snapshot.data as List<dynamic>;
-        return Trends(schema: schema, type: type, trends: trends);
+        return Trends(schema: schema, type: type, trends: trends, accessToken: accessToken);
       },
     );
   }
+}
+
+// Get the popular statuses trends in the current Mastodon server.
+class Trends extends StatefulWidget {
+  final ServerSchema schema;
+  final TrendsType type;
+  final String? accessToken;
+  final List<dynamic> trends;
+
+  const Trends({
+    super.key,
+    required this.schema,
+    required this.type,
+    this.accessToken,
+    this.trends = const [],
+  });
+
+  @override
+  State<Trends> createState() => _TrendsState();
 }
 
 // Show the trends for a specific hashtag in the current Mastodon server.
@@ -173,7 +193,11 @@ class _TrendsState extends State<Trends> {
     }
 
     setState(() => isLoading = true);
-    final List<dynamic> newStatuses = await widget.type.fetch(server: widget.schema, offset: trends.length);
+    final List<dynamic> newStatuses = await widget.type.fetch(
+      server: widget.schema,
+      accessToken: widget.accessToken,
+      offset: trends.length,
+    );
 
     setState(() {
       trends.addAll(newStatuses);
