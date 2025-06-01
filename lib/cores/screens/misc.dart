@@ -220,7 +220,12 @@ class _ClockProgressIndicatorState extends State<ClockProgressIndicator> with Si
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: buildContent());
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 18.0),
+        child: buildContent(),
+      ),
+    );
   }
 
   Widget buildContent() {
