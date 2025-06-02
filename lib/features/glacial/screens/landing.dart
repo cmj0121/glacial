@@ -2,13 +2,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
 
 // The landing page that shows the icon of the app and flips intermittently.
-class LandingPage extends ConsumerStatefulWidget {
+class LandingPage extends StatefulWidget {
   final Duration duration;
 
   const LandingPage({
@@ -17,12 +14,11 @@ class LandingPage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<LandingPage> createState() => _LandingPageState();
+  State<LandingPage> createState() => _LandingPageState();
 }
 
-class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProviderStateMixin {
-  final Storage storage = Storage();
-  final Duration waitToPreload = const Duration(milliseconds: 350);
+class _LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
+  final Duration waitToPreload = const Duration(milliseconds: 1200);
   final int engineerModeClickThreshold = 5;
 
   late final AnimationController controller;
@@ -64,20 +60,20 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          // The callback when the user clicks the icon, and may entry to the
-          // engineer mode.
-          child: InkWellDone(
-            onTap: () => setState(() => clickCount++),
-            child: buildContent(),
-          ),
-        ),
-      ),
+      body: buildContent(),
     );
   }
 
   Widget buildContent() {
+    return SafeArea(
+      child: Center(
+        child: buildIcon(),
+      ),
+    );
+  }
+
+  // Build the animation icon
+  Widget buildIcon() {
     final Widget image = Image.asset('assets/images/logo.png');
     final Matrix4 transform = Matrix4.identity();
     transform.setEntry(3, 2, 0.001);
@@ -98,28 +94,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
   // preload the necessary resources and navigate to the home page
   // if completed
   void preload() async {
-    final String? server = await storage.loadLastServer();
-    final String? accessToken = await storage.loadAccessToken(server);
-    late ServerSchema? schema;
-
-    schema = server == null ? null : await fetch(server);
-    logger.i("preloading server schema from $server to $schema ...");
-
-    await onLoading(ref, schema, accessToken);
-    await Future.delayed(waitToPreload);
-    logger.i("completely preloaded server schema ...");
-
-    if (mounted) {
-      if (clickCount >= engineerModeClickThreshold) {
-        logger.i("entering engineer mode ...");
-        context.go(RoutePath.engineer.path);
-        return;
-      }
-
-      final RoutePath route = schema == null ? RoutePath.serverExplorer : RoutePath.timeline;
-      logger.i("navigating to ${route.path} ...");
-      context.go(route.path);
-    }
+    logger.i('completed preloading, navigating to home page');
   }
 }
 
