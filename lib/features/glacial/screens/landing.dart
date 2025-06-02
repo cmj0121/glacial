@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'server.dart';
+import 'package:glacial/features/core.dart';
 
 // The landing page that shows the icon of the app and flips intermittently.
 class LandingPage extends ConsumerStatefulWidget {
@@ -23,7 +22,7 @@ class LandingPage extends ConsumerStatefulWidget {
 
 class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProviderStateMixin {
   final Storage storage = Storage();
-  final Duration waitToPreload = const Duration(milliseconds: 1200);
+  final Duration waitToPreload = const Duration(milliseconds: 350);
   final int engineerModeClickThreshold = 5;
 
   late final AnimationController controller;
@@ -106,18 +105,20 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
     schema = server == null ? null : await fetch(server);
     logger.i("preloading server schema from $server to $schema ...");
 
-    await Future.delayed(waitToPreload);
     await onLoading(ref, schema, accessToken);
+    await Future.delayed(waitToPreload);
+    logger.i("completely preloaded server schema ...");
 
     if (mounted) {
-      logger.i("completely preloaded and click $clickCount ...");
-
       if (clickCount >= engineerModeClickThreshold) {
         logger.i("entering engineer mode ...");
         context.go(RoutePath.engineer.path);
         return;
       }
-      context.go(schema == null ? RoutePath.serverExplorer.path : RoutePath.timeline.path);
+
+      final RoutePath route = schema == null ? RoutePath.serverExplorer : RoutePath.timeline;
+      logger.i("navigating to ${route.path} ...");
+      context.go(route.path);
     }
   }
 }

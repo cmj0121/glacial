@@ -9,13 +9,7 @@ export 'cores/provider.dart';
 export 'cores/screens/misc.dart';
 export 'cores/screens/view.dart';
 export 'cores/storage.dart';
+export 'features/extensions.dart';
 export 'l10n/app_localizations.dart';
-
-export 'features/auth/extensions.dart';
-export 'features/account/extensions.dart';
-export 'features/explore/extensions.dart';
-export 'features/glacial/extensions.dart';
-export 'features/timeline/extensions.dart';
-export 'features/trends/extensions.dart';
 
 // vim: set ts=2 sw=2 sts=2 et:

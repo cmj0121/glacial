@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
 
 // The possible actions in sidebar and used to interact with the current server.
 enum SidebarButtonType {

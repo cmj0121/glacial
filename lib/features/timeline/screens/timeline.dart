@@ -21,6 +21,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
 
   late final TabController controller;
   late final ServerSchema? schema;
+  late List<ScrollController> scrollControllers = [];
 
   @override
   void initState() {
@@ -32,6 +33,16 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
       initialIndex: 0,
       vsync: this,
     );
+    scrollControllers = List.generate(types.length, (index) => ScrollController());
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    for (final ScrollController scrollController in scrollControllers) {
+      scrollController.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -56,13 +67,23 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
         final Color color = isActive ?
             (isSelected ?
               Theme.of(context).colorScheme.primary :
-              Theme.of(context).colorScheme.onSurface
+             Theme.of(context).colorScheme.onSurface
             ) : Theme.of(context).disabledColor;
 
         return Icon(isSelected ? type.activeIcon : type.icon, color: color);
       },
-      itemBuilder: (context, index) => TimelineBuilder(type: types[index]),
+      itemBuilder: (context, index) => TimelineBuilder(type: types[index], controller: scrollControllers[index]),
       onTabTappable: (index) => accessToken != null || types[index].supportAnonymous,
+      onDoubleTap: onDoubleTap,
+    );
+  }
+
+  void onDoubleTap(int index) {
+    // Scroll to the top of the timeline when the user double taps on the tab.
+    scrollControllers[index].animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 }
@@ -71,12 +92,14 @@ class TimelineBuilder extends ConsumerWidget {
   final TimelineType type;
   final String? keyword;
   final AccountSchema? account;
+  final ScrollController? controller;
 
   const TimelineBuilder({
     super.key,
     required this.type,
     this.keyword,
     this.account,
+    this.controller,
   });
 
   @override
@@ -112,6 +135,7 @@ class TimelineBuilder extends ConsumerWidget {
           type: type,
           statuses: statuses,
           account: account,
+          controller: controller,
         );
       },
     );
@@ -127,6 +151,7 @@ class Timeline extends StatefulWidget {
   final String? keyword;
   final AccountSchema? account;
   final List<StatusSchema> statuses;
+  final ScrollController? controller;
 
   const Timeline({
     super.key,
@@ -136,6 +161,7 @@ class Timeline extends StatefulWidget {
     this.keyword,
     this.account,
     this.statuses = const [],
+    this.controller,
   });
 
   @override
@@ -143,7 +169,7 @@ class Timeline extends StatefulWidget {
 }
 
 class _TimelineState extends State<Timeline> {
-  final ScrollController controller = ScrollController();
+  late final ScrollController controller = widget.controller ?? ScrollController();
   final Storage storage = Storage();
   final double loadingThreshold = 180;
 
@@ -160,7 +186,10 @@ class _TimelineState extends State<Timeline> {
 
   @override
   void dispose() {
-    controller.dispose();
+    controller.removeListener(onScroll);
+    if (widget.controller == null) {
+      controller.dispose();
+    }
     super.dispose();
   }
 

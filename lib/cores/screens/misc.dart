@@ -113,6 +113,7 @@ class MediaHero extends StatelessWidget {
   Widget buildHero(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.all(10),
       child: Stack(
         children: [
           BackdropFilter(
@@ -219,7 +220,12 @@ class _ClockProgressIndicatorState extends State<ClockProgressIndicator> with Si
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: buildContent());
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 18.0),
+        child: buildContent(),
+      ),
+    );
   }
 
   Widget buildContent() {

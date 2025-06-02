@@ -145,6 +145,7 @@ class SwipeTabView extends StatefulWidget {
   final IndexedWidgetBuilder itemBuilder;
   final bool Function(int)? onTabTappable;
   final TabController? tabController;
+  final ValueChanged<int>? onDoubleTap;
 
   const SwipeTabView({
     super.key,
@@ -153,6 +154,7 @@ class SwipeTabView extends StatefulWidget {
     required this.itemBuilder,
     this.onTabTappable,
     this.tabController,
+    this.onDoubleTap,
   });
 
   @override
@@ -220,6 +222,7 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
           itemCount: widget.itemCount,
           tabBuilder: widget.tabBuilder,
           onTabTappable: widget.onTabTappable,
+          onDoubleTap: () => widget.onDoubleTap?.call(tabController.index),
         ),
         Flexible(child: buildContent()),
       ],
@@ -257,6 +260,7 @@ class SwipeTabBar extends StatefulWidget {
   final IndexedWidgetBuilder tabBuilder;
   final TabController? controller;
   final bool Function(int)? onTabTappable;
+  final VoidCallback? onDoubleTap;
 
   const SwipeTabBar({
     super.key,
@@ -264,6 +268,7 @@ class SwipeTabBar extends StatefulWidget {
     required this.tabBuilder,
     this.controller,
     this.onTabTappable,
+    this.onDoubleTap,
   });
 
   @override
@@ -343,6 +348,7 @@ class _SwipeTabBarState extends State<SwipeTabBar> with TickerProviderStateMixin
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: InkWellDone(
               onTap: isClickable ? () => onTabTap(index) : null,
+              onDoubleTap: widget.onDoubleTap,
               child: widget.tabBuilder(context, index),
             ),
           ),

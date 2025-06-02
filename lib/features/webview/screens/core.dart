@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
+import 'package:glacial/features/models.dart';
 
 class WebViewPage extends ConsumerStatefulWidget {
   final Uri url;

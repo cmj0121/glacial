@@ -2,14 +2,11 @@
 import 'dart:convert';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/glacial/models/server.dart';
-import 'package:glacial/features/explore/models/core.dart';
-import 'package:glacial/features/timeline/models/core.dart';
-import 'package:glacial/features/trends/models/core.dart';
+import 'package:glacial/features/models.dart';
 
 extension TrendsExtension on TrendsType {
   // Fetch the trends data for the specified server, and return the list of trends.
-  Future<List<dynamic>> fetch({required ServerSchema server, int? offset}) async {
+  Future<List<dynamic>> fetch({required ServerSchema server, String? accessToken, int? offset}) async {
     final Map<String, String> queryParameters = <String, String>{};
     late final Uri uri;
 
@@ -26,7 +23,8 @@ extension TrendsExtension on TrendsType {
     }
 
     queryParameters["offset"] = offset?.toString() ?? '0';
-    final response = await get(uri.replace(queryParameters: queryParameters));
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri.replace(queryParameters: queryParameters), headers: accessToken == null ? {} : headers);
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
 
     switch (this) {
