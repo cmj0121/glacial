@@ -1,6 +1,8 @@
 // The Mastodon server data schema.
 import 'dart:convert';
 
+import 'package:glacial/core.dart';
+
 // The Mastodon server data schema that show the necessary info to show
 // the widget in the app.
 //
@@ -58,6 +60,21 @@ class ServerSchema {
         return RuleSchema.fromJson(rule);
       }).toList(),
     );
+  }
+
+  // fetch the server information from the specified domain.
+  static Future<ServerSchema> fetch(String domain) async {
+    logger.i('search the mastodon server: $domain');
+
+    final Uri url = UriEx.handle(domain, '/api/v2/instance');
+    final response = await get(url);
+
+    if (response.statusCode != 200) {
+      logger.w('failed to load the server: $domain: ${response.statusCode}');
+      throw Exception('Failed to load the server: $domain');
+    }
+
+    return ServerSchema.fromString(response.body);
   }
 }
 

@@ -2,10 +2,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
 
 // The landing page that shows the icon of the app and flips intermittently.
-class LandingPage extends StatefulWidget {
+class LandingPage extends ConsumerStatefulWidget {
   final Duration duration;
 
   const LandingPage({
@@ -14,10 +18,10 @@ class LandingPage extends StatefulWidget {
   });
 
   @override
-  State<LandingPage> createState() => _LandingPageState();
+  ConsumerState<LandingPage> createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
+class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProviderStateMixin {
   final Duration waitToPreload = const Duration(milliseconds: 1800);
   final int engineerModeClickThreshold = 5;
 
@@ -97,7 +101,10 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
   // preload the necessary resources and navigate to the home page
   // if completed
   void preload() async {
+    await Storage().reloadProvider(ref);
     await Future.delayed(waitToPreload);
+
+    final ServerSchema? server = ref.read(serverProvider);
     logger.i('completed preloading, navigating to home page');
 
     if (mounted) {
@@ -107,7 +114,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
         return;
       }
 
-      final RoutePath route = RoutePath.explorer;
+      final RoutePath route = server == null ? RoutePath.explorer : RoutePath.wip;
       logger.i("navigating to ${route.path} ...");
       context.go(route.path);
     }

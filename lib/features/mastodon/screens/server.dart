@@ -5,21 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
-// fetch the server information from the specified domain.
-Future<ServerSchema> fetch(String domain) async {
-  logger.i('search the mastodon server: $domain');
-
-  final Uri url = UriEx.handle(domain, '/api/v2/instance');
-  final response = await get(url);
-
-  if (response.statusCode != 200) {
-    logger.w('failed to load the server: $domain: ${response.statusCode}');
-    throw Exception('Failed to load the server: $domain');
-  }
-
-  return ServerSchema.fromString(response.body);
-}
-
 // The Mastodon server widget to show the information based on the widget type.
 class MastodonServer extends StatelessWidget {
   final ServerSchema schema;
@@ -37,7 +22,7 @@ class MastodonServer extends StatelessWidget {
   // the future builder to load the server information.
   static Widget builder({required String domain, ValueChanged<ServerSchema>? onTap}) {
     return FutureBuilder(
-      future: fetch(domain),
+      future: ServerSchema.fetch(domain),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const ClockProgressIndicator();

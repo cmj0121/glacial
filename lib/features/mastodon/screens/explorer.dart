@@ -228,6 +228,9 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
       }
     });
 
+    ref.read(serverProvider.notifier).state = schema;
+    storage.saveLastServer(schema.domain);
+
     if (mounted) {
       context.push(RoutePath.wip.path, extra: schema);
     }

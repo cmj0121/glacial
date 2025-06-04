@@ -1,7 +1,13 @@
 // The shared library to access the data in local storage, which
 // may be the shared preferences or security storage.
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import 'package:glacial/features/models.dart';
+
+// The global provider to declare the selected Mastodon server and access token
+final serverProvider = StateProvider<ServerSchema?>((ref) => null);
 
 class Storage {
   static SharedPreferences? _prefs;
