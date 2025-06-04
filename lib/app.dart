@@ -71,6 +71,12 @@ class GlacialApp extends StatelessWidget {
           path: RoutePath.landing.path,
           builder: (_, _) => const LandingPage(),
         ),
+        // The engineering mode to show the app's internal information and settings
+        // @animation: FadeTransition
+        GoRoute(
+          path: RoutePath.engineer.path,
+          builder: (_, _) => const EngineeringMode(),
+        ),
       ],
       // The fallback page, show the WIP screen if the route is not found
       errorBuilder: (BuildContext context, GoRouterState state) {

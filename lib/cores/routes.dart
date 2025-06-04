@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 enum RoutePath {
   landing,           // The landing page of the app when user opens it.
+  engineer,          // The engineer page of the app.
   wip;               // The work-in-progress page of the app.
 
   // Get the string path for the route.
@@ -11,6 +12,8 @@ enum RoutePath {
     switch (this) {
       case RoutePath.landing:
         return '/';
+      case RoutePath.engineer:
+        return '/engineer';
       case RoutePath.wip:
         return '/wip';
     }

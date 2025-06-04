@@ -18,7 +18,7 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
-  final Duration waitToPreload = const Duration(milliseconds: 1200);
+  final Duration waitToPreload = const Duration(milliseconds: 1800);
   final int engineerModeClickThreshold = 5;
 
   late final AnimationController controller;
@@ -67,7 +67,10 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
   Widget buildContent() {
     return SafeArea(
       child: Center(
-        child: buildIcon(),
+        child: InkWellDone(
+          onTap: () => setState(() => clickCount++),
+          child: buildIcon(),
+        ),
       ),
     );
   }
@@ -94,7 +97,20 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
   // preload the necessary resources and navigate to the home page
   // if completed
   void preload() async {
+    await Future.delayed(waitToPreload);
     logger.i('completed preloading, navigating to home page');
+
+    if (mounted) {
+      if (clickCount >= engineerModeClickThreshold) {
+        logger.i("entering engineer mode ...");
+        context.go(RoutePath.engineer.path);
+        return;
+      }
+
+      final RoutePath route = RoutePath.wip;
+      logger.i("navigating to ${route.path} ...");
+      context.go(route.path);
+    }
   }
 }
 
