@@ -1,5 +1,12 @@
 {
   "@@locale": "ja",
   "txt_app_name": "氷河",
+  "txt_invalid_instance": "無効な Mastodon サーバー",
+  "txt_server_contact": "連絡先",
+  "txt_search_helper": "興味のあるものを検索してください",
+  "txt_search_history": "検索履歴",
+  "txt_search_mastodon": "mastodon.social",
+  "txt_server_rules": "サーバーのルール",
+  "btn_clean_all": "すべて削除",
   "dots": "..."
 }

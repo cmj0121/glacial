@@ -77,6 +77,12 @@ class GlacialApp extends StatelessWidget {
           path: RoutePath.engineer.path,
           builder: (_, _) => const EngineeringMode(),
         ),
+        // The server explorer page to search and show the available servers
+        // @animation: FadeTransition
+        GoRoute(
+          path: RoutePath.explorer.path,
+          builder: (_, __) => const ServerExplorer(),
+        ),
       ],
       // The fallback page, show the WIP screen if the route is not found
       errorBuilder: (BuildContext context, GoRouterState state) {

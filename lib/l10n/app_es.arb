@@ -1,5 +1,12 @@
 {
   "@@locale": "es",
   "txt_app_name": "Glacial",
+  "txt_invalid_instance": "Servidor de Mastodon no válido",
+  "txt_server_contact": "Contacto",
+  "txt_search_helper": "Busca algo interesante",
+  "txt_search_history": "Historial de búsqueda",
+  "txt_search_mastodon": "mastodon.social",
+  "txt_server_rules": "Reglas del servidor",
+  "btn_clean_all": "Borrar todo",
   "dots": "..."
 }

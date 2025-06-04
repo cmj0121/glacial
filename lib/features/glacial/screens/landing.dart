@@ -107,7 +107,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
         return;
       }
 
-      final RoutePath route = RoutePath.wip;
+      final RoutePath route = RoutePath.explorer;
       logger.i("navigating to ${route.path} ...");
       context.go(route.path);
     }

@@ -12,5 +12,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_app_name => 'Glacial';
 
   @override
+  String get txt_invalid_instance => 'Invalid Mastodon server';
+
+  @override
+  String get txt_server_contact => 'Contact';
+
+  @override
+  String get txt_search_helper => 'Search for something interesting';
+
+  @override
+  String get txt_search_history => 'Search history';
+
+  @override
+  String get txt_search_mastodon => 'mastodon.social';
+
+  @override
+  String get txt_server_rules => 'Server rules';
+
+  @override
+  String get btn_clean_all => 'Clean All';
+
+  @override
   String get dots => '...';
 }

@@ -113,6 +113,48 @@ abstract class AppLocalizations {
   /// **'Glacial'**
   String get txt_app_name;
 
+  /// No description provided for @txt_invalid_instance.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Mastodon server'**
+  String get txt_invalid_instance;
+
+  /// No description provided for @txt_server_contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get txt_server_contact;
+
+  /// No description provided for @txt_search_helper.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for something interesting'**
+  String get txt_search_helper;
+
+  /// No description provided for @txt_search_history.
+  ///
+  /// In en, this message translates to:
+  /// **'Search history'**
+  String get txt_search_history;
+
+  /// No description provided for @txt_search_mastodon.
+  ///
+  /// In en, this message translates to:
+  /// **'mastodon.social'**
+  String get txt_search_mastodon;
+
+  /// No description provided for @txt_server_rules.
+  ///
+  /// In en, this message translates to:
+  /// **'Server rules'**
+  String get txt_server_rules;
+
+  /// No description provided for @btn_clean_all.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean All'**
+  String get btn_clean_all;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:
