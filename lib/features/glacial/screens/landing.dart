@@ -34,7 +34,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
     controller = AnimationController(duration: widget.duration, vsync: this)
       ..repeat(reverse: true);
 
-    animation = Tween<double>(begin: 0, end: pi).animate(CurvedAnimation(
+    animation = Tween<double>(begin: 0, end: 2 * pi).animate(CurvedAnimation(
       parent: controller,
       curve: Curves.easeInOut,
     ))
@@ -74,7 +74,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
 
   // Build the animation icon
   Widget buildIcon() {
-    final Widget image = Image.asset('assets/images/logo.png');
+    final Widget image = Image.asset('assets/images/icon.png');
     final Matrix4 transform = Matrix4.identity();
     transform.setEntry(3, 2, 0.001);
     flipX ? transform.rotateY(animation.value) : transform.rotateX(animation.value);
