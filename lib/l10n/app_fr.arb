@@ -8,5 +8,10 @@
   "txt_search_mastodon": "mastodon.social",
   "txt_server_rules": "Règles du serveur",
   "btn_clean_all": "Tout effacer",
+  "btn_timeline": "Fil d’actualité",
+  "btn_trending": "Tendance en ce moment",
+  "btn_notifications": "Tendance en ce moment",
+  "btn_settings": "Paramètres",
+  "btn_management": "Administration",
   "dots": "..."
 }

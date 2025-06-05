@@ -155,6 +155,36 @@ abstract class AppLocalizations {
   /// **'Clean All'**
   String get btn_clean_all;
 
+  /// No description provided for @btn_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Timelines'**
+  String get btn_timeline;
+
+  /// No description provided for @btn_trending.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending now'**
+  String get btn_trending;
+
+  /// No description provided for @btn_notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get btn_notifications;
+
+  /// No description provided for @btn_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get btn_settings;
+
+  /// No description provided for @btn_management.
+  ///
+  /// In en, this message translates to:
+  /// **'Administration'**
+  String get btn_management;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

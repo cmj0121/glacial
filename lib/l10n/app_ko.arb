@@ -8,5 +8,10 @@
   "txt_search_mastodon": "mastodon.social",
   "txt_server_rules": "서버 규칙",
   "btn_clean_all": "모두 지우기",
+  "btn_timeline": "타임라인",
+  "btn_trending": "지금 유행 중",
+  "btn_notifications": "알림",
+  "btn_settings": "설정",
+  "btn_management": "관리",
   "dots": "..."
 }

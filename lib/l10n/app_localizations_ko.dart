@@ -33,5 +33,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_clean_all => '모두 지우기';
 
   @override
+  String get btn_timeline => '타임라인';
+
+  @override
+  String get btn_trending => '지금 유행 중';
+
+  @override
+  String get btn_notifications => '알림';
+
+  @override
+  String get btn_settings => '설정';
+
+  @override
+  String get btn_management => '관리';
+
+  @override
   String get dots => '...';
 }

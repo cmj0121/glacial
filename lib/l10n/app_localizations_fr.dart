@@ -33,5 +33,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_clean_all => 'Tout effacer';
 
   @override
+  String get btn_timeline => 'Fil d’actualité';
+
+  @override
+  String get btn_trending => 'Tendance en ce moment';
+
+  @override
+  String get btn_notifications => 'Tendance en ce moment';
+
+  @override
+  String get btn_settings => 'Paramètres';
+
+  @override
+  String get btn_management => 'Administration';
+
+  @override
   String get dots => '...';
 }

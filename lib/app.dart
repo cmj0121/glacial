@@ -83,12 +83,62 @@ class GlacialApp extends StatelessWidget {
           path: RoutePath.explorer.path,
           builder: (_, __) => const ServerExplorer(),
         ),
+
+        // The core home page and show the possible operations
+        homeRoutes(),
       ],
       // The fallback page, show the WIP screen if the route is not found
       errorBuilder: (BuildContext context, GoRouterState state) {
         logger.w("the route ${state.uri} does not implement yet ...");
         return const WIP();
       }
+    );
+  }
+
+  // Build the home page with the sidebar and the main content
+  RouteBase homeRoutes() {
+    return ShellRoute(
+      builder: (BuildContext context, GoRouterState state, Widget child) {
+        return GlacialHome(child: child);
+      },
+      routes: [
+        // The glacial timeline page to show the server timeline in the selected
+        // Mastodon server
+        GoRoute(
+          path: RoutePath.timeline.path,
+          builder: (BuildContext context, GoRouterState state) =>const WIP(),
+        ),
+        // The glacial trends page to show the server trends in the selected
+        // Mastodon server
+        GoRoute(
+          path: RoutePath.trends.path,
+          builder: (BuildContext context, GoRouterState state) =>const WIP(),
+        ),
+        // The explorer page to search and show the target accounts, links, and
+        // hashtags in the selected Mastodon server
+        GoRoute(
+          path: RoutePath.explorer.path,
+          builder: (BuildContext context, GoRouterState state) =>const WIP(),
+        ),
+        // The glacial notifications page to show the server notifications in the
+        // selected Mastodon server
+        GoRoute(
+          path: RoutePath.notifications.path,
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
+        ),
+        // The glacial settings page to show the server settings in the selected
+        // Mastodon server
+        GoRoute(
+          path: RoutePath.settings.path,
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
+        ),
+        // The admin page to show the server management page in the selected
+        // Mastodon server
+        GoRoute(
+          path: RoutePath.admin.path,
+          builder: (BuildContext context, GoRouterState state) => const WIP(),
+        ),
+      ],
     );
   }
 }

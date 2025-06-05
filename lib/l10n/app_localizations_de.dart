@@ -33,5 +33,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_clean_all => 'Alles löschen';
 
   @override
+  String get btn_timeline => 'Zeitleiste';
+
+  @override
+  String get btn_trending => 'Aktuelle Trends';
+
+  @override
+  String get btn_notifications => 'Benachrichtigungen';
+
+  @override
+  String get btn_settings => 'Einstellungen';
+
+  @override
+  String get btn_management => 'Administration';
+
+  @override
   String get dots => '...';
 }

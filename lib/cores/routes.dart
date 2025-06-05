@@ -6,6 +6,12 @@ enum RoutePath {
   landing,           // The landing page of the app when user opens it.
   engineer,          // The engineer page of the app.
   explorer,          // The server explorer page of the app to explore the Mastodon server.
+  // The home page of the Glacial, showing the timeline, trends, notifications, and other features.
+  timeline,          // The timeline page of the app.
+  trends,            // The trends page of the app.
+  notifications,     // The notifications page of the app.
+  settings,          // The settings page of the app.
+  admin,             // The admin page of the app.
   wip;               // The work-in-progress page of the app.
 
   // Get the string path for the route.
@@ -17,6 +23,16 @@ enum RoutePath {
         return '/engineer';
       case RoutePath.explorer:
         return '/explorer';
+      case RoutePath.timeline:
+        return '/home/timeline';
+      case RoutePath.trends:
+        return '/home/trends';
+      case RoutePath.notifications:
+        return '/home/notifications';
+      case RoutePath.settings:
+        return '/home/settings';
+      case RoutePath.admin:
+        return '/home/admin';
       case RoutePath.wip:
         return '/wip';
     }

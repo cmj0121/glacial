@@ -33,5 +33,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_clean_all => '清除全部';
 
   @override
+  String get btn_timeline => '時間軸';
+
+  @override
+  String get btn_trending => '現正熱門趨勢';
+
+  @override
+  String get btn_notifications => '推播通知';
+
+  @override
+  String get btn_settings => '設定';
+
+  @override
+  String get btn_management => '管理介面';
+
+  @override
   String get dots => '...';
 }

@@ -8,5 +8,10 @@
   "txt_search_mastodon": "mastodon.social",
   "txt_server_rules": "サーバーのルール",
   "btn_clean_all": "すべて削除",
+  "btn_timeline": "タイムライン",
+  "btn_trending": "トレンドタグ",
+  "btn_notifications": "通知",
+  "btn_settings": "設定",
+  "btn_management": "管理",
   "dots": "..."
 }

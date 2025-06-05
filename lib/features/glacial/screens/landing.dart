@@ -114,7 +114,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
         return;
       }
 
-      final RoutePath route = server == null ? RoutePath.explorer : RoutePath.wip;
+      final RoutePath route = server == null ? RoutePath.explorer : RoutePath.timeline;
       logger.i("navigating to ${route.path} ...");
       context.go(route.path);
     }

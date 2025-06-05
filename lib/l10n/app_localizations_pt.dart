@@ -33,5 +33,20 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_clean_all => 'Limpar tudo';
 
   @override
+  String get btn_timeline => 'Linha do tempo';
+
+  @override
+  String get btn_trending => 'Tendências atuais';
+
+  @override
+  String get btn_notifications => 'Notificações';
+
+  @override
+  String get btn_settings => 'Configurações';
+
+  @override
+  String get btn_management => 'Administração';
+
+  @override
   String get dots => '...';
 }

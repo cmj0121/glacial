@@ -232,7 +232,7 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
     storage.saveLastServer(schema.domain);
 
     if (mounted) {
-      context.push(RoutePath.wip.path, extra: schema);
+      context.push(RoutePath.timeline.path, extra: schema);
     }
   }
 

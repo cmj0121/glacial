@@ -33,5 +33,20 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btn_clean_all => 'Borrar todo';
 
   @override
+  String get btn_timeline => 'Línea de tiempo';
+
+  @override
+  String get btn_trending => 'Tendencia ahora';
+
+  @override
+  String get btn_notifications => 'Notificaciones';
+
+  @override
+  String get btn_settings => 'Ajustes';
+
+  @override
+  String get btn_management => 'Administración';
+
+  @override
   String get dots => '...';
 }

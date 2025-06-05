@@ -32,6 +32,7 @@ extension ProviderExtensions on Storage {
   // Clear and reset all the provider states.
   Future<void> clearProvider(WidgetRef ref) async {
     ref.read(serverProvider.notifier).state = null;
+    saveLastServer(null);
   }
 
   // Load the possible last provider state from the storage.

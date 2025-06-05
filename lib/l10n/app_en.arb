@@ -8,5 +8,10 @@
   "txt_search_mastodon": "mastodon.social",
   "txt_server_rules": "Server rules",
   "btn_clean_all": "Clean All",
+  "btn_timeline": "Timelines",
+  "btn_trending": "Trending now",
+  "btn_notifications": "Notifications",
+  "btn_settings": "Settings",
+  "btn_management": "Administration",
   "dots": "..."
 }
