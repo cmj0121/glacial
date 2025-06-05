@@ -45,6 +45,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     final ServerSchema? schema = ref.watch(serverProvider);
+    final String? accessToken = ref.watch(accessTokenProvider);
     final TimelineType initType = TimelineType.local;
 
     if (schema == null) {
@@ -60,7 +61,10 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
       tabBuilder: (context, index) {
         final TimelineType type = types[index];
         final bool isSelected = controller.index == index;
-        final Color color = isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface;
+        final bool isActive = accessToken != null || type.supportAnonymous;
+        final Color color = isActive ?
+            (isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface) :
+            Theme.of(context).disabledColor;
 
         return Tooltip(
           message: type.tooltip(context) ?? '',
@@ -68,6 +72,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
         );
       },
       itemBuilder: (context, index) => Center(child: Text(types[index].name)),
+      onTabTappable: (index) => accessToken != null || types[index].supportAnonymous,
       onDoubleTap: onDoubleTap,
     );
   }

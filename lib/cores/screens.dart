@@ -344,7 +344,7 @@ class _SwipeTabBarState extends State<SwipeTabBar> with TickerProviderStateMixin
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: InkWellDone(
               onTap: isClickable ? () => onTabTap(index) : null,
-              onDoubleTap: widget.onDoubleTap,
+              onDoubleTap: isClickable ? widget.onDoubleTap : null,
               child: widget.tabBuilder(context, index),
             ),
           ),

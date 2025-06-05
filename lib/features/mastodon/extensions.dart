@@ -32,14 +32,15 @@ extension ProviderExtensions on Storage {
   // Clear and reset all the provider states.
   Future<void> clearProvider(WidgetRef ref) async {
     ref.read(serverProvider.notifier).state = null;
+    ref.read(accessTokenProvider.notifier).state = null;
     saveLastServer(null);
   }
 
   // Load the possible last provider state from the storage.
   Future<void> reloadProvider(WidgetRef ref) async {
     final String? lastServer = await loadLastServer();
-    if (lastServer != null && lastServer.isNotEmpty) {
 
+    if (lastServer != null && lastServer.isNotEmpty) {
       final ServerSchema server = await ServerSchema.fetch(lastServer);
       ref.read(serverProvider.notifier).state = server;
     }
