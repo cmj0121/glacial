@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 final keyServerHistory = 'server_history';
@@ -33,17 +34,35 @@ extension ProviderExtensions on Storage {
   Future<void> clearProvider(WidgetRef ref) async {
     ref.read(serverProvider.notifier).state = null;
     ref.read(accessTokenProvider.notifier).state = null;
+    ref.read(accountProvider.notifier).state = null;
     saveLastServer(null);
   }
 
   // Load the possible last provider state from the storage.
   Future<void> reloadProvider(WidgetRef ref) async {
     final String? lastServer = await loadLastServer();
+    final String? accessToken = await loadAccessToken(lastServer);
 
     if (lastServer != null && lastServer.isNotEmpty) {
       final ServerSchema server = await ServerSchema.fetch(lastServer);
       ref.read(serverProvider.notifier).state = server;
+
+      if (accessToken != null && accessToken.isNotEmpty) {
+        ref.read(accessTokenProvider.notifier).state = accessToken;
+        ref.read(accountProvider.notifier).state = await server.getUserByAccessToken(accessToken);
+      }
     }
+  }
+
+  // Update the provider state based on the current server and access token.
+  Future<void> updateProvider(WidgetRef ref, ServerSchema server, String? accessToken) async {
+    ref.read(serverProvider.notifier).state = server;
+    ref.read(accessTokenProvider.notifier).state = accessToken;
+
+    ref.read(accountProvider.notifier).state = await server.getUserByAccessToken(accessToken);
+
+    await saveLastServer(server.domain);
+    await saveAccessToken(server.domain, accessToken);
   }
 }
 

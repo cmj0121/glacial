@@ -1,5 +1,7 @@
 // The global export of feature models
 
+export 'account/models/core.dart';
+export 'auth/models/core.dart';
 export 'glacial/models/core.dart';
 export 'mastodon/models/server.dart';
 export 'timeline/models/core.dart';

@@ -1,6 +1,7 @@
 // The core library of the app.
 export 'package:go_router/go_router.dart';
 
+export 'cores/errors.dart';
 export 'cores/http.dart';
 export 'cores/misc.dart';
 export 'cores/routes.dart';

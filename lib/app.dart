@@ -72,16 +72,29 @@ class GlacialApp extends StatelessWidget {
           builder: (_, _) => const LandingPage(),
         ),
         // The engineering mode to show the app's internal information and settings
-        // @animation: FadeTransition
         GoRoute(
           path: RoutePath.engineer.path,
           builder: (_, _) => const EngineeringMode(),
         ),
         // The server explorer page to search and show the available servers
-        // @animation: FadeTransition
         GoRoute(
           path: RoutePath.explorer.path,
           builder: (_, __) => const ServerExplorer(),
+        ),
+        // The webview page to show the in-app webview with specified URL
+        GoRoute(
+          path: RoutePath.webview.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final Uri? url = state.extra as Uri?;
+
+            if (url == null) {
+              logger.w("the url is null, cannot open the webview");
+              context.pop();
+              return const SizedBox.shrink();
+            }
+
+            return WebViewPage(url: url);
+          },
         ),
 
         // The core home page and show the possible operations

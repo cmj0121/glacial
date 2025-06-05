@@ -9,6 +9,7 @@ import 'package:glacial/features/models.dart';
 // The global provider to declare the selected Mastodon server and access token
 final serverProvider = StateProvider<ServerSchema?>((ref) => null);
 final accessTokenProvider = StateProvider<String?>((ref) => null);
+final accountProvider = StateProvider<AccountSchema?>((ref) => null);
 
 class Storage {
   static SharedPreferences? _prefs;

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The main home page of the app, interacts with the current server and show the
 // server timeline and other features.
@@ -53,7 +54,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(appBarHeight),
             child: AppBar(
-              leading: const SizedBox.shrink(),
+              leading: UserAvatar(schema: schema),
               title: Align(
                 alignment: Alignment.center,
                 child: Tooltip(
