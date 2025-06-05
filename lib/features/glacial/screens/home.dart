@@ -147,11 +147,13 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   // may not be available for the anonymous user.
   List<Widget> buildActions() {
     final String path = GoRouter.of(context).state.uri.toString();
+    final AccountSchema? account = ref.read(accountProvider);
     final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
 
     return actions.map((action) {
         final int index = actions.indexOf(action);
         final bool isSelected = action.route == route;
+        final bool isEnabled = account != null || action.supportAnonymous;
 
         return IconButton(
           icon: Icon(action.icon(active: isSelected), size: sidebarSize),
@@ -159,7 +161,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           color: isSelected ? Theme.of(context).colorScheme.primary : null,
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: () => onSelect(index),
+          onPressed: isEnabled ? () => onSelect(index) : null,
         );
       }).toList();
   }

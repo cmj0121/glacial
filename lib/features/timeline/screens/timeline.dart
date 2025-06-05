@@ -46,7 +46,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
   Widget build(BuildContext context) {
     final ServerSchema? schema = ref.watch(serverProvider);
     final String? accessToken = ref.watch(accessTokenProvider);
-    final TimelineType initType = TimelineType.local;
+    final TimelineType initType = accessToken == null ? TimelineType.local : TimelineType.home;
 
     if (schema == null) {
       logger.w("No server selected, but it's required to show the timeline.");
