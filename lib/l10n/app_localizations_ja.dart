@@ -48,5 +48,35 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_management => '管理';
 
   @override
+  String get btn_trends_links => 'ニュース';
+
+  @override
+  String get btn_trends_statuses => '投稿';
+
+  @override
+  String get btn_trends_tags => 'ハッシュタグ';
+
+  @override
+  String get btn_home => 'ホーム';
+
+  @override
+  String get btn_user => 'ユーザー';
+
+  @override
+  String get btn_local => 'このサーバー';
+
+  @override
+  String get btn_federal => 'ほかのサーバー';
+
+  @override
+  String get btn_public => 'すべて';
+
+  @override
+  String get btn_bookmarks => 'ブックマーク';
+
+  @override
+  String get btn_favourites => 'お気に入り';
+
+  @override
   String get dots => '...';
 }

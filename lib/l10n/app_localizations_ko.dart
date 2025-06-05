@@ -48,5 +48,35 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_management => '관리';
 
   @override
+  String get btn_trends_links => '소식';
+
+  @override
+  String get btn_trends_statuses => '게시물';
+
+  @override
+  String get btn_trends_tags => '해시태그';
+
+  @override
+  String get btn_home => '홈';
+
+  @override
+  String get btn_user => '사용자';
+
+  @override
+  String get btn_local => '이 서버';
+
+  @override
+  String get btn_federal => '다른 서버';
+
+  @override
+  String get btn_public => '모두';
+
+  @override
+  String get btn_bookmarks => '북마크';
+
+  @override
+  String get btn_favourites => '좋아요';
+
+  @override
   String get dots => '...';
 }

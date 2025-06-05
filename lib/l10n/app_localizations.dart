@@ -185,6 +185,66 @@ abstract class AppLocalizations {
   /// **'Administration'**
   String get btn_management;
 
+  /// No description provided for @btn_trends_links.
+  ///
+  /// In en, this message translates to:
+  /// **'News'**
+  String get btn_trends_links;
+
+  /// No description provided for @btn_trends_statuses.
+  ///
+  /// In en, this message translates to:
+  /// **'Posts'**
+  String get btn_trends_statuses;
+
+  /// No description provided for @btn_trends_tags.
+  ///
+  /// In en, this message translates to:
+  /// **'Hashtags'**
+  String get btn_trends_tags;
+
+  /// No description provided for @btn_home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get btn_home;
+
+  /// No description provided for @btn_user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get btn_user;
+
+  /// No description provided for @btn_local.
+  ///
+  /// In en, this message translates to:
+  /// **'This server'**
+  String get btn_local;
+
+  /// No description provided for @btn_federal.
+  ///
+  /// In en, this message translates to:
+  /// **'Other servers'**
+  String get btn_federal;
+
+  /// No description provided for @btn_public.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get btn_public;
+
+  /// No description provided for @btn_bookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks'**
+  String get btn_bookmarks;
+
+  /// No description provided for @btn_favourites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get btn_favourites;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

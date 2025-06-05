@@ -48,5 +48,35 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_management => 'Administração';
 
   @override
+  String get btn_trends_links => 'Notícias';
+
+  @override
+  String get btn_trends_statuses => 'Publicações';
+
+  @override
+  String get btn_trends_tags => 'Etiquetas';
+
+  @override
+  String get btn_home => 'Início';
+
+  @override
+  String get btn_user => 'utilizador';
+
+  @override
+  String get btn_local => 'Este servidor';
+
+  @override
+  String get btn_federal => 'Outros servidores';
+
+  @override
+  String get btn_public => 'Todas';
+
+  @override
+  String get btn_bookmarks => 'Marcadores';
+
+  @override
+  String get btn_favourites => 'Favoritos';
+
+  @override
   String get dots => '...';
 }

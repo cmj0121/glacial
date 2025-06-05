@@ -13,5 +13,15 @@
   "btn_notifications": "알림",
   "btn_settings": "설정",
   "btn_management": "관리",
+  "btn_trends_links": "소식",
+  "btn_trends_statuses": "게시물",
+  "btn_trends_tags": "해시태그",
+  "btn_home": "홈",
+  "btn_user": "사용자",
+  "btn_local": "이 서버",
+  "btn_federal": "다른 서버",
+  "btn_public": "모두",
+  "btn_bookmarks": "북마크",
+  "btn_favourites": "좋아요",
   "dots": "..."
 }

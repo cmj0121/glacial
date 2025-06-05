@@ -48,5 +48,35 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_management => '管理介面';
 
   @override
+  String get btn_trends_links => '最新消息';
+
+  @override
+  String get btn_trends_statuses => '嘟文';
+
+  @override
+  String get btn_trends_tags => '主題標籤';
+
+  @override
+  String get btn_home => '首頁';
+
+  @override
+  String get btn_user => '使用者';
+
+  @override
+  String get btn_local => '本站';
+
+  @override
+  String get btn_federal => '聯邦宇宙';
+
+  @override
+  String get btn_public => '全部';
+
+  @override
+  String get btn_bookmarks => '書籤';
+
+  @override
+  String get btn_favourites => '最愛';
+
+  @override
   String get dots => '...';
 }

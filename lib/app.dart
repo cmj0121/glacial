@@ -106,13 +106,13 @@ class GlacialApp extends StatelessWidget {
         // Mastodon server
         GoRoute(
           path: RoutePath.timeline.path,
-          builder: (BuildContext context, GoRouterState state) =>const WIP(),
+          builder: (BuildContext context, GoRouterState state) =>const TimelineTab(),
         ),
         // The glacial trends page to show the server trends in the selected
         // Mastodon server
         GoRoute(
           path: RoutePath.trends.path,
-          builder: (BuildContext context, GoRouterState state) =>const WIP(),
+          builder: (BuildContext context, GoRouterState state) =>const TrendsTab(),
         ),
         // The explorer page to search and show the target accounts, links, and
         // hashtags in the selected Mastodon server

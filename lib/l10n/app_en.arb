@@ -13,5 +13,15 @@
   "btn_notifications": "Notifications",
   "btn_settings": "Settings",
   "btn_management": "Administration",
+  "btn_trends_links": "News",
+  "btn_trends_statuses": "Posts",
+  "btn_trends_tags": "Hashtags",
+  "btn_home": "Home",
+  "btn_user": "User",
+  "btn_local": "This server",
+  "btn_federal": "Other servers",
+  "btn_public": "All",
+  "btn_bookmarks": "Bookmarks",
+  "btn_favourites": "Favorites",
   "dots": "..."
 }
