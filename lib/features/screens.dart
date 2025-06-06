@@ -1,6 +1,7 @@
 // The exposed screens for the Glacial app.
 
 export 'auth/screens/core.dart';
+export 'account/screens/core.dart';
 export 'engineer/screens/core.dart';
 export 'glacial/screens/core.dart';
 export 'mastodon/screens/core.dart';

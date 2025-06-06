@@ -149,6 +149,18 @@ abstract class AppLocalizations {
   /// **'Server rules'**
   String get txt_server_rules;
 
+  /// No description provided for @txt_show_less.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get txt_show_less;
+
+  /// No description provided for @txt_show_more.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get txt_show_more;
+
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:

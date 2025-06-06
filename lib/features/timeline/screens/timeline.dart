@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The timeline tab that shows the all possible timelines in the current
 // selected Mastodon server.
@@ -67,11 +69,15 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
             Theme.of(context).disabledColor;
 
         return Tooltip(
-          message: type.tooltip(context) ?? '',
+          message: type.tooltip(context),
           child: Icon(type.icon(active: isSelected),color: color),
         );
       },
-      itemBuilder: (context, index) => Center(child: Text(types[index].name)),
+      itemBuilder: (context, index) => Timeline(
+        schema: schema,
+        type: types[index],
+        controller: scrollControllers[index],
+      ),
       onTabTappable: (index) => accessToken != null || types[index].supportAnonymous,
       onDoubleTap: onDoubleTap,
     );
@@ -84,6 +90,143 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+  }
+}
+
+// The timeline widget that contains the status from the current selected
+// Mastodon server.
+class Timeline extends ConsumerStatefulWidget {
+  final ServerSchema schema;
+  final TimelineType type;
+  final String? keyword;
+  final AccountSchema? account;
+  final ScrollController? controller;
+
+  const Timeline({
+    super.key,
+    required this.schema,
+    required this.type,
+    this.keyword,
+    this.account,
+    this.controller,
+  });
+
+  @override
+  ConsumerState<Timeline> createState() => _TimelineState();
+}
+
+class _TimelineState extends ConsumerState<Timeline> {
+  late final ScrollController controller = widget.controller ?? ScrollController();
+  final Storage storage = Storage();
+  final double loadingThreshold = 180;
+
+  bool isLoading = false;
+  bool isCompleted = false;
+  List<StatusSchema> statuses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(onScroll);
+
+    onLoad();
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(onScroll);
+    if (widget.controller == null) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          isLoading ? ClockProgressIndicator() : const SizedBox.shrink(),
+          Flexible(child: buildContent()),
+        ],
+      ),
+    );
+  }
+
+  // Build the list of the statuses in the current selected Mastodon server and
+  // timeline type.
+  Widget buildContent() {
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView.builder(
+        controller: controller,
+        shrinkWrap: true,
+        itemCount: statuses.length,
+        itemBuilder: (context, index) {
+          final StatusSchema status = statuses[index];
+          return Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Status(
+              schema: status.reblog ?? status,
+              reblogFrom: status.reblog != null ? status.account : null,
+              replyToAccountID: status.inReplyToAccountID,
+              onDeleted: () => onDeleted(index),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // Detect the scroll event and load more statuses when the user scrolls to the
+  // almost bottom of the list.
+  void onScroll() async {
+    if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
+      onLoad();
+    }
+  }
+
+  // Clean-up and refresh the timeline when the user pulls down the list.
+  Future<void> onRefresh() async {
+    setState(() {
+      isLoading = false;
+      isCompleted = false;
+      statuses.clear();
+    });
+    await onLoad();
+  }
+
+  // Load the statuses from the current selected Mastodon server.
+  Future<void> onLoad() async {
+    if (isLoading || isCompleted) {
+      return;
+    }
+
+    setState(() => isLoading = true);
+    final String? maxId = statuses.isNotEmpty ? statuses.last.id : null;
+    final List<StatusSchema> newStatuses = await widget.schema.fetchTimeline(
+      widget.type,
+      accessToken: ref.read(accessTokenProvider),
+      maxId: maxId,
+    );
+
+    setState(() {
+      isLoading = false;
+
+      if (newStatuses.isEmpty) {
+        isCompleted = true;
+        return;
+      }
+
+      statuses.addAll(newStatuses);
+    });
+  }
+
+  // Reload the timeline when the status is deleted.
+  void onDeleted(int index) async {
+    setState(() => statuses.removeAt(index));
   }
 }
 

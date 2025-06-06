@@ -30,6 +30,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_server_rules => 'サーバーのルール';
 
   @override
+  String get txt_show_less => '注意事項を閉じる';
+
+  @override
+  String get txt_show_more => '注意事項';
+
+  @override
   String get btn_clean_all => 'すべて削除';
 
   @override

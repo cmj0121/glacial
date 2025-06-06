@@ -30,6 +30,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_server_rules => 'Regras do servidor';
 
   @override
+  String get txt_show_less => 'Mostrar menos';
+
+  @override
+  String get txt_show_more => 'Mostrar mais';
+
+  @override
   String get btn_clean_all => 'Limpar tudo';
 
   @override

@@ -27,7 +27,7 @@ enum SidebarButtonType {
   }
 
   // The list of actions could be performed in the sidebar.
-  String? tooltip(BuildContext context) {
+  String tooltip(BuildContext context) {
     switch (this) {
       case SidebarButtonType.timeline:
         return AppLocalizations.of(context)?.btn_timeline ?? "Timeline";

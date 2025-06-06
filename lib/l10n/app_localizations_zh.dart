@@ -30,6 +30,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_server_rules => '伺服器規則';
 
   @override
+  String get txt_show_less => '減少顯示';
+
+  @override
+  String get txt_show_more => '顯示更多';
+
+  @override
   String get btn_clean_all => '清除全部';
 
   @override

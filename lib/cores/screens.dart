@@ -1,8 +1,11 @@
 // The miscellaneous widget library of the app.
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
+import 'package:glacial/core.dart';
 
 // The InkWell wrapper that is no any animation and color.
 class InkWellDone extends StatelessWidget {
@@ -127,6 +130,79 @@ class _ClockProgressIndicatorState extends State<ClockProgressIndicator> with Si
   }
 }
 
+// The customize HTML render
+class HtmlDone extends StatelessWidget {
+  final String html;
+  final OnTap? onLinkTap;
+
+  const HtmlDone({
+    super.key,
+    required this.html,
+    this.onLinkTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Html(
+      data: html,
+      style: {
+        'a': Style(
+          color: Theme.of(context).colorScheme.secondary,
+          textDecoration: TextDecoration.underline,
+        ),
+      },
+      onLinkTap: onLinkTap,
+    );
+  }
+}
+
+// The hero media that show the media and show to full-screen when tap on it.
+class MediaHero extends StatelessWidget {
+  final Widget child;
+
+  const MediaHero({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWellDone(
+      onTap: () {
+        // Pop-up the media as full-screen and blur the background.
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return Center(
+                child: Hero(
+                  tag: 'media-hero',
+                  child: buildHero(context),
+                ),
+              );
+            },
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+
+  // The hero-like media with full-screen and blur the background.
+  Widget buildHero(BuildContext context) {
+    return Dismissible(
+      key: const Key('media-hero-dismiss'),
+      direction: DismissDirection.horizontal,
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: InteractiveViewer(child: child),
+      ),
+      onDismissed: (direction) {
+        // Pop the media when the user swipes it away.
+        Navigator.of(context).pop();
+      },
+    );
+  }
+}
 
 // The customized tab view that can be used to show the active and inactive
 // tabs and slide the content to trigger the animation.
@@ -375,6 +451,129 @@ class _SwipeTabBarState extends State<SwipeTabBar> with TickerProviderStateMixin
       controller.forward(from: 0);
     });
     widget.controller?.animateTo(index);
+  }
+}
+
+// The sensitive view widget that hide the content and only show the icon
+// when the content is not visible.
+class SensitiveView extends StatefulWidget {
+  final Widget child;
+  final String? spoiler;
+
+  const SensitiveView({
+    super.key,
+    required this.child,
+    this.spoiler,
+  });
+
+  @override
+  State<SensitiveView> createState() => _SensitiveViewState();
+}
+
+class _SensitiveViewState extends State<SensitiveView> {
+  bool isVisible = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.spoiler == null ? buildWithBlur() : buildWithSpoiler();
+  }
+
+  Widget buildWithSpoiler() {
+    return InkWellDone(
+      onTap: onTap,
+      child: Column(
+        children: [
+          const SizedBox(height: 8),
+    buildSpoiler(),
+          Visibility(
+            visible: isVisible,
+            child: widget.child,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildSpoiler() {
+    final List<Widget> texts = widget.spoiler?.isNotEmpty == true ? [
+      Text(widget.spoiler ?? ""),
+      const SizedBox(height: 8),
+    ] : [];
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        border: Border.all(
+          width: 2,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...texts,
+            buildHint(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildHint() {
+    return Text(
+      (isVisible ? AppLocalizations.of(context)?.txt_show_less : AppLocalizations.of(context)?.txt_show_more) ?? "...",
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.primary,
+      ),
+    );
+  }
+
+  Widget buildWithBlur() {
+    final double blur = isVisible ? 0 : 15;
+
+    return InkWellDone(
+      onTap: isVisible ? null : onTap,
+      child: ClipRect(
+        child: Stack(
+          children: [
+            ImageFiltered(
+              imageFilter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+              child: widget.child,
+            ),
+            buildCover(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildCover() {
+    if (isVisible) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.95),
+      width: double.infinity,
+      height: double.infinity,
+      child: Center(
+        child: Icon(
+          Icons.visibility_off,
+          color: Theme.of(context).colorScheme.onError,
+          size: 32,
+        ),
+      ),
+    );
+  }
+
+  void onTap() async {
+    setState(() {
+      isVisible = !isVisible;
+    });
   }
 }
 

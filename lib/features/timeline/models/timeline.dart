@@ -14,7 +14,7 @@ enum TimelineType {
   favourites,    // The favourite timeline for the logged in user.
   bookmarks;     // The bookmark timeline for the logged in user.
 
-  String? tooltip(BuildContext context) {
+  String tooltip(BuildContext context) {
     switch (this) {
       case TimelineType.home:
         return AppLocalizations.of(context)?.btn_home ?? 'Home';

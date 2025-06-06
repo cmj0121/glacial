@@ -7,6 +7,7 @@ enum RoutePath {
   engineer,          // The engineer page of the app.
   explorer,          // The server explorer page of the app to explore the Mastodon server.
   webview,           // The in-app webview page of the app.
+  media,             // The media viewer page of the app to view the media content.
   // The home page of the Glacial, showing the timeline, trends, notifications, and other features.
   timeline,          // The timeline page of the app.
   trends,            // The trends page of the app.
@@ -26,6 +27,8 @@ enum RoutePath {
         return '/explorer';
       case RoutePath.webview:
         return '/webview';
+      case RoutePath.media:
+        return '/media';
       case RoutePath.timeline:
         return '/home/timeline';
       case RoutePath.trends:

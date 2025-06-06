@@ -9,7 +9,7 @@ enum TrendsType {
   tags,
   links;
 
-  String? tooltip(BuildContext context) {
+  String tooltip(BuildContext context) {
     switch (this) {
       case TrendsType.links:
         return AppLocalizations.of(context)?.btn_trends_links ?? 'Links';
