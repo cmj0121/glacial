@@ -45,7 +45,7 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
       itemCount: tabs.length,
       tabBuilder: (context, index) {
         final TrendsType type = tabs[index];
-        final Widget icon = Icon(type.icon(active: controller.index == index));
+        final Widget icon = Icon(type.icon(active: controller.index == index), size: 32);
 
         return Tooltip(
           message: type.tooltip(context),

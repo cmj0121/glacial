@@ -70,7 +70,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
 
         return Tooltip(
           message: type.tooltip(context),
-          child: Icon(type.icon(active: isSelected),color: color),
+          child: Icon(type.icon(active: isSelected), color: color, size: 32),
         );
       },
       itemBuilder: (context, index) => Timeline(

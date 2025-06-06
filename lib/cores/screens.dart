@@ -291,6 +291,7 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
           onTabTappable: widget.onTabTappable,
           onDoubleTap: () => widget.onDoubleTap?.call(tabController.index),
         ),
+        const SizedBox(height: 8),
         Flexible(child: buildContent()),
       ],
     );
