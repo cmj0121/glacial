@@ -40,8 +40,9 @@ class MastodonServer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Debouncer debouncer = Debouncer(duration: const Duration(milliseconds: 700));
     return InkWellDone(
-      onTap: () => onTap?.call(schema),
+      onTap: () => debouncer.callOnce(() => onTap?.call(schema)),
       child: buildContent(context),
     );
   }
