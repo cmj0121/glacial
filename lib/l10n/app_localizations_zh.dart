@@ -36,6 +36,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_show_more => '顯示更多';
 
   @override
+  String txt_trends_uses(Object uses) {
+    return '$uses 人於過去幾天';
+  }
+
+  @override
   String get btn_clean_all => '清除全部';
 
   @override

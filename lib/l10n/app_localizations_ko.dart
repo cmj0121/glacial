@@ -36,6 +36,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_show_more => '더 보기';
 
   @override
+  String txt_trends_uses(Object uses) {
+    return '최근 며칠 동안 $uses회 사용됨';
+  }
+
+  @override
   String get btn_clean_all => '모두 지우기';
 
   @override

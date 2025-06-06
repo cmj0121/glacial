@@ -36,6 +36,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_show_more => 'Afficher plus';
 
   @override
+  String txt_trends_uses(Object uses) {
+    return 'Utilisé $uses fois ces derniers jours';
+  }
+
+  @override
   String get btn_clean_all => 'Tout effacer';
 
   @override

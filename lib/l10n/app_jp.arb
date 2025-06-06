@@ -9,6 +9,7 @@
   "txt_server_rules": "サーバーのルール",
   "txt_show_less": "注意事項を閉じる",
   "txt_show_more": "注意事項",
+  "txt_trends_uses": "過去数日間で{uses}回使用されました",
   "btn_clean_all": "すべて削除",
   "btn_timeline": "タイムライン",
   "btn_trending": "トレンドタグ",

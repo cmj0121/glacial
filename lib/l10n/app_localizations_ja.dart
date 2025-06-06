@@ -36,6 +36,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_show_more => '注意事項';
 
   @override
+  String txt_trends_uses(Object uses) {
+    return '過去数日間で$uses回使用されました';
+  }
+
+  @override
   String get btn_clean_all => 'すべて削除';
 
   @override

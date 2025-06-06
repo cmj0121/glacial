@@ -9,6 +9,7 @@
   "txt_server_rules": "Règles du serveur",
   "txt_show_less": "Afficher moins",
   "txt_show_more": "Afficher plus",
+  "txt_trends_uses": "Utilisé {uses} fois ces derniers jours",
   "btn_clean_all": "Tout effacer",
   "btn_timeline": "Fil d’actualité",
   "btn_trending": "Tendance en ce moment",

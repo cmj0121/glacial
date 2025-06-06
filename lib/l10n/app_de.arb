@@ -9,6 +9,7 @@
   "txt_server_rules": "Serverregeln",
   "txt_show_less": "Weniger anzeigen",
   "txt_show_more": "Mehr anzeigen",
+  "txt_trends_uses": "{uses} Mal in den letzten Tagen verwendet",
   "btn_clean_all": "Alles löschen",
   "btn_timeline": "Zeitleiste",
   "btn_trending": "Aktuelle Trends",
