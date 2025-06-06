@@ -10,6 +10,7 @@
   "txt_show_less": "注意事項を閉じる",
   "txt_show_more": "注意事項",
   "txt_trends_uses": "過去数日間で{uses}回使用されました",
+  "txt_no_results_found": "{keyword} の検索結果が見つかりませんでした",
   "btn_clean_all": "すべて削除",
   "btn_timeline": "タイムライン",
   "btn_trending": "トレンドタグ",

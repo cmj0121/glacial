@@ -10,6 +10,7 @@
   "txt_show_less": "減少顯示",
   "txt_show_more": "顯示更多",
   "txt_trends_uses": "{uses} 人於過去幾天",
+  "txt_no_results_found": "搜尋 {keyword} 無結果",
   "btn_clean_all": "清除全部",
   "btn_timeline": "時間軸",
   "btn_trending": "現正熱門趨勢",

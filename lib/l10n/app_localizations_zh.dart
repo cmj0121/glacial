@@ -41,6 +41,11 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String txt_no_results_found(Object keyword) {
+    return '搜尋 $keyword 無結果';
+  }
+
+  @override
   String get btn_clean_all => '清除全部';
 
   @override

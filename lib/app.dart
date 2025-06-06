@@ -150,8 +150,11 @@ class GlacialApp extends StatelessWidget {
         // The explorer page to search and show the target accounts, links, and
         // hashtags in the selected Mastodon server
         GoRoute(
-          path: RoutePath.explorer.path,
-          builder: (BuildContext context, GoRouterState state) =>const WIP(),
+          path: RoutePath.search.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final String keyword = state.extra as String;
+            return ExplorerTab(keyword: keyword);
+          },
         ),
         // The glacial notifications page to show the server notifications in the
         // selected Mastodon server

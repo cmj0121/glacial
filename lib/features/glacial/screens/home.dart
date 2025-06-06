@@ -66,6 +66,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
                 ),
               ),
               actions: [
+                Explorer(),
                 IconButton(
                   icon: Icon(Icons.logout),
                   color: Theme.of(context).colorScheme.outline,

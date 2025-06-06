@@ -10,6 +10,7 @@
   "txt_show_less": "Afficher moins",
   "txt_show_more": "Afficher plus",
   "txt_trends_uses": "Utilisé {uses} fois ces derniers jours",
+  "txt_no_results_found": "Aucun résultat trouvé pour {keyword}",
   "btn_clean_all": "Tout effacer",
   "btn_timeline": "Fil d’actualité",
   "btn_trending": "Tendance en ce moment",

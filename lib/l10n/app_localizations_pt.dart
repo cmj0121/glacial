@@ -41,6 +41,11 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String txt_no_results_found(Object keyword) {
+    return 'Nenhum resultado encontrado para $keyword';
+  }
+
+  @override
   String get btn_clean_all => 'Limpar tudo';
 
   @override

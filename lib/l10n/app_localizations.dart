@@ -167,6 +167,12 @@ abstract class AppLocalizations {
   /// **'{uses} used in the past days'**
   String txt_trends_uses(Object uses);
 
+  /// No description provided for @txt_no_results_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found for {keyword}'**
+  String txt_no_results_found(Object keyword);
+
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:

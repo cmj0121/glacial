@@ -41,6 +41,11 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String txt_no_results_found(Object keyword) {
+    return '$keyword の検索結果が見つかりませんでした';
+  }
+
+  @override
   String get btn_clean_all => 'すべて削除';
 
   @override

@@ -41,6 +41,11 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String txt_no_results_found(Object keyword) {
+    return '$keyword에 대한 결과가 없습니다';
+  }
+
+  @override
   String get btn_clean_all => '모두 지우기';
 
   @override

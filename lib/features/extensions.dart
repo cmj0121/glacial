@@ -2,6 +2,7 @@
 
 export 'account/extensions.dart';
 export 'auth/extensions.dart';
+export 'explore/extensions.dart';
 export 'timeline/extensions.dart';
 export 'trends/extensions.dart';
 export 'mastodon/extensions.dart';
