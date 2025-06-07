@@ -17,13 +17,18 @@ class Hashtag extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final String? accessToken = ref.read(accessTokenProvider);
+
     return Container(
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
-        child: buildContent(context),
+        child: InkWellDone(
+          onTap: accessToken == null ? null : () => context.push(RoutePath.hashtag.path, extra: schema),
+          child: buildContent(context),
+        ),
       ),
     );
   }

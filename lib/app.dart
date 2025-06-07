@@ -1,8 +1,10 @@
 // The main application and define the global variables.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -29,11 +31,11 @@ class WIP extends StatelessWidget {
 }
 
 // The main application widget that contains the router and the theme.
-class GlacialApp extends StatelessWidget {
+class GlacialApp extends ConsumerWidget {
   const GlacialApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final info = Info().info;
 
     return MaterialApp.router(
@@ -55,13 +57,13 @@ class GlacialApp extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
 
       // The router implementation
-      routerConfig: router(),
+      routerConfig: router(ref),
     );
   }
 
   // define the router for the app and how to handle the routes
   // with the optional animation
-  GoRouter router() {
+  GoRouter router(WidgetRef ref) {
     return GoRouter(
       initialLocation: RoutePath.landing.path,
       navigatorKey: navigatorKey,
@@ -118,7 +120,7 @@ class GlacialApp extends StatelessWidget {
 
 
         // The core home page and show the possible operations
-        homeRoutes(),
+        homeRoutes(ref),
       ],
       // The fallback page, show the WIP screen if the route is not found
       errorBuilder: (BuildContext context, GoRouterState state) {
@@ -129,7 +131,7 @@ class GlacialApp extends StatelessWidget {
   }
 
   // Build the home page with the sidebar and the main content
-  RouteBase homeRoutes() {
+  RouteBase homeRoutes(WidgetRef ref) {
     return ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
         return GlacialHome(child: child);
@@ -173,6 +175,25 @@ class GlacialApp extends StatelessWidget {
         GoRoute(
           path: RoutePath.admin.path,
           builder: (BuildContext context, GoRouterState state) => const WIP(),
+        ),
+        // Show the timeline based on the specified hashtag
+        GoRoute(
+          path: RoutePath.hashtag.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final ServerSchema? server = ref.read(serverProvider);
+            final HashtagSchema schema = state.extra as HashtagSchema;
+
+            if (server == null) {
+              logger.w("No server selected, cannot show the hashtag timeline.");
+              return const SizedBox.shrink();
+            }
+
+            return  Timeline(
+              schema: server,
+              type: TimelineType.hashtag,
+              keyword: schema.name,
+            );
+          },
         ),
       ],
     );

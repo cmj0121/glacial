@@ -15,6 +15,7 @@ enum RoutePath {
   settings,          // The settings page of the app.
   admin,             // The admin page of the app.
   search,            // The search page of the app.
+  hashtag,           // The hashtag page of the app.
   wip;               // The work-in-progress page of the app.
 
   // Get the string path for the route.
@@ -42,6 +43,8 @@ enum RoutePath {
         return '/home/admin';
       case RoutePath.search:
         return '/home/search';
+      case RoutePath.hashtag:
+        return '/home/hashtag';
       case RoutePath.wip:
         return '/wip';
     }
