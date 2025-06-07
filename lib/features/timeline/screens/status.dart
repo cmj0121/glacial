@@ -102,6 +102,7 @@ class _StatusState extends ConsumerState<Status> {
       children: [
         HtmlDone(
           html: schema.content,
+          onLinkTap: onLinkTap,
         ),
 
         Attachments(schemas: schema.attachments),
@@ -122,6 +123,16 @@ class _StatusState extends ConsumerState<Status> {
   void onReload(StatusSchema schema) async {
     // fetch the status again from the server, and update the status
     setState(() => this.schema = schema);
+  }
+
+  // Handle the link tap event, and open the link in the in-app webview.
+  void onLinkTap(String? url, Map<String, String> attributes, _) {
+    final Uri? uri = url == null ? null : Uri.parse(url);
+    if (uri == null) {
+      return;
+    }
+
+    context.push(RoutePath.webview.path, extra: uri);
   }
 }
 
