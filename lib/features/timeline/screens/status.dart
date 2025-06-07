@@ -102,6 +102,7 @@ class _StatusState extends ConsumerState<Status> {
       children: [
         HtmlDone(
           html: schema.content,
+          emojis: schema.emojis,
           onLinkTap: onLinkTap,
         ),
 

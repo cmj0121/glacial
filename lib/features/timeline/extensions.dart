@@ -2,8 +2,13 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
+
+// The in-memory AccountSchema and EmojiSchema cache
+Map<String, EmojiSchema> emojiCache = {};
 
 extension TimelineExtensions on ServerSchema {
   // Fetch timeline's statuses based on the timeline type.
@@ -79,6 +84,98 @@ extension TimelineExtensions on ServerSchema {
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
 
     return json.map((e) => StatusSchema.fromJson(e)).toList();
+  }
+}
+
+// The extension of the Storage to save and load the emoji data.
+extension EmojiExtensions on Storage {
+  // Save the account schema to the cache.
+  void saveEmoji(String id, EmojiSchema schema) {
+    emojiCache[id] = schema;
+  }
+
+  // Replace the orignal emoji shortcode into the HTML image tag.
+  String replaceEmojiToHTML(String content, {List<EmojiSchema>? emojis, double size = 16}) {
+    final List<String> parts = splitEmoji(content);
+
+    if (parts.isEmpty) {
+      return content;
+    }
+
+    return parts.reduce((String value, String part) {
+      final String shortcode = (part.startsWith(':') && part.endsWith(':'))
+          ? part.substring(1, part.length - 1)
+          : part;
+      final EmojiSchema? emoji = (
+        emojiCache[shortcode] ??
+        emojis?.cast<EmojiSchema?>().firstWhere((e) => e?.shortcode == shortcode, orElse: () => null)
+      );
+
+      if (emoji == null) {
+        return "$value$part";
+      }
+
+      return "$value<img src='${emoji.url}' width='$size' height='$size' />";
+    });
+  }
+
+  // Replace the orignal emoji shortcode into the Widget image tag.
+  Widget replaceEmojiToWidget(String content, {List<EmojiSchema>? emojis, double size = 16}) {
+    final List<String> parts = splitEmoji(content);
+
+    if (parts.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: parts.map((String part) {
+        final String shortcode = (part.length > 2) ? part.substring(1, part.length - 1) : part;
+        final EmojiSchema? emoji = (
+          emojiCache[shortcode] ??
+          emojis?.cast<EmojiSchema?>().firstWhere((e) => e?.shortcode == shortcode, orElse: () => null)
+        );
+
+        if (emoji == null) {
+          return Text(part, overflow: TextOverflow.ellipsis);
+        }
+
+        return Image.network(
+          emoji.url,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+        );
+      }).toList(),
+    );
+  }
+
+  // Split the text into parts based on the emoji pattern.
+  List<String> splitEmoji(String content) {
+    final RegExp pattern = RegExp(r':[a-zA-Z0-9_+\-]+?:');
+    final List<String> parts = [];
+
+    int lastEnd = 0;
+    for (final match in pattern.allMatches(content)) {
+      if (match.start > lastEnd) {
+        parts.add(content.substring(lastEnd, match.start));
+      }
+
+      final String emoji = content.substring(match.start, match.end);
+      parts.add(emoji);
+      lastEnd = match.end;
+    }
+
+    if (lastEnd < content.length) {
+      parts.add(content.substring(lastEnd));
+    }
+
+    return parts;
+  }
+
+  // Purge all the cached accounts.
+  void purgeCachedEmojis() {
+    emojiCache.clear();
   }
 }
 

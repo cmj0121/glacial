@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
 
 // The InkWell wrapper that is no any animation and color.
 class InkWellDone extends StatelessWidget {
@@ -133,18 +135,20 @@ class _ClockProgressIndicatorState extends State<ClockProgressIndicator> with Si
 // The customize HTML render
 class HtmlDone extends StatelessWidget {
   final String html;
+  final List<EmojiSchema> emojis;
   final OnTap? onLinkTap;
 
   const HtmlDone({
     super.key,
     required this.html,
+    this.emojis = const [],
     this.onLinkTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Html(
-      data: html,
+      data: Storage().replaceEmojiToHTML(html, emojis: emojis),
       style: {
         'a': Style(
           color: Theme.of(context).colorScheme.secondary,
