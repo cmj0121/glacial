@@ -26,7 +26,7 @@ class Hashtag extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
         child: InkWellDone(
-          onTap: accessToken == null ? null : () => context.push(RoutePath.hashtag.path, extra: schema),
+          onTap: accessToken == null ? null : () => context.push(RoutePath.hashtag.path, extra: schema.name),
           child: buildContent(context),
         ),
       ),

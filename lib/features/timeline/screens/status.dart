@@ -128,8 +128,19 @@ class _StatusState extends ConsumerState<Status> {
 
   // Handle the link tap event, and open the link in the in-app webview.
   void onLinkTap(String? url, Map<String, String> attributes, _) {
+    final Uri baseUri = Uri.parse(schema.uri);
     final Uri? uri = url == null ? null : Uri.parse(url);
     if (uri == null) {
+      return;
+    }
+
+    // check if the url is the tag from the Mastodon server
+    if (schema.tags.any((tag) => uri == baseUri.replace(path: '/tags/${tag.name}'))) {
+      // navigate to the tag timeline
+      final String path = Uri.decodeFull(uri.path);
+      final String tag = path.substring(path.lastIndexOf('/') + 1);
+
+      context.push(RoutePath.hashtag.path, extra: tag);
       return;
     }
 
