@@ -101,6 +101,7 @@ class Timeline extends ConsumerStatefulWidget {
   final String? keyword;
   final AccountSchema? account;
   final ScrollController? controller;
+  final Widget? child;
 
   const Timeline({
     super.key,
@@ -109,6 +110,7 @@ class Timeline extends ConsumerStatefulWidget {
     this.keyword,
     this.account,
     this.controller,
+    this.child,
   });
 
   @override
@@ -163,16 +165,21 @@ class _TimelineState extends ConsumerState<Timeline> {
       child: ListView.builder(
         controller: controller,
         shrinkWrap: true,
-        itemCount: statuses.length,
+        itemCount: statuses.length + 1,
         itemBuilder: (context, index) {
-          final StatusSchema status = statuses[index];
+          if (index == 0) {
+            return widget.child ?? const SizedBox.shrink();
+          }
+
+          final int trueIndex = index - 1;
+          final StatusSchema status = statuses[trueIndex];
           return Padding(
             padding: EdgeInsets.only(right: 16),
             child: Status(
               schema: status.reblog ?? status,
               reblogFrom: status.reblog != null ? status.account : null,
               replyToAccountID: status.inReplyToAccountID,
-              onDeleted: () => onDeleted(index),
+              onDeleted: () => onDeleted(trueIndex),
             ),
           );
         },
@@ -209,6 +216,7 @@ class _TimelineState extends ConsumerState<Timeline> {
     final List<StatusSchema> newStatuses = await widget.schema.fetchTimeline(
       widget.type,
       accessToken: ref.read(accessTokenProvider),
+      accountID: widget.account?.id,
       maxId: maxId,
     );
 

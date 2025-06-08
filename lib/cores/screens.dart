@@ -208,6 +208,46 @@ class MediaHero extends StatelessWidget {
   }
 }
 
+// The backable widget that can be used to show the back button and the optional
+// title of the widget.
+class BackableView extends StatelessWidget {
+  final Widget child;
+  final String? title;
+
+  const BackableView({
+    super.key,
+    required this.child,
+    this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle? titleStyle = Theme.of(context).textTheme.labelLarge;
+    final Widget header = title == null ? const SizedBox.shrink() : Text(title!, style: titleStyle);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back_ios_outlined),
+              onPressed: () => context.pop(),
+            ),
+            Expanded(
+              child: Center(child: header),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Flexible(child: child),
+      ],
+    );
+  }
+}
+
 // The customized tab view that can be used to show the active and inactive
 // tabs and slide the content to trigger the animation.
 class SwipeTabView extends StatefulWidget {

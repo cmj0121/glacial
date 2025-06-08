@@ -1,9 +1,11 @@
 // The Status widget to show the toots from user.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The account widget to show the account information.
 class Account extends StatelessWidget {
@@ -39,7 +41,7 @@ class Account extends StatelessWidget {
           }
 
           return InkWellDone(
-            onTap: () => context.push(RoutePath.wip.path, extra: schema),
+            onTap: () => context.push(RoutePath.profile.path, extra: schema),
             child: content,
           );
         },
@@ -92,6 +94,149 @@ class Account extends StatelessWidget {
   // Build display name with the emoji
   Widget buildDisplayName() {
     return Text(schema.displayName.isEmpty ? schema.username : schema.displayName);
+  }
+}
+
+// The account profile to show the details of the user.
+class AccountProfile extends ConsumerWidget {
+  final AccountSchema schema;
+  final double bannerHeight;
+  final double avatarSize;
+
+  const AccountProfile({
+    super.key,
+    required this.schema,
+    this.bannerHeight = 200,
+    this.avatarSize = 80,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ServerSchema? server = ref.watch(serverProvider);
+
+    if (server == null) {
+      logger.w('Server is not available, cannot build account detail');
+      return const SizedBox.shrink();
+    }
+
+    return buildContent(context, server);
+  }
+
+  Widget buildContent(BuildContext context, ServerSchema server) {
+    return Timeline(
+      schema: server,
+      type: TimelineType.user,
+      account: schema,
+      child: buildTimelineHeader(context, server),
+    );
+  }
+
+  // Build the header of the account's timeline, including the user name and
+  // the banner.
+  Widget buildTimelineHeader(BuildContext context, ServerSchema server) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildBanner(context),
+        const SizedBox(height: 16),
+        buildName(context, server),
+        HtmlDone(
+          html: schema.note,
+          emojis: schema.emojis,
+        ),
+        const Divider(thickness: 4),
+      ],
+    );
+  }
+
+  // Show the user name and the account name.
+  Widget buildName(BuildContext context, ServerSchema server) {
+    final String acct = schema.acct.contains('@') ? schema.acct : '${schema.username}@${server.domain}';
+
+    return Row(
+      children: [
+        // The location of the user and show as the badge.
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(acct),
+        ),
+      ],
+    );
+  }
+
+  // Build the fixed banner of the account profile and the avatar.
+  // It will be fixed in the top of the screen.
+  Widget buildBanner(BuildContext context) {
+    return SizedBox(
+      height: bannerHeight,
+      child: buildBannerContent(context),
+    );
+  }
+
+  // Build the banner of the account profile, including the header, the
+  // avatar and the metadata.
+  Widget buildBannerContent(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        buildHeader(context),
+        Positioned(
+          left: 0,
+          bottom: 0,
+          width: avatarSize,
+          height: avatarSize,
+          child: buildAvatar(context),
+        ),
+      ],
+    );
+  }
+
+  // Build the header of the account profile, as the part of the banner.
+  Widget buildHeader(BuildContext context) {
+    final Widget banner = CachedNetworkImage(
+      imageUrl: schema.header,
+      placeholder: (context, url) => const CircularProgressIndicator(),
+      errorWidget: (context, url, error) => const Icon(Icons.error),
+    );
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: OverflowBox(
+        alignment: Alignment.center,
+        maxWidth: double.infinity,
+        maxHeight: double.infinity,
+        child: MediaHero(child: banner),
+      ),
+    );
+  }
+
+  // Build the Avatar of the user.
+  Widget buildAvatar(BuildContext context) {
+    final Widget avatar = CachedNetworkImage(
+      imageUrl: schema.avatar,
+      placeholder: (context, url) => const CircularProgressIndicator(),
+      errorWidget: (context, url, error) => const Icon(Icons.error),
+      fit: BoxFit.cover,
+    );
+
+    return Container(
+      width: avatarSize,
+      height: avatarSize,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        shape: BoxShape.circle,
+      ),
+      child: ClipOval(
+        child: MediaHero(child: avatar),
+      ),
+    );
   }
 }
 

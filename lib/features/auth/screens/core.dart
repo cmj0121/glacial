@@ -62,9 +62,11 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
       return Icon(Icons.help_outlined, size: widget.size);
     }
 
-    return buildUserAvatar(account);
+    return InkWellDone(
+      onTap: () => context.push(RoutePath.profile.path, extra: account),
+      child: buildUserAvatar(account),
+    );
   }
-
 
   // Build the user avatar with the size of the widget.
   Widget buildUserAvatar(AccountSchema account) {

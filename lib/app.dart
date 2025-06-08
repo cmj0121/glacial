@@ -188,10 +188,29 @@ class GlacialApp extends ConsumerWidget {
               return const SizedBox.shrink();
             }
 
-            return  Timeline(
+            final Widget timeline = Timeline(
               schema: server,
               type: TimelineType.hashtag,
               keyword: schema.name,
+            );
+
+            return BackableView(
+              title: '#${schema.name}',
+              child: timeline,
+            );
+          },
+        ),
+        // The user's profile page to show the user account details and the
+        // user timeline in the selected Mastodon server
+        GoRoute(
+          path: RoutePath.profile.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final AccountSchema account = state.extra as AccountSchema;
+            final Widget content = AccountProfile(schema: account);
+
+            return BackableView(
+              title: account.displayName,
+              child: content,
             );
           },
         ),
