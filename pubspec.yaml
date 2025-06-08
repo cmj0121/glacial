@@ -54,6 +54,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   url_launcher: ^6.3.1
   fl_chart: ^1.0.0
+  video_player: ^2.10.0
 
 dev_dependencies:
   flutter_test:
