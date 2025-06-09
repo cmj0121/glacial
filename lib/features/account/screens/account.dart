@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -93,7 +94,10 @@ class Account extends StatelessWidget {
 
   // Build display name with the emoji
   Widget buildDisplayName() {
-    return Text(schema.displayName.isEmpty ? schema.username : schema.displayName);
+    final Storage storage = Storage();
+    final String text = schema.displayName.isEmpty ? schema.username : schema.displayName;
+
+    return storage.replaceEmojiToWidget(text, emojis: schema.emojis);
   }
 }
 

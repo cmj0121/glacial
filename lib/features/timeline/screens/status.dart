@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -59,12 +60,52 @@ class _StatusState extends ConsumerState<Status> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        buildMetadata(),
         buildHeader(),
         const SizedBox(height: 8),
         buildSensitiveView(),
 
         Application(schema: schema.application),
       ],
+    );
+  }
+
+  // The optional metadata of the status, including the status reply or reblog
+  // from the user.
+  Widget buildMetadata() {
+    if (widget.reblogFrom == null && widget.replyToAccountID == null) {
+      return SizedBox.shrink();
+    }
+
+    final ServerSchema? schema = ref.read(serverProvider);
+    return FutureBuilder(
+      future: schema?.loadAccount(widget.reblogFrom?.id ?? widget.replyToAccountID),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SizedBox.shrink();
+        }
+
+        if (snapshot.hasError) {
+          return SizedBox.shrink();
+        }
+
+        final IconData icon = widget.reblogFrom != null ? StatusInteraction.reblog.activeIcon : StatusInteraction.reply.activeIcon;
+        final AccountSchema? account = snapshot.data;
+        if (account == null) {
+          return SizedBox.shrink();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.grey, size: metadataHeight),
+              const SizedBox(width: 4),
+              Account(schema: account, maxHeight: metadataHeight),
+            ],
+          ),
+        );
+      },
     );
   }
 

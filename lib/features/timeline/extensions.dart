@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 // The in-memory AccountSchema and EmojiSchema cache
@@ -82,8 +83,13 @@ extension TimelineExtensions on ServerSchema {
     final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
     final response = await get(uri, headers: accessToken == null ? {} : headers);
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
 
-    return json.map((e) => StatusSchema.fromJson(e)).toList();
+    // Save the related info to the in-memory cache.
+    final List<Future<void>> saveFutures = status.map((s) => saveAccount(s.account)).toList();
+    await Future.wait(saveFutures);
+
+    return status;
   }
 }
 
