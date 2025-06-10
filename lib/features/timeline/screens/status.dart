@@ -45,7 +45,19 @@ class _StatusState extends ConsumerState<Status> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 16),
-      child: buildContent(),
+      child: InkWellDone(
+        onTap: () {
+          final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
+
+          if (path == RoutePath.status) {
+            // already in the status context, replace it
+            context.replace(RoutePath.status.path, extra: schema);
+            return;
+          }
+          context.push(RoutePath.status.path, extra: schema);
+        },
+        child: buildContent(),
+      ),
     );
   }
 
@@ -58,7 +70,10 @@ class _StatusState extends ConsumerState<Status> {
         buildMetadata(),
         buildHeader(),
         const SizedBox(height: 8),
-        buildSensitiveView(),
+        Indent(
+          indent: widget.indent,
+          child: buildSensitiveView(),
+        ),
 
         Application(schema: schema.application),
       ],
@@ -169,6 +184,81 @@ class _StatusState extends ConsumerState<Status> {
     }
 
     context.push(RoutePath.webview.path, extra: uri);
+  }
+}
+
+// The single Status widget that contains the status information.
+class StatusContext extends ConsumerWidget {
+  final StatusSchema schema;
+
+  const StatusContext({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ServerSchema? server = ref.watch(serverProvider);
+    final String? accessToken = ref.watch(accessTokenProvider);
+
+    if (server == null) {
+      return const SizedBox.shrink();
+    }
+
+    return FutureBuilder(
+      future: server.getStatusContext(schema: schema, accessToken: accessToken),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Align(
+            alignment: Alignment.topCenter,
+            child: ClockProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${server.domain}';
+          return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
+        }
+
+        final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
+        return buildContent(ctx);
+      }
+    );
+  }
+
+  // The main content of the status context, including the current status
+  // the previous statuses and the next statuses.
+  Widget buildContent(StatusContextSchema ctx) {
+    Map<String, int> indents = {schema.id: 1};
+    final List<Widget> children = [
+      ...ctx.ancestors.map((StatusSchema status) {
+        final int indent = indents[status.inReplyToID] ?? 1;
+
+        indents[status.id] = indent + 1;
+        return Status(schema: status, indent: indent);
+      }),
+
+      Status(schema: schema),
+
+      ...ctx.descendants.map((StatusSchema status) {
+        final int indent = indents[status.inReplyToID] ?? 1;
+
+        indents[status.id] = indent + 1;
+        return Status(schema: status, indent: indent);
+      }),
+    ];
+
+    return ListView.builder(
+      itemCount: children.length,
+      itemBuilder: (context, index) {
+        final Widget child = children[index];
+
+        return Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+          ),
+          child: child,
+        );
+      },
+    );
   }
 }
 

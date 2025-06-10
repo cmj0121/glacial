@@ -108,6 +108,16 @@ extension TimelineExtensions on ServerSchema {
     storage.saveStatusIntoCache(schema);
     return schema;
   }
+
+  // Get the context of the status by its ID.
+  Future<StatusContextSchema> getStatusContext({required StatusSchema schema, String? accessToken}) async {
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/${schema.id}/context");
+    final response = await get(uri, headers: accessToken == null ? {} : headers);
+    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+
+    return StatusContextSchema.fromJson(json);
+  }
 }
 
 // The extension of the Storage to save and load the emoji data.
