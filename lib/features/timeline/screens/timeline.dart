@@ -173,13 +173,19 @@ class _TimelineState extends ConsumerState<Timeline> {
 
           final int trueIndex = index - 1;
           final StatusSchema status = statuses[trueIndex];
-          return Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Status(
-              schema: status.reblog ?? status,
-              reblogFrom: status.reblog != null ? status.account : null,
-              replyToAccountID: status.inReplyToAccountID,
-              onDeleted: () => onDeleted(trueIndex),
+
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: Status(
+                schema: status.reblog ?? status,
+                reblogFrom: status.reblog != null ? status.account : null,
+                replyToAccountID: status.inReplyToAccountID,
+                onDeleted: () => onDeleted(trueIndex),
+              ),
             ),
           );
         },

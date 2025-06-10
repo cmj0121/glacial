@@ -43,14 +43,9 @@ class _StatusState extends ConsumerState<Status> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16),
-        child: buildContent(),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: buildContent(),
     );
   }
 
@@ -78,34 +73,22 @@ class _StatusState extends ConsumerState<Status> {
     }
 
     final ServerSchema? schema = ref.read(serverProvider);
-    return FutureBuilder(
-      future: schema?.loadAccount(widget.reblogFrom?.id ?? widget.replyToAccountID),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return SizedBox.shrink();
-        }
+    final AccountSchema? account = storage.loadAccountFromCache(schema!, widget.reblogFrom?.id ?? widget.replyToAccountID);
+    final IconData icon = widget.reblogFrom != null ? StatusInteraction.reblog.activeIcon : StatusInteraction.reply.activeIcon;
 
-        if (snapshot.hasError) {
-          return SizedBox.shrink();
-        }
+    if (account == null) {
+      return SizedBox.shrink();
+    }
 
-        final IconData icon = widget.reblogFrom != null ? StatusInteraction.reblog.activeIcon : StatusInteraction.reply.activeIcon;
-        final AccountSchema? account = snapshot.data;
-        if (account == null) {
-          return SizedBox.shrink();
-        }
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Row(
-            children: [
-              Icon(icon, color: Colors.grey, size: metadataHeight),
-              const SizedBox(width: 4),
-              Account(schema: account, maxHeight: metadataHeight),
-            ],
-          ),
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.grey, size: metadataHeight),
+          const SizedBox(width: 4),
+          Account(schema: account, maxHeight: metadataHeight),
+        ],
+      ),
     );
   }
 

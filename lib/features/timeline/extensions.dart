@@ -10,6 +10,7 @@ import 'package:glacial/features/models.dart';
 
 // The in-memory AccountSchema and EmojiSchema cache
 Map<String, EmojiSchema> emojiCache = {};
+Map<String, StatusSchema> statusCache = {};
 
 extension TimelineExtensions on ServerSchema {
   // Fetch timeline's statuses based on the timeline type.
@@ -86,10 +87,26 @@ extension TimelineExtensions on ServerSchema {
     final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
 
     // Save the related info to the in-memory cache.
-    final List<Future<void>> saveFutures = status.map((s) => saveAccount(s.account)).toList();
-    await Future.wait(saveFutures);
+    status.map((s) => Storage().saveAccountIntoCache(this, s.account)).toList();
 
     return status;
+  }
+
+  // Get the StatusSchema by its ID.
+  Future<StatusSchema?> getStatus(String id, {String? accessToken}) async {
+    final Storage storage = Storage();
+    final StatusSchema? cachedStatus = storage.loadStatusFromCache(id);
+    if (cachedStatus != null) {
+      return cachedStatus;
+    }
+
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/$id");
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: accessToken != null ? headers : {});
+    final StatusSchema schema = StatusSchema.fromJson(jsonDecode(response.body));
+
+    storage.saveStatusIntoCache(schema);
+    return schema;
   }
 }
 
@@ -182,6 +199,24 @@ extension EmojiExtensions on Storage {
   // Purge all the cached accounts.
   void purgeCachedEmojis() {
     emojiCache.clear();
+  }
+}
+
+// The extension of the Storage to save and load the status data.
+extension StatusExtensions on Storage {
+  // Save the status schema to the cache.
+  void saveStatusIntoCache(StatusSchema schema) {
+    statusCache[schema.id] = schema;
+  }
+
+  // Get the status schema from the cache.
+  StatusSchema? loadStatusFromCache(String id) {
+    return statusCache[id];
+  }
+
+  // Purge all the cached statuses.
+  void purgeCachedStatuses() {
+    statusCache.clear();
   }
 }
 

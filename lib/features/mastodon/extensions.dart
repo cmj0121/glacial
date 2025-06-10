@@ -32,9 +32,15 @@ extension ServerExtensions on Storage {
 extension ProviderExtensions on Storage {
   // Clear and reset all the provider states.
   Future<void> clearProvider(WidgetRef ref) async {
+    final Storage storage = Storage();
+
     ref.read(serverProvider.notifier).state = null;
     ref.read(accessTokenProvider.notifier).state = null;
     ref.read(accountProvider.notifier).state = null;
+
+    storage.purgeCachedEmojis();
+    storage.purgeCachedStatuses();
+
     saveLastServer(null);
   }
 

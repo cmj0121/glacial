@@ -27,38 +27,31 @@ extension AccountExtensions on ServerSchema {
     final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
     final AccountSchema account = AccountSchema.fromJson(json);
 
-    await saveAccount(account);
+    Storage().saveAccountIntoCache(this, account);
     return account;
-  }
-
-  Future<AccountSchema?> loadAccount(String? accountID) async {
-    return Storage().loadAccountFromCache(this, accountID);
-  }
-
-  Future<void> saveAccount(AccountSchema? account) async {
-    if (account == null) {
-      return;
-    }
-
-    await Storage().saveAccountIntoCache(this, account);
   }
 }
 
 // The extension to the TimelineType enum to list the statuses per timeline type.
 extension AccountCacheExtensions on Storage {
   // Try to load the account from the cache.
-  Future<AccountSchema?> loadAccountFromCache(ServerSchema server, String? accountID) async {
+  AccountSchema? loadAccountFromCache(ServerSchema server, String? accountID) {
     return accountCache[server.domain]?[accountID];
   }
 
   // Save the account to the cache.
-  Future<void> saveAccountIntoCache(ServerSchema server, AccountSchema? account) async {
+  void saveAccountIntoCache(ServerSchema server, AccountSchema? account) {
     if (account == null) {
       return;
     }
 
     accountCache[server.domain] ??= {};
     accountCache[server.domain]![account.id] = account;
+  }
+
+  // clear the account cache for the server.
+  void pureAccountCache(ServerSchema server) {
+    accountCache.remove(server.domain);
   }
 }
 

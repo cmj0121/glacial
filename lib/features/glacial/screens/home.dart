@@ -155,9 +155,19 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         final int index = actions.indexOf(action);
         final bool isSelected = action.route == route;
         final bool isEnabled = account != null || action.supportAnonymous;
+        late final Widget icon;
+
+        switch (action) {
+          case SidebarButtonType.notifications:
+            icon = Icon(action.icon(active: isSelected), size: sidebarSize);
+            break;
+          default:
+            icon = Icon(action.icon(active: isSelected), size: sidebarSize);
+            break;
+        }
 
         return IconButton(
-          icon: Icon(action.icon(active: isSelected), size: sidebarSize),
+          icon: icon,
           tooltip: action.tooltip(context),
           color: isSelected ? Theme.of(context).colorScheme.primary : null,
           hoverColor: Colors.transparent,

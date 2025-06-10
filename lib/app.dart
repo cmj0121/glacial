@@ -162,7 +162,7 @@ class GlacialApp extends ConsumerWidget {
         // selected Mastodon server
         GoRoute(
           path: RoutePath.notifications.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
+          builder: (BuildContext context, GoRouterState state) => const GroupNotification(),
         ),
         // The glacial settings page to show the server settings in the selected
         // Mastodon server
