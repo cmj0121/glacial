@@ -12,45 +12,24 @@ enum StatusInteraction {
   block,
   delete;
 
-  IconData get icon {
+  IconData icon({bool active = false}) {
     switch (this) {
       case reply:
-        return Icons.turn_left_outlined;
+        return active ? Icons.turn_left : Icons.turn_left_outlined;
       case reblog:
-        return Icons.repeat_outlined;
+        return active ? Icons.repeat : Icons.repeat_outlined;
       case favourite:
-        return Icons.star_outline_outlined;
+        return active ? Icons.star : Icons.star_outline_outlined;
       case bookmark:
-        return Icons.bookmark_outline;
+        return active ? Icons.bookmark : Icons.bookmark_outline_outlined;
       case share:
-        return Icons.share_outlined;
+        return active ? Icons.share : Icons.share_outlined;
       case mute:
-        return Icons.volume_off_outlined;
+        return active ? Icons.volume_off : Icons.volume_mute_outlined;
       case block:
-        return Icons.block_outlined;
+        return active ? Icons.block : Icons.block_outlined;
       case delete:
-        return Icons.delete_outline;
-    }
-  }
-
-  IconData get activeIcon {
-    switch (this) {
-      case reply:
-        return Icons.turn_left;
-      case reblog:
-        return Icons.repeat;
-      case favourite:
-        return Icons.star;
-      case bookmark:
-        return Icons.bookmark;
-      case share:
-        return Icons.share;
-      case mute:
-        return Icons.volume_off;
-      case block:
-        return Icons.block;
-      case delete:
-        return Icons.delete;
+        return active ? Icons.delete : Icons.delete_outline_outlined;
     }
   }
 

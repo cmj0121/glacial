@@ -144,7 +144,7 @@ class SingleNotification extends ConsumerWidget {
             final StatusSchema status = snapshot.data!;
             return ColorFiltered(
               colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
-              child: Status(schema: status),
+              child: StatusLight(schema: status),
             );
           },
         );
@@ -154,6 +154,7 @@ class SingleNotification extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             buildHeader(context, server: server),
+            const SizedBox(height: 8),
             Transform.scale(
               scale: 0.9,
               child: Container(
@@ -180,7 +181,7 @@ class SingleNotification extends ConsumerWidget {
             }
 
             final StatusSchema status = snapshot.data!;
-            return Status(schema: status);
+            return StatusLight(schema: status);
           },
         );
       default:
@@ -190,36 +191,52 @@ class SingleNotification extends ConsumerWidget {
 
   // Build the related accounts based on the schema.
   Widget buildHeader(BuildContext context, {required ServerSchema server}) {
-    final double iconSize = 32;
+    final double iconSize = 24;
     final Storage storage = Storage();
     final List<AccountSchema?> accounts = schema.accounts.map((a) => storage.loadAccountFromCache(server, a)).toList();
+
+    late final IconData? icon;
+    switch (schema.type) {
+      case NotificationType.favourite:
+        icon = StatusInteraction.favourite.icon(active: true);
+        break;
+      case NotificationType.reblog:
+        icon = StatusInteraction.reblog.icon(active: true);
+        break;
+      default:
+        icon = null;
+    }
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
-      children: accounts.map((account) {
-        if (account == null) {
-          return const SizedBox.shrink();
-        }
+      children: [
+        icon == null ? const SizedBox.shrink() : Icon(icon, size: iconSize, color: Theme.of(context).colorScheme.tertiary),
+        const SizedBox(width: 8),
+        ...accounts.map((account) {
+          if (account == null) {
+            return const SizedBox.shrink();
+          }
 
-        final Widget avatar = CachedNetworkImage(
-          imageUrl: account.avatar,
-          placeholder: (context, url) => const CircularProgressIndicator(),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-          width: iconSize,
-          height: iconSize,
-          fit: BoxFit.cover,
-        );
-        return Padding(
-          padding: const EdgeInsets.only(right: 4),
-          child: ClipOval(
-            child: InkWellDone(
-              onTap: () => context.push(RoutePath.profile.path, extra: account),
-              child: avatar,
+          final Widget avatar = CachedNetworkImage(
+            imageUrl: account.avatar,
+            placeholder: (context, url) => const CircularProgressIndicator(),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+            width: iconSize,
+            height: iconSize,
+            fit: BoxFit.cover,
+          );
+          return Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: ClipOval(
+              child: InkWellDone(
+                onTap: () => context.push(RoutePath.profile.path, extra: account),
+                child: avatar,
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }),
+      ],
     );
   }
 }

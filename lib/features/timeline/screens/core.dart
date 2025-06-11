@@ -2,6 +2,7 @@
 
 export 'application.dart';
 export 'attachment.dart';
+export 'interaction.dart';
 export 'timeline.dart';
 export 'status.dart';
 export 'visibility.dart';
