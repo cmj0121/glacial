@@ -20,7 +20,8 @@ build:				# build the binary/library
 	cd ios && fastlane build
 
 release:			# build the release binary/library
-	dart run flutter_launcher_icons -f pubspec.yaml
+	# dart run flutter_launcher_icons -f pubspec.yaml
+	cd macos && fastlane release
 	cd ios && fastlane release
 
 upgrade:			# upgrade all the necessary packages

@@ -31,6 +31,6 @@
     </g>
   </defs>
 
-  <rect x="0" y="0" width="512" height="512" fill="#C8D8DF"/>
+  <rect x="48" y="48" width="416" height="416" rx="102" ry="102" fill="#C8D8DF" />
   <use href="#iceberg" transform="translate(256, 256) scale(0.85) translate(-256, -256)" />
 </svg>
