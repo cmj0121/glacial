@@ -46,6 +46,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get txt_copied_to_clipboard => 'Copié dans le presse-papiers';
+
+  @override
   String get btn_clean_all => 'Tout effacer';
 
   @override

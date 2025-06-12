@@ -46,6 +46,9 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get txt_copied_to_clipboard => 'Copiado al portapapeles';
+
+  @override
   String get btn_clean_all => 'Borrar todo';
 
   @override

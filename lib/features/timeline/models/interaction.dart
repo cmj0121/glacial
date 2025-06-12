@@ -12,6 +12,10 @@ enum StatusInteraction {
   block,
   delete;
 
+  String tooltip(BuildContext context) {
+    return name;
+  }
+
   IconData icon({bool active = false}) {
     switch (this) {
       case reply:

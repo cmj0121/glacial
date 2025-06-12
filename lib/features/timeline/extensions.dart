@@ -12,6 +12,9 @@ import 'package:glacial/features/models.dart';
 Map<String, EmojiSchema> emojiCache = {};
 Map<String, StatusSchema> statusCache = {};
 
+// The future function to interact with the status.
+typedef InteractIt = Future<StatusSchema> Function({required String domain, required String accessToken});
+
 extension TimelineExtensions on ServerSchema {
   // Fetch timeline's statuses based on the timeline type.
   Future<List<StatusSchema>> fetchTimeline(TimelineType type, {
@@ -117,6 +120,58 @@ extension TimelineExtensions on ServerSchema {
     final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
 
     return StatusContextSchema.fromJson(json);
+  }
+
+  // ======== interaction with statuses ========
+  // The raw action to interact with the status, such as reblog, favourite, or delete.
+  Future<StatusSchema> interactWithStatus(String action, {required StatusSchema schema, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/${schema.id}/$action");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    final String body = response.body;
+    return StatusSchema.fromString(body);
+  }
+
+  // Reblog the status to the Mastodon server
+  Future<StatusSchema> reblogIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("reblog", schema: schema, accessToken: accessToken);
+  }
+
+  // Unreblog the status from the Mastodon server
+  Future<StatusSchema> unreblogIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("unreblog", schema: schema, accessToken: accessToken);
+  }
+
+  // Favourite the status to the Mastodon server
+  Future<StatusSchema> favouriteIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("favourite", schema: schema, accessToken: accessToken);
+  }
+
+  // Unfavourite the status from the Mastodon server
+  Future<StatusSchema> unfavouriteIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("unfavourite", schema: schema, accessToken: accessToken);
+  }
+
+  // Bookmark the status to the Mastodon server
+  Future<StatusSchema> bookmarkIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("bookmark", schema: schema, accessToken: accessToken);
+  }
+
+  // Unbookmark the status from the Mastodon server
+  Future<StatusSchema> unbookmarkIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("unbookmark", schema: schema, accessToken: accessToken);
+  }
+
+  // Delete the status from the Mastodon server
+  Future<void> deleteIt({required StatusSchema schema, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/${schema.id}");
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+
+    await delete(uri, headers: headers);
   }
 }
 

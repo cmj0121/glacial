@@ -2,9 +2,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 // The interaction bar that shows the all the possible actions for the current
@@ -162,6 +164,7 @@ class _InteractionState extends ConsumerState<Interaction> {
   Widget buildNormalIcon(bool isEnabled) {
     return ListTile(
       leading: Icon(icon, size: widget.iconSize),
+      title: Text(widget.action.tooltip(context)),
       textColor: iconColor,
       iconColor: iconColor,
       onTap: isEnabled ? onPressed : null,
@@ -224,6 +227,47 @@ class _InteractionState extends ConsumerState<Interaction> {
 
   // Interactive with the current status
   void onPressed() async {
+    final ServerSchema? server = ref.read(serverProvider);
+    final String? accessToken = ref.read(accessTokenProvider);
+
+    if (server == null) {
+      logger.w("No server selected or access token is null, cannot perform interaction.");
+      return;
+    }
+
+    Future<StatusSchema> Function({required StatusSchema schema, required String accessToken})? fn;
+
+    switch (widget.action) {
+      case StatusInteraction.reblog:
+        fn = (widget.schema.reblogged ?? false) ? server.unreblogIt : server.reblogIt;
+        break;
+      case StatusInteraction.favourite:
+        fn = (widget.schema.favourited ?? false) ? server.unfavouriteIt : server.favouriteIt;
+        break;
+      case StatusInteraction.bookmark:
+        fn = (widget.schema.bookmarked ?? false) ? server.unbookmarkIt : server.bookmarkIt;
+        break;
+      case StatusInteraction.share:
+        final String text = AppLocalizations.of(context)?.txt_copied_to_clipboard ?? "Copy to clipboard";
+
+        Clipboard.setData(ClipboardData(text: widget.schema.uri));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(text),
+          ),
+        );
+        break;
+      default:
+        break;
+    }
+
+    final StatusSchema? schema = await fn?.call(schema: widget.schema, accessToken: accessToken ?? '');
+    if (schema != null) {
+      logger.i("Interaction ${widget.action.name} performed on status ${widget.schema.id} and reloaded.");
+      widget.onReload?.call(schema);
+    }
+
+    widget.onPressed?.call();
   }
 }
 

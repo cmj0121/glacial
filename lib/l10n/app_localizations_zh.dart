@@ -46,6 +46,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get txt_copied_to_clipboard => '複製到剪貼簿';
+
+  @override
   String get btn_clean_all => '清除全部';
 
   @override

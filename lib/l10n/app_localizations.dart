@@ -173,6 +173,12 @@ abstract class AppLocalizations {
   /// **'No results found for {keyword}'**
   String txt_no_results_found(Object keyword);
 
+  /// No description provided for @txt_copied_to_clipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy to Clipboard'**
+  String get txt_copied_to_clipboard;
+
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:

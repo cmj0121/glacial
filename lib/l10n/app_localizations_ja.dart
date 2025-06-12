@@ -46,6 +46,9 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get txt_copied_to_clipboard => 'クリップボードにコピーしました';
+
+  @override
   String get btn_clean_all => 'すべて削除';
 
   @override
