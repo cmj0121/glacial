@@ -55,6 +55,10 @@ dependencies:
   url_launcher: ^6.3.1
   fl_chart: ^1.0.0
   video_player: ^2.10.0
+  file_picker: ^10.2.0
+  mime: ^2.0.0
+  http_parser: ^4.1.2
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

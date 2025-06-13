@@ -12,6 +12,10 @@
   "txt_trends_uses": "過去数日間で{uses}回使用されました",
   "txt_no_results_found": "{keyword} の検索結果が見つかりませんでした",
   "txt_copied_to_clipboard": "クリップボードにコピーしました",
+  "txt_public": "公開",
+  "txt_unlisted": "未掲載",
+  "txt_private": "フォロワー限定",
+  "txt_direct": "ダイレクト",
   "btn_clean_all": "すべて削除",
   "btn_timeline": "タイムライン",
   "btn_trending": "トレンドタグ",
@@ -28,5 +32,6 @@
   "btn_public": "すべて",
   "btn_bookmarks": "ブックマーク",
   "btn_favourites": "お気に入り",
+  "btn_post": "投稿",
   "dots": "..."
 }

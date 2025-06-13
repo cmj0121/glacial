@@ -18,7 +18,7 @@ class StatusVisibility extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = Theme.of(context).dividerColor;
+    final Color color = Theme.of(context).colorScheme.onSurfaceVariant;
 
     if (isCompact) {
       return Tooltip(
@@ -38,6 +38,72 @@ class StatusVisibility extends StatelessWidget {
           fontWeight: FontWeight.bold,
         )),
       ],
+    );
+  }
+}
+
+// The dropdown button to select the status' visibility type.
+class VisibilitySelector extends StatefulWidget {
+  final double height;
+  final double width;
+  final VisibilityType? type;
+  final ValueChanged<VisibilityType>? onChanged;
+
+  const VisibilitySelector({
+    super.key,
+    this.height = 32,
+    this.width = 120,
+    this.type,
+    this.onChanged,
+  });
+
+  @override
+  State<VisibilitySelector> createState() => _VisibilitySelectorState();
+}
+
+class _VisibilitySelectorState extends State<VisibilitySelector> {
+  late VisibilityType type;
+
+  @override
+  void initState() {
+    super.initState();
+    type = widget.type ?? VisibilityType.public;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: widget.height,
+        maxWidth: widget.width,
+      ),
+      child: buildContent(),
+    );
+  }
+
+  Widget buildContent() {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<VisibilityType>(
+        value: type,
+        padding: const EdgeInsets.all(0),
+        borderRadius: BorderRadius.circular(8),
+        focusColor: Colors.transparent,
+        icon: const SizedBox.shrink(),
+        items: VisibilityType.values.map((VisibilityType value) {
+          return DropdownMenuItem<VisibilityType>(
+            value: value,
+            child: StatusVisibility(type: value),
+          );
+        }).toList(),
+        onChanged: (VisibilityType? newValue) {
+          if (newValue != null) {
+            setState(() {
+              type = newValue;
+            });
+            widget.onChanged?.call(newValue);
+          }
+        },
+      ),
     );
   }
 }

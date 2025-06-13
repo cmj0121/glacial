@@ -49,6 +49,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_copied_to_clipboard => '複製到剪貼簿';
 
   @override
+  String get txt_public => '公開';
+
+  @override
+  String get txt_unlisted => '不公開';
+
+  @override
+  String get txt_private => '追隨';
+
+  @override
+  String get txt_direct => '私訊';
+
+  @override
   String get btn_clean_all => '清除全部';
 
   @override
@@ -95,6 +107,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get btn_favourites => '最愛';
+
+  @override
+  String get btn_post => '嘟出去';
 
   @override
   String get dots => '...';

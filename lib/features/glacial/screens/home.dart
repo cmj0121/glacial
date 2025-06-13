@@ -122,6 +122,9 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ...buildActions(),
+          const Spacer(),
+          PostStatusButton(size: sidebarSize),
+          const SizedBox(height: 8),
         ],
     );
   }
@@ -139,6 +142,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ...buildActions(),
+          PostStatusButton(size: sidebarSize),
         ],
       ),
     );

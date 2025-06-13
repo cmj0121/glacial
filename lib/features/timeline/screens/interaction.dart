@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The interaction bar that shows the all the possible actions for the current
 // status, and wraps the interaction more button if there are more actions
@@ -238,6 +239,24 @@ class _InteractionState extends ConsumerState<Interaction> {
     Future<StatusSchema> Function({required StatusSchema schema, required String accessToken})? fn;
 
     switch (widget.action) {
+      case StatusInteraction.reply:
+        // Navigate to the post page with the current status schema
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: StatusForm(
+                replyTo: widget.schema,
+                mentions: widget.schema.mentions,
+                onPost: (_) => context.pop(),
+              ),
+            );
+          },
+        );
+        return;
       case StatusInteraction.reblog:
         fn = (widget.schema.reblogged ?? false) ? server.unreblogIt : server.reblogIt;
         break;

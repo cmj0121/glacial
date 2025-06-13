@@ -12,6 +12,10 @@
   "txt_trends_uses": "{uses} used in the past days",
   "txt_no_results_found": "No results found for {keyword}",
   "txt_copied_to_clipboard": "Copy to Clipboard",
+  "txt_public": "Public",
+  "txt_unlisted": "Unlisted",
+  "txt_private": "Private",
+  "txt_direct": "Direct",
   "btn_clean_all": "Clean All",
   "btn_timeline": "Timelines",
   "btn_trending": "Trending now",
@@ -28,5 +32,6 @@
   "btn_public": "All",
   "btn_bookmarks": "Bookmarks",
   "btn_favourites": "Favorites",
+  "btn_post": "New post",
   "dots": "..."
 }

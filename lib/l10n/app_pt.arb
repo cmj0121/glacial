@@ -12,6 +12,10 @@
   "txt_trends_uses": "Utilisé {uses} fois ces derniers jours",
   "txt_no_results_found": "Nenhum resultado encontrado para {keyword}",
   "txt_copied_to_clipboard": "Copiado para a área de transferência",
+  "txt_public": "Público",
+  "txt_unlisted": "Não listado",
+  "txt_private": "Privado (seguidores)",
+  "txt_direct": "Direta",
   "btn_clean_all": "Limpar tudo",
   "btn_timeline": "Linha do tempo",
   "btn_trending": "Tendências atuais",
@@ -28,5 +32,6 @@
   "btn_public": "Todas",
   "btn_bookmarks": "Marcadores",
   "btn_favourites": "Favoritos",
+  "btn_post": "Nova publicação",
   "dots": "..."
 }

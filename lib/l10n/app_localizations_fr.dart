@@ -49,6 +49,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_copied_to_clipboard => 'Copié dans le presse-papiers';
 
   @override
+  String get txt_public => 'Public';
+
+  @override
+  String get txt_unlisted => 'Non listé';
+
+  @override
+  String get txt_private => 'Privé (abonnés)';
+
+  @override
+  String get txt_direct => 'Direct';
+
+  @override
   String get btn_clean_all => 'Tout effacer';
 
   @override
@@ -95,6 +107,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get btn_favourites => 'Favoris';
+
+  @override
+  String get btn_post => 'Nouveau message';
 
   @override
   String get dots => '...';

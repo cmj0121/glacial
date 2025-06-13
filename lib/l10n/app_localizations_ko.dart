@@ -49,6 +49,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_copied_to_clipboard => '클립보드에 복사됨';
 
   @override
+  String get txt_public => '공개';
+
+  @override
+  String get txt_unlisted => '미등록';
+
+  @override
+  String get txt_private => '팔로워 전용';
+
+  @override
+  String get txt_direct => '다이렉트';
+
+  @override
   String get btn_clean_all => '모두 지우기';
 
   @override
@@ -95,6 +107,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get btn_favourites => '좋아요';
+
+  @override
+  String get btn_post => '새 게시물';
 
   @override
   String get dots => '...';

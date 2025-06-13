@@ -29,7 +29,7 @@ class AttachmentSchema {
     return AttachmentSchema(
       id: json["id"] as String,
       type: MediaType.values.firstWhere((e) => e.name == json["type"]),
-      url: json["url"] as String,
+      url: json["url"] as String? ?? '',
       previewUrl: json["preview_url"] as String?,
       remoteUrl: json["remote_url"] as String?,
     );

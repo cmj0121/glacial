@@ -12,6 +12,10 @@
   "txt_trends_uses": "{uses} 人於過去幾天",
   "txt_no_results_found": "搜尋 {keyword} 無結果",
   "txt_copied_to_clipboard": "複製到剪貼簿",
+  "txt_public": "公開",
+  "txt_unlisted": "不公開",
+  "txt_private": "追隨",
+  "txt_direct": "私訊",
   "btn_clean_all": "清除全部",
   "btn_timeline": "時間軸",
   "btn_trending": "現正熱門趨勢",
@@ -28,5 +32,6 @@
   "btn_public": "全部",
   "btn_bookmarks": "書籤",
   "btn_favourites": "最愛",
+  "btn_post": "嘟出去",
   "dots": "..."
 }

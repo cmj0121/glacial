@@ -49,6 +49,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_copied_to_clipboard => 'In die Zwischenablage kopiert';
 
   @override
+  String get txt_public => 'Öffentlich';
+
+  @override
+  String get txt_unlisted => 'Nicht gelistet';
+
+  @override
+  String get txt_private => 'Privat (Follower)';
+
+  @override
+  String get txt_direct => 'Direkt';
+
+  @override
   String get btn_clean_all => 'Alles löschen';
 
   @override
@@ -95,6 +107,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get btn_favourites => 'Favoriten';
+
+  @override
+  String get btn_post => 'Neuer Beitrag';
 
   @override
   String get dots => '...';

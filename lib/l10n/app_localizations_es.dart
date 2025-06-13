@@ -49,6 +49,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_copied_to_clipboard => 'Copiado al portapapeles';
 
   @override
+  String get txt_public => 'Público';
+
+  @override
+  String get txt_unlisted => 'No listado';
+
+  @override
+  String get txt_private => 'Privado (seguidores)';
+
+  @override
+  String get txt_direct => 'Directo';
+
+  @override
   String get btn_clean_all => 'Borrar todo';
 
   @override
@@ -95,6 +107,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get btn_favourites => 'Favoritos';
+
+  @override
+  String get btn_post => 'Publicar';
 
   @override
   String get dots => '...';

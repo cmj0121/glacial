@@ -49,6 +49,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_copied_to_clipboard => 'クリップボードにコピーしました';
 
   @override
+  String get txt_public => '公開';
+
+  @override
+  String get txt_unlisted => '未掲載';
+
+  @override
+  String get txt_private => 'フォロワー限定';
+
+  @override
+  String get txt_direct => 'ダイレクト';
+
+  @override
   String get btn_clean_all => 'すべて削除';
 
   @override
@@ -95,6 +107,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get btn_favourites => 'お気に入り';
+
+  @override
+  String get btn_post => '投稿';
 
   @override
   String get dots => '...';

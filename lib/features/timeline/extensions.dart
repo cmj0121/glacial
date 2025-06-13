@@ -2,7 +2,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:flutter/material.dart';
+import 'package:mime/mime.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -172,6 +175,51 @@ extension TimelineExtensions on ServerSchema {
     final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
 
     await delete(uri, headers: headers);
+  }
+
+  // Create a new status on the Mastodon server
+  Future<StatusSchema> createStatus({
+    required NewStatusSchema status,
+    required String accessToken,
+    required String ikey,
+  }) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+      "Idempotency-Key": ikey,
+    };
+    final String body = jsonEncode(status.toJson());
+
+    final response = await post(uri, headers: headers, body: body);
+    final String responseBody = response.body;
+
+    return StatusSchema.fromString(responseBody);
+  }
+
+  // Upload a media file to the Mastodon server
+  Future<AttachmentSchema> uploadMedia({required String filepath, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v2/media");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "multipart/form-data",
+    };
+
+    final String mime = lookupMimeType(filepath) ?? "application/octet-stream";
+    final http.MultipartFile multipartFile = await http.MultipartFile.fromPath(
+      'file',
+      filepath,
+      contentType: http_parser.MediaType.parse(mime),
+    );
+
+    final http.MultipartRequest request = http.MultipartRequest('POST', uri)
+      ..headers.addAll(headers)
+      ..files.add(multipartFile);
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+
+    return AttachmentSchema.fromJson(json);
   }
 }
 
