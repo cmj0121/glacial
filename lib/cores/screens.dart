@@ -180,7 +180,7 @@ class MediaHero extends StatelessWidget {
               return Center(
                 child: Hero(
                   tag: 'media-hero',
-                  child: buildHero(context),
+                  child: MediaViewer(child: child),
                 ),
               );
             },
@@ -190,24 +190,41 @@ class MediaHero extends StatelessWidget {
       child: child,
     );
   }
+}
 
-  // The hero-like media with full-screen and blur the background.
-  Widget buildHero(BuildContext context) {
+// The media viewer that can be used to show the media content in the app.
+class MediaViewer extends StatelessWidget {
+  final Widget child;
+
+  const MediaViewer({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Dismissible(
-      key: const Key('media-hero-dismiss'),
+      key: const Key('media-viewer'),
       direction: DismissDirection.vertical,
-      child: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: FittedBox(
-          fit: BoxFit.contain,
-          child: InteractiveViewer(child: child),
-        ),
+      child: Stack(
+        alignment: Alignment.topRight,
+        fit: StackFit.expand,
+        children: [
+          FittedBox(
+            fit: BoxFit.contain,
+            child: InteractiveViewer(child: child),
+          ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
+              onPressed: () => context.pop()
+            ),
+          ),
+        ],
       ),
-      onDismissed: (direction) {
-        // Pop the media when the user swipes it away.
-        Navigator.of(context).pop();
-      },
+      onDismissed: (direction) => context.pop(),
     );
   }
 }

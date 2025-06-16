@@ -98,26 +98,6 @@ class GlacialApp extends ConsumerWidget {
             return WebViewPage(url: url);
           },
         ),
-        // The media viewer page to show the media content in the app
-        GoRoute(
-          path: RoutePath.media.path,
-          builder: (BuildContext context, GoRouterState state) {
-            final Widget media = state.extra as Widget;
-            return Dismissible(
-              key: const Key('media-hero-dismiss'),
-              direction: DismissDirection.vertical,
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: InteractiveViewer(child: media),
-              ),
-              onDismissed: (direction) {
-                // Pop the media when the user swipes it away.
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        ),
-
 
         // The core home page and show the possible operations
         homeRoutes(ref),
