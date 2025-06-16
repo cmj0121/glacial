@@ -195,7 +195,7 @@ class MediaHero extends StatelessWidget {
   Widget buildHero(BuildContext context) {
     return Dismissible(
       key: const Key('media-hero-dismiss'),
-      direction: DismissDirection.horizontal,
+      direction: DismissDirection.vertical,
       child: FittedBox(
         fit: BoxFit.contain,
         child: InteractiveViewer(child: child),
