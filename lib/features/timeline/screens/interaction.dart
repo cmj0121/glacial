@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The interaction bar that shows the all the possible actions for the current
 // status, and wraps the interaction more button if there are more actions
@@ -27,7 +29,7 @@ class InteractionBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AccountSchema? account = ref.read(currentUserProvider);
+    final AccountSchema? account = ref.read(accountProvider);
     final List<StatusInteraction> actions = StatusInteraction.values.where((v) {
       return v != StatusInteraction.delete || (schema.account.id == account?.id);
     }).toList();
@@ -137,7 +139,7 @@ class Interaction extends ConsumerStatefulWidget {
 class _InteractionState extends ConsumerState<Interaction> {
   @override
   Widget build(BuildContext context) {
-    final String? accessToken = ref.read(currentAccessTokenProvider);
+    final String? accessToken = ref.read(accessTokenProvider);
     final bool isEnabled = accessToken != null || widget.action.supportAnonymous;
 
     return widget.isCompact ? buildCompactIcon(isEnabled) : buildNormalIcon(isEnabled);
@@ -148,16 +150,13 @@ class _InteractionState extends ConsumerState<Interaction> {
   Widget buildCompactIcon(bool isEnabled) {
     final Widget counter = count == null ? const SizedBox.shrink() : Text("$count");
 
-    return Tooltip(
-      message: text,
-      child: TextButton.icon(
-        label: counter,
-        icon: Icon(icon, size: widget.iconSize),
-        style: TextButton.styleFrom(
-          foregroundColor: isEnabled ? iconColor : null,
-        ),
-        onPressed: isEnabled ? onPressed : null,
+    return TextButton.icon(
+      label: counter,
+      icon: Icon(icon, size: widget.iconSize),
+      style: TextButton.styleFrom(
+        foregroundColor: isEnabled ? iconColor : null,
       ),
+      onPressed: isEnabled ? onPressed : null,
     );
   }
 
@@ -166,7 +165,7 @@ class _InteractionState extends ConsumerState<Interaction> {
   Widget buildNormalIcon(bool isEnabled) {
     return ListTile(
       leading: Icon(icon, size: widget.iconSize),
-      title: Text(text),
+      title: Text(widget.action.tooltip(context)),
       textColor: iconColor,
       iconColor: iconColor,
       onTap: isEnabled ? onPressed : null,
@@ -177,13 +176,13 @@ class _InteractionState extends ConsumerState<Interaction> {
   IconData get icon {
     switch (widget.action) {
       case StatusInteraction.reblog:
-        return (widget.schema.reblogged ?? false) ? widget.action.activeIcon : widget.action.icon;
+        return widget.action.icon(active: widget.schema.reblogged ?? false);
       case StatusInteraction.favourite:
-        return (widget.schema.favourited ?? false) ? widget.action.activeIcon : widget.action.icon;
+        return widget.action.icon(active: widget.schema.favourited ?? false);
       case StatusInteraction.bookmark:
-        return (widget.schema.bookmarked ?? false) ? widget.action.activeIcon : widget.action.icon;
+        return widget.action.icon(active: widget.schema.bookmarked ?? false);
       default:
-        return widget.action.icon;
+        return widget.action.icon();
     }
   }
 
@@ -227,43 +226,45 @@ class _InteractionState extends ConsumerState<Interaction> {
     }
   }
 
-  // Ge the action l10n text based on the action.
-  String get text {
-    switch (widget.action) {
-      case StatusInteraction.reply:
-        return AppLocalizations.of(context)?.btn_reply ?? "Reply";
-      case StatusInteraction.reblog:
-        return AppLocalizations.of(context)?.btn_reblog ?? "Reblog";
-      case StatusInteraction.favourite:
-        return AppLocalizations.of(context)?.btn_favourite ?? "Favourite";
-      case StatusInteraction.bookmark:
-        return AppLocalizations.of(context)?.btn_bookmark ?? "Bookmark";
-      case StatusInteraction.share:
-        return AppLocalizations.of(context)?.btn_share ?? "Share";
-      case StatusInteraction.mute:
-        return AppLocalizations.of(context)?.btn_mute ?? "Mute";
-      case StatusInteraction.block:
-        return AppLocalizations.of(context)?.btn_block ?? "Block";
-      case StatusInteraction.delete:
-        return AppLocalizations.of(context)?.btn_delete ?? "Delete";
-    }
-  }
-
   // Interactive with the current status
   void onPressed() async {
-    final ServerSchema? server = ref.read(currentServerProvider);
-    final String? accessToken = ref.read(currentAccessTokenProvider);
-    InteractIt? fn;
+    final ServerSchema? server = ref.read(serverProvider);
+    final String? accessToken = ref.read(accessTokenProvider);
+
+    if (server == null) {
+      logger.w("No server selected or access token is null, cannot perform interaction.");
+      return;
+    }
+
+    Future<StatusSchema> Function({required StatusSchema schema, required String accessToken})? fn;
 
     switch (widget.action) {
+      case StatusInteraction.reply:
+        // Navigate to the post page with the current status schema
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: StatusForm(
+                replyTo: widget.schema,
+                mentions: widget.schema.mentions,
+                onPost: (_) => context.pop(),
+              ),
+            );
+          },
+        );
+        return;
       case StatusInteraction.reblog:
-        fn = widget.schema.reblogged == true ? widget.schema.unreblogIt : widget.schema.reblogIt;
+        fn = (widget.schema.reblogged ?? false) ? server.unreblogIt : server.reblogIt;
         break;
       case StatusInteraction.favourite:
-        fn = widget.schema.favourited == true ? widget.schema.unfavouriteIt : widget.schema.favouriteIt;
+        fn = (widget.schema.favourited ?? false) ? server.unfavouriteIt : server.favouriteIt;
         break;
       case StatusInteraction.bookmark:
-        fn = widget.schema.bookmarked == true ? widget.schema.unbookmarkIt : widget.schema.bookmarkIt;
+        fn = (widget.schema.bookmarked ?? false) ? server.unbookmarkIt : server.bookmarkIt;
         break;
       case StatusInteraction.share:
         final String text = AppLocalizations.of(context)?.txt_copied_to_clipboard ?? "Copy to clipboard";
@@ -275,16 +276,13 @@ class _InteractionState extends ConsumerState<Interaction> {
           ),
         );
         break;
-      case StatusInteraction.delete:
-        widget.onDeleted?.call();
-        break;
       default:
-        fn = null;
         break;
     }
 
-    if (fn != null && server != null && accessToken != null) {
-      final StatusSchema schema = await fn(domain: server.domain, accessToken: accessToken);
+    final StatusSchema? schema = await fn?.call(schema: widget.schema, accessToken: accessToken ?? '');
+    if (schema != null) {
+      logger.i("Interaction ${widget.action.name} performed on status ${widget.schema.id} and reloaded.");
       widget.onReload?.call(schema);
     }
 

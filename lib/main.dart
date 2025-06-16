@@ -11,7 +11,7 @@ void main() async {
   await Info.init();
   await Storage.init(purge: false);
 
-  logger.d("completely preloaded ...");
+  logger.d("completely preloaded system-wise settings ...");
   runApp(
     // Adding ProviderScope enables Riverpod for the entire project
     const ProviderScope(child: GlacialApp()),

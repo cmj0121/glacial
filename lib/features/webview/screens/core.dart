@@ -1,9 +1,12 @@
 // The webview widget to show the website embedded in the app.
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 class WebViewPage extends ConsumerStatefulWidget {
@@ -33,12 +36,10 @@ class _WebViewPageState extends ConsumerState<WebViewPage> {
             switch (uri.scheme) {
               case 'glacial':
                 final String? accessToken = await Storage().gainAccessToken(uri);
-                final ServerSchema? schema = ref.read(currentServerProvider);
+                final ServerSchema? schema = ref.read(serverProvider);
 
                 if (schema != null && accessToken != null) {
-                  ref.read(currentAccessTokenProvider.notifier).state = accessToken;
-                  ref.read(currentUserProvider.notifier).state = await schema.getAuthUser(accessToken);
-
+                  Storage().updateProvider(ref, schema, accessToken);
                   logger.i("gain access token from ${schema.domain}");
                 }
 
@@ -63,7 +64,14 @@ class _WebViewPageState extends ConsumerState<WebViewPage> {
     return Scaffold(
       appBar: AppBar(),
       body: InteractiveViewer(
-        child: WebViewWidget(controller: controller),
+        child: WebViewWidget(
+          controller: controller,
+          gestureRecognizers: {
+            Factory<VerticalDragGestureRecognizer>(
+              () => VerticalDragGestureRecognizer(),
+            ),
+          },
+        ),
       ),
     );
   }

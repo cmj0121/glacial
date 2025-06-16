@@ -13,7 +13,7 @@ Map <String, ServerSchema> stateCache = {};
 
 // Extend the Storage that can be used to access the Mastodon server by get/set servers.
 extension OAuth2Extension on Storage {
-  // Get or Create the OAuth2Info from the storage based on the domain.
+  // Get or create the OAuth2Info from the storage based on the domain.
   Future<OAuth2Info> getOAuth2Info(String domain) async {
     late OAuth2Info? info;
 

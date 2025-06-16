@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The account widget to show the account information.
 class Account extends StatelessWidget {
@@ -40,7 +42,7 @@ class Account extends StatelessWidget {
           }
 
           return InkWellDone(
-            onTap: () => context.push(RoutePath.userDetail.path, extra: schema),
+            onTap: () => context.push(RoutePath.profile.path, extra: schema),
             child: content,
           );
         },
@@ -100,12 +102,12 @@ class Account extends StatelessWidget {
 }
 
 // The account profile to show the details of the user.
-class AccountDetail extends ConsumerWidget {
+class AccountProfile extends ConsumerWidget {
   final AccountSchema schema;
   final double bannerHeight;
   final double avatarSize;
 
-  const AccountDetail({
+  const AccountProfile({
     super.key,
     required this.schema,
     this.bannerHeight = 200,
@@ -114,41 +116,49 @@ class AccountDetail extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          buildBanner(context),
-          const SizedBox(height: 16),
-          buildContent(context, ref),
-        ],
-      ),
+    final ServerSchema? server = ref.watch(serverProvider);
+
+    if (server == null) {
+      logger.w('Server is not available, cannot build account detail');
+      return const SizedBox.shrink();
+    }
+
+    return buildContent(context, ref, server);
+  }
+
+  Widget buildContent(BuildContext context, WidgetRef ref, ServerSchema server) {
+    return Timeline(
+      schema: server,
+      type: TimelineType.user,
+      account: schema,
+      child: buildTimelineHeader(context, ref, server),
     );
   }
 
-  Widget buildContent(BuildContext context, WidgetRef ref) {
+  // Build the header of the account's timeline, including the user name and
+  // the banner.
+  Widget buildTimelineHeader(BuildContext context, WidgetRef ref, ServerSchema server) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildName(context, ref),
+        buildBanner(context),
+        const SizedBox(height: 16),
+        buildName(context, ref, server),
         HtmlDone(
           html: schema.note,
           emojis: schema.emojis,
         ),
-        const Divider(),
-        TimelineBuilder(type: TimelineType.user, account: schema),
+        const Divider(thickness: 4),
       ],
     );
   }
 
   // Show the user name and the account name.
-  Widget buildName(BuildContext context, WidgetRef ref) {
-    final ServerSchema? server = ref.watch(currentServerProvider);
-    final AccountSchema? account = ref.watch(currentUserProvider);
-
-    final String acct = schema.acct.contains('@') ? schema.acct : '${schema.username}@${server?.domain ?? '-'}';
+  Widget buildName(BuildContext context, WidgetRef ref, ServerSchema server) {
+    final String acct = schema.acct.contains('@') ? schema.acct : '${schema.username}@${server.domain}';
+    final AccountSchema? account = ref.watch(accountProvider);
 
     return Row(
       children: [
@@ -163,7 +173,8 @@ class AccountDetail extends ConsumerWidget {
         ),
 
         const Spacer(),
-        account?.id == schema.id ? UserProfileBuilder() : RelationshipBuilder(schema: schema),
+        account?.id == schema.id ? const SizedBox.shrink() : RelationshipBuilder(schema: schema),
+        const SizedBox(width: 12),
       ],
     );
   }

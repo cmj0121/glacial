@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The timeline tab that shows the all possible timelines in the current
 // selected Mastodon server.
@@ -20,14 +22,11 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
   final List<TimelineType> types = TimelineType.values.where((type) => type.isPublicView).toList();
 
   late final TabController controller;
-  late final ServerSchema? schema;
   late List<ScrollController> scrollControllers = [];
 
   @override
   void initState() {
     super.initState();
-    schema = ref.read(currentServerProvider);
-
     controller = TabController(
       length: types.length,
       initialIndex: 0,
@@ -47,7 +46,8 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final String? accessToken = ref.watch(currentAccessTokenProvider);
+    final ServerSchema? schema = ref.watch(serverProvider);
+    final String? accessToken = ref.watch(accessTokenProvider);
     final TimelineType initType = accessToken == null ? TimelineType.local : TimelineType.home;
 
     if (schema == null) {
@@ -65,21 +65,26 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
         final bool isSelected = controller.index == index;
         final bool isActive = accessToken != null || type.supportAnonymous;
         final Color color = isActive ?
-            (isSelected ?
-              Theme.of(context).colorScheme.primary :
-             Theme.of(context).colorScheme.onSurface
-            ) : Theme.of(context).disabledColor;
+            (isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface) :
+            Theme.of(context).disabledColor;
 
-        return Icon(isSelected ? type.activeIcon : type.icon, color: color);
+        return Tooltip(
+          message: type.tooltip(context),
+          child: Icon(type.icon(active: isSelected), color: color, size: 32),
+        );
       },
-      itemBuilder: (context, index) => TimelineBuilder(type: types[index], controller: scrollControllers[index]),
+      itemBuilder: (context, index) => Timeline(
+        schema: schema,
+        type: types[index],
+        controller: scrollControllers[index],
+      ),
       onTabTappable: (index) => accessToken != null || types[index].supportAnonymous,
       onDoubleTap: onDoubleTap,
     );
   }
 
+  // Scroll to the top of the timeline when the user double taps on the tab.
   void onDoubleTap(int index) {
-    // Scroll to the top of the timeline when the user double taps on the tab.
     scrollControllers[index].animateTo(
       0,
       duration: const Duration(milliseconds: 300),
@@ -88,100 +93,45 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
   }
 }
 
-class TimelineBuilder extends ConsumerWidget {
-  final TimelineType type;
-  final String? keyword;
-  final AccountSchema? account;
-  final ScrollController? controller;
-
-  const TimelineBuilder({
-    super.key,
-    required this.type,
-    this.keyword,
-    this.account,
-    this.controller,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ServerSchema? schema = ref.read(currentServerProvider);
-    final String? accessToken = ref.read(currentAccessTokenProvider);
-
-    if (schema == null) {
-      logger.w("No server selected, but it's required to show the timeline.");
-      return const SizedBox.shrink();
-    }
-
-    return FutureBuilder(
-      future: schema.fetchTimeline(type: type, accessToken: accessToken, keyword: keyword, account: account),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Align(
-            alignment: Alignment.topCenter,
-            child: ClockProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${schema.domain}';
-          return Align(
-            alignment: Alignment.topCenter,
-            child: Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red)),
-          );
-        }
-
-        final List<StatusSchema> statuses = snapshot.data as List<StatusSchema>;
-        return Timeline(
-          schema: schema,
-          accessToken: accessToken,
-          type: type,
-          statuses: statuses,
-          account: account,
-          controller: controller,
-        );
-      },
-    );
-  }
-}
-
 // The timeline widget that contains the status from the current selected
 // Mastodon server.
-class Timeline extends StatefulWidget {
+class Timeline extends ConsumerStatefulWidget {
   final ServerSchema schema;
   final TimelineType type;
-  final String? accessToken;
   final String? keyword;
   final AccountSchema? account;
-  final List<StatusSchema> statuses;
   final ScrollController? controller;
+  final Widget? child;
 
   const Timeline({
     super.key,
     required this.schema,
     required this.type,
-    this.accessToken,
     this.keyword,
     this.account,
-    this.statuses = const [],
     this.controller,
+    this.child,
   });
 
   @override
-  State<Timeline> createState() => _TimelineState();
+  ConsumerState<Timeline> createState() => _TimelineState();
 }
 
-class _TimelineState extends State<Timeline> {
+class _TimelineState extends ConsumerState<Timeline> {
   late final ScrollController controller = widget.controller ?? ScrollController();
   final Storage storage = Storage();
   final double loadingThreshold = 180;
 
   bool isLoading = false;
   bool isCompleted = false;
-  late List<StatusSchema> statuses = [];
+  List<StatusSchema> statuses = [];
 
   @override
   void initState() {
     super.initState();
-    statuses = widget.statuses;
     controller.addListener(onScroll);
+
+    onLoad();
   }
 
   @override
@@ -215,14 +165,28 @@ class _TimelineState extends State<Timeline> {
       child: ListView.builder(
         controller: controller,
         shrinkWrap: true,
-        itemCount: statuses.length,
+        itemCount: statuses.length + 1,
         itemBuilder: (context, index) {
-          final StatusSchema status = statuses[index];
-          return Status(
-            schema: status.reblog ?? status,
-            reblogFrom: status.reblog != null ? status.account : null,
-            replyToAccountID: status.inReplyToAccountID,
-            onDeleted: () => onDeleted(index),
+          if (index == 0) {
+            return widget.child ?? const SizedBox.shrink();
+          }
+
+          final int trueIndex = index - 1;
+          final StatusSchema status = statuses[trueIndex];
+
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: Status(
+                schema: status.reblog ?? status,
+                reblogFrom: status.reblog != null ? status.account : null,
+                replyToAccountID: status.inReplyToAccountID,
+                onDeleted: () => onDeleted(trueIndex),
+              ),
+            ),
           );
         },
       ),
@@ -256,10 +220,11 @@ class _TimelineState extends State<Timeline> {
     setState(() => isLoading = true);
     final String? maxId = statuses.isNotEmpty ? statuses.last.id : null;
     final List<StatusSchema> newStatuses = await widget.schema.fetchTimeline(
-      type: widget.type,
-      accessToken: widget.accessToken,
+      widget.type,
+      accessToken: ref.read(accessTokenProvider),
+      accountID: widget.account?.id,
       maxId: maxId,
-      account: widget.account,
+      keyword: widget.keyword,
     );
 
     setState(() {
@@ -276,12 +241,7 @@ class _TimelineState extends State<Timeline> {
 
   // Reload the timeline when the status is deleted.
   void onDeleted(int index) async {
-    final StatusSchema status = statuses[index];
-
-    if (widget.accessToken != null) {
-      await status.deleteIt(domain: widget.schema.domain, accessToken: widget.accessToken!);
-      setState(() => statuses.removeAt(index));
-    }
+    setState(() => statuses.removeAt(index));
   }
 }
 

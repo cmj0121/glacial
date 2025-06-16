@@ -9,13 +9,13 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get txt_app_name => 'glacial';
+  String get txt_app_name => 'Glacial';
 
   @override
-  String get txt_search_mastodon => 'mastodon.social';
+  String get txt_invalid_instance => 'Serveur Mastodon invalide';
 
   @override
-  String get txt_search_hint => 'Appuyez sur Entrée pour rechercher...';
+  String get txt_server_contact => 'Contact';
 
   @override
   String get txt_search_helper => 'Recherchez quelque chose d\'intéressant';
@@ -24,13 +24,29 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_search_history => 'Historique de recherche';
 
   @override
-  String get txt_invalid_instance => 'Serveur Mastodon invalide';
-
-  @override
-  String get txt_server_contact => 'Coordonnées';
+  String get txt_search_mastodon => 'mastodon.social';
 
   @override
   String get txt_server_rules => 'Règles du serveur';
+
+  @override
+  String get txt_show_less => 'Afficher moins';
+
+  @override
+  String get txt_show_more => 'Afficher plus';
+
+  @override
+  String txt_trends_uses(Object uses) {
+    return 'Utilisé $uses fois ces derniers jours';
+  }
+
+  @override
+  String txt_no_results_found(Object keyword) {
+    return 'Aucun résultat trouvé pour $keyword';
+  }
+
+  @override
+  String get txt_copied_to_clipboard => 'Copié dans le presse-papiers';
 
   @override
   String get txt_public => 'Public';
@@ -45,112 +61,55 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_direct => 'Direct';
 
   @override
-  String get txt_copied_to_clipboard => 'Copié dans le presse-papiers';
-
-  @override
-  String txt_trends_uses(Object uses) {
-    return 'Utilisé $uses fois ces derniers jours';
-  }
-
-  @override
-  String get txt_show_less => 'Afficher moins';
-
-  @override
-  String get txt_show_more => 'Afficher plus';
-
-  @override
-  String txt_user_profile(Object text) {
-    return 'Profil de l\'utilisateur $text';
-  }
-
-  @override
-  String txt_no_results_found(Object keyword) {
-    return 'Aucun résultat trouvé pour $keyword';
-  }
-
-  @override
   String get btn_clean_all => 'Tout effacer';
-
-  @override
-  String get btn_back_to_explorer => 'Retour à l\'explorateur';
-
-  @override
-  String get btn_sign_in => 'Se connecter';
 
   @override
   String get btn_timeline => 'Fil d’actualité';
 
   @override
-  String get btn_trending => 'Tendances';
+  String get btn_trending => 'Tendance en ce moment';
 
   @override
-  String get btn_notifications => 'Notifications';
-
-  @override
-  String get btn_explore => 'Explorer';
+  String get btn_notifications => 'Tendance en ce moment';
 
   @override
   String get btn_settings => 'Paramètres';
 
   @override
-  String get btn_post => 'Publier';
+  String get btn_management => 'Administration';
 
   @override
-  String get btn_home_timeline => 'Accueil';
+  String get btn_trends_links => 'Nouvelles';
 
   @override
-  String get btn_local_timeline => 'Local';
+  String get btn_trends_statuses => 'Messages';
 
   @override
-  String get btn_federal_timeline => 'Fédéral';
+  String get btn_trends_tags => 'Hashtags';
 
   @override
-  String get btn_public_timeline => 'Public';
+  String get btn_home => 'Accueil';
 
   @override
-  String get btn_bookmarks_timeline => 'Favoris';
+  String get btn_user => 'utilisateur·ice';
 
   @override
-  String get btn_favourites_timeline => 'Favoris';
+  String get btn_local => 'Ce serveur';
 
   @override
-  String get btn_hashtag_timeline => 'Hashtag';
+  String get btn_federal => 'Autres serveurs';
 
   @override
-  String get btn_reply => 'Répondre';
+  String get btn_public => 'Tout';
 
   @override
-  String get btn_reblog => 'Rebloguer';
+  String get btn_bookmarks => 'Marque-pages';
 
   @override
-  String get btn_favourite => 'Favori';
+  String get btn_favourites => 'Favoris';
 
   @override
-  String get btn_bookmark => 'Signet';
-
-  @override
-  String get btn_share => 'Partager';
-
-  @override
-  String get btn_mute => 'Mettre en sourdine';
-
-  @override
-  String get btn_block => 'Bloquer';
-
-  @override
-  String get btn_delete => 'Supprimer';
-
-  @override
-  String get btn_trends_links => 'Actualités chaudes';
-
-  @override
-  String get btn_trends_statuses => 'Statuts';
-
-  @override
-  String get btn_trends_tags => 'Étiquettes';
-
-  @override
-  String get btn_management => 'Gestion';
+  String get btn_post => 'Nouveau message';
 
   @override
   String get btn_follow_mutual => 'Abonnement mutuel';
@@ -165,16 +124,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_follow => 'Suivre';
 
   @override
+  String get btn_block => 'Bloquer';
+
+  @override
   String get btn_unblock => 'Débloquer';
+
+  @override
+  String get btn_mute => 'Mettre en sourdine';
 
   @override
   String get btn_unmute => 'Réactiver le son';
 
   @override
   String get btn_report => 'Signaler';
-
-  @override
-  String get btn_edit_profile => 'Modifier le profil';
 
   @override
   String get dots => '...';

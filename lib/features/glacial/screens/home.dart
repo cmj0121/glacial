@@ -3,81 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
-
-// The possible actions in sidebar and used to interact with the current server.
-enum SidebarButtonType {
-  timeline,
-  trending,
-  notifications,
-  settings,
-  admin;
-
-  bool get supportAnonymous {
-    switch (this) {
-      case timeline:
-      case trending:
-        return true;
-      case notifications:
-      case settings:
-      case admin:
-        return false;
-    }
-  }
-
-  IconData get icon {
-    switch (this) {
-      case timeline:
-        return Icons.view_list_outlined;
-      case trending:
-        return Icons.trending_up_outlined;
-      case notifications:
-        return Icons.notifications_outlined;
-      case settings:
-        return Icons.settings_outlined;
-      case admin:
-        return Icons.admin_panel_settings_outlined;
-    }
-  }
-
-  IconData get activeIcon {
-    switch (this) {
-      case timeline:
-        return Icons.view_list;
-      case trending:
-        return Icons.bar_chart;
-      case notifications:
-        return Icons.notifications;
-      case settings:
-        return Icons.settings;
-      case admin:
-        return Icons.admin_panel_settings;
-    }
-  }
-
-  RoutePath get route {
-    switch (this) {
-      case timeline:
-        return RoutePath.timeline;
-      case trending:
-        return RoutePath.trends;
-      case notifications:
-        return RoutePath.notifications;
-      case settings:
-        return RoutePath.settings;
-      case admin:
-        return RoutePath.admin;
-    }
-  }
-}
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The main home page of the app, interacts with the current server and show the
 // server timeline and other features.
 class GlacialHome extends ConsumerStatefulWidget {
+  final ServerSchema server;
   final Widget child;
 
   const GlacialHome({
     super.key,
+    required this.server,
     required this.child,
   });
 
@@ -88,25 +26,9 @@ class GlacialHome extends ConsumerStatefulWidget {
 class _GlacialHomeState extends ConsumerState<GlacialHome> {
   final double appBarHeight = 44;
   final double sidebarSize = 32;
+  final Storage storage = Storage();
 
-  late final List<SidebarButtonType> actions;
-  late final ServerSchema schema;
-
-  @override
-  void initState() {
-    super.initState();
-
-    final AccountSchema? account = ref.read(currentUserProvider);
-    final ServerSchema? schema = ref.read(currentServerProvider);
-    final int permissions = int.parse(account?.role?.permissions ?? '0');
-
-    if (schema == null) {
-      throw Exception("No server schema found, please select a server.");
-    }
-
-    this.schema = schema;
-    actions = SidebarButtonType.values.where((a) => permissions > 0 || a != SidebarButtonType.admin).toList();
-  }
+  late final List<SidebarButtonType> actions = SidebarButtonType.values;
 
   @override
   Widget build(BuildContext context) {
@@ -118,22 +40,26 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(appBarHeight),
             child: AppBar(
-              leading: UserAvatar(schema: schema),
+              leading: UserAvatar(schema: widget.server),
               title: Align(
                 alignment: Alignment.center,
                 child: Tooltip(
-                  message: schema.desc,
-                  child: InkWellDone(
-                    onDoubleTap: onBack,
-                    child: Text(
-                      schema.title,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
+                  message: widget.server.desc,
+                  child: Text(
+                    widget.server.title,
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
               ),
               actions: [
                 Explorer(),
+                IconButton(
+                  icon: Icon(Icons.logout),
+                  color: Theme.of(context).colorScheme.outline,
+                  hoverColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  onPressed: onBack,
+                ),
               ],
             ),
           ),
@@ -183,7 +109,8 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         children: [
           ...buildActions(),
           const Spacer(),
-          NewStatus(size: sidebarSize),
+          PostStatusButton(size: sidebarSize),
+          const SizedBox(height: 8),
         ],
     );
   }
@@ -201,7 +128,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ...buildActions(),
-          NewStatus(size: sidebarSize),
+          PostStatusButton(size: sidebarSize),
         ],
       ),
     );
@@ -210,46 +137,35 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   // Build the list of actions in the sidebar for the general user, the actions
   // may not be available for the anonymous user.
   List<Widget> buildActions() {
-    final AccountSchema? account = ref.watch(currentUserProvider);
     final String path = GoRouter.of(context).state.uri.toString();
+    final AccountSchema? account = ref.read(accountProvider);
     final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
 
     return actions.map((action) {
         final int index = actions.indexOf(action);
         final bool isSelected = action.route == route;
         final bool isEnabled = account != null || action.supportAnonymous;
+        final bool isNotImplemented = [SidebarButtonType.settings, SidebarButtonType.admin].contains(action);
+        late final Widget icon;
+
+        switch (action) {
+          case SidebarButtonType.notifications:
+            icon = Icon(action.icon(active: isSelected), size: sidebarSize);
+            break;
+          default:
+            icon = Icon(action.icon(active: isSelected), size: sidebarSize);
+            break;
+        }
 
         return IconButton(
-          icon: Icon(isSelected ? action.activeIcon : action.icon, size: sidebarSize),
+          icon: icon,
+          tooltip: action.tooltip(context),
           color: isSelected ? Theme.of(context).colorScheme.primary : null,
-          tooltip: actionTooltip(action),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: isEnabled ? () => onSelect(index) : null,
+          onPressed: isEnabled && !isNotImplemented ? () => onSelect(index) : null,
         );
       }).toList();
-  }
-
-  // The list of actions could be performed in the sidebar.
-  String actionTooltip(SidebarButtonType action) {
-    switch (action) {
-      case SidebarButtonType.timeline:
-        return AppLocalizations.of(context)?.btn_timeline ?? "Timeline";
-      case SidebarButtonType.trending:
-        return AppLocalizations.of(context)?.btn_trending ?? "Trending";
-      case SidebarButtonType.notifications:
-        return AppLocalizations.of(context)?.btn_notifications ?? "Notifications";
-      case SidebarButtonType.settings:
-        return AppLocalizations.of(context)?.btn_settings ?? "Settings";
-      case SidebarButtonType.admin:
-        return AppLocalizations.of(context)?.btn_management ?? "Admin Management";
-    }
-  }
-
-  // Back to the explorer page.
-  void onBack() {
-    clearProvider(ref);
-    context.go(RoutePath.serverExplorer.path);
   }
 
   // Select the action in the sidebar and show the corresponding content.
@@ -259,8 +175,17 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     final SidebarButtonType action = actions[index];
 
     if (action.route != route) {
-      logger.i("selected action: ${action.name} -> ${action.route.path}");
+      logger.d("selected action: ${action.name} -> ${action.route.path}");
       context.go(action.route.path, extra: action);
+    }
+  }
+
+  // Back to the explorer page.
+  void onBack() async {
+    await storage.clearProvider(ref);
+    if (mounted) {
+      logger.i("back to the explorer page ...");
+      context.go(RoutePath.explorer.path);
     }
   }
 }

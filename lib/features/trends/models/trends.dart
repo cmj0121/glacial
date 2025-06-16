@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:glacial/core.dart';
 
 // The type list for the timeline, based on the Mastodon API.
-enum TrendsType implements SlideTab {
+enum TrendsType {
   statuses,
   tags,
   links;
 
-  @override
-  String? tooltip(BuildContext context) {
+  String tooltip(BuildContext context) {
     switch (this) {
       case TrendsType.links:
         return AppLocalizations.of(context)?.btn_trends_links ?? 'Links';
@@ -21,27 +20,14 @@ enum TrendsType implements SlideTab {
     }
   }
 
-  @override
-  IconData get icon {
+  IconData icon({bool active = false}) {
     switch (this) {
       case links:
-        return Icons.whatshot_outlined;
+        return active ? Icons.whatshot : Icons.whatshot_outlined;
       case statuses:
-        return Icons.chat_outlined;
+        return active ? Icons.chat_bubble : Icons.chat_bubble_outline;
       case tags:
-        return Icons.label_outline;
-    }
-  }
-
-  @override
-  IconData get activeIcon {
-    switch (this) {
-      case links:
-        return Icons.whatshot;
-      case statuses:
-        return Icons.chat;
-      case tags:
-        return Icons.label;
+        return active ? Icons.label : Icons.label_outline;
     }
   }
 }

@@ -1,7 +1,6 @@
 // The Status widget to show the toots from user.
 import 'package:flutter/material.dart';
 
-import 'package:glacial/core.dart';
 import 'package:glacial/features/timeline/models/core.dart';
 
 // The icon of the status' visibility type.
@@ -19,40 +18,27 @@ class StatusVisibility extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = Theme.of(context).colorScheme.secondary;
+    final Color color = Theme.of(context).colorScheme.onSurfaceVariant;
 
     if (isCompact) {
       return Tooltip(
-        message: tooltip(context),
-        child: Icon(type.icon, size: size, color: color),
+        message: type.tooltip(context),
+        child: Icon(type.icon(), size: size, color: color),
       );
     }
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(type.icon, size: size, color: color),
+        Icon(type.icon(), size: size, color: color),
         const SizedBox(width: 8),
-        Text(tooltip(context), style: Theme.of(context).textTheme.bodySmall?.copyWith(
+        Text(type.tooltip(context), style: Theme.of(context).textTheme.bodySmall?.copyWith(
           color: color,
           fontSize: size,
           fontWeight: FontWeight.bold,
         )),
       ],
     );
-  }
-
-  String tooltip(BuildContext context) {
-    switch (type) {
-      case VisibilityType.public:
-        return AppLocalizations.of(context)?.txt_public ?? 'Public';
-      case VisibilityType.unlisted:
-        return AppLocalizations.of(context)?.txt_unlisted ?? 'Unlisted';
-      case VisibilityType.private:
-        return AppLocalizations.of(context)?.txt_private ?? 'Private';
-      case VisibilityType.direct:
-        return AppLocalizations.of(context)?.txt_direct ?? 'Direct';
-    }
   }
 }
 

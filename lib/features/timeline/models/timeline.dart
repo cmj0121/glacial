@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:glacial/core.dart';
 
 // The type list for the timeline, based on the Mastodon API.
-enum TimelineType implements SlideTab {
+enum TimelineType {
   home,          // The home timeline for the logged in user.
   hashtag,       // The hashtag timeline for the current server.
   user,          // The statuses posted from the given user.
@@ -14,69 +14,45 @@ enum TimelineType implements SlideTab {
   favourites,    // The favourite timeline for the logged in user.
   bookmarks;     // The bookmark timeline for the logged in user.
 
-  @override
-  String? tooltip(BuildContext context) {
+  String tooltip(BuildContext context) {
     switch (this) {
       case TimelineType.home:
-        return AppLocalizations.of(context)?.btn_home_timeline ?? 'Home';
+        return AppLocalizations.of(context)?.btn_home ?? 'Home';
       case TimelineType.user:
-        return 'User';
+        return AppLocalizations.of(context)?.btn_user ?? 'User';
       case TimelineType.hashtag:
-        return AppLocalizations.of(context)?.btn_hashtag_timeline ?? 'Hashtag';
+        return AppLocalizations.of(context)?.btn_trends_tags ?? 'Hashtag';
       case TimelineType.local:
-        return AppLocalizations.of(context)?.btn_local_timeline ?? 'Local';
+        return AppLocalizations.of(context)?.btn_local ?? 'Local';
       case TimelineType.federal:
-        return AppLocalizations.of(context)?.btn_federal_timeline ?? 'Federal';
+        return AppLocalizations.of(context)?.btn_federal ?? 'Federal';
       case TimelineType.public:
-        return AppLocalizations.of(context)?.btn_public_timeline ?? 'Public';
+        return AppLocalizations.of(context)?.btn_public ?? 'Public';
       case TimelineType.bookmarks:
-        return AppLocalizations.of(context)?.btn_bookmarks_timeline ?? 'Bookmarks';
+        return AppLocalizations.of(context)?.btn_bookmarks ?? 'Bookmarks';
       case TimelineType.favourites:
-        return AppLocalizations.of(context)?.btn_favourites_timeline ?? 'Favourites';
+        return AppLocalizations.of(context)?.btn_favourites ?? 'Favourites';
     }
   }
 
-  @override
-  IconData get icon {
+  IconData icon({bool active = false}) {
     switch (this) {
       case home:
-        return Icons.home_outlined;
+        return active ? Icons.home : Icons.home_outlined;
       case user:
-        return Icons.person_outline;
+        return active ? Icons.person : Icons.person_outline;
       case hashtag:
-        return Icons.tag_outlined;
+        return active ? Icons.tag : Icons.tag_outlined;
       case local:
-        return Icons.groups_outlined;
+        return active ? Icons.groups : Icons.groups_outlined;
       case federal:
-        return Icons.account_tree_outlined;
+        return active ? Icons.account_tree : Icons.account_tree_outlined;
       case public:
-        return Icons.public_outlined;
+        return active ? Icons.public : Icons.public_outlined;
       case bookmarks:
-        return Icons.bookmarks_outlined;
+        return active ? Icons.bookmarks : Icons.bookmarks_outlined;
       case favourites:
-        return Icons.star_outline_outlined;
-    }
-  }
-
-  @override
-  IconData get activeIcon {
-    switch (this) {
-      case home:
-        return Icons.home;
-      case user:
-        return Icons.person;
-      case hashtag:
-        return Icons.tag;
-      case local:
-        return Icons.groups;
-      case federal:
-        return Icons.account_tree;
-      case public:
-        return Icons.public;
-      case bookmarks:
-        return Icons.bookmarks;
-      case favourites:
-        return Icons.star;
+        return active ? Icons.star : Icons.star_outline_outlined;
     }
   }
 

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // Show the possible timeline tab per timeline type.
 class TrendsTab extends ConsumerStatefulWidget {
@@ -31,7 +33,7 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    final ServerSchema? server = ref.read(currentServerProvider);
+    final ServerSchema? server = ref.read(serverProvider);
 
     if (server == null) {
       logger.w("No server selected, but it's required to show the trends.");
@@ -43,52 +45,18 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
       itemCount: tabs.length,
       tabBuilder: (context, index) {
         final TrendsType type = tabs[index];
-        final Widget icon = Icon(controller.index == index ? type.activeIcon : type.icon);
+        final Widget icon = Icon(type.icon(active: controller.index == index), size: 32);
 
         return Tooltip(
-          message: type.tooltip(context) ?? '',
+          message: type.tooltip(context),
           child: icon,
         );
       },
-      itemBuilder: (context, index) => TrendsBuilder(type: tabs[index]),
-    );
-  }
-}
-
-class TrendsBuilder extends ConsumerWidget {
-  final TrendsType type;
-
-  const TrendsBuilder({
-    super.key,
-    required this.type,
-  });
-
-  // The builder method to create a Trends instance based on the server schema and trends type.
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ServerSchema? schema = ref.watch(currentServerProvider);
-    final String? accessToken = ref.watch(currentAccessTokenProvider);
-
-    if (schema == null) {
-      logger.w("No server selected, but it's required to show the trends.");
-      return const SizedBox.shrink();
-    }
-
-    return FutureBuilder(
-      future: type.fetch(server: schema, accessToken: accessToken),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Align(
-            alignment: Alignment.topCenter,
-            child: const ClockProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          return const Text('Error loading trends');
-        }
-
-        final List<dynamic> trends = snapshot.data as List<dynamic>;
-        return Trends(schema: schema, type: type, trends: trends, accessToken: accessToken);
-      },
+      itemBuilder: (context, index) => Trends(
+        schema: server,
+        type: tabs[index],
+        accessToken: ref.read(accessTokenProvider),
+      ),
     );
   }
 }
@@ -98,14 +66,12 @@ class Trends extends StatefulWidget {
   final ServerSchema schema;
   final TrendsType type;
   final String? accessToken;
-  final List<dynamic> trends;
 
   const Trends({
     super.key,
     required this.schema,
     required this.type,
     this.accessToken,
-    this.trends = const [],
   });
 
   @override
@@ -118,13 +84,13 @@ class _TrendsState extends State<Trends> {
 
   bool isLoading = false;
   bool isCompleted = false;
-  late List<dynamic> trends = [];
+  List<dynamic> trends = [];
 
   @override
   void initState() {
     super.initState();
-    trends.addAll(widget.trends);
     controller.addListener(onScroll);
+    onLoad();
   }
 
   @override
@@ -153,28 +119,53 @@ class _TrendsState extends State<Trends> {
 
   // Build the content of the trends page based on the type of trends.
   Widget buildContent() {
-    return ListView.builder(
-      controller: controller,
-      shrinkWrap: true,
-      itemCount: trends.length,
-      itemBuilder: (context, index) {
-        switch (widget.type) {
-          case TrendsType.statuses:
-            final StatusSchema status = trends[index] as StatusSchema;
-            return Status(
-              schema: status.reblog ?? status,
-              reblogFrom: status.reblog != null ? status.account : null,
-              replyToAccountID: status.inReplyToAccountID,
-            );
-          case TrendsType.links:
-            final LinkSchema link = trends[index] as LinkSchema;
-            return TrendsLink(
-              schema: link,
-            );
-          case TrendsType.tags:
-						final HashTagSchema tag = trends[index] as HashTagSchema;
-						return HashTag(schema: tag);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        late final double imageSize;
+        if (constraints.maxWidth < 600) {
+          imageSize = 80;
+        } else {
+          imageSize = 120;
         }
+
+        return ListView.builder(
+          controller: controller,
+          shrinkWrap: true,
+          itemCount: trends.length,
+          itemBuilder: (context, index) {
+            late final Widget child;
+
+            switch (widget.type) {
+              case TrendsType.statuses:
+                final StatusSchema status = trends[index] as StatusSchema;
+                child = Status(
+                  schema: status.reblog ?? status,
+                  reblogFrom: status.reblog != null ? status.account : null,
+                  replyToAccountID: status.inReplyToAccountID,
+                );
+                break;
+              case TrendsType.links:
+                final LinkSchema link = trends[index] as LinkSchema;
+                child = TrendsLink(schema: link, imageSize: imageSize);
+                break;
+              case TrendsType.tags:
+                final HashtagSchema tag = trends[index] as HashtagSchema;
+                child = Hashtag(schema: tag);
+                break;
+            }
+
+
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: child,
+            ),
+          );
+          },
+        );
       },
     );
   }
@@ -193,8 +184,8 @@ class _TrendsState extends State<Trends> {
     }
 
     setState(() => isLoading = true);
-    final List<dynamic> newStatuses = await widget.type.fetch(
-      server: widget.schema,
+    final List<dynamic> newStatuses = await widget.schema.fetchTrends(
+      widget.type,
       accessToken: widget.accessToken,
       offset: trends.length,
     );
@@ -207,4 +198,4 @@ class _TrendsState extends State<Trends> {
   }
 }
 
-// vim: set ts=2 sw=2 sts=2 et::w
+// vim: set ts=2 sw=2 sts=2 et:

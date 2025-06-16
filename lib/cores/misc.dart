@@ -1,8 +1,11 @@
-// The shared library to access the package info.
+// The miscellaneous utilities and constants for the Glacial app.
 import 'dart:async';
 
 import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+// The logger instance.
+final Logger logger = Logger(printer: PrettyPrinter());
 
 // The system-wide package info.
 class Info {
@@ -14,10 +17,6 @@ class Info {
 
   PackageInfo? get info => _packageInfo;
 }
-
-// The logger instance.
-final Logger logger = Logger(printer: PrettyPrinter());
-
 
 // The debounce helper to delay the function call and avoid triggering
 // multiple times.

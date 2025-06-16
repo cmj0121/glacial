@@ -12,10 +12,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_app_name => '氷河';
 
   @override
-  String get txt_search_mastodon => 'mastodon.social';
+  String get txt_invalid_instance => '無効な Mastodon サーバー';
 
   @override
-  String get txt_search_hint => '入力して検索...';
+  String get txt_server_contact => '連絡先';
 
   @override
   String get txt_search_helper => '興味のあるものを検索してください';
@@ -24,13 +24,29 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_search_history => '検索履歴';
 
   @override
-  String get txt_invalid_instance => '無効な Mastodon サーバー';
+  String get txt_search_mastodon => 'mastodon.social';
 
   @override
-  String get txt_server_contact => '連絡先';
+  String get txt_server_rules => 'サーバーのルール';
 
   @override
-  String get txt_server_rules => 'サーバールール';
+  String get txt_show_less => '注意事項を閉じる';
+
+  @override
+  String get txt_show_more => '注意事項';
+
+  @override
+  String txt_trends_uses(Object uses) {
+    return '過去数日間で$uses回使用されました';
+  }
+
+  @override
+  String txt_no_results_found(Object keyword) {
+    return '$keyword の検索結果が見つかりませんでした';
+  }
+
+  @override
+  String get txt_copied_to_clipboard => 'クリップボードにコピーしました';
 
   @override
   String get txt_public => '公開';
@@ -45,112 +61,55 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_direct => 'ダイレクト';
 
   @override
-  String get txt_copied_to_clipboard => 'クリップボードにコピーしました';
-
-  @override
-  String txt_trends_uses(Object uses) {
-    return '過去数日間で$uses回使用されました';
-  }
-
-  @override
-  String get txt_show_less => '表示を減らす';
-
-  @override
-  String get txt_show_more => 'もっと表示';
-
-  @override
-  String txt_user_profile(Object text) {
-    return 'ユーザー $text のプロフィール';
-  }
-
-  @override
-  String txt_no_results_found(Object keyword) {
-    return '$keyword の検索結果が見つかりませんでした';
-  }
-
-  @override
   String get btn_clean_all => 'すべて削除';
-
-  @override
-  String get btn_back_to_explorer => '検索ページに戻る';
-
-  @override
-  String get btn_sign_in => 'サインイン';
 
   @override
   String get btn_timeline => 'タイムライン';
 
   @override
-  String get btn_trending => 'トレンド';
+  String get btn_trending => 'トレンドタグ';
 
   @override
   String get btn_notifications => '通知';
 
   @override
-  String get btn_explore => '検索';
-
-  @override
   String get btn_settings => '設定';
 
   @override
-  String get btn_post => '投稿';
+  String get btn_management => '管理';
 
   @override
-  String get btn_home_timeline => 'ホーム';
-
-  @override
-  String get btn_local_timeline => 'ローカル';
-
-  @override
-  String get btn_federal_timeline => 'フェデレーション';
-
-  @override
-  String get btn_public_timeline => 'パブリック';
-
-  @override
-  String get btn_bookmarks_timeline => 'ブックマーク';
-
-  @override
-  String get btn_favourites_timeline => 'お気に入り';
-
-  @override
-  String get btn_hashtag_timeline => 'ハッシュタグ';
-
-  @override
-  String get btn_reply => '返信';
-
-  @override
-  String get btn_reblog => '再投稿';
-
-  @override
-  String get btn_favourite => 'お気に入り';
-
-  @override
-  String get btn_bookmark => 'ブックマーク';
-
-  @override
-  String get btn_share => '共有';
-
-  @override
-  String get btn_mute => 'ミュート';
-
-  @override
-  String get btn_block => 'ブロック';
-
-  @override
-  String get btn_delete => '削除';
-
-  @override
-  String get btn_trends_links => '注目ニュース';
+  String get btn_trends_links => 'ニュース';
 
   @override
   String get btn_trends_statuses => '投稿';
 
   @override
-  String get btn_trends_tags => 'タグ';
+  String get btn_trends_tags => 'ハッシュタグ';
 
   @override
-  String get btn_management => '管理（かんり）';
+  String get btn_home => 'ホーム';
+
+  @override
+  String get btn_user => 'ユーザー';
+
+  @override
+  String get btn_local => 'このサーバー';
+
+  @override
+  String get btn_federal => 'ほかのサーバー';
+
+  @override
+  String get btn_public => 'すべて';
+
+  @override
+  String get btn_bookmarks => 'ブックマーク';
+
+  @override
+  String get btn_favourites => 'お気に入り';
+
+  @override
+  String get btn_post => '投稿';
 
   @override
   String get btn_follow_mutual => '相互フォロー';
@@ -165,16 +124,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_follow => 'フォロー';
 
   @override
+  String get btn_block => 'ブロック';
+
+  @override
   String get btn_unblock => 'ブロック解除';
+
+  @override
+  String get btn_mute => 'ミュート';
 
   @override
   String get btn_unmute => 'ミュート解除';
 
   @override
   String get btn_report => '報告';
-
-  @override
-  String get btn_edit_profile => 'Editar perfil';
 
   @override
   String get dots => '...';

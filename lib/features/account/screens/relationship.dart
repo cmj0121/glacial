@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
 
 // The relationship action enum, used for the relationship actions.
 enum RelationshipAction {
@@ -22,9 +23,9 @@ class RelationshipBuilder extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ServerSchema? server = ref.watch(currentServerProvider);
-    final AccountSchema? account = ref.watch(currentUserProvider);
-    final String? accessToken = ref.watch(currentAccessTokenProvider);
+    final ServerSchema? server = ref.watch(serverProvider);
+    final AccountSchema? account = ref.watch(accountProvider);
+    final String? accessToken = ref.watch(accessTokenProvider);
 
     if (server == null || account == null || accessToken == null) {
       logger.w("No server, account or access token available for relationship builder.");
@@ -32,7 +33,6 @@ class RelationshipBuilder extends ConsumerWidget {
     }
 
     return Relationship.builder(
-      currentUser: account,
       user: schema,
       server: server,
       accessToken: accessToken,
@@ -55,13 +55,12 @@ class Relationship extends ConsumerStatefulWidget {
   ConsumerState<Relationship> createState() => _RelationshipState();
 
   static builder({
-    required AccountSchema currentUser,
     required AccountSchema user,
     required ServerSchema server,
     required String accessToken,
   }) {
     return FutureBuilder(
-      future: currentUser.relationship(domain: server.domain, accessToken: accessToken, ids: [user.id]),
+      future: server.relationship(accessToken: accessToken, accounts: [user]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox.shrink();
@@ -130,7 +129,7 @@ class _RelationshipState extends ConsumerState<Relationship> {
       icon = const Icon(Icons.handshake_sharp);
       text = AppLocalizations.of(context)?.btn_follow_mutual ?? "Mutual";
     } else if (relationship.following) {
-      icon = const Icon(Icons.star_border);
+      icon = const Icon(Icons.star);
       text = AppLocalizations.of(context)?.btn_following ?? "Following";
     } else if (relationship.followedBy) {
       icon = const Icon(Icons.visibility);
@@ -220,8 +219,8 @@ class _RelationshipState extends ConsumerState<Relationship> {
 
   // Change the following status of the relationship.
   void onFollowToggle() async {
-    final ServerSchema? server = ref.read(currentServerProvider);
-    final String? accessToken = ref.read(currentAccessTokenProvider);
+    final ServerSchema? server = ref.read(serverProvider);
+    final String? accessToken = ref.read(accessTokenProvider);
     late final RelationshipSchema newRel;
 
     if (server == null || accessToken == null) {
@@ -229,13 +228,12 @@ class _RelationshipState extends ConsumerState<Relationship> {
       return;
     }
 
-    logger.i("accessToken: $accessToken, target: ${widget.schema.id} me: ${ref.read(currentUserProvider)?.id}");
     switch (relationship.following) {
       case true:
-        newRel = await widget.schema.unfollow(domain: server.domain, accessToken: accessToken);
+        newRel = await server.unfollow(account: widget.schema, accessToken: accessToken);
         break;
       case false:
-        newRel = await widget.schema.follow(domain: server.domain, accessToken: accessToken);
+        newRel = await server.follow(account: widget.schema, accessToken: accessToken);
         break;
     }
 
@@ -244,8 +242,8 @@ class _RelationshipState extends ConsumerState<Relationship> {
 
   // Change the blocking status of the relationship.
   void onBlockToggle() async {
-    final ServerSchema? server = ref.read(currentServerProvider);
-    final String? accessToken = ref.read(currentAccessTokenProvider);
+    final ServerSchema? server = ref.read(serverProvider);
+    final String? accessToken = ref.read(accessTokenProvider);
     late final RelationshipSchema newRel;
 
     if (server == null || accessToken == null) {
@@ -255,10 +253,10 @@ class _RelationshipState extends ConsumerState<Relationship> {
 
     switch (relationship.blocking) {
       case true:
-        newRel = await widget.schema.unblock(domain: server.domain, accessToken: accessToken);
+        newRel = await server.unblock(account: widget.schema, accessToken: accessToken);
         break;
       case false:
-        newRel = await widget.schema.block(domain: server.domain, accessToken: accessToken);
+        newRel = await server.block(account: widget.schema, accessToken: accessToken);
         break;
     }
 
@@ -267,8 +265,8 @@ class _RelationshipState extends ConsumerState<Relationship> {
 
   // Change the muting status of the relationship.
   void onMuteToggle() async {
-    final ServerSchema? server = ref.read(currentServerProvider);
-    final String? accessToken = ref.read(currentAccessTokenProvider);
+    final ServerSchema? server = ref.read(serverProvider);
+    final String? accessToken = ref.read(accessTokenProvider);
     late final RelationshipSchema newRel;
 
     if (server == null || accessToken == null) {
@@ -278,10 +276,10 @@ class _RelationshipState extends ConsumerState<Relationship> {
 
     switch (relationship.muting) {
       case true:
-        newRel = await widget.schema.unmute(domain: server.domain, accessToken: accessToken);
+        newRel = await server.unmute(account: widget.schema, accessToken: accessToken);
         break;
       case false:
-        newRel = await widget.schema.mute(domain: server.domain, accessToken: accessToken);
+        newRel = await server.mute(account: widget.schema, accessToken: accessToken);
         break;
     }
 

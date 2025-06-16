@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The main search page that shows the search bar and the possible
 // mastodon servers.
@@ -79,7 +81,6 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
           ),
           const Divider(),
           Expanded(child: buildServerHistory()),
-          const Spacer(),
           TextButton.icon(
             icon: const Icon(Icons.cleaning_services),
             label: Text(AppLocalizations.of(context)?.btn_clean_all ?? "Clear All"),
@@ -172,7 +173,6 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
   // can select it again.
   Widget buildServerHistory() {
     return ReorderableListView.builder(
-      shrinkWrap: true,
       itemCount: history.length,
       itemBuilder: (context, index) {
         final String domain = history[index];
@@ -189,10 +189,16 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
         return Dismissible(
           key: ValueKey(domain),
           background: Container(
+            alignment: Alignment.centerLeft,
             color: Colors.red,
-            child: const Icon(Icons.delete, color: Colors.white),
+            child: const Icon(Icons.delete_forever_rounded, color: Colors.white),
           ),
           direction: DismissDirection.startToEnd,
+          onDismissed: (direction) {
+            history.removeAt(index);
+            storage.serverHistory = history;
+            setState(() {});
+          },
           child: item,
         );
       },
@@ -222,12 +228,11 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
       }
     });
 
-    final String? accessToken = await storage.loadAccessToken(schema.domain);
-    await onLoading(ref, schema, accessToken);
+    await storage.saveLastServer(schema.domain);
+    await storage.reloadProvider(ref);
 
     if (mounted) {
-      logger.i("save current server: ${schema.domain}");
-      GoRouter.of(context).push(RoutePath.timeline.path);
+      context.push(RoutePath.timeline.path, extra: schema);
     }
   }
 

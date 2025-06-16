@@ -6,7 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
 
 // The Sign In widget is used to sign in to the Mastodon server.
 class UserAvatar extends ConsumerStatefulWidget {
@@ -43,43 +44,43 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
 
   @override
   Widget build(BuildContext context) {
-    final String? accessToken = ref.watch(currentAccessTokenProvider);
+    final String? accessToken = ref.watch(accessTokenProvider);
 
     return IconButton(
       icon: buildAvatar(accessToken),
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
       onPressed: accessToken == null ? () => debouncer.call(onSignIn) : null,
     );
   }
 
+  // Build the avatar based on the current sign-in state.
   Widget buildAvatar(String? accessToken) {
-    final ServerSchema? schema = ref.read(currentServerProvider);
+    final AccountSchema? account = ref.read(accountProvider);
 
-    if (accessToken == null || schema == null) {
+    if (account == null || accessToken == null) {
       return Icon(Icons.help_outlined, size: widget.size);
     }
 
-    final AccountSchema? account = ref.read(currentUserProvider);
-    return account == null ? Icon(Icons.error, size: widget.size) : buildUserAvatar(account);
+    return InkWellDone(
+      onTap: () => context.push(RoutePath.profile.path, extra: account),
+      child: buildUserAvatar(account),
+    );
   }
 
   // Build the user avatar with the size of the widget.
   Widget buildUserAvatar(AccountSchema account) {
-    return InkWellDone(
-      onTap: () => context.push(RoutePath.userDetail.path, extra: account),
-      onDoubleTap: onSignOut,
-      child: ClipOval(
-        child: CachedNetworkImage(
-          width: widget.size,
-          height: widget.size,
-          imageUrl: account.avatar,
-          placeholder: (context, url) => const SizedBox.shrink(),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-          fit: BoxFit.cover,
-        ),
+    return ClipOval(
+      child: CachedNetworkImage(
+        width: widget.size,
+        height: widget.size,
+        imageUrl: account.avatar,
+        placeholder: (context, url) => const SizedBox.shrink(),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+        fit: BoxFit.cover,
       ),
     );
   }
-
   // The sign-in button is pressed, navigate to the sign-in page of the
   // Mastodon server.
   void onSignIn() async {
@@ -97,24 +98,6 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
     if (mounted) {
       final Uri uri = UriEx.handle(widget.schema.domain, "/oauth/authorize", query);
       context.push(RoutePath.webview.path, extra: uri);
-    }
-  }
-
-  // The sign-up button is pressed, clean-up the authorization code and
-  // refresh the page.
-  void onSignOut() async {
-    final DateTime now = DateTime.now();
-    final ServerSchema? schema = ref.read(currentServerProvider);
-
-    if (schema == null) {
-      logger.w("expected: schema, got: $schema");
-      return;
-    }
-
-    await clearProvider(ref);
-    if (mounted) {
-      logger.i("sign out and clean up the access token");
-      context.go(RoutePath.timeline.path, extra: now);
     }
   }
 }

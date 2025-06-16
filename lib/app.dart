@@ -1,9 +1,13 @@
 // The main application and define the global variables.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
+import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 // The placeholder for the app's Work-In-Progress screen
 class WIP extends StatelessWidget {
@@ -26,44 +30,12 @@ class WIP extends StatelessWidget {
   }
 }
 
-// The global animation for child that fade-out the current page and fade-in
-// the new page
-CustomTransitionPage fadeTransitionPage({required Widget child, required GoRouterState state}) {
-  return CustomTransitionPage(
-    key: state.pageKey,
-    child: child,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return FadeTransition(
-        opacity: animation,
-        child: child,
-      );
-    },
-  );
-}
-
-// The global animation for child that scale the current page and fade-in
-// the new page
-CustomTransitionPage scaleTransitionPage({required Widget child, required GoRouterState state}) {
-  return CustomTransitionPage(
-    key: state.pageKey,
-    child: child,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return ScaleTransition(
-        scale: Tween<double>(begin: 0.8, end: 1.0).animate(animation),
-        child: FadeTransition(
-          opacity: animation,
-          child: child,
-        ),
-      );
-    },
-  );
-}
-
-class GlacialApp extends StatelessWidget {
+// The main application widget that contains the router and the theme.
+class GlacialApp extends ConsumerWidget {
   const GlacialApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final info = Info().info;
 
     return MaterialApp.router(
@@ -85,13 +57,13 @@ class GlacialApp extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
 
       // The router implementation
-      routerConfig: router(),
+      routerConfig: router(ref),
     );
   }
 
   // define the router for the app and how to handle the routes
   // with the optional animation
-  GoRouter router() {
+  GoRouter router(WidgetRef ref) {
     return GoRouter(
       initialLocation: RoutePath.landing.path,
       navigatorKey: navigatorKey,
@@ -102,45 +74,53 @@ class GlacialApp extends StatelessWidget {
           builder: (_, _) => const LandingPage(),
         ),
         // The engineering mode to show the app's internal information and settings
-        // @animation: FadeTransition
         GoRoute(
           path: RoutePath.engineer.path,
-          pageBuilder: (BuildContext context, GoRouterState state) => fadeTransitionPage(
-            state: state,
-            child: const EngineeringMode(),
-          ),
+          builder: (_, _) => const EngineeringMode(),
         ),
         // The server explorer page to search and show the available servers
-        // @animation: FadeTransition
         GoRoute(
-          path: RoutePath.serverExplorer.path,
-          pageBuilder: (BuildContext context, GoRouterState state) => fadeTransitionPage(
-            state: state,
-            child: const ServerExplorer(),
-          ),
+          path: RoutePath.explorer.path,
+          builder: (_, __) => const ServerExplorer(),
         ),
         // The webview page to show the in-app webview with specified URL
-        // @animation: FadeTransition
         GoRoute(
           path: RoutePath.webview.path,
-          pageBuilder: (BuildContext context, GoRouterState state) {
+          builder: (BuildContext context, GoRouterState state) {
             final Uri? url = state.extra as Uri?;
-            final Widget child = url == null ? const SizedBox.shrink() : WebViewPage(url: url);
 
             if (url == null) {
               logger.w("the url is null, cannot open the webview");
               context.pop();
+              return const SizedBox.shrink();
             }
 
-            return fadeTransitionPage(
-              state: state,
-              child: child,
+            return WebViewPage(url: url);
+          },
+        ),
+        // The media viewer page to show the media content in the app
+        GoRoute(
+          path: RoutePath.media.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final Widget media = state.extra as Widget;
+            return Dismissible(
+              key: const Key('media-hero-dismiss'),
+              direction: DismissDirection.vertical,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: InteractiveViewer(child: media),
+              ),
+              onDismissed: (direction) {
+                // Pop the media when the user swipes it away.
+                Navigator.of(context).pop();
+              },
             );
           },
         ),
 
-        // The core glacial page and show the possible operations
-        glacialRoutes(),
+
+        // The core home page and show the possible operations
+        homeRoutes(ref),
       ],
       // The fallback page, show the WIP screen if the route is not found
       errorBuilder: (BuildContext context, GoRouterState state) {
@@ -150,27 +130,18 @@ class GlacialApp extends StatelessWidget {
     );
   }
 
-  // Build the glacial home page with the sidebar and the main content
-  RouteBase glacialRoutes() {
+  // Build the home page with the sidebar and the main content
+  RouteBase homeRoutes(WidgetRef ref) {
     return ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        return GlacialHome(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return ScaleTransition(
-                scale: Tween<double>(begin: 0.8, end: 1.0).animate(animation),
-                child: FadeTransition(
-                  opacity: animation,
-                  child: child,
-                ),
-              );
-            },
-            child: KeyedSubtree(
-              child: child,
-            ),
-          ),
-        );
+        late final ServerSchema? server = ref.watch(serverProvider);
+
+        if (server == null) {
+          logger.w("No server selected, cannot build the home page.");
+          return const WIP();
+        }
+
+        return GlacialHome(server: server, child: child);
       },
       routes: [
         // The glacial timeline page to show the server timeline in the selected
@@ -183,12 +154,12 @@ class GlacialApp extends StatelessWidget {
         // Mastodon server
         GoRoute(
           path: RoutePath.trends.path,
-          builder: (BuildContext context, GoRouterState state) => const TrendsTab(),
+          builder: (BuildContext context, GoRouterState state) =>const TrendsTab(),
         ),
         // The explorer page to search and show the target accounts, links, and
         // hashtags in the selected Mastodon server
         GoRoute(
-          path: RoutePath.explorer.path,
+          path: RoutePath.search.path,
           builder: (BuildContext context, GoRouterState state) {
             final String keyword = state.extra as String;
             return ExplorerTab(keyword: keyword);
@@ -198,7 +169,7 @@ class GlacialApp extends StatelessWidget {
         // selected Mastodon server
         GoRoute(
           path: RoutePath.notifications.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
+          builder: (BuildContext context, GoRouterState state) => const GroupNotification(),
         ),
         // The glacial settings page to show the server settings in the selected
         // Mastodon server
@@ -206,63 +177,62 @@ class GlacialApp extends StatelessWidget {
           path: RoutePath.settings.path,
           builder: (BuildContext context, GoRouterState state) => const WIP(),
         ),
-        // The sub-route to show the context of the status, including the previous
-        // and next statuses related to the current status
-        GoRoute(
-          path: RoutePath.statusContext.path,
-          builder: (BuildContext context, GoRouterState state) {
-            final StatusSchema status = state.extra as StatusSchema;
-            final Widget content = StatusContext(schema: status);
-
-            return BackableView(
-              title: AppLocalizations.of(context)?.btn_post ?? "Post",
-              child: content,
-            );
-          },
-        ),
-        // The sub-route to show the user profile page with the specified user
-        GoRoute(
-          path: RoutePath.userDetail.path,
-          builder: (BuildContext context, GoRouterState state) {
-            final AccountSchema schema = state.extra as AccountSchema;
-            final Widget content = AccountDetail(schema: schema);
-
-            return BackableView(
-              title: schema.displayName,
-              child: content,
-            );
-          },
-        ),
-        // The user profile edit page to edit the user profile
-        GoRoute(
-          path: RoutePath.userProfile.path,
-          builder: (BuildContext context, GoRouterState state) {
-            return BackableView(
-              child: const WIP(),
-            );
-          },
-        ),
-        // Show the timeline based on the specified hashtag
-        GoRoute(
-          path: RoutePath.hashtagTimeline.path,
-          builder: (BuildContext context, GoRouterState state) {
-            final HashTagSchema schema = state.extra as HashTagSchema;
-            final Widget content = TimelineBuilder(
-              type: TimelineType.hashtag,
-              keyword: schema.name,
-            );
-
-            return BackableView(
-              title: '#${schema.name}',
-              child: content,
-            );
-          },
-        ),
         // The admin page to show the server management page in the selected
         // Mastodon server
         GoRoute(
           path: RoutePath.admin.path,
           builder: (BuildContext context, GoRouterState state) => const WIP(),
+        ),
+        // Show the timeline based on the specified hashtag
+        GoRoute(
+          path: RoutePath.hashtag.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final ServerSchema? server = ref.read(serverProvider);
+            final String hashtag = state.extra as String;
+
+            if (server == null) {
+              logger.w("No server selected, cannot show the hashtag timeline.");
+              return const SizedBox.shrink();
+            }
+
+            final Widget timeline = Timeline(
+              schema: server,
+              type: TimelineType.hashtag,
+              keyword: hashtag,
+            );
+
+            return BackableView(
+              title: '#$hashtag',
+              child: timeline,
+            );
+          },
+        ),
+        // The user's profile page to show the user account details and the
+        // user timeline in the selected Mastodon server
+        GoRoute(
+          path: RoutePath.profile.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final AccountSchema account = state.extra as AccountSchema;
+            final Widget content = AccountProfile(schema: account);
+
+            return BackableView(
+              title: account.displayName,
+              child: content,
+            );
+          },
+        ),
+        // The sub-route to show the context of the status, including the previous
+        // and next statuses related to the current status
+        GoRoute(
+          path: RoutePath.status.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema status = state.extra as StatusSchema;
+
+            return BackableView(
+              title: AppLocalizations.of(context)?.btn_trends_statuses ?? "Post",
+              child: StatusContext(schema: status),
+            );
+          },
         ),
       ],
     );

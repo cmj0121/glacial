@@ -1,7 +1,5 @@
 // The Account data schema that is the user account info.
-import 'package:glacial/features/timeline/models/core.dart';
-
-import 'relationship.dart';
+import 'package:glacial/features/models.dart';
 
 // The Account data schema that is the user account info.
 class AccountSchema {

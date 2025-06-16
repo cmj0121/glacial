@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
-
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The single Status widget that contains the status information.
 class Status extends ConsumerStatefulWidget {
@@ -42,17 +43,20 @@ class _StatusState extends ConsumerState<Status> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16),
-        child: InkWellDone(
-          // View statuses above and below this status in the thread.
-          onTap: () => onShowStatusContext(widget.schema),
-          child: buildContent(),
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: InkWellDone(
+        onTap: () {
+          final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
+
+          if (path == RoutePath.status) {
+            // already in the status context, replace it
+            context.replace(RoutePath.status.path, extra: schema);
+            return;
+          }
+          context.push(RoutePath.status.path, extra: schema);
+        },
+        child: buildContent(),
       ),
     );
   }
@@ -70,8 +74,8 @@ class _StatusState extends ConsumerState<Status> {
           indent: widget.indent,
           child: buildSensitiveView(),
         ),
-        Application(schema: schema.application),
 
+        Application(schema: schema.application),
         const SizedBox(height: 8),
         InteractionBar(schema: schema, onReload: onReload, onDeleted: widget.onDeleted),
       ],
@@ -85,39 +89,30 @@ class _StatusState extends ConsumerState<Status> {
       return SizedBox.shrink();
     }
 
+    final ServerSchema? schema = ref.read(serverProvider);
+    final AccountSchema? account = storage.loadAccountFromCache(schema!, widget.reblogFrom?.id ?? widget.replyToAccountID);
+    final IconData icon = widget.reblogFrom != null ?
+        StatusInteraction.reblog.icon(active: true) :
+        StatusInteraction.reply.icon(active: true);
 
-    final ServerSchema? schema = ref.read(currentServerProvider);
-    return FutureBuilder(
-      future: schema?.loadAccount(widget.reblogFrom?.id ?? widget.replyToAccountID),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return SizedBox.shrink();
-        }
+    if (account == null) {
+      return SizedBox.shrink();
+    }
 
-        if (snapshot.hasError) {
-          return SizedBox.shrink();
-        }
-
-        final IconData icon = widget.reblogFrom != null ? StatusInteraction.reblog.activeIcon : StatusInteraction.reply.activeIcon;
-        final AccountSchema? account = snapshot.data;
-        if (account == null) {
-          return SizedBox.shrink();
-        }
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Row(
-            children: [
-              Icon(icon, color: Colors.grey, size: metadataHeight),
-              const SizedBox(width: 4),
-              Account(schema: account, maxHeight: metadataHeight),
-            ],
-          ),
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.grey, size: metadataHeight),
+          const SizedBox(width: 4),
+          Account(schema: account, maxHeight: metadataHeight),
+        ],
+      ),
     );
   }
 
+  // The header of the status, which includes the account information, the status
+  // posted time, and the visibility status.
   Widget buildHeader() {
     final String duration = timeago.format(schema.createdAt, locale: 'en_short');
 
@@ -130,7 +125,10 @@ class _StatusState extends ConsumerState<Status> {
 
         const Spacer(),
 
-        Text(duration, style: const TextStyle(color: Colors.grey)),
+        Tooltip(
+          message: schema.createdAt.toLocal().toString(),
+          child: Text(duration, style: const TextStyle(color: Colors.grey)),
+        ),
         const SizedBox(width: 4),
         StatusVisibility(type: schema.visibility, size: 16, isCompact: true),
       ],
@@ -150,6 +148,7 @@ class _StatusState extends ConsumerState<Status> {
           emojis: schema.emojis,
           onLinkTap: onLinkTap,
         ),
+
         Attachments(schemas: schema.attachments),
       ],
     );
@@ -170,19 +169,6 @@ class _StatusState extends ConsumerState<Status> {
     setState(() => this.schema = schema);
   }
 
-  // View statuses above and below this status in the thread.
-  void onShowStatusContext(StatusSchema schema) async {
-    final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
-
-    if (path == RoutePath.statusContext) {
-      // already in the status context, replace it
-      context.replace(RoutePath.statusContext.path, extra: schema);
-      return;
-    }
-
-    context.push(RoutePath.statusContext.path, extra: schema);
-  }
-
   // Handle the link tap event, and open the link in the in-app webview.
   void onLinkTap(String? url, Map<String, String> attributes, _) {
     final Uri baseUri = Uri.parse(schema.uri);
@@ -197,7 +183,7 @@ class _StatusState extends ConsumerState<Status> {
       final String path = Uri.decodeFull(uri.path);
       final String tag = path.substring(path.lastIndexOf('/') + 1);
 
-      context.push(RoutePath.hashtagTimeline.path, extra: tag);
+      context.push(RoutePath.hashtag.path, extra: tag);
       return;
     }
 
@@ -205,157 +191,75 @@ class _StatusState extends ConsumerState<Status> {
   }
 }
 
-// The new status button to create a new status.
-class NewStatus extends ConsumerWidget {
-  final double size;
+// The lightweight Status widget
+class StatusLight extends StatelessWidget {
+  final StatusSchema schema;
 
-  const NewStatus({
+  const StatusLight({
     super.key,
-    this.size = 32,
+    required this.schema,
   });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final String? accessToken = ref.watch(currentAccessTokenProvider);
-
-    return IconButton.filledTonal(
-      icon: Icon(Icons.post_add_outlined, size: size),
-      tooltip: AppLocalizations.of(context)?.btn_post ?? "Post",
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      onPressed: accessToken == null ? null : () => onPressed(context, ref),
-    );
-  }
-
-  void onPressed(BuildContext context, WidgetRef ref) async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: NewStatusForm(onPost: (schema) => onPost(context, ref, schema)),
-        );
-      },
-    );
-  }
-
-  void onPost(BuildContext context, WidgetRef ref, NewStatusSchema status) async {
-    final ServerSchema? schema = ref.watch(currentServerProvider);
-    final String? accessToken = ref.watch(currentAccessTokenProvider);
-
-    if (schema == null || accessToken == null) {
-      final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? "No server selected";
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(text),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-      return;
-    }
-
-    await status.create(schema: schema, accessToken: accessToken);
-    if (context.mounted) {
-      logger.d("completed create a new status");
-      context.pop();
-    }
-  }
-}
-
-// The form of the new status that user can fill in to create a new status.
-class NewStatusForm extends ConsumerStatefulWidget {
-  final double maxWidth;
-  final ValueChanged<NewStatusSchema>? onPost;
-
-  const NewStatusForm({
-    super.key,
-    this.maxWidth = 600,
-    this.onPost,
-  });
-
-  @override
-  ConsumerState<NewStatusForm> createState() => _NewStatusFormState();
-}
-
-class _NewStatusFormState extends ConsumerState<NewStatusForm> {
-  final TextEditingController controller = TextEditingController();
-  final formKey = GlobalKey<FormState>();
-
-  VisibilityType vtype = VisibilityType.public;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: widget.maxWidth,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: buildContent(),
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: InkWellDone(
+        onTap: () {
+          final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
+
+          if (path == RoutePath.status) {
+            // already in the status context, replace it
+            context.replace(RoutePath.status.path, extra: schema);
+            return;
+          }
+          context.push(RoutePath.status.path, extra: schema);
+        },
+        child: buildContent(),
       ),
     );
   }
 
+  // Build the main content of the status, including the author, the content
+  // and the possible actions
   Widget buildContent() {
-    final ServerSchema? schema = ref.watch(currentServerProvider);
-
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextFormField(
-          controller: controller,
-          maxLines: 10,
-          minLines: 10,
-          maxLength: schema?.config.statuses.maxCharacters ?? 500,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-          ),
+        buildHeader(),
+        const SizedBox(height: 8),
+        HtmlDone(
+          html: schema.content,
+          emojis: schema.emojis,
         ),
-        const SizedBox(height: 16),
-        Flexible(child: buildActions()),
+
+        Attachments(schemas: schema.attachments),
       ],
     );
   }
 
-  Widget buildActions() {
+  // The header of the status, which includes the account information, the status
+  // posted time, and the visibility status.
+  Widget buildHeader() {
+    final String duration = timeago.format(schema.createdAt, locale: 'en_short');
+
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        VisibilitySelector(type: vtype, onChanged: (type) => setState(() => vtype = type)),
-        const Spacer(),
-        TextButton.icon(
-          icon: Icon(Icons.chat),
-          label: Text(AppLocalizations.of(context)?.btn_post ?? "Post"),
-          style: TextButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.primary,
-          ),
-          onPressed: onPost,
+        Expanded(
+          flex: 10,
+          child: Account(schema: schema.account),
         ),
+
+        const Spacer(),
+
+        Tooltip(
+          message: schema.createdAt.toLocal().toString(),
+          child: Text(duration, style: const TextStyle(color: Colors.grey)),
+        ),
+        const SizedBox(width: 4),
+        StatusVisibility(type: schema.visibility, size: 16, isCompact: true),
       ],
     );
-  }
-
-  void onPost() async {
-    if (controller.text.isEmpty) {
-      // empty content, do nothing
-      return;
-    }
-
-    final NewStatusSchema schema = NewStatusSchema(
-      status: controller.text,
-      mediaIDs: [],
-      pollIDs: [],
-      visibility: vtype,
-    );
-
-    widget.onPost?.call(schema);
   }
 }
 
@@ -370,15 +274,15 @@ class StatusContext extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ServerSchema? server = ref.watch(currentServerProvider);
-    final String? accessToken = ref.watch(currentAccessTokenProvider);
+    final ServerSchema? server = ref.watch(serverProvider);
+    final String? accessToken = ref.watch(accessTokenProvider);
 
     if (server == null) {
       return const SizedBox.shrink();
     }
 
     return FutureBuilder(
-      future: schema.context(domain: server.domain, accessToken: accessToken),
+      future: server.getStatusContext(schema: schema, accessToken: accessToken),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Align(
@@ -391,12 +295,7 @@ class StatusContext extends ConsumerWidget {
         }
 
         final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
-        return Dismissible(
-          key: ValueKey<String>('StatusContext-${schema.id}'),
-          direction: DismissDirection.horizontal,
-          onDismissed: (direction) => context.pop(),
-          child: buildContent(ctx),
-        );
+        return buildContent(ctx);
       }
     );
   }
@@ -405,28 +304,36 @@ class StatusContext extends ConsumerWidget {
   // the previous statuses and the next statuses.
   Widget buildContent(StatusContextSchema ctx) {
     Map<String, int> indents = {schema.id: 1};
+    final List<Widget> children = [
+      ...ctx.ancestors.map((StatusSchema status) {
+        final int indent = indents[status.inReplyToID] ?? 1;
 
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ...ctx.ancestors.map((StatusSchema status) {
-            final int indent = indents[status.inReplyToID] ?? 1;
+        indents[status.id] = indent + 1;
+        return Status(schema: status, indent: indent);
+      }),
 
-            indents[status.id] = indent + 1;
-            return Status(schema: status, indent: indent);
-          }),
+      Status(schema: schema),
 
-          Status(schema: schema),
+      ...ctx.descendants.map((StatusSchema status) {
+        final int indent = indents[status.inReplyToID] ?? 1;
 
-          ...ctx.descendants.map((StatusSchema status) {
-            final int indent = indents[status.inReplyToID] ?? 1;
+        indents[status.id] = indent + 1;
+        return Status(schema: status, indent: indent);
+      }),
+    ];
 
-            indents[status.id] = indent + 1;
-            return Status(schema: status, indent: indent);
-          }),
-        ],
-      ),
+    return ListView.builder(
+      itemCount: children.length,
+      itemBuilder: (context, index) {
+        final Widget child = children[index];
+
+        return Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+          ),
+          child: child,
+        );
+      },
     );
   }
 }

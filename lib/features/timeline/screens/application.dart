@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/models.dart';
 
 class Application extends StatelessWidget {
   final ApplicationSchema? schema;

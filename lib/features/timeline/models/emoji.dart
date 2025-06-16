@@ -1,5 +1,4 @@
 // The custom emoji data schema.
-import 'package:glacial/core.dart';
 
 class EmojiSchema {
   final String shortcode; // The name of the custom emoji.
@@ -17,18 +16,13 @@ class EmojiSchema {
   });
 
   factory EmojiSchema.fromJson(Map<String, dynamic> json) {
-    final Storage storage = Storage();
-
-    final EmojiSchema schema = EmojiSchema(
+    return EmojiSchema(
       shortcode: json['shortcode'] as String,
       url: json['url'] as String,
       staticUrl: json['static_url'] as String,
       visible: json['visible'] as bool? ?? true,
       category: json['category'] as String?,
     );
-
-    storage.saveEmoji(schema.shortcode, schema);
-    return schema;
   }
 }
 

@@ -1,22 +1,29 @@
+// The extensions implementation for the timeline feature.
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:flutter/material.dart';
+import 'package:mime/mime.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
 
 // The in-memory AccountSchema and EmojiSchema cache
 Map<String, EmojiSchema> emojiCache = {};
-Map<ServerSchema, Map<String, AccountSchema>> accountCache = {};
+Map<String, StatusSchema> statusCache = {};
 
-// The extension to the TimelineType enum to list the statuses per timeline type.
-extension StatusLoaderExtensions on ServerSchema {
-  // Fetch the timeline statuss from the server.
-  Future<List<StatusSchema>> fetchTimeline({
-    required TimelineType type,
-    AccountSchema? account,
+// The future function to interact with the status.
+typedef InteractIt = Future<StatusSchema> Function({required String domain, required String accessToken});
+
+extension TimelineExtensions on ServerSchema {
+  // Fetch timeline's statuses based on the timeline type.
+  Future<List<StatusSchema>> fetchTimeline(TimelineType type, {
     String? accessToken,
     String? maxId,
+    String? accountID,
     String? keyword,
   }) async {
     late final Uri uri;
@@ -32,7 +39,7 @@ extension StatusLoaderExtensions on ServerSchema {
         final Map<String, String> query = {};
         query["max_id"] = maxId ?? "";
 
-        uri = UriEx.handle(domain, "/api/v1/accounts/${account?.id ?? '-'}/statuses").replace(queryParameters: query);
+        uri = UriEx.handle(domain, "/api/v1/accounts/${accountID ?? '-'}/statuses").replace(queryParameters: query);
         break;
       case TimelineType.hashtag:
         final Map<String, String> query = {};
@@ -80,194 +87,139 @@ extension StatusLoaderExtensions on ServerSchema {
         break;
     }
 
-    if (!type.supportAnonymous && accessToken == null) {
-      logger.w("access token is required for $this");
-      throw MissingAuth("access token is required for $this");
-    }
-
-    logger.i("try to fetch the timeline from $uri");
     final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
-    final response = await get(uri, headers: type.supportAnonymous ? {} : headers);
+    final response = await get(uri, headers: accessToken == null ? {} : headers);
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
 
-    final ServerSchema server = this;
-    final List<StatusSchema> schemas = json.map((e) => StatusSchema.fromJson(e)).toList();
+    // Save the related info to the in-memory cache.
+    status.map((s) => Storage().saveAccountIntoCache(this, s.account)).toList();
 
-    // Save the status to the in-memory cache.
-    final List<Future<void>> saveFutures = schemas.map((s) => server.saveAccount(s.account)).toList();
-    await Future.wait(saveFutures);
-    return schemas;
+    return status;
   }
 
-  // Get the authenticated user account.
-  Future<AccountSchema?> getAuthUser(String? token) async {
-    if (token == null) {
-      return null;
+  // Get the StatusSchema by its ID.
+  Future<StatusSchema?> getStatus(String id, {String? accessToken}) async {
+    final Storage storage = Storage();
+    final StatusSchema? cachedStatus = storage.loadStatusFromCache(id);
+    if (cachedStatus != null) {
+      return cachedStatus;
     }
 
-    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/verify_credentials");
-    final Map<String, String> headers = {"Authorization": "Bearer $token"};
-    final response = await get(uri, headers: headers);
-
-    if (response.statusCode != 200) {
-      throw RequestError(response);
-    }
-
-    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
-    return AccountSchema.fromJson(json);
-  }
-}
-
-// The in-memory account cache to store the account data.
-extension AccountLoaderExtensions on ServerSchema {
-  Future<AccountSchema?> loadAccount(String? accountID) async {
-    return accountCache[this]?[accountID];
-  }
-
-  Future<void> saveAccount(AccountSchema? account) async {
-    if (account == null) {
-      return;
-    }
-
-    accountCache[this] ??= {};
-    accountCache[this]![account.id] = account;
-  }
-}
-
-// The extension to post the new status to the server.
-extension PostStatusExtensions on NewStatusSchema {
-  Future<StatusSchema> create({ServerSchema? schema, String? accessToken}) async {
-    if (schema == null || accessToken == null) {
-      logger.w("schema and access token are required");
-      throw MissingAuth("schema and access token are required");
-    }
-
-    final Uri uri = UriEx.handle(schema.domain, "/api/v1/statuses");
-    final Map<String, String> headers = {
-      "Authorization": "Bearer $accessToken",
-      "Content-Type": "application/json",
-    };
-
-    final Map<String, dynamic> body = toJson();
-    final response = await post(uri, headers: headers, body: jsonEncode(body));
-
-    logger.i("complete create a new status: ${response.statusCode}");
-    return StatusSchema.fromString(response.body);
-  }
-}
-
-// The future function to interact with the status.
-typedef InteractIt = Future<StatusSchema> Function({required String domain, required String accessToken});
-
-// The extension of the current status to update the status.
-extension InteractiveStatusExtensions on StatusSchema {
-  // Get statuses above and below this status in the thread.
-  Future<StatusContextSchema> context({
-    required String domain,
-    String? accessToken,
-  }) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/$id");
     final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
-    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/$id/context");
+    final response = await get(uri, headers: accessToken != null ? headers : {});
+    final StatusSchema schema = StatusSchema.fromJson(jsonDecode(response.body));
+
+    storage.saveStatusIntoCache(schema);
+    return schema;
+  }
+
+  // Get the context of the status by its ID.
+  Future<StatusContextSchema> getStatusContext({required StatusSchema schema, String? accessToken}) async {
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/${schema.id}/context");
     final response = await get(uri, headers: accessToken == null ? {} : headers);
     final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
 
-    logger.i("fetch context for $this from $uri");
     return StatusContextSchema.fromJson(json);
   }
 
-  // Reblog the status to the Mastodon server
-  Future<StatusSchema> reblogIt({required String domain, required String accessToken}) async {
-    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/$id/reblog");
+  // ======== interaction with statuses ========
+  // The raw action to interact with the status, such as reblog, favourite, or delete.
+  Future<StatusSchema> interactWithStatus(String action, {required StatusSchema schema, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/${schema.id}/$action");
     final Map<String, String> headers = {
       "Authorization": "Bearer $accessToken",
       "Content-Type": "application/json",
     };
 
-    final String body = await sendPostRequest(uri, headers: headers);
+    final response = await post(uri, headers: headers);
+    final String body = response.body;
     return StatusSchema.fromString(body);
   }
 
-  // Unreblog the status to the Mastodon server
-  Future<StatusSchema> unreblogIt({required String domain, required String accessToken}) async {
-    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/$id/unreblog");
-    final Map<String, String> headers = {
-      "Authorization": "Bearer $accessToken",
-      "Content-Type": "application/json",
-    };
+  // Reblog the status to the Mastodon server
+  Future<StatusSchema> reblogIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("reblog", schema: schema, accessToken: accessToken);
+  }
 
-    final String body = await sendPostRequest(uri, headers: headers);
-    return StatusSchema.fromString(body);
+  // Unreblog the status from the Mastodon server
+  Future<StatusSchema> unreblogIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("unreblog", schema: schema, accessToken: accessToken);
   }
 
   // Favourite the status to the Mastodon server
-  Future<StatusSchema> favouriteIt({required String domain, required String accessToken}) async {
-    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/$id/favourite");
-    final Map<String, String> headers = {
-      "Authorization": "Bearer $accessToken",
-      "Content-Type": "application/json",
-    };
-
-    final String body = await sendPostRequest(uri, headers: headers);
-    return StatusSchema.fromString(body);
+  Future<StatusSchema> favouriteIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("favourite", schema: schema, accessToken: accessToken);
   }
 
-  // Unfavourite the status to the Mastodon server
-  Future<StatusSchema> unfavouriteIt({required String domain, required String accessToken}) async {
-    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/$id/unfavourite");
-    final Map<String, String> headers = {
-      "Authorization": "Bearer $accessToken",
-      "Content-Type": "application/json",
-    };
-
-    final String body = await sendPostRequest(uri, headers: headers);
-    return StatusSchema.fromString(body);
+  // Unfavourite the status from the Mastodon server
+  Future<StatusSchema> unfavouriteIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("unfavourite", schema: schema, accessToken: accessToken);
   }
 
   // Bookmark the status to the Mastodon server
-  Future<StatusSchema> bookmarkIt({required String domain, required String accessToken}) async {
-    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/$id/bookmark");
-    final Map<String, String> headers = {
-      "Authorization": "Bearer $accessToken",
-      "Content-Type": "application/json",
-    };
-
-    final String body = await sendPostRequest(uri, headers: headers);
-    return StatusSchema.fromString(body);
+  Future<StatusSchema> bookmarkIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("bookmark", schema: schema, accessToken: accessToken);
   }
 
-  // Unbookmark the status to the Mastodon server
-  Future<StatusSchema> unbookmarkIt({required String domain, required String accessToken}) async {
-    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/$id/unbookmark");
-    final Map<String, String> headers = {
-      "Authorization": "Bearer $accessToken",
-      "Content-Type": "application/json",
-    };
-
-    final String body = await sendPostRequest(uri, headers: headers);
-    return StatusSchema.fromString(body);
+  // Unbookmark the status from the Mastodon server
+  Future<StatusSchema> unbookmarkIt({required StatusSchema schema, required String accessToken}) async {
+    return interactWithStatus("unbookmark", schema: schema, accessToken: accessToken);
   }
 
-  // Delete the status to the Mastodon server
-  Future<void> deleteIt({required String domain, required String accessToken}) async {
-    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/$id");
-    final Map<String, String> headers = {
-      "Authorization": "Bearer $accessToken",
-      "Content-Type": "application/json",
-    };
+  // Delete the status from the Mastodon server
+  Future<void> deleteIt({required StatusSchema schema, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/${schema.id}");
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
 
     await delete(uri, headers: headers);
   }
 
-  Future<String> sendPostRequest(Uri uri, {Map<String, String>? headers, Map<String, String>? body}) async {
-    final response = await post(uri, headers: headers, body: jsonEncode(body));
-    switch (response.statusCode) {
-      case 200:
-        logger.i("call status action from $uri");
-        return response.body;
-      default:
-        logger.e("failed to unbookmark $this from $uri: ${response.statusCode}");
-        throw Exception("failed to unbookmark $this from $uri: ${response.statusCode}");
-    }
+  // Create a new status on the Mastodon server
+  Future<StatusSchema> createStatus({
+    required NewStatusSchema status,
+    required String accessToken,
+    required String ikey,
+  }) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+      "Idempotency-Key": ikey,
+    };
+    final String body = jsonEncode(status.toJson());
+
+    final response = await post(uri, headers: headers, body: body);
+    final String responseBody = response.body;
+
+    return StatusSchema.fromString(responseBody);
+  }
+
+  // Upload a media file to the Mastodon server
+  Future<AttachmentSchema> uploadMedia({required String filepath, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v2/media");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "multipart/form-data",
+    };
+
+    final String mime = lookupMimeType(filepath) ?? "application/octet-stream";
+    final http.MultipartFile multipartFile = await http.MultipartFile.fromPath(
+      'file',
+      filepath,
+      contentType: http_parser.MediaType.parse(mime),
+    );
+
+    final http.MultipartRequest request = http.MultipartRequest('POST', uri)
+      ..headers.addAll(headers)
+      ..files.add(multipartFile);
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+
+    return AttachmentSchema.fromJson(json);
   }
 }
 
@@ -360,6 +312,24 @@ extension EmojiExtensions on Storage {
   // Purge all the cached accounts.
   void purgeCachedEmojis() {
     emojiCache.clear();
+  }
+}
+
+// The extension of the Storage to save and load the status data.
+extension StatusExtensions on Storage {
+  // Save the status schema to the cache.
+  void saveStatusIntoCache(StatusSchema schema) {
+    statusCache[schema.id] = schema;
+  }
+
+  // Get the status schema from the cache.
+  StatusSchema? loadStatusFromCache(String id) {
+    return statusCache[id];
+  }
+
+  // Purge all the cached statuses.
+  void purgeCachedStatuses() {
+    statusCache.clear();
   }
 }
 

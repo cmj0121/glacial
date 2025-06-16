@@ -68,7 +68,8 @@ import 'app_localizations_zh.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -76,7 +77,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -88,12 +90,13 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
@@ -104,26 +107,26 @@ abstract class AppLocalizations {
     Locale('ja'),
     Locale('ko'),
     Locale('pt'),
-    Locale('zh')
+    Locale('zh'),
   ];
 
   /// No description provided for @txt_app_name.
   ///
   /// In en, this message translates to:
-  /// **'glacial'**
+  /// **'Glacial'**
   String get txt_app_name;
 
-  /// No description provided for @txt_search_mastodon.
+  /// No description provided for @txt_invalid_instance.
   ///
   /// In en, this message translates to:
-  /// **'mastodon.social'**
-  String get txt_search_mastodon;
+  /// **'Invalid Mastodon server'**
+  String get txt_invalid_instance;
 
-  /// No description provided for @txt_search_hint.
+  /// No description provided for @txt_server_contact.
   ///
   /// In en, this message translates to:
-  /// **'Enter to Search ...'**
-  String get txt_search_hint;
+  /// **'Contact'**
+  String get txt_server_contact;
 
   /// No description provided for @txt_search_helper.
   ///
@@ -137,23 +140,47 @@ abstract class AppLocalizations {
   /// **'Search history'**
   String get txt_search_history;
 
-  /// No description provided for @txt_invalid_instance.
+  /// No description provided for @txt_search_mastodon.
   ///
   /// In en, this message translates to:
-  /// **'Invalid Mastodon server'**
-  String get txt_invalid_instance;
-
-  /// No description provided for @txt_server_contact.
-  ///
-  /// In en, this message translates to:
-  /// **'Contact Info'**
-  String get txt_server_contact;
+  /// **'mastodon.social'**
+  String get txt_search_mastodon;
 
   /// No description provided for @txt_server_rules.
   ///
   /// In en, this message translates to:
-  /// **'Server Rules'**
+  /// **'Server rules'**
   String get txt_server_rules;
+
+  /// No description provided for @txt_show_less.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get txt_show_less;
+
+  /// No description provided for @txt_show_more.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get txt_show_more;
+
+  /// No description provided for @txt_trends_uses.
+  ///
+  /// In en, this message translates to:
+  /// **'{uses} used in the past days'**
+  String txt_trends_uses(Object uses);
+
+  /// No description provided for @txt_no_results_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found for {keyword}'**
+  String txt_no_results_found(Object keyword);
+
+  /// No description provided for @txt_copied_to_clipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy to Clipboard'**
+  String get txt_copied_to_clipboard;
 
   /// No description provided for @txt_public.
   ///
@@ -179,83 +206,29 @@ abstract class AppLocalizations {
   /// **'Direct'**
   String get txt_direct;
 
-  /// No description provided for @txt_copied_to_clipboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy to Clipboard'**
-  String get txt_copied_to_clipboard;
-
-  /// No description provided for @txt_trends_uses.
-  ///
-  /// In en, this message translates to:
-  /// **'{uses} used in the past days'**
-  String txt_trends_uses(Object uses);
-
-  /// No description provided for @txt_show_less.
-  ///
-  /// In en, this message translates to:
-  /// **'Show less'**
-  String get txt_show_less;
-
-  /// No description provided for @txt_show_more.
-  ///
-  /// In en, this message translates to:
-  /// **'Show more'**
-  String get txt_show_more;
-
-  /// No description provided for @txt_user_profile.
-  ///
-  /// In en, this message translates to:
-  /// **'User {text} Profile'**
-  String txt_user_profile(Object text);
-
-  /// No description provided for @txt_no_results_found.
-  ///
-  /// In en, this message translates to:
-  /// **'No results found for {keyword}'**
-  String txt_no_results_found(Object keyword);
-
   /// No description provided for @btn_clean_all.
   ///
   /// In en, this message translates to:
   /// **'Clean All'**
   String get btn_clean_all;
 
-  /// No description provided for @btn_back_to_explorer.
-  ///
-  /// In en, this message translates to:
-  /// **'Back to Explorer'**
-  String get btn_back_to_explorer;
-
-  /// No description provided for @btn_sign_in.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign In'**
-  String get btn_sign_in;
-
   /// No description provided for @btn_timeline.
   ///
   /// In en, this message translates to:
-  /// **'Timeline'**
+  /// **'Timelines'**
   String get btn_timeline;
 
   /// No description provided for @btn_trending.
   ///
   /// In en, this message translates to:
-  /// **'Trending'**
+  /// **'Trending now'**
   String get btn_trending;
 
   /// No description provided for @btn_notifications.
   ///
   /// In en, this message translates to:
-  /// **'Notification'**
+  /// **'Notifications'**
   String get btn_notifications;
-
-  /// No description provided for @btn_explore.
-  ///
-  /// In en, this message translates to:
-  /// **'Explore'**
-  String get btn_explore;
 
   /// No description provided for @btn_settings.
   ///
@@ -263,125 +236,77 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get btn_settings;
 
-  /// No description provided for @btn_post.
+  /// No description provided for @btn_management.
   ///
   /// In en, this message translates to:
-  /// **'Post'**
-  String get btn_post;
-
-  /// No description provided for @btn_home_timeline.
-  ///
-  /// In en, this message translates to:
-  /// **'Home'**
-  String get btn_home_timeline;
-
-  /// No description provided for @btn_local_timeline.
-  ///
-  /// In en, this message translates to:
-  /// **'Local'**
-  String get btn_local_timeline;
-
-  /// No description provided for @btn_federal_timeline.
-  ///
-  /// In en, this message translates to:
-  /// **'Federal'**
-  String get btn_federal_timeline;
-
-  /// No description provided for @btn_public_timeline.
-  ///
-  /// In en, this message translates to:
-  /// **'Public'**
-  String get btn_public_timeline;
-
-  /// No description provided for @btn_bookmarks_timeline.
-  ///
-  /// In en, this message translates to:
-  /// **'Bookmarks'**
-  String get btn_bookmarks_timeline;
-
-  /// No description provided for @btn_favourites_timeline.
-  ///
-  /// In en, this message translates to:
-  /// **'Favourites'**
-  String get btn_favourites_timeline;
-
-  /// No description provided for @btn_hashtag_timeline.
-  ///
-  /// In en, this message translates to:
-  /// **'Hashtag'**
-  String get btn_hashtag_timeline;
-
-  /// No description provided for @btn_reply.
-  ///
-  /// In en, this message translates to:
-  /// **'Reply'**
-  String get btn_reply;
-
-  /// No description provided for @btn_reblog.
-  ///
-  /// In en, this message translates to:
-  /// **'Reblog'**
-  String get btn_reblog;
-
-  /// No description provided for @btn_favourite.
-  ///
-  /// In en, this message translates to:
-  /// **'Favourite'**
-  String get btn_favourite;
-
-  /// No description provided for @btn_bookmark.
-  ///
-  /// In en, this message translates to:
-  /// **'Bookmark'**
-  String get btn_bookmark;
-
-  /// No description provided for @btn_share.
-  ///
-  /// In en, this message translates to:
-  /// **'Share'**
-  String get btn_share;
-
-  /// No description provided for @btn_mute.
-  ///
-  /// In en, this message translates to:
-  /// **'Mute'**
-  String get btn_mute;
-
-  /// No description provided for @btn_block.
-  ///
-  /// In en, this message translates to:
-  /// **'Block'**
-  String get btn_block;
-
-  /// No description provided for @btn_delete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get btn_delete;
+  /// **'Administration'**
+  String get btn_management;
 
   /// No description provided for @btn_trends_links.
   ///
   /// In en, this message translates to:
-  /// **'Hot News'**
+  /// **'News'**
   String get btn_trends_links;
 
   /// No description provided for @btn_trends_statuses.
   ///
   /// In en, this message translates to:
-  /// **'Statuses'**
+  /// **'Posts'**
   String get btn_trends_statuses;
 
   /// No description provided for @btn_trends_tags.
   ///
   /// In en, this message translates to:
-  /// **'Tags'**
+  /// **'Hashtags'**
   String get btn_trends_tags;
 
-  /// No description provided for @btn_management.
+  /// No description provided for @btn_home.
   ///
   /// In en, this message translates to:
-  /// **'Management'**
-  String get btn_management;
+  /// **'Home'**
+  String get btn_home;
+
+  /// No description provided for @btn_user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get btn_user;
+
+  /// No description provided for @btn_local.
+  ///
+  /// In en, this message translates to:
+  /// **'This server'**
+  String get btn_local;
+
+  /// No description provided for @btn_federal.
+  ///
+  /// In en, this message translates to:
+  /// **'Other servers'**
+  String get btn_federal;
+
+  /// No description provided for @btn_public.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get btn_public;
+
+  /// No description provided for @btn_bookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks'**
+  String get btn_bookmarks;
+
+  /// No description provided for @btn_favourites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get btn_favourites;
+
+  /// No description provided for @btn_post.
+  ///
+  /// In en, this message translates to:
+  /// **'New post'**
+  String get btn_post;
 
   /// No description provided for @btn_follow_mutual.
   ///
@@ -407,11 +332,23 @@ abstract class AppLocalizations {
   /// **'Follow'**
   String get btn_follow;
 
+  /// No description provided for @btn_block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get btn_block;
+
   /// No description provided for @btn_unblock.
   ///
   /// In en, this message translates to:
   /// **'Unblock'**
   String get btn_unblock;
+
+  /// No description provided for @btn_mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get btn_mute;
 
   /// No description provided for @btn_unmute.
   ///
@@ -425,12 +362,6 @@ abstract class AppLocalizations {
   /// **'Report'**
   String get btn_report;
 
-  /// No description provided for @btn_edit_profile.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Profile'**
-  String get btn_edit_profile;
-
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:
@@ -438,7 +369,8 @@ abstract class AppLocalizations {
   String get dots;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -447,31 +379,46 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['de', 'en', 'es', 'fr', 'ja', 'ko', 'pt', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'de',
+    'en',
+    'es',
+    'fr',
+    'ja',
+    'ko',
+    'pt',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'de': return AppLocalizationsDe();
-    case 'en': return AppLocalizationsEn();
-    case 'es': return AppLocalizationsEs();
-    case 'fr': return AppLocalizationsFr();
-    case 'ja': return AppLocalizationsJa();
-    case 'ko': return AppLocalizationsKo();
-    case 'pt': return AppLocalizationsPt();
-    case 'zh': return AppLocalizationsZh();
+    case 'de':
+      return AppLocalizationsDe();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

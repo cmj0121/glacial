@@ -12,45 +12,28 @@ enum StatusInteraction {
   block,
   delete;
 
-  IconData get icon {
-    switch (this) {
-      case reply:
-        return Icons.turn_left_outlined;
-      case reblog:
-        return Icons.repeat_outlined;
-      case favourite:
-        return Icons.star_outline_outlined;
-      case bookmark:
-        return Icons.bookmark_outline;
-      case share:
-        return Icons.share_outlined;
-      case mute:
-        return Icons.volume_off_outlined;
-      case block:
-        return Icons.block_outlined;
-      case delete:
-        return Icons.delete_outline;
-    }
+  String tooltip(BuildContext context) {
+    return name;
   }
 
-  IconData get activeIcon {
+  IconData icon({bool active = false}) {
     switch (this) {
       case reply:
-        return Icons.turn_left;
+        return active ? Icons.turn_left : Icons.turn_left_outlined;
       case reblog:
-        return Icons.repeat;
+        return active ? Icons.repeat : Icons.repeat_outlined;
       case favourite:
-        return Icons.star;
+        return active ? Icons.star : Icons.star_outline_outlined;
       case bookmark:
-        return Icons.bookmark;
+        return active ? Icons.bookmark : Icons.bookmark_outline_outlined;
       case share:
-        return Icons.share;
+        return active ? Icons.share : Icons.share_outlined;
       case mute:
-        return Icons.volume_off;
+        return active ? Icons.volume_off : Icons.volume_mute_outlined;
       case block:
-        return Icons.block;
+        return active ? Icons.block : Icons.block_outlined;
       case delete:
-        return Icons.delete;
+        return active ? Icons.delete : Icons.delete_outline_outlined;
     }
   }
 

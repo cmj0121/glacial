@@ -1,8 +1,9 @@
-// The Timeline widget, including the related Status and Account widgets.
+// The Timeline widget and related widgets.
 
 export 'application.dart';
 export 'attachment.dart';
 export 'interaction.dart';
+export 'post.dart';
 export 'status.dart';
 export 'timeline.dart';
 export 'visibility.dart';

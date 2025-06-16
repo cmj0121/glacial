@@ -1,5 +1,5 @@
 // The trends records of the links.
-import 'package:glacial/features/trends/models/core.dart';
+import 'package:glacial/features/models.dart';
 
 // The trends of the links that have been shared more than others.
 class LinkSchema {
