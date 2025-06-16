@@ -46,8 +46,8 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final ServerSchema? schema = ref.watch(serverProvider);
-    final String? accessToken = ref.watch(accessTokenProvider);
+    final ServerSchema? schema = ref.read(serverProvider);
+    final String? accessToken = ref.read(accessTokenProvider);
     final TimelineType initType = accessToken == null ? TimelineType.local : TimelineType.home;
 
     if (schema == null) {
