@@ -196,9 +196,13 @@ class MediaHero extends StatelessWidget {
     return Dismissible(
       key: const Key('media-hero-dismiss'),
       direction: DismissDirection.vertical,
-      child: FittedBox(
-        fit: BoxFit.contain,
-        child: InteractiveViewer(child: child),
+      child: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: InteractiveViewer(child: child),
+        ),
       ),
       onDismissed: (direction) {
         // Pop the media when the user swipes it away.
