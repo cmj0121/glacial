@@ -190,6 +190,10 @@ class _TrendsState extends State<Trends> {
       offset: trends.length,
     );
 
+    if (mounted == false) {
+      return;
+    }
+
     setState(() {
       trends.addAll(newStatuses);
       isLoading = false;

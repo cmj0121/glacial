@@ -242,7 +242,13 @@ class BackableView extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        Flexible(child: child),
+        Flexible(
+          child: Dismissible(
+            key: UniqueKey(),
+            onDismissed: (direction) => context.pop(),
+            child: child,
+          ),
+        ),
       ],
     );
   }
