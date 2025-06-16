@@ -232,7 +232,7 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
     await storage.reloadProvider(ref);
 
     if (mounted) {
-      context.push(RoutePath.timeline.path, extra: schema);
+      context.go(RoutePath.timeline.path, extra: schema);
     }
   }
 

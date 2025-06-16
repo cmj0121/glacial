@@ -14,7 +14,7 @@ class HistoryLineChart extends StatelessWidget {
     super.key,
     required this.schemas,
     this.maxHeight = 30,
-    this.maxWidth = 120,
+    this.maxWidth = 80,
   });
 
   @override

@@ -195,10 +195,14 @@ class MediaHero extends StatelessWidget {
   Widget buildHero(BuildContext context) {
     return Dismissible(
       key: const Key('media-hero-dismiss'),
-      direction: DismissDirection.horizontal,
-      child: FittedBox(
-        fit: BoxFit.contain,
-        child: InteractiveViewer(child: child),
+      direction: DismissDirection.vertical,
+      child: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: InteractiveViewer(child: child),
+        ),
       ),
       onDismissed: (direction) {
         // Pop the media when the user swipes it away.
@@ -242,7 +246,13 @@ class BackableView extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        Flexible(child: child),
+        Flexible(
+          child: Dismissible(
+            key: UniqueKey(),
+            onDismissed: (direction) => context.pop(),
+            child: child,
+          ),
+        ),
       ],
     );
   }
