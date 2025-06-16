@@ -249,6 +249,7 @@ class BackableView extends StatelessWidget {
         Flexible(
           child: Dismissible(
             key: UniqueKey(),
+            direction: DismissDirection.startToEnd,
             onDismissed: (direction) => context.pop(),
             child: child,
           ),
