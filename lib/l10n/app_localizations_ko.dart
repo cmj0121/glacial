@@ -112,5 +112,32 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_post => '새 게시물';
 
   @override
+  String get btn_follow_mutual => '맞팔로우';
+
+  @override
+  String get btn_following => '팔로잉 중';
+
+  @override
+  String get btn_followed_by => '팔로워';
+
+  @override
+  String get btn_follow => '팔로우';
+
+  @override
+  String get btn_block => '차단';
+
+  @override
+  String get btn_unblock => '차단 해제';
+
+  @override
+  String get btn_mute => '음소거';
+
+  @override
+  String get btn_unmute => '음소거 해제';
+
+  @override
+  String get btn_report => '신고';
+
+  @override
   String get dots => '...';
 }

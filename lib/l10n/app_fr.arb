@@ -33,5 +33,14 @@
   "btn_bookmarks": "Marque-pages",
   "btn_favourites": "Favoris",
   "btn_post": "Nouveau message",
+  "btn_follow_mutual": "Abonnement mutuel",
+  "btn_following": "Abonné",
+  "btn_followed_by": "Abonné par",
+  "btn_follow": "Suivre",
+  "btn_block": "Bloquer",
+  "btn_unblock": "Débloquer",
+  "btn_mute": "Mettre en sourdine",
+  "btn_unmute": "Réactiver le son",
+  "btn_report": "Signaler",
   "dots": "..."
 }

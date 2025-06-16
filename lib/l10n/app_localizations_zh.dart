@@ -112,5 +112,32 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_post => '嘟出去';
 
   @override
+  String get btn_follow_mutual => '互相跟隨';
+
+  @override
+  String get btn_following => '跟隨中';
+
+  @override
+  String get btn_followed_by => '被跟隨';
+
+  @override
+  String get btn_follow => '跟隨';
+
+  @override
+  String get btn_block => '封鎖';
+
+  @override
+  String get btn_unblock => '解除封鎖';
+
+  @override
+  String get btn_mute => '靜音';
+
+  @override
+  String get btn_unmute => '解除靜音';
+
+  @override
+  String get btn_report => '檢舉';
+
+  @override
   String get dots => '...';
 }

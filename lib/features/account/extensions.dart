@@ -30,6 +30,120 @@ extension AccountExtensions on ServerSchema {
     Storage().saveAccountIntoCache(this, account);
     return account;
   }
+
+  // Get the relationships of the accounts with the current user.
+  Future<List<RelationshipSchema>> relationship({
+    required String accessToken,
+    required List<AccountSchema> accounts,
+  }) async {
+    final Map<String, String> query = {'id[]': accounts.map((e) => e.id).join(',')};
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/relationships").replace(queryParameters: query);
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    return json.map((e) => RelationshipSchema.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  // Follow the account from the Mastodon server.
+  Future<RelationshipSchema> follow({required AccountSchema account, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/${account.id}/follow");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  // Unfollow the account from the Mastodon server.
+  Future<RelationshipSchema> unfollow({required AccountSchema account, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/${account.id}/unfollow");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  // Block the account from the Mastodon server.
+  Future<RelationshipSchema> block({required AccountSchema account, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/${account.id}/block");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  // Unblock the account from the Mastodon server.
+  Future<RelationshipSchema> unblock({required AccountSchema account, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/${account.id}/unblock");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  // Mute the account from the Mastodon server.
+  Future<RelationshipSchema> mute({required AccountSchema account, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/${account.id}/mute");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  // Unmute the account from the Mastodon server.
+  Future<RelationshipSchema> unmute({required AccountSchema account, required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/${account.id}/unmute");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+
+    final response = await post(uri, headers: headers);
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
 }
 
 // The extension to the TimelineType enum to list the statuses per timeline type.

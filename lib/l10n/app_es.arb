@@ -33,5 +33,14 @@
   "btn_bookmarks": "Marcadores",
   "btn_favourites": "Favoritos",
   "btn_post": "Publicar",
+  "btn_follow_mutual": "Mutuo",
+  "btn_following": "Siguiendo",
+  "btn_followed_by": "Seguido por",
+  "btn_follow": "Seguir",
+  "btn_block": "Bloquear",
+  "btn_unblock": "Desbloquear",
+  "btn_mute": "Silenciar",
+  "btn_unmute": "Reactivar sonido",
+  "btn_report": "Reportar",
   "dots": "..."
 }

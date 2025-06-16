@@ -112,5 +112,32 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_post => '投稿';
 
   @override
+  String get btn_follow_mutual => '相互フォロー';
+
+  @override
+  String get btn_following => 'フォロー中';
+
+  @override
+  String get btn_followed_by => 'フォロワー';
+
+  @override
+  String get btn_follow => 'フォロー';
+
+  @override
+  String get btn_block => 'ブロック';
+
+  @override
+  String get btn_unblock => 'ブロック解除';
+
+  @override
+  String get btn_mute => 'ミュート';
+
+  @override
+  String get btn_unmute => 'ミュート解除';
+
+  @override
+  String get btn_report => '報告';
+
+  @override
   String get dots => '...';
 }

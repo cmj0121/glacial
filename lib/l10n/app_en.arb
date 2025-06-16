@@ -33,5 +33,14 @@
   "btn_bookmarks": "Bookmarks",
   "btn_favourites": "Favorites",
   "btn_post": "New post",
+  "btn_follow_mutual": "Mutual",
+  "btn_following": "Following",
+  "btn_followed_by": "Followed By",
+  "btn_follow": "Follow",
+  "btn_block": "Block",
+  "btn_unblock": "Unblock",
+  "btn_mute": "Mute",
+  "btn_unmute": "Unmute",
+  "btn_report": "Report",
   "dots": "..."
 }

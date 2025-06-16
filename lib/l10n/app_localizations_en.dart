@@ -112,5 +112,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_post => 'New post';
 
   @override
+  String get btn_follow_mutual => 'Mutual';
+
+  @override
+  String get btn_following => 'Following';
+
+  @override
+  String get btn_followed_by => 'Followed By';
+
+  @override
+  String get btn_follow => 'Follow';
+
+  @override
+  String get btn_block => 'Block';
+
+  @override
+  String get btn_unblock => 'Unblock';
+
+  @override
+  String get btn_mute => 'Mute';
+
+  @override
+  String get btn_unmute => 'Unmute';
+
+  @override
+  String get btn_report => 'Report';
+
+  @override
   String get dots => '...';
 }

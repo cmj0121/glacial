@@ -123,21 +123,21 @@ class AccountProfile extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    return buildContent(context, server);
+    return buildContent(context, ref, server);
   }
 
-  Widget buildContent(BuildContext context, ServerSchema server) {
+  Widget buildContent(BuildContext context, WidgetRef ref, ServerSchema server) {
     return Timeline(
       schema: server,
       type: TimelineType.user,
       account: schema,
-      child: buildTimelineHeader(context, server),
+      child: buildTimelineHeader(context, ref, server),
     );
   }
 
   // Build the header of the account's timeline, including the user name and
   // the banner.
-  Widget buildTimelineHeader(BuildContext context, ServerSchema server) {
+  Widget buildTimelineHeader(BuildContext context, WidgetRef ref, ServerSchema server) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -145,7 +145,7 @@ class AccountProfile extends ConsumerWidget {
       children: [
         buildBanner(context),
         const SizedBox(height: 16),
-        buildName(context, server),
+        buildName(context, ref, server),
         HtmlDone(
           html: schema.note,
           emojis: schema.emojis,
@@ -156,8 +156,9 @@ class AccountProfile extends ConsumerWidget {
   }
 
   // Show the user name and the account name.
-  Widget buildName(BuildContext context, ServerSchema server) {
+  Widget buildName(BuildContext context, WidgetRef ref, ServerSchema server) {
     final String acct = schema.acct.contains('@') ? schema.acct : '${schema.username}@${server.domain}';
+    final AccountSchema? account = ref.watch(accountProvider);
 
     return Row(
       children: [
@@ -170,6 +171,10 @@ class AccountProfile extends ConsumerWidget {
           ),
           child: Text(acct),
         ),
+
+        const Spacer(),
+        account?.id == schema.id ? const SizedBox.shrink() : RelationshipBuilder(schema: schema),
+        const SizedBox(width: 12),
       ],
     );
   }
