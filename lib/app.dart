@@ -134,7 +134,14 @@ class GlacialApp extends ConsumerWidget {
   RouteBase homeRoutes(WidgetRef ref) {
     return ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        return GlacialHome(child: child);
+        late final ServerSchema? server = ref.watch(serverProvider);
+
+        if (server == null) {
+          logger.w("No server selected, cannot build the home page.");
+          return const WIP();
+        }
+
+        return GlacialHome(server: server, child: child);
       },
       routes: [
         // The glacial timeline page to show the server timeline in the selected

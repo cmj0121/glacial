@@ -23,6 +23,7 @@ class AccountSchema {
   final int statusesCount;          // How many statuses are attached to this account.
   final int followersCount;         // The reported followers of this profile.
   final int followingCount;         // The reported follows of this profile.
+  final RoleSchema? role;           // The role of the account, if any.
 
   const AccountSchema({
     required this.id,
@@ -45,6 +46,7 @@ class AccountSchema {
     required this.statusesCount,
     required this.followersCount,
     required this.followingCount,
+    this.role,
   });
 
   factory AccountSchema.fromJson(Map<String, dynamic> json) {
@@ -69,6 +71,7 @@ class AccountSchema {
       statusesCount: json['statuses_count'] as int,
       followersCount: json['followers_count'] as int,
       followingCount: json['following_count'] as int,
+      role: json['role'] == null ? null : RoleSchema.fromJson(json['role'] as Map<String, dynamic>),
     );
   }
 }

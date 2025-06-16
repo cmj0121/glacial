@@ -10,10 +10,12 @@ import 'package:glacial/features/screens.dart';
 // The main home page of the app, interacts with the current server and show the
 // server timeline and other features.
 class GlacialHome extends ConsumerStatefulWidget {
+  final ServerSchema server;
   final Widget child;
 
   const GlacialHome({
     super.key,
+    required this.server,
     required this.child,
   });
 
@@ -26,23 +28,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   final double sidebarSize = 32;
   final Storage storage = Storage();
 
-  late final List<SidebarButtonType> actions;
-  late final ServerSchema schema;
-
-  @override
-  void initState() {
-    super.initState();
-
-    late final ServerSchema? schema = ref.read(serverProvider);
-
-    if (schema == null) {
-      logger.w("No server selected, but it's required to show the home page.");
-      return;
-    }
-
-    this.schema = schema;
-    actions = SidebarButtonType.values;
-  }
+  late final List<SidebarButtonType> actions = SidebarButtonType.values;
 
   @override
   Widget build(BuildContext context) {
@@ -54,13 +40,13 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(appBarHeight),
             child: AppBar(
-              leading: UserAvatar(schema: schema),
+              leading: UserAvatar(schema: widget.server),
               title: Align(
                 alignment: Alignment.center,
                 child: Tooltip(
-                  message: schema.desc,
+                  message: widget.server.desc,
                   child: Text(
-                    schema.title,
+                    widget.server.title,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
@@ -159,6 +145,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         final int index = actions.indexOf(action);
         final bool isSelected = action.route == route;
         final bool isEnabled = account != null || action.supportAnonymous;
+        final bool isNotImplemented = [SidebarButtonType.settings, SidebarButtonType.admin].contains(action);
         late final Widget icon;
 
         switch (action) {
@@ -176,7 +163,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           color: isSelected ? Theme.of(context).colorScheme.primary : null,
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: isEnabled ? () => onSelect(index) : null,
+          onPressed: isEnabled && !isNotImplemented ? () => onSelect(index) : null,
         );
       }).toList();
   }
