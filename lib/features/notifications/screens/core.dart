@@ -184,6 +184,34 @@ class SingleNotification extends ConsumerWidget {
             return StatusLight(schema: status);
           },
         );
+      case NotificationType.follow:
+        return FutureBuilder(
+          future: server.getAccounts(schema.accounts, accessToken: accessToken),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const ClockProgressIndicator();
+            } else if (snapshot.hasError || !snapshot.hasData) {
+              logger.w("failed to load accounts for notification: ${snapshot.error}");
+              return const SizedBox.shrink();
+            }
+
+            final List<AccountSchema> accounts = snapshot.data!;
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.person_add, color: Theme.of(context).colorScheme.tertiary, size: 24),
+                const SizedBox(height: 8),
+                Column(
+                  children: accounts.map((a) => ColorFiltered(
+                    colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
+                    child: Account(schema: a))
+                  ).toList(),
+                ),
+              ],
+            );
+          },
+        );
       default:
         return Text("not implemented yet: ${schema.type}", style: TextStyle(color: Colors.red));
     }

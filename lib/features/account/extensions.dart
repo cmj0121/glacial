@@ -31,6 +31,25 @@ extension AccountExtensions on ServerSchema {
     return account;
   }
 
+  // Get the account by ID from the Mastodon server.
+  Future<List<AccountSchema>> getAccounts(List<String> ids, {String? accessToken}) async {
+    if (ids.isEmpty) {
+      return [];
+    }
+
+    final Map<String, String> query = {'id[]': ids.join(',')};
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts").replace(queryParameters: query);
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    return json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
   // Get the relationships of the accounts with the current user.
   Future<List<RelationshipSchema>> relationship({
     required String accessToken,
