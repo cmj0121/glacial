@@ -178,7 +178,7 @@ extension TimelineExtensions on ServerSchema {
   }
 
   // Create a new status on the Mastodon server
-  Future<StatusSchema> createStatus({
+  Future<void> createStatus({
     required NewStatusSchema status,
     required String accessToken,
     required String ikey,
@@ -191,10 +191,7 @@ extension TimelineExtensions on ServerSchema {
     };
     final String body = jsonEncode(status.toJson());
 
-    final response = await post(uri, headers: headers, body: body);
-    final String responseBody = response.body;
-
-    return StatusSchema.fromString(responseBody);
+    await post(uri, headers: headers, body: body);
   }
 
   // Upload a media file to the Mastodon server

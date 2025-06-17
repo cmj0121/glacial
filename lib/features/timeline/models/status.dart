@@ -116,6 +116,7 @@ class NewStatusSchema {
   final String? spoiler;           // Text to show when the status is marked as sensitive.
   final VisibilityType visibility; // The visibility of the status. Defaults to public.
   final String? inReplyToID;       // ID of the status being replied to, if status is a reply.
+  final DateTime? scheduledAt;    // The time when the status should be scheduled to be posted.
 
   const NewStatusSchema({
     required this.status,
@@ -125,6 +126,7 @@ class NewStatusSchema {
     this.spoiler,
     this.visibility = VisibilityType.public,
     this.inReplyToID,
+    this.scheduledAt,
   });
 
   Map<String, dynamic> toJson() {
@@ -136,6 +138,7 @@ class NewStatusSchema {
       'spoiler_text': spoiler,
       'visibility': visibility.name,
       'in_reply_to_id': inReplyToID,
+      'scheduled_at': scheduledAt?.toIso8601String(),
     };
 
     // only return the non-null values

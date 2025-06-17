@@ -2,6 +2,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -31,6 +32,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
 
   VisibilityType vtype = VisibilityType.public;
   List<AttachmentSchema> medias = [];
+  DateTime? scheduledAt;
 
   @override
   void initState() {
@@ -69,20 +71,22 @@ class _StatusFormState extends ConsumerState<StatusForm> {
         ),
       );
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        replyWidget,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          replyWidget,
 
-        ClipRRect(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: buildContent(),
+          ClipRRect(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: buildContent(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -178,6 +182,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
             foregroundColor: Theme.of(context).colorScheme.primary,
           ),
           onPressed: onPost,
+          onLongPress: onSchedulePost,
         ),
       ],
     );
@@ -219,6 +224,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
       pollIDs: [],
       visibility: vtype,
       inReplyToID: widget.replyTo?.id,
+      scheduledAt: scheduledAt,
     );
 
     final ServerSchema? server = ref.watch(serverProvider);
@@ -240,6 +246,23 @@ class _StatusFormState extends ConsumerState<StatusForm> {
     if (mounted) {
       context.pop();
     }
+  }
+
+  // The callback when the user long presses the post button to schedule the post.
+  void onSchedulePost() async {
+    final DateTime now = DateTime.now();
+    final DateTime? datetime = await picker.DatePicker.showDateTimePicker(
+      context,
+      currentTime: now,
+    );
+    if (datetime == null) {
+      logger.d("No date selected for scheduling the post.");
+      return;
+    }
+
+    logger.d("scheduling post at ${datetime.toUtc().toIso8601String()}");
+    setState(() => scheduledAt = datetime.toUtc());
+    onPost();
   }
 }
 
