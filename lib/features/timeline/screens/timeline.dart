@@ -157,39 +157,51 @@ class _TimelineState extends ConsumerState<Timeline> {
     );
   }
 
-  // Build the list of the statuses in the current selected Mastodon server and
-  // timeline type.
+  // Build the list of the statuses and optionally header widget.
   Widget buildContent() {
     return RefreshIndicator(
       onRefresh: onRefresh,
-      child: ListView.builder(
-        controller: controller,
-        shrinkWrap: true,
-        itemCount: statuses.length + 1,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return widget.child ?? const SizedBox.shrink();
-          }
-
-          final int trueIndex = index - 1;
-          final StatusSchema status = statuses[trueIndex];
-
-          return Container(
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(right: 16),
-              child: Status(
-                schema: status.reblog ?? status,
-                reblogFrom: status.reblog != null ? status.account : null,
-                replyToAccountID: status.inReplyToAccountID,
-                onDeleted: () => onDeleted(trueIndex),
-              ),
-            ),
-          );
-        },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          widget.child ?? const SizedBox.shrink(),
+          Expanded(child: buildStatuses()),
+        ],
       ),
+
+    );
+  }
+
+  // Build the list of the statuses in the current selected Mastodon server.
+  Widget buildStatuses() {
+    if (statuses.isEmpty) {
+      const SizedBox.shrink();
+    }
+
+    return ListView.builder(
+      controller: controller,
+      shrinkWrap: true,
+      itemCount: statuses.length,
+      itemBuilder: (context, index) {
+        final StatusSchema status = statuses[index];
+        final Widget child = Status(
+          key: ValueKey(status.id),
+          schema: status.reblog ?? status,
+          reblogFrom: status.reblog != null ? status.account : null,
+          replyToAccountID: status.inReplyToAccountID,
+          onDeleted: () => setState(() => statuses.removeAt(index)),
+        );
+
+        return Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: child,
+          ),
+        );
+      },
     );
   }
 
@@ -237,11 +249,6 @@ class _TimelineState extends ConsumerState<Timeline> {
 
       statuses.addAll(newStatuses);
     });
-  }
-
-  // Reload the timeline when the status is deleted.
-  void onDeleted(int index) async {
-    setState(() => statuses.removeAt(index));
   }
 }
 

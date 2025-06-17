@@ -276,6 +276,11 @@ class _InteractionState extends ConsumerState<Interaction> {
           ),
         );
         break;
+      case StatusInteraction.delete:
+        await server.deleteIt(schema: widget.schema, accessToken: accessToken ?? '');
+        widget.onDeleted?.call();
+        widget.onPressed?.call();
+        return;
       default:
         break;
     }
