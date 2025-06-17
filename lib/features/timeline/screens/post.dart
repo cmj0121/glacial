@@ -12,12 +12,10 @@ import 'package:glacial/features/screens.dart';
 
 // The form of the new status that user can fill in to create a new status.
 class StatusForm extends ConsumerStatefulWidget {
-  final double maxWidth;
   final StatusSchema? replyTo;
 
   const StatusForm({
     super.key,
-    this.maxWidth = 600,
     this.replyTo,
   });
 
@@ -60,19 +58,35 @@ class _StatusFormState extends ConsumerState<StatusForm> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: widget.maxWidth,
+    final String? replyText = widget.replyTo?.content;
+    final Widget replyWidget = replyText == null ?
+      const SizedBox.shrink() :
+      ColorFiltered(
+        colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
+        child: HtmlDone(
+          html: replyText,
+          emojis: widget.replyTo?.emojis ?? [],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: buildContent(),
+      );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        replyWidget,
+
+        ClipRRect(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: buildContent(),
+          ),
         ),
-      ),
+      ],
     );
   }
 
+  // Build the content of the status form.
   Widget buildContent() {
     final int maxLines = 6;
     final ServerSchema? schema = ref.read(serverProvider);

@@ -194,10 +194,12 @@ class _StatusState extends ConsumerState<Status> {
 // The lightweight Status widget
 class StatusLight extends StatelessWidget {
   final StatusSchema schema;
+  final bool isTappable;
 
   const StatusLight({
     super.key,
     required this.schema,
+    this.isTappable = true,
   });
 
   @override
@@ -205,7 +207,7 @@ class StatusLight extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: InkWellDone(
-        onTap: () {
+        onTap: isTappable ? () {
           final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
 
           if (path == RoutePath.status) {
@@ -214,7 +216,7 @@ class StatusLight extends StatelessWidget {
             return;
           }
           context.push(RoutePath.status.path, extra: schema);
-        },
+        } : null,
         child: buildContent(),
       ),
     );
@@ -247,7 +249,7 @@ class StatusLight extends StatelessWidget {
       children: [
         Expanded(
           flex: 10,
-          child: Account(schema: schema.account),
+          child: Account(schema: schema.account, isTappable: isTappable),
         ),
 
         const Spacer(),

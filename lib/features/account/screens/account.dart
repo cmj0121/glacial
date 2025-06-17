@@ -12,11 +12,13 @@ import 'package:glacial/features/screens.dart';
 class Account extends StatelessWidget {
   final AccountSchema schema;
   final double maxHeight;
+  final bool isTappable;
 
   const Account({
     super.key,
     required this.schema,
     this.maxHeight = 52,
+    this.isTappable = true,
   });
 
   @override
@@ -42,7 +44,7 @@ class Account extends StatelessWidget {
           }
 
           return InkWellDone(
-            onTap: () => context.push(RoutePath.profile.path, extra: schema),
+            onTap: isTappable ? () => context.push(RoutePath.profile.path, extra: schema) : null,
             child: content,
           );
         },
