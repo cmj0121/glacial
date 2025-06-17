@@ -18,6 +18,7 @@ enum RoutePath {
   hashtag,           // The hashtag page of the app.
   profile,           // The user's profile page of the app.
   status,            // The list of statuses in the context of the app.
+  post,              // The post page of the app to create a new post.
   wip;               // The work-in-progress page of the app.
 
   // Get the string path for the route.
@@ -51,6 +52,8 @@ enum RoutePath {
         return '/home/profile';
       case RoutePath.status:
         return '/home/status';
+      case RoutePath.post:
+        return '/home/post';
       case RoutePath.wip:
         return '/wip';
     }

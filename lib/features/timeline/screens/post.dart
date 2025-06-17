@@ -10,63 +10,17 @@ import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
-// The RWD button that allows the user to create a new status.
-class PostStatusButton extends ConsumerWidget {
-  final double size;
-
-  const PostStatusButton({
-    super.key,
-    this.size = 32,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final String? accessToken = ref.watch(accessTokenProvider);
-
-    return IconButton.filledTonal(
-      icon: Icon(Icons.post_add_outlined, size: size),
-      tooltip: AppLocalizations.of(context)?.btn_post ?? "Post",
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      onPressed: accessToken == null ? null : () => onPressed(context, ref),
-    );
-  }
-
-  void onPressed(BuildContext context, WidgetRef ref) async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: StatusForm(onPost: (schema) => onPost(context, ref, schema)),
-        );
-      },
-    );
-  }
-
-  void onPost(BuildContext context, WidgetRef ref, NewStatusSchema schema) async {
-    if (context.mounted) {
-      logger.d("completed create a new status");
-      context.pop();
-    }
-  }
-}
-
 // The form of the new status that user can fill in to create a new status.
 class StatusForm extends ConsumerStatefulWidget {
   final double maxWidth;
   final StatusSchema? replyTo;
   final List<MentionSchema> mentions;
-  final ValueChanged<NewStatusSchema>? onPost;
 
   const StatusForm({
     super.key,
     this.maxWidth = 600,
     this.replyTo,
     this.mentions = const [],
-    this.onPost,
   });
 
   @override
@@ -266,7 +220,9 @@ class _StatusFormState extends ConsumerState<StatusForm> {
     }
 
     await server.createStatus(status: schema, accessToken: accessToken, ikey: ikey);
-    widget.onPost?.call(schema);
+    if (mounted) {
+      context.pop();
+    }
   }
 }
 
