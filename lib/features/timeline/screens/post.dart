@@ -14,13 +14,11 @@ import 'package:glacial/features/screens.dart';
 class StatusForm extends ConsumerStatefulWidget {
   final double maxWidth;
   final StatusSchema? replyTo;
-  final List<MentionSchema> mentions;
 
   const StatusForm({
     super.key,
     this.maxWidth = 600,
     this.replyTo,
-    this.mentions = const [],
   });
 
   @override
@@ -40,10 +38,15 @@ class _StatusFormState extends ConsumerState<StatusForm> {
   void initState() {
     super.initState();
 
-    List<String> accts = widget.mentions.map((mention) => mention.acct).toList();
-    if (widget.replyTo != null) {
-      accts.add(widget.replyTo!.account.acct);
-    }
+    late final AccountSchema? account = ref.read(accountProvider);
+
+    List<String> accts = [
+      ...(widget.replyTo?.mentions ?? []).map((mention) => mention.acct),
+      widget.replyTo?.account.acct ?? "",
+    ];
+
+    // remove self mentions and empty mentions
+    accts.removeWhere((acct) => acct == account?.acct || acct.isEmpty);
 
     final String mentioned = accts.toSet().toList().map((acct) => "@$acct").join(" ");
     controller = TextEditingController(text: mentioned.isEmpty ? "" : "$mentioned ");
