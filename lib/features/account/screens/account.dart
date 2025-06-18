@@ -189,19 +189,56 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
   // Build the header of the account's timeline, including the user name and
   // the banner.
   Widget buildTimelineHeader(ServerSchema server) {
-    return Column(
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          buildBanner(),
+          const SizedBox(height: 16),
+          buildName(context, ref, server),
+          HtmlDone(
+            html: widget.schema.note,
+            emojis: widget.schema.emojis,
+          ),
+          const Divider(thickness: 4),
+
+          buildUserStats(),
+
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  // Build the user stats, including the followers, following and statuses.
+  Widget buildUserStats() {
+    final int followers = widget.schema.followersCount;
+    final int following = widget.schema.followingCount;
+    final int statuses = widget.schema.statusesCount;
+
+    return Row(
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        buildBanner(),
-        const SizedBox(height: 16),
-        buildName(context, ref, server),
-        HtmlDone(
-          html: widget.schema.note,
-          emojis: widget.schema.emojis,
+        TextButton.icon(
+          label: Text('$statuses', style: const TextStyle(fontSize: 16)),
+          icon: const Icon(Icons.post_add),
+          onPressed: () => controller.animateTo(types.indexOf(TimelineType.user)),
         ),
-        const Divider(thickness: 4),
+
+        TextButton.icon(
+          label: Text('$followers', style: const TextStyle(fontSize: 16)),
+          icon: const Icon(Icons.visibility),
+          onPressed: null,
+        ),
+
+        TextButton.icon(
+          label: Text('$following', style: const TextStyle(fontSize: 16)),
+          icon: const Icon(Icons.star),
+          onPressed: null,
+        ),
       ],
     );
   }

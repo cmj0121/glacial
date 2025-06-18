@@ -49,9 +49,9 @@ enum TimelineType {
       case home:
         return active ? Icons.home : Icons.home_outlined;
       case profile:
-        return active ? Icons.article : Icons.article_outlined;
+        return active ? Icons.contact_page : Icons.contact_page_outlined;
       case user:
-        return active ? Icons.person : Icons.person_outline;
+        return active ? Icons.article : Icons.article_outlined;
       case pin:
         return active ? Icons.push_pin : Icons.push_pin_outlined;
       case schedule:
