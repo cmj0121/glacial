@@ -94,6 +94,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_user => 'utilisateur·ice';
 
   @override
+  String get btn_profile => 'ce profil';
+
+  @override
+  String get btn_pin => 'Épingler';
+
+  @override
+  String get btn_schedule => 'Planifié';
+
+  @override
   String get btn_local => 'Ce serveur';
 
   @override

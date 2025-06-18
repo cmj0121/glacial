@@ -25,6 +25,7 @@ extension TimelineExtensions on ServerSchema {
     String? maxId,
     String? accountID,
     String? keyword,
+    AccountSchema? currentUser,
   }) async {
     late final Uri uri;
 
@@ -35,11 +36,26 @@ extension TimelineExtensions on ServerSchema {
 
         uri = UriEx.handle(domain, "/api/v1/timelines/home").replace(queryParameters: query);
         break;
+      case TimelineType.profile:
+        throw ArgumentError("TimelineType.profile does not support fetch timeline, use TimelineType.user instead.");
       case TimelineType.user:
         final Map<String, String> query = {};
         query["max_id"] = maxId ?? "";
 
         uri = UriEx.handle(domain, "/api/v1/accounts/${accountID ?? '-'}/statuses").replace(queryParameters: query);
+        break;
+      case TimelineType.pin:
+        final Map<String, String> query = {};
+        query["max_id"] = maxId ?? "";
+        query["pinned"] = "true";
+
+        uri = UriEx.handle(domain, "/api/v1/accounts/${accountID ?? '-'}/statuses").replace(queryParameters: query);
+        break;
+      case TimelineType.schedule:
+        final Map<String, String> query = {};
+        query["max_id"] = maxId ?? "";
+
+        uri = UriEx.handle(domain, "/api/v1/scheduled_statuses").replace(queryParameters: query);
         break;
       case TimelineType.hashtag:
         final Map<String, String> query = {};
@@ -90,7 +106,9 @@ extension TimelineExtensions on ServerSchema {
     final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
     final response = await get(uri, headers: accessToken == null ? {} : headers);
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
-    final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
+    final List<StatusSchema> status = json.map(
+      (e) => type == TimelineType.schedule ? StatusSchema.fromScheduleJson(e, currentUser!) : StatusSchema.fromJson(e)
+    ).toList();
 
     // Save the related info to the in-memory cache.
     status.map((s) => Storage().saveAccountIntoCache(this, s.account)).toList();
@@ -171,10 +189,19 @@ extension TimelineExtensions on ServerSchema {
 
   // Delete the status from the Mastodon server
   Future<void> deleteIt({required StatusSchema schema, required String accessToken}) async {
-    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/${schema.id}");
     final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    late final Uri uri;
+    switch (schema.scheduledAt) {
+      case null:
+        uri = UriEx.handle(domain, "/api/v1/statuses/${schema.id}");
+        break;
+      default:
+        uri = UriEx.handle(domain, "/api/v1/scheduled_statuses/${schema.id}");
+        break;
+    }
 
     await delete(uri, headers: headers);
+    logger.d("deleted status ${schema.id} from the server.");
   }
 
   // Create a new status on the Mastodon server

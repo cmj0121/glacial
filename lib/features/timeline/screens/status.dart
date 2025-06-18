@@ -125,10 +125,16 @@ class _StatusState extends ConsumerState<Status> {
 
         const Spacer(),
 
-        Tooltip(
-          message: schema.createdAt.toLocal().toString(),
-          child: Text(duration, style: const TextStyle(color: Colors.grey)),
-        ),
+        schema.scheduledAt == null ?
+          Tooltip(
+            message: schema.createdAt.toLocal().toString(),
+            child: Text(duration, style: const TextStyle(color: Colors.grey)),
+          ) :
+          Text(
+            schema.scheduledAt!.toLocal().toString().substring(0, 16),
+            style: const TextStyle(color: Colors.grey),
+          ),
+
         const SizedBox(width: 4),
         StatusVisibility(type: schema.visibility, size: 16, isCompact: true),
       ],

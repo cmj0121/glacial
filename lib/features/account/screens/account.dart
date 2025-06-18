@@ -104,7 +104,7 @@ class Account extends StatelessWidget {
 }
 
 // The account profile to show the details of the user.
-class AccountProfile extends ConsumerWidget {
+class AccountProfile extends ConsumerStatefulWidget {
   final AccountSchema schema;
   final double bannerHeight;
   final double avatarSize;
@@ -117,7 +117,28 @@ class AccountProfile extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AccountProfile> createState() => _AccountProfileState();
+}
+
+class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTickerProviderStateMixin {
+  final List<TimelineType> types = [TimelineType.profile, TimelineType.user, TimelineType.pin, TimelineType.schedule];
+
+  late final TabController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TabController(length: types.length, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final ServerSchema? server = ref.watch(serverProvider);
 
     if (server == null) {
@@ -125,32 +146,60 @@ class AccountProfile extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    return buildContent(context, ref, server);
+    return buildContent(context, server);
   }
 
-  Widget buildContent(BuildContext context, WidgetRef ref, ServerSchema server) {
-    return Timeline(
-      schema: server,
-      type: TimelineType.user,
-      account: schema,
-      child: buildTimelineHeader(context, ref, server),
+  Widget buildContent(BuildContext context, ServerSchema server) {
+    final AccountSchema? account = ref.read(accountProvider);
+
+    return SwipeTabView(
+      tabController: controller,
+      itemCount: types.length,
+      tabBuilder: (context, index) {
+        final TimelineType type = types[index];
+        final bool isSelected = controller.index == index;
+        final bool isActive = type.supportAnonymous || account?.id == widget.schema.id;
+        final Color color = isActive ?
+            (isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface) :
+            Theme.of(context).disabledColor;
+
+        return Tooltip(
+          message: type.tooltip(context),
+          child: Icon(type.icon(active: isSelected), color: color, size: 32),
+        );
+      },
+      itemBuilder: (context, index) {
+        final TimelineType type = types[index];
+
+        switch (type) {
+          case TimelineType.profile:
+            return buildTimelineHeader(server);
+          default:
+          return Timeline(
+            schema: server,
+            type: types[index],
+            account: widget.schema,
+          );
+        }
+      },
+      onTabTappable: (index) => types[index].supportAnonymous || account?.id == widget.schema.id,
     );
   }
 
   // Build the header of the account's timeline, including the user name and
   // the banner.
-  Widget buildTimelineHeader(BuildContext context, WidgetRef ref, ServerSchema server) {
+  Widget buildTimelineHeader(ServerSchema server) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildBanner(context),
+        buildBanner(),
         const SizedBox(height: 16),
         buildName(context, ref, server),
         HtmlDone(
-          html: schema.note,
-          emojis: schema.emojis,
+          html: widget.schema.note,
+          emojis: widget.schema.emojis,
         ),
         const Divider(thickness: 4),
       ],
@@ -159,7 +208,7 @@ class AccountProfile extends ConsumerWidget {
 
   // Show the user name and the account name.
   Widget buildName(BuildContext context, WidgetRef ref, ServerSchema server) {
-    final String acct = schema.acct.contains('@') ? schema.acct : '${schema.username}@${server.domain}';
+    final String acct = widget.schema.acct.contains('@') ? widget.schema.acct : '${widget.schema.username}@${server.domain}';
     final AccountSchema? account = ref.watch(accountProvider);
 
     return Row(
@@ -175,7 +224,7 @@ class AccountProfile extends ConsumerWidget {
         ),
 
         const Spacer(),
-        account?.id == schema.id ? const SizedBox.shrink() : RelationshipBuilder(schema: schema),
+        account?.id == widget.schema.id ? const SizedBox.shrink() : RelationshipBuilder(schema: widget.schema),
         const SizedBox(width: 12),
       ],
     );
@@ -183,35 +232,35 @@ class AccountProfile extends ConsumerWidget {
 
   // Build the fixed banner of the account profile and the avatar.
   // It will be fixed in the top of the screen.
-  Widget buildBanner(BuildContext context) {
+  Widget buildBanner() {
     return SizedBox(
-      height: bannerHeight,
-      child: buildBannerContent(context),
+      height: widget.bannerHeight,
+      child: buildBannerContent(),
     );
   }
 
   // Build the banner of the account profile, including the header, the
   // avatar and the metadata.
-  Widget buildBannerContent(BuildContext context) {
+  Widget buildBannerContent() {
     return Stack(
       alignment: Alignment.topCenter,
       children: [
-        buildHeader(context),
+        buildHeader(),
         Positioned(
           left: 0,
           bottom: 0,
-          width: avatarSize,
-          height: avatarSize,
-          child: buildAvatar(context),
+          width: widget.avatarSize,
+          height: widget.avatarSize,
+          child: buildAvatar(),
         ),
       ],
     );
   }
 
   // Build the header of the account profile, as the part of the banner.
-  Widget buildHeader(BuildContext context) {
+  Widget buildHeader() {
     final Widget banner = CachedNetworkImage(
-      imageUrl: schema.header,
+      imageUrl: widget.schema.header,
       placeholder: (context, url) => const CircularProgressIndicator(),
       errorWidget: (context, url, error) => const Icon(Icons.error),
     );
@@ -228,17 +277,17 @@ class AccountProfile extends ConsumerWidget {
   }
 
   // Build the Avatar of the user.
-  Widget buildAvatar(BuildContext context) {
+  Widget buildAvatar() {
     final Widget avatar = CachedNetworkImage(
-      imageUrl: schema.avatar,
+      imageUrl: widget.schema.avatar,
       placeholder: (context, url) => const CircularProgressIndicator(),
       errorWidget: (context, url, error) => const Icon(Icons.error),
       fit: BoxFit.cover,
     );
 
     return Container(
-      width: avatarSize,
-      height: avatarSize,
+      width: widget.avatarSize,
+      height: widget.avatarSize,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.white, width: 2),
         color: Theme.of(context).colorScheme.surface,

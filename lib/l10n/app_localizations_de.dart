@@ -94,6 +94,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_user => 'Profil';
 
   @override
+  String get btn_profile => 'Profil';
+
+  @override
+  String get btn_pin => 'Anheften';
+
+  @override
+  String get btn_schedule => 'Geplant';
+
+  @override
   String get btn_local => 'Dieser Server';
 
   @override

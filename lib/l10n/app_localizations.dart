@@ -272,6 +272,24 @@ abstract class AppLocalizations {
   /// **'User'**
   String get btn_user;
 
+  /// No description provided for @btn_profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get btn_profile;
+
+  /// No description provided for @btn_pin.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin'**
+  String get btn_pin;
+
+  /// No description provided for @btn_schedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get btn_schedule;
+
   /// No description provided for @btn_local.
   ///
   /// In en, this message translates to:

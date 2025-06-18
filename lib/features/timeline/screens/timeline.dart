@@ -237,6 +237,7 @@ class _TimelineState extends ConsumerState<Timeline> {
       accountID: widget.account?.id,
       maxId: maxId,
       keyword: widget.keyword,
+      currentUser: ref.read(accountProvider),
     );
 
     setState(() {

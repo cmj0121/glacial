@@ -94,6 +94,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_user => '사용자';
 
   @override
+  String get btn_profile => '프로필';
+
+  @override
+  String get btn_pin => '고정하기';
+
+  @override
+  String get btn_schedule => '예약됨';
+
+  @override
   String get btn_local => '이 서버';
 
   @override
