@@ -1,6 +1,7 @@
 // The Status widget to show the toots from user.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
@@ -115,6 +116,7 @@ class _StatusState extends ConsumerState<Status> {
   // posted time, and the visibility status.
   Widget buildHeader() {
     final String duration = timeago.format(schema.createdAt, locale: 'en_short');
+    final bool showInfo = (schema.reblogsCount + schema.favouritesCount) > 0;
 
     return Row(
       children: [
@@ -124,6 +126,14 @@ class _StatusState extends ConsumerState<Status> {
         ),
 
         const Spacer(),
+
+        IconButton(
+          icon: const Icon(Icons.info_outline, size: 20),
+          hoverColor: Colors.transparent,
+          focusColor: Colors.transparent,
+          onPressed: showInfo ? () => context.push(RoutePath.statusInfo.path, extra: schema) : null,
+        ),
+        const SizedBox(width: 4),
 
         schema.scheduledAt == null ?
           Tooltip(
@@ -194,6 +204,101 @@ class _StatusState extends ConsumerState<Status> {
     }
 
     context.push(RoutePath.webview.path, extra: uri);
+  }
+}
+
+// Show the status information, like the reblogged by user and the favourited by user.
+class StatusInfo extends ConsumerStatefulWidget {
+  final StatusSchema schema;
+
+  const StatusInfo({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  ConsumerState<StatusInfo> createState() => _StatusInfoState();
+}
+
+class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProviderStateMixin {
+  final List<StatusInteraction> actions = [StatusInteraction.reblog, StatusInteraction.favourite];
+  late final TabController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TabController(length: actions.length, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: SwipeTabView(
+        itemCount: actions.length,
+        tabController: controller,
+        tabBuilder: (context, index) {
+          final StatusInteraction action = actions[index];
+          final bool isSelected = controller.index == index;
+          final bool isActive = tappable(action);
+          final Color color = isActive ?
+              (isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface) :
+              Theme.of(context).disabledColor;
+
+          return Tooltip(
+            message: action.tooltip(context),
+            child: Icon(action.icon(active: isSelected), color: color, size: 32),
+            );
+        },
+        itemBuilder: (context, index) {
+          final StatusInteraction action = actions[index];
+          final bool isReblog = action == StatusInteraction.reblog;
+          final ServerSchema? server = ref.read(serverProvider);
+
+          return FutureBuilder(
+            future: isReblog ? server?.rebloggedBy(schema: widget.schema) : server?.favouritedBy(schema: widget.schema),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return const SizedBox.shrink();
+              }
+
+              final List<AccountSchema> accounts = snapshot.data as List<AccountSchema>;
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: accounts.length,
+                itemBuilder: (context, index) {
+                  final AccountSchema account = accounts[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Account(schema: account, isTappable: true),
+                  );
+                },
+              );
+            },
+          );
+        },
+        onTabTappable: (index) => tappable(actions[index]),
+      ),
+    );
+  }
+
+  bool tappable(StatusInteraction action) {
+    switch (action) {
+      case StatusInteraction.reblog:
+        return widget.schema.reblogsCount > 0;
+      case StatusInteraction.favourite:
+        return widget.schema.favouritesCount > 0;
+      default:
+        return false;
+    }
   }
 }
 
@@ -272,7 +377,7 @@ class StatusLight extends StatelessWidget {
 }
 
 // The single Status widget that contains the status information.
-class StatusContext extends ConsumerWidget {
+class StatusContext extends ConsumerStatefulWidget {
   final StatusSchema schema;
 
   const StatusContext({
@@ -281,7 +386,14 @@ class StatusContext extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<StatusContext> createState() => _StatusContextState();
+}
+
+class _StatusContextState extends ConsumerState<StatusContext> {
+  final ItemScrollController itemScrollController = ItemScrollController();
+
+  @override
+  Widget build(BuildContext context) {
     final ServerSchema? server = ref.watch(serverProvider);
     final String? accessToken = ref.watch(accessTokenProvider);
 
@@ -290,7 +402,7 @@ class StatusContext extends ConsumerWidget {
     }
 
     return FutureBuilder(
-      future: server.getStatusContext(schema: schema, accessToken: accessToken),
+      future: server.getStatusContext(schema: widget.schema, accessToken: accessToken),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Align(
@@ -303,6 +415,13 @@ class StatusContext extends ConsumerWidget {
         }
 
         final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // scroll to the current status when the widget is built
+          itemScrollController.scrollTo(
+            index: ctx.ancestors.length,
+            duration: const Duration(milliseconds: 300),
+          );
+        });
         return buildContent(ctx);
       }
     );
@@ -311,7 +430,7 @@ class StatusContext extends ConsumerWidget {
   // The main content of the status context, including the current status
   // the previous statuses and the next statuses.
   Widget buildContent(StatusContextSchema ctx) {
-    Map<String, int> indents = {schema.id: 1};
+    Map<String, int> indents = {widget.schema.id: 1};
     final List<Widget> children = [
       ...ctx.ancestors.map((StatusSchema status) {
         final int indent = indents[status.inReplyToID] ?? 1;
@@ -320,7 +439,7 @@ class StatusContext extends ConsumerWidget {
         return Status(schema: status, indent: indent);
       }),
 
-      Status(schema: schema),
+      Status(schema: widget.schema),
 
       ...ctx.descendants.map((StatusSchema status) {
         final int indent = indents[status.inReplyToID] ?? 1;
@@ -330,7 +449,8 @@ class StatusContext extends ConsumerWidget {
       }),
     ];
 
-    return ListView.builder(
+    return ScrollablePositionedList.builder(
+      itemScrollController: itemScrollController,
       itemCount: children.length,
       itemBuilder: (context, index) {
         final Widget child = children[index];

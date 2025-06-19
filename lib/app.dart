@@ -214,6 +214,18 @@ class GlacialApp extends ConsumerWidget {
             );
           },
         ),
+        // The status info page to show the status details and the related
+        // information in the selected Mastodon server
+        GoRoute(
+          path: RoutePath.statusInfo.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema status = state.extra as StatusSchema;
+
+            return BackableView(
+              child: StatusInfo(schema: status),
+            );
+          },
+        ),
         // The post page to create a new post in the selected Mastodon server
         GoRoute(
           path: RoutePath.post.path,
