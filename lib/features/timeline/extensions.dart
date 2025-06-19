@@ -278,7 +278,24 @@ extension TimelineExtensions on ServerSchema {
         logger.w("Unknown type: $type, returning empty list.");
         return [];
     }
+  }
 
+  // List the accounts that reblogged the status.
+  Future<List<AccountSchema>> rebloggedBy({required StatusSchema schema}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/${schema.id}/reblogged_by");
+    final response = await get(uri);
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+
+    return json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  // List the accounts that favourited the status.
+  Future<List<AccountSchema>> favouritedBy({required StatusSchema schema}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/${schema.id}/favourited_by");
+    final response = await get(uri);
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+
+    return json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
   }
 }
 

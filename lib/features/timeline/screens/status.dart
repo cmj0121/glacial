@@ -116,6 +116,7 @@ class _StatusState extends ConsumerState<Status> {
   // posted time, and the visibility status.
   Widget buildHeader() {
     final String duration = timeago.format(schema.createdAt, locale: 'en_short');
+    final bool showInfo = (schema.reblogsCount + schema.favouritesCount) > 0;
 
     return Row(
       children: [
@@ -125,6 +126,14 @@ class _StatusState extends ConsumerState<Status> {
         ),
 
         const Spacer(),
+
+        IconButton(
+          icon: const Icon(Icons.info_outline, size: 20),
+          hoverColor: Colors.transparent,
+          focusColor: Colors.transparent,
+          onPressed: showInfo ? () => context.push(RoutePath.statusInfo.path, extra: schema) : null,
+        ),
+        const SizedBox(width: 4),
 
         schema.scheduledAt == null ?
           Tooltip(
@@ -195,6 +204,101 @@ class _StatusState extends ConsumerState<Status> {
     }
 
     context.push(RoutePath.webview.path, extra: uri);
+  }
+}
+
+// Show the status information, like the reblogged by user and the favourited by user.
+class StatusInfo extends ConsumerStatefulWidget {
+  final StatusSchema schema;
+
+  const StatusInfo({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  ConsumerState<StatusInfo> createState() => _StatusInfoState();
+}
+
+class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProviderStateMixin {
+  final List<StatusInteraction> actions = [StatusInteraction.reblog, StatusInteraction.favourite];
+  late final TabController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TabController(length: actions.length, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: SwipeTabView(
+        itemCount: actions.length,
+        tabController: controller,
+        tabBuilder: (context, index) {
+          final StatusInteraction action = actions[index];
+          final bool isSelected = controller.index == index;
+          final bool isActive = tappable(action);
+          final Color color = isActive ?
+              (isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface) :
+              Theme.of(context).disabledColor;
+
+          return Tooltip(
+            message: action.tooltip(context),
+            child: Icon(action.icon(active: isSelected), color: color, size: 32),
+            );
+        },
+        itemBuilder: (context, index) {
+          final StatusInteraction action = actions[index];
+          final bool isReblog = action == StatusInteraction.reblog;
+          final ServerSchema? server = ref.read(serverProvider);
+
+          return FutureBuilder(
+            future: isReblog ? server?.rebloggedBy(schema: widget.schema) : server?.favouritedBy(schema: widget.schema),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                const SizedBox.shrink();
+              }
+
+              final List<AccountSchema> accounts = snapshot.data as List<AccountSchema>;
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: accounts.length,
+                itemBuilder: (context, index) {
+                  final AccountSchema account = accounts[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Account(schema: account, isTappable: true),
+                  );
+                },
+              );
+            },
+          );
+        },
+        onTabTappable: (index) => tappable(actions[index]),
+      ),
+    );
+  }
+
+  bool tappable(StatusInteraction action) {
+    switch (action) {
+      case StatusInteraction.reblog:
+        return widget.schema.reblogsCount > 0;
+      case StatusInteraction.favourite:
+        return widget.schema.favouritesCount > 0;
+      default:
+        return false;
+    }
   }
 }
 
