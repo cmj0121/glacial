@@ -36,6 +36,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
 
   VisibilityType vtype = VisibilityType.public;
   List<AttachmentSchema> medias = [];
+  String? spoiler;
   DateTime? scheduledAt;
 
   @override
@@ -101,6 +102,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        buildSpoilerField(),
         buildTextField(),
         const SizedBox(height: 16),
         buildMedias(),
@@ -122,13 +124,32 @@ class _StatusFormState extends ConsumerState<StatusForm> {
           controller: textEditingController,
           focusNode: focusNode,
           maxLines: maxLines,
-            minLines: maxLines,
-            maxLength: schema?.config.statuses.maxCharacters ?? 500,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-            ),
+          minLines: maxLines,
+          maxLength: schema?.config.statuses.maxCharacters ?? 500,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+          ),
         );
       },
+    );
+  }
+
+  // Build the optional spoiler text field for the status.
+  Widget buildSpoilerField() {
+    if (spoiler == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: TextFormField(
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.warning, color: Theme.of(context).colorScheme.tertiary),
+          suffixIcon: Icon(Icons.warning, color: Theme.of(context).colorScheme.tertiary),
+          border: const OutlineInputBorder(),
+        ),
+        onChanged: (value) => setState(() => spoiler = value),
+      ),
     );
   }
 
@@ -185,10 +206,16 @@ class _StatusFormState extends ConsumerState<StatusForm> {
       children: [
         VisibilitySelector(type: vtype, onChanged: (type) => setState(() => vtype = type)),
         IconButton(
-          icon: Icon(Icons.perm_media_rounded),
+          icon: Icon(Icons.perm_media_rounded, color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
           onPressed: maxMedias > medias.length ? onImagePicker : null,
+        ),
+        IconButton(
+          icon: Icon(Icons.warning, color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary),
+          hoverColor: Colors.transparent,
+          focusColor: Colors.transparent,
+          onPressed: () => setState(() => spoiler = spoiler == null ? "" : null),
         ),
         const Spacer(),
         TextButton.icon(
@@ -238,6 +265,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
       status: controller.text,
       mediaIDs: medias.map((media) => media.id).toList(),
       pollIDs: [],
+      spoiler: spoiler,
       visibility: vtype,
       inReplyToID: widget.replyTo?.id,
       scheduledAt: scheduledAt,
