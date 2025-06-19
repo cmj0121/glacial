@@ -32,6 +32,7 @@ class StatusSchema {
   final ApplicationSchema? application;     // The application used to post the status.
   final DateTime createdAt;                 // The date when this status was created.
   final DateTime? editedAt;                 // Timestamp of when the status was last edited.
+  final DateTime? scheduledAt;              // Timestamp of when the status is scheduled to be posted.
 
   const StatusSchema({
     required this.id,
@@ -60,6 +61,7 @@ class StatusSchema {
     this.application,
     required this.createdAt,
     this.editedAt,
+    this.scheduledAt,
   });
 
   factory StatusSchema.fromString(String str) {
@@ -105,6 +107,48 @@ class StatusSchema {
       editedAt: json['edited_at'] == null ? null : DateTime.parse(json['edited_at'] as String),
     );
   }
+
+  factory StatusSchema.fromScheduleJson(Map<String, dynamic> json, AccountSchema account) {
+    final Map<String, dynamic> params = json['params'] as Map<String, dynamic>;
+
+    return StatusSchema(
+      id: json['id'] as String,
+      content: params['text'] as String,
+      visibility: VisibilityType.fromString(params['visibility'] as String),
+      sensitive: params['sensitive'] as bool,
+      spoiler: params['spoiler_text'] as String? ?? '',
+      account: account,
+      uri: params['uri'] as String? ?? '',
+      url: params['url'] as String?,
+      attachments: (json['media_attachments'] as List<dynamic>)
+        .map((e) => AttachmentSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      mentions: (params['mentions'] as List<dynamic>? ?? [])
+        .map((e) => MentionSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      tags: (params['tags'] as List<dynamic>? ?? [])
+        .map((e) => TagSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      emojis: (params['emojis'] as List<dynamic>? ?? [])
+        .map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      inReplyToID: (params['in_reply_to_id'] as int?)?.toString(),
+      inReplyToAccountID: params['in_reply_to_account_id'] as String?,
+      reblog: params['reblog'] == null ? null : StatusSchema.fromJson(params['reblog'] as Map<String, dynamic>),
+      reblogsCount: params['reblogs_count'] as int? ?? 0,
+      favouritesCount: params['favourites_count'] as int? ?? 0,
+      repliesCount: params['replies_count'] as int? ?? 0,
+      favourited: params['favourited'] as bool?,
+      reblogged: params['reblogged'] as bool?,
+      muted: params['muted'] as bool?,
+      bookmarked: params['bookmarked'] as bool?,
+      pinned: params['pinned'] as bool?,
+      application: params['application'] == null ? null : ApplicationSchema.fromJson(params['application'] as Map<String, dynamic>),
+      createdAt: DateTime.parse(json['scheduled_at'] as String),
+      scheduledAt: DateTime.parse(json['scheduled_at'] as String),
+      editedAt: null,
+    );
+  }
 }
 
 // The new status data schema.
@@ -116,6 +160,7 @@ class NewStatusSchema {
   final String? spoiler;           // Text to show when the status is marked as sensitive.
   final VisibilityType visibility; // The visibility of the status. Defaults to public.
   final String? inReplyToID;       // ID of the status being replied to, if status is a reply.
+  final DateTime? scheduledAt;    // The time when the status should be scheduled to be posted.
 
   const NewStatusSchema({
     required this.status,
@@ -125,6 +170,7 @@ class NewStatusSchema {
     this.spoiler,
     this.visibility = VisibilityType.public,
     this.inReplyToID,
+    this.scheduledAt,
   });
 
   Map<String, dynamic> toJson() {
@@ -136,6 +182,7 @@ class NewStatusSchema {
       'spoiler_text': spoiler,
       'visibility': visibility.name,
       'in_reply_to_id': inReplyToID,
+      'scheduled_at': scheduledAt?.toIso8601String(),
     };
 
     // only return the non-null values

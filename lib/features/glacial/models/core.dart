@@ -9,7 +9,8 @@ enum SidebarButtonType {
   trending,
   notifications,
   settings,
-  admin;
+  admin,
+  post;
 
   IconData icon({bool active = false}) {
     switch (this) {
@@ -23,6 +24,8 @@ enum SidebarButtonType {
         return active ? Icons.settings : Icons.settings_outlined;
       case admin:
         return active ? Icons.admin_panel_settings : Icons.admin_panel_settings_outlined;
+      case post:
+        return active ? Icons.post_add : Icons.post_add_outlined;
     }
   }
 
@@ -39,6 +42,8 @@ enum SidebarButtonType {
         return AppLocalizations.of(context)?.btn_settings ?? "Settings";
       case SidebarButtonType.admin:
         return AppLocalizations.of(context)?.btn_management ?? "Admin Management";
+      case SidebarButtonType.post:
+        return AppLocalizations.of(context)?.btn_post ?? "Post";
     }
   }
 
@@ -50,6 +55,7 @@ enum SidebarButtonType {
       case notifications:
       case settings:
       case admin:
+      case post:
         return false;
     }
   }
@@ -66,6 +72,8 @@ enum SidebarButtonType {
         return RoutePath.settings;
       case admin:
         return RoutePath.admin;
+      case post:
+        return RoutePath.post;
     }
   }
 }

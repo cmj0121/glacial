@@ -91,7 +91,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_home => 'Início';
 
   @override
-  String get btn_user => 'utilizador';
+  String get btn_user => 'Utilizador';
+
+  @override
+  String get btn_profile => 'perfil';
+
+  @override
+  String get btn_pin => 'Afixar';
+
+  @override
+  String get btn_schedule => 'Agendado';
 
   @override
   String get btn_local => 'Este servidor';

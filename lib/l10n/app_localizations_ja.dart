@@ -94,6 +94,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_user => 'ユーザー';
 
   @override
+  String get btn_profile => 'プロフィール';
+
+  @override
+  String get btn_pin => 'ピン留めする';
+
+  @override
+  String get btn_schedule => '予定済み';
+
+  @override
   String get btn_local => 'このサーバー';
 
   @override

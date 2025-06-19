@@ -94,6 +94,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_user => '使用者';
 
   @override
+  String get btn_profile => '個人檔案';
+
+  @override
+  String get btn_pin => '釘選';
+
+  @override
+  String get btn_schedule => '排程';
+
+  @override
   String get btn_local => '本站';
 
   @override

@@ -28,7 +28,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   final double sidebarSize = 32;
   final Storage storage = Storage();
 
-  late final List<SidebarButtonType> actions = SidebarButtonType.values;
+    late final List<SidebarButtonType> actions = SidebarButtonType.values;
 
   @override
   Widget build(BuildContext context) {
@@ -102,14 +102,17 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   // The left sidebar of the app, shows the possible actions to interact with
   // the current server.
   Widget buildSidebar() {
+    final List<Widget> children = buildActions();
+    final int postIndex = actions.indexWhere((action) => action.route == RoutePath.post);
+
     return Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...buildActions(),
+          ...children.sublist(0, postIndex),
           const Spacer(),
-          PostStatusButton(size: sidebarSize),
+          ...children.sublist(postIndex, children.length),
           const SizedBox(height: 8),
         ],
     );
@@ -126,10 +129,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ...buildActions(),
-          PostStatusButton(size: sidebarSize),
-        ],
+        children: buildActions(),
       ),
     );
   }
@@ -141,23 +141,24 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     final AccountSchema? account = ref.read(accountProvider);
     final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
 
-    return actions.map((action) {
-        final int index = actions.indexOf(action);
-        final bool isSelected = action.route == route;
-        final bool isEnabled = account != null || action.supportAnonymous;
-        final bool isNotImplemented = [SidebarButtonType.settings, SidebarButtonType.admin].contains(action);
-        late final Widget icon;
+    final List<Widget> children = actions.map((action) {
+      final int index = actions.indexOf(action);
+      final bool isSelected = action.route == route;
+      final bool isEnabled = account != null || action.supportAnonymous;
+      final bool isNotImplemented = [SidebarButtonType.settings, SidebarButtonType.admin].contains(action);
+      late final Widget icon;
 
-        switch (action) {
-          case SidebarButtonType.notifications:
-            icon = Icon(action.icon(active: isSelected), size: sidebarSize);
-            break;
-          default:
-            icon = Icon(action.icon(active: isSelected), size: sidebarSize);
-            break;
-        }
+      switch (action) {
+        case SidebarButtonType.notifications:
+          icon = Icon(action.icon(active: isSelected), size: sidebarSize);
+          break;
+        default:
+          icon = Icon(action.icon(active: isSelected), size: sidebarSize);
+          break;
+      }
 
-        return IconButton(
+      if (action == SidebarButtonType.post) {
+        return IconButton.filledTonal(
           icon: icon,
           tooltip: action.tooltip(context),
           color: isSelected ? Theme.of(context).colorScheme.primary : null,
@@ -165,7 +166,19 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           focusColor: Colors.transparent,
           onPressed: isEnabled && !isNotImplemented ? () => onSelect(index) : null,
         );
-      }).toList();
+      }
+
+      return IconButton(
+        icon: icon,
+        tooltip: action.tooltip(context),
+        color: isSelected ? Theme.of(context).colorScheme.primary : null,
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        onPressed: isEnabled && !isNotImplemented ? () => onSelect(index) : null,
+      );
+    }).toList();
+
+    return children;
   }
 
   // Select the action in the sidebar and show the corresponding content.
@@ -176,7 +189,12 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
     if (action.route != route) {
       logger.d("selected action: ${action.name} -> ${action.route.path}");
-      context.go(action.route.path, extra: action);
+      switch (action) {
+        case SidebarButtonType.post:
+          context.push(action.route.path, extra: null);
+        default:
+          context.go(action.route.path, extra: action);
+      }
     }
   }
 
