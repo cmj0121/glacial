@@ -267,7 +267,7 @@ class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProvid
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
-                const SizedBox.shrink();
+                return const SizedBox.shrink();
               }
 
               final List<AccountSchema> accounts = snapshot.data as List<AccountSchema>;
