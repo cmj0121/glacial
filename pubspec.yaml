@@ -60,6 +60,7 @@ dependencies:
   http_parser: ^4.1.2
   image_picker: ^1.1.2
   flutter_datetime_picker_plus: ^2.2.0
+  scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
   flutter_test:

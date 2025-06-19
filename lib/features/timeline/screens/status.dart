@@ -1,6 +1,7 @@
 // The Status widget to show the toots from user.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
@@ -272,7 +273,7 @@ class StatusLight extends StatelessWidget {
 }
 
 // The single Status widget that contains the status information.
-class StatusContext extends ConsumerWidget {
+class StatusContext extends ConsumerStatefulWidget {
   final StatusSchema schema;
 
   const StatusContext({
@@ -281,7 +282,14 @@ class StatusContext extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<StatusContext> createState() => _StatusContextState();
+}
+
+class _StatusContextState extends ConsumerState<StatusContext> {
+  final ItemScrollController itemScrollController = ItemScrollController();
+
+  @override
+  Widget build(BuildContext context) {
     final ServerSchema? server = ref.watch(serverProvider);
     final String? accessToken = ref.watch(accessTokenProvider);
 
@@ -290,7 +298,7 @@ class StatusContext extends ConsumerWidget {
     }
 
     return FutureBuilder(
-      future: server.getStatusContext(schema: schema, accessToken: accessToken),
+      future: server.getStatusContext(schema: widget.schema, accessToken: accessToken),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Align(
@@ -303,6 +311,13 @@ class StatusContext extends ConsumerWidget {
         }
 
         final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // scroll to the current status when the widget is built
+          itemScrollController.scrollTo(
+            index: ctx.ancestors.length,
+            duration: const Duration(milliseconds: 300),
+          );
+        });
         return buildContent(ctx);
       }
     );
@@ -311,7 +326,7 @@ class StatusContext extends ConsumerWidget {
   // The main content of the status context, including the current status
   // the previous statuses and the next statuses.
   Widget buildContent(StatusContextSchema ctx) {
-    Map<String, int> indents = {schema.id: 1};
+    Map<String, int> indents = {widget.schema.id: 1};
     final List<Widget> children = [
       ...ctx.ancestors.map((StatusSchema status) {
         final int indent = indents[status.inReplyToID] ?? 1;
@@ -320,7 +335,7 @@ class StatusContext extends ConsumerWidget {
         return Status(schema: status, indent: indent);
       }),
 
-      Status(schema: schema),
+      Status(schema: widget.schema),
 
       ...ctx.descendants.map((StatusSchema status) {
         final int indent = indents[status.inReplyToID] ?? 1;
@@ -330,7 +345,8 @@ class StatusContext extends ConsumerWidget {
       }),
     ];
 
-    return ListView.builder(
+    return ScrollablePositionedList.builder(
+      itemScrollController: itemScrollController,
       itemCount: children.length,
       itemBuilder: (context, index) {
         final Widget child = children[index];
