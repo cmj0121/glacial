@@ -245,6 +245,41 @@ extension TimelineExtensions on ServerSchema {
 
     return AttachmentSchema.fromJson(json);
   }
+
+  // Find the possible hashtags or account name with the prefix.
+  Future<List<String>> findSuggestions({required String prefix, required String type, String? accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v2/search");
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final Map<String, String> queryParameters = {
+      "q": prefix,
+      "type": type,
+    };
+
+    if (type != "accounts" && type != "hashtags") {
+      logger.d("Unknown type: $type, returning empty list.");
+      return [];
+    }
+
+    if (prefix.isEmpty) {
+      logger.d("Prefix is empty, returning empty list.");
+      return [];
+    }
+
+    final response = await get(uri.replace(queryParameters: queryParameters), headers: accessToken == null ? {} : headers);
+    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+    final SearchResultSchema result = SearchResultSchema.fromJson(json);
+
+    switch (type) {
+      case "accounts":
+        return result.accounts.map((e) => e.acct).toList();
+      case "hashtags":
+        return result.hashtags.map((e) => e.name).toList();
+      default:
+        logger.w("Unknown type: $type, returning empty list.");
+        return [];
+    }
+
+  }
 }
 
 // The extension of the Storage to save and load the emoji data.
