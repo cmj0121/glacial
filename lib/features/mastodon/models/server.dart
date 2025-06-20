@@ -73,7 +73,7 @@ class ServerSchema {
       case 200:
         return ServerSchema.fromString(response.body);
       case 404:
-        final Uri url = UriEx.handle(domain, '/api/v2/instance');
+        final Uri url = UriEx.handle(domain, '/api/v1/instance');
         final response = await get(url);
 
         if (response.statusCode == 200) {
