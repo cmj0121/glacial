@@ -13,6 +13,7 @@ class Account extends StatelessWidget {
   final AccountSchema schema;
   final double maxHeight;
   final bool isTappable;
+  final bool showStats;
   final VoidCallback? onTap;
 
   const Account({
@@ -20,6 +21,7 @@ class Account extends StatelessWidget {
     required this.schema,
     this.maxHeight = 52,
     this.isTappable = true,
+    this.showStats = false,
     this.onTap,
   });
 
@@ -42,7 +44,7 @@ class Account extends StatelessWidget {
               ]
             );
           } else {
-            content = buildContent();
+            content = buildContent(context);
           }
 
           return InkWellDone(
@@ -57,13 +59,18 @@ class Account extends StatelessWidget {
     );
   }
 
-  Widget buildContent() {
+  Widget buildContent(BuildContext context) {
     final Widget content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         buildAvatar(),
         const SizedBox(width: 16),
         buildName(),
+
+        if (showStats) ...[
+          const Spacer(),
+          buildStats(context),
+        ],
       ],
     );
 
@@ -105,6 +112,26 @@ class Account extends StatelessWidget {
     final String text = schema.displayName.isEmpty ? schema.username : schema.displayName;
 
     return storage.replaceEmojiToWidget(text, emojis: schema.emojis);
+  }
+
+  // The statistics of the user, such as followers, following and statuses.
+  Widget buildStats(BuildContext context) {
+    final int followers = schema.followersCount;
+    final int following = schema.followingCount;
+    final int statuses = schema.statusesCount;
+    final Color color = Theme.of(context).colorScheme.onSecondaryContainer;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Badge.count(count: statuses, backgroundColor: color, child: Icon(Icons.post_add)),
+        const SizedBox(width: 26),
+        Badge.count(count: followers, backgroundColor: color, child: Icon(Icons.visibility)),
+        const SizedBox(width: 26),
+        Badge.count(count: following, backgroundColor: color, child: Icon(Icons.star)),
+        const SizedBox(width: 26),
+      ],
+    );
   }
 }
 
@@ -440,7 +467,7 @@ class _AccountRelationsState extends ConsumerState<AccountRelations> {
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.only(bottom: 8),
-          child: Account(schema: accounts[index], onTap: () => context.pop()),
+          child: Account(schema: accounts[index], showStats: true, onTap: () => context.pop()),
         );
       },
     );

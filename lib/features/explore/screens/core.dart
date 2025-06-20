@@ -251,7 +251,7 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
 
         switch (type) {
           case ExplorerResultType.account:
-            content = Account(schema: schema.accounts[index]);
+            content = Account(schema: schema.accounts[index], showStats: true);
           case ExplorerResultType.status:
             content = Status(schema: schema.statuses[index]);
           case ExplorerResultType.hashtag:
