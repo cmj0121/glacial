@@ -31,6 +31,26 @@ extension AccountExtensions on ServerSchema {
     return account;
   }
 
+  // Search accounts by query from the Mastodon server.
+  Future<List<AccountSchema>> searchAccounts(String query, {String? accessToken}) async {
+    if (query.isEmpty) {
+      return [];
+    }
+
+    final Map<String, String> queryParams = {'q': query};
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/search").replace(queryParameters: queryParams);
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      logger.w("Failed to search accounts: ${response.statusCode} ${response.body}");
+      throw RequestError(response);
+    }
+
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    return json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
   // Get the account by ID from the Mastodon server.
   Future<List<AccountSchema>> getAccounts(List<String> ids, {String? accessToken}) async {
     if (ids.isEmpty) {
@@ -162,6 +182,84 @@ extension AccountExtensions on ServerSchema {
     }
 
     return RelationshipSchema.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  // Get the followers of the account from the Mastodon server.
+  Future<(List<AccountSchema>, String?)> followers({required AccountSchema account, String? accessToken, String? maxID}) async {
+    if (account.acct.contains('@')) {
+      try {
+        // The account is located in a different server, so we cannot get the followers in current server.
+        final ServerSchema remoteServer = await ServerSchema.fetch(account.acct.split('@').last);
+        final List<AccountSchema> remoteAccounts = await remoteServer.searchAccounts(account.acct);
+
+        if (remoteAccounts.length != 1) {
+          // If the remote server does not have the account, return an empty list.
+          return (List<AccountSchema>.empty(), null);
+        }
+        return remoteServer.followers(account: remoteAccounts.first, maxID: maxID);
+      } catch (e) {
+        logger.w("Failed to fetch followers from remote server: $e");
+      }
+    }
+
+    final Map<String, String> query = {'max_id': maxID ?? ''};
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/${account.id}/followers").replace(queryParameters: query);
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: accessToken == null ? null : headers);
+
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    final String? nextLink = response.headers['link'];
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    return (json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList(), nextLink);
+  }
+
+  // Get the accounts that the account is following from the Mastodon server.
+  Future<(List<AccountSchema>, String?)> following({required AccountSchema account, String? accessToken, String? maxID}) async {
+    if (account.acct.contains('@')) {
+      try {
+        // The account is located in a different server, so we cannot get the followers in current server.
+        final ServerSchema remoteServer = await ServerSchema.fetch(account.acct.split('@').last);
+        final List<AccountSchema> remoteAccounts = await remoteServer.searchAccounts(account.acct);
+
+        if (remoteAccounts.length != 1) {
+          // If the remote server does not have the account, return an empty list.
+          return (List<AccountSchema>.empty(), null);
+        }
+        return remoteServer.following(account: remoteAccounts.first, maxID: maxID);
+      } catch (e) {
+        logger.w("Failed to fetch followers from remote server: $e");
+      }
+    }
+
+    final Map<String, String> query = {'max_id': maxID ?? ''};
+    final Uri uri = UriEx.handle(domain, "/api/v1/accounts/${account.id}/following").replace(queryParameters: query);
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: accessToken == null ? null : headers);
+
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    final String? nextLink = response.headers['link'];
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    return (json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList(), nextLink);
+  }
+
+  // Get the suggestions of accounts from the Mastodon server.
+  Future<List<AccountSchema>> suggestions({required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v2/suggestions");
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    return json.map((e) => AccountSchema.fromJson(e["account"] as Map<String, dynamic>)).toList();
   }
 }
 

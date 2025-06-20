@@ -17,6 +17,8 @@ extension TrendsExtension on ServerSchema {
       case TrendsType.tags:
         uri = UriEx.handle(domain, '/api/v1/trends/tags');
         break;
+      case TrendsType.users:
+        throw UnimplementedError('Users trends are not implemented yet.');
       case TrendsType.links:
         uri = UriEx.handle(domain, '/api/v1/trends/links');
         break;
@@ -32,6 +34,8 @@ extension TrendsExtension on ServerSchema {
         return json.map((e) => StatusSchema.fromJson(e as Map<String, dynamic>)).toList();
       case TrendsType.tags:
         return json.map((e) => HashtagSchema.fromJson(e as Map<String, dynamic>)).toList();
+      case TrendsType.users:
+        throw UnimplementedError('Users trends are not implemented yet.');
       case TrendsType.links:
         return json.map((e) => LinkSchema.fromJson(e as Map<String, dynamic>)).toList();
     }

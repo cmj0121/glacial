@@ -13,12 +13,16 @@ class Account extends StatelessWidget {
   final AccountSchema schema;
   final double maxHeight;
   final bool isTappable;
+  final bool showStats;
+  final VoidCallback? onTap;
 
   const Account({
     super.key,
     required this.schema,
     this.maxHeight = 52,
     this.isTappable = true,
+    this.showStats = false,
+    this.onTap,
   });
 
   @override
@@ -40,11 +44,14 @@ class Account extends StatelessWidget {
               ]
             );
           } else {
-            content = buildContent();
+            content = buildContent(context);
           }
 
           return InkWellDone(
-            onTap: isTappable ? () => context.push(RoutePath.profile.path, extra: schema) : null,
+            onTap: isTappable ? () {
+              onTap?.call();
+              context.push(RoutePath.profile.path, extra: schema);
+            } : null,
             child: content,
           );
         },
@@ -52,13 +59,18 @@ class Account extends StatelessWidget {
     );
   }
 
-  Widget buildContent() {
+  Widget buildContent(BuildContext context) {
     final Widget content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         buildAvatar(),
         const SizedBox(width: 16),
         buildName(),
+
+        if (showStats) ...[
+          const Spacer(),
+          buildStats(context),
+        ],
       ],
     );
 
@@ -100,6 +112,26 @@ class Account extends StatelessWidget {
     final String text = schema.displayName.isEmpty ? schema.username : schema.displayName;
 
     return storage.replaceEmojiToWidget(text, emojis: schema.emojis);
+  }
+
+  // The statistics of the user, such as followers, following and statuses.
+  Widget buildStats(BuildContext context) {
+    final int followers = schema.followersCount;
+    final int following = schema.followingCount;
+    final int statuses = schema.statusesCount;
+    final Color color = Theme.of(context).colorScheme.onSecondaryContainer;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Badge.count(count: statuses, backgroundColor: color, child: Icon(Icons.post_add)),
+        const SizedBox(width: 26),
+        Badge.count(count: followers, backgroundColor: color, child: Icon(Icons.visibility)),
+        const SizedBox(width: 26),
+        Badge.count(count: following, backgroundColor: color, child: Icon(Icons.star)),
+        const SizedBox(width: 26),
+      ],
+    );
   }
 }
 
@@ -214,6 +246,7 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
 
   // Build the user stats, including the followers, following and statuses.
   Widget buildUserStats() {
+    final ServerSchema? server = ref.read(serverProvider);
     final int followers = widget.schema.followersCount;
     final int following = widget.schema.followingCount;
     final int statuses = widget.schema.statusesCount;
@@ -231,13 +264,21 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
         TextButton.icon(
           label: Text('$followers', style: const TextStyle(fontSize: 16)),
           icon: const Icon(Icons.visibility),
-          onPressed: null,
+          onPressed: () => AccountRelations.show(
+            context: context,
+            schema: widget.schema,
+            onLoadMore: server?.followers,
+          ),
         ),
 
         TextButton.icon(
           label: Text('$following', style: const TextStyle(fontSize: 16)),
           icon: const Icon(Icons.star),
-          onPressed: null,
+          onPressed: () => AccountRelations.show(
+            context: context,
+            schema: widget.schema,
+            onLoadMore: server?.following,
+          ),
         ),
       ],
     );
@@ -334,6 +375,142 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
         child: MediaHero(child: avatar),
       ),
     );
+  }
+}
+
+class AccountRelations extends ConsumerStatefulWidget {
+  final AccountSchema schema;
+  final Function({required AccountSchema account, String? accessToken, String? maxID})? onLoadMore;
+
+  const AccountRelations({
+    super.key,
+    required this.schema,
+    this.onLoadMore,
+  });
+
+  @override
+  ConsumerState<AccountRelations> createState() => _AccountRelationsState();
+
+  static void show({
+    required BuildContext context,
+    required AccountSchema schema,
+    Function({required AccountSchema account, String? accessToken, String? maxID})? onLoadMore,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: AccountRelations(schema: schema, onLoadMore: onLoadMore),
+      ),
+    );
+  }
+}
+
+class _AccountRelationsState extends ConsumerState<AccountRelations> {
+  final ScrollController controller = ScrollController();
+
+  bool isLoading = false;
+  bool isCompleted = false;
+  String? maxID;
+  List<AccountSchema> accounts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(onScroll);
+    onLoad();
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(onScroll);
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (accounts.isEmpty && isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (accounts.isEmpty && isCompleted) {
+      final String text = "User ${widget.schema.username} hide their relations";
+      final Color color = Theme.of(context).colorScheme.error;
+
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(Icons.visibility_off, size: 48, color: Colors.grey),
+                Text(text, style: TextStyle(color: color, fontSize: 16)),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: buildContent(),
+    );
+  }
+
+  Widget buildContent() {
+    return ListView.builder(
+      controller: controller,
+      itemCount: accounts.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Account(schema: accounts[index], showStats: true, onTap: () => context.pop()),
+        );
+      },
+    );
+  }
+
+  // Handle the scroll event to load more accounts.
+  void onScroll() {
+    if (controller.position.pixels >= controller.position.maxScrollExtent - 100 && !isLoading) {
+      onLoad();
+    }
+  }
+
+  // Load the accounts from the server.
+  Future<void> onLoad() async {
+    final String? accessToken = ref.read(accessTokenProvider);
+
+    if (isLoading || isCompleted) return;
+
+    setState(() => isLoading = true);
+
+    final (newAccounts, nextLink) = await widget.onLoadMore?.call(
+      account: widget.schema,
+      accessToken: accessToken,
+      maxID: maxID,
+    ) ?? [];
+
+    logger.i('Loaded ${newAccounts.length} accounts for ${widget.schema.username} followers');
+    setState(() {
+      accounts.addAll(newAccounts);
+      isLoading = false;
+
+      final links = nextLink?.split(',') ?? [];
+      maxID = null;
+      for (final link in links) {
+        final match = RegExp(r'<([^>]+)>;\s*rel="([^"]+)"').firstMatch(link.trim());
+        if (match != null && match.group(2) == 'next') {
+          maxID = Uri.parse(match.group(1) ?? '').queryParameters['max_id'];
+          break;
+        }
+      }
+
+      isCompleted = maxID == null || maxID!.isEmpty;
+    });
   }
 }
 
