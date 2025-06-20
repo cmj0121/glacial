@@ -214,6 +214,7 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
 
   // Build the user stats, including the followers, following and statuses.
   Widget buildUserStats() {
+    final ServerSchema? server = ref.read(serverProvider);
     final int followers = widget.schema.followersCount;
     final int following = widget.schema.followingCount;
     final int statuses = widget.schema.statusesCount;
@@ -231,13 +232,21 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
         TextButton.icon(
           label: Text('$followers', style: const TextStyle(fontSize: 16)),
           icon: const Icon(Icons.visibility),
-          onPressed: null,
+          onPressed: () => AccountRelations.show(
+            context: context,
+            schema: widget.schema,
+            onLoadMore: server?.followers,
+          ),
         ),
 
         TextButton.icon(
           label: Text('$following', style: const TextStyle(fontSize: 16)),
           icon: const Icon(Icons.star),
-          onPressed: null,
+          onPressed: () => AccountRelations.show(
+            context: context,
+            schema: widget.schema,
+            onLoadMore: server?.following,
+          ),
         ),
       ],
     );
@@ -334,6 +343,111 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
         child: MediaHero(child: avatar),
       ),
     );
+  }
+}
+
+class AccountRelations extends ConsumerStatefulWidget {
+  final AccountSchema schema;
+  final Function({required AccountSchema account, String? accessToken, String? maxID})? onLoadMore;
+
+  const AccountRelations({
+    super.key,
+    required this.schema,
+    this.onLoadMore,
+  });
+
+  @override
+  ConsumerState<AccountRelations> createState() => _AccountRelationsState();
+
+  static void show({
+    required BuildContext context,
+    required AccountSchema schema,
+    Function({required AccountSchema account, String? accessToken, String? maxID})? onLoadMore,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: AccountRelations(schema: schema, onLoadMore: onLoadMore),
+      ),
+    );
+  }
+}
+
+class _AccountRelationsState extends ConsumerState<AccountRelations> {
+  final ScrollController controller = ScrollController();
+  final List<AccountSchema> accounts = [];
+
+  bool isLoading = false;
+  bool isCompleted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(onScroll);
+    onLoad();
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(onScroll);
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (accounts.isEmpty && isCompleted) {
+      return const Text("User may set their account private or no relations found.");
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: buildContent(),
+    );
+  }
+
+  Widget buildContent() {
+    return ListView.builder(
+      controller: controller,
+      itemCount: accounts.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Account(schema: accounts[index]),
+        );
+      },
+    );
+  }
+
+  // Handle the scroll event to load more accounts.
+  void onScroll() {
+    if (controller.position.pixels >= controller.position.maxScrollExtent - 100 && !isLoading) {
+      onLoad();
+    }
+  }
+
+  // Load the accounts from the server.
+  Future<void> onLoad() async {
+    final String? accessToken = ref.read(accessTokenProvider);
+
+    if (isLoading || isCompleted) return;
+
+    setState(() => isLoading = true);
+
+    final List<AccountSchema> newAccounts = await widget.onLoadMore?.call(
+      account: widget.schema,
+      accessToken: accessToken,
+      maxID: accounts.isNotEmpty ? accounts.last.id : null,
+    ) ?? [];
+
+    logger.i('Loaded ${newAccounts.length} accounts for ${widget.schema.username} followers');
+    setState(() {
+      accounts.addAll(newAccounts);
+      isLoading = false;
+      isCompleted = newAccounts.isEmpty;
+    });
   }
 }
 
