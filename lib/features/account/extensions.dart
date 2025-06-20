@@ -247,6 +247,20 @@ extension AccountExtensions on ServerSchema {
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
     return (json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList(), nextLink);
   }
+
+  // Get the suggestions of accounts from the Mastodon server.
+  Future<List<AccountSchema>> suggestions({required String accessToken}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v2/suggestions");
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    return json.map((e) => AccountSchema.fromJson(e["account"] as Map<String, dynamic>)).toList();
+  }
 }
 
 // The extension to the TimelineType enum to list the statuses per timeline type.

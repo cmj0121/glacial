@@ -34,6 +34,7 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     final ServerSchema? server = ref.read(serverProvider);
+    final String? accessToken = ref.read(accessTokenProvider);
 
     if (server == null) {
       logger.w("No server selected, but it's required to show the trends.");
@@ -45,18 +46,54 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
       itemCount: tabs.length,
       tabBuilder: (context, index) {
         final TrendsType type = tabs[index];
-        final Widget icon = Icon(type.icon(active: controller.index == index), size: 32);
+        final bool isDisabled = (type == TrendsType.users && accessToken == null);
+        final Color? color = isDisabled ? Theme.of(context).disabledColor : null;
+        final Widget icon = Icon(type.icon(active: controller.index == index), color: color, size: 32);
 
         return Tooltip(
           message: type.tooltip(context),
           child: icon,
         );
       },
-      itemBuilder: (context, index) => Trends(
-        schema: server,
-        type: tabs[index],
-        accessToken: ref.read(accessTokenProvider),
-      ),
+      itemBuilder: (context, index) {
+        final TrendsType type = tabs[index];
+
+        switch (type) {
+          case TrendsType.users:
+            return FutureBuilder(
+              future: server.suggestions(accessToken: accessToken!),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const ClockProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return const SizedBox.shrink();
+                }
+
+                final List<AccountSchema> suggestions = snapshot.data as List<AccountSchema>;
+                return ListView.builder(
+                  itemCount: suggestions.length,
+                  itemBuilder: (context, index) {
+                    final AccountSchema account = suggestions[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Account(
+                        schema: account,
+                        showStats: true,
+                      ),
+                    );
+                  },
+                );
+              }
+            );
+          default:
+            return Trends(
+              schema: server,
+              type: tabs[index],
+              accessToken: ref.read(accessTokenProvider),
+            );
+        }
+      },
+      onTabTappable: (index) => (tabs[index] != TrendsType.users || accessToken != null),
     );
   }
 }
@@ -148,6 +185,8 @@ class _TrendsState extends State<Trends> {
                 final LinkSchema link = trends[index] as LinkSchema;
                 child = TrendsLink(schema: link, imageSize: imageSize);
                 break;
+              case TrendsType.users:
+                throw UnimplementedError('User trends are not implemented yet.');
               case TrendsType.tags:
                 final HashtagSchema tag = trends[index] as HashtagSchema;
                 child = Hashtag(schema: tag);

@@ -7,6 +7,7 @@ import 'package:glacial/core.dart';
 enum TrendsType {
   statuses,
   tags,
+  users,
   links;
 
   String tooltip(BuildContext context) {
@@ -15,6 +16,8 @@ enum TrendsType {
         return AppLocalizations.of(context)?.btn_trends_links ?? 'Links';
       case TrendsType.statuses:
         return AppLocalizations.of(context)?.btn_trends_statuses ?? 'Statuses';
+      case TrendsType.users:
+        return AppLocalizations.of(context)?.btn_user ?? 'Users';
       case TrendsType.tags:
         return AppLocalizations.of(context)?.btn_trends_tags ?? 'Tags';
     }
@@ -26,6 +29,8 @@ enum TrendsType {
         return active ? Icons.whatshot : Icons.whatshot_outlined;
       case statuses:
         return active ? Icons.chat_bubble : Icons.chat_bubble_outline;
+      case users:
+        return active ? Icons.person : Icons.person_outline;
       case tags:
         return active ? Icons.label : Icons.label_outline;
     }
