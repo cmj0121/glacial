@@ -13,12 +13,14 @@ class Account extends StatelessWidget {
   final AccountSchema schema;
   final double maxHeight;
   final bool isTappable;
+  final VoidCallback? onTap;
 
   const Account({
     super.key,
     required this.schema,
     this.maxHeight = 52,
     this.isTappable = true,
+    this.onTap,
   });
 
   @override
@@ -44,7 +46,10 @@ class Account extends StatelessWidget {
           }
 
           return InkWellDone(
-            onTap: isTappable ? () => context.push(RoutePath.profile.path, extra: schema) : null,
+            onTap: isTappable ? () {
+              onTap?.call();
+              context.push(RoutePath.profile.path, extra: schema);
+            } : null,
             child: content,
           );
         },
@@ -435,7 +440,7 @@ class _AccountRelationsState extends ConsumerState<AccountRelations> {
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.only(bottom: 8),
-          child: Account(schema: accounts[index]),
+          child: Account(schema: accounts[index], onTap: () => context.pop()),
         );
       },
     );
