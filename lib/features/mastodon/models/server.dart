@@ -69,12 +69,19 @@ class ServerSchema {
     final Uri url = UriEx.handle(domain, '/api/v2/instance');
     final response = await get(url);
 
-    if (response.statusCode != 200) {
-      logger.w('failed to load the server: $domain: ${response.statusCode}');
-      throw Exception('Failed to load the server: $domain');
+    switch (response.statusCode) {
+      case 200:
+        return ServerSchema.fromString(response.body);
+      case 404:
+        final Uri url = UriEx.handle(domain, '/api/v2/instance');
+        final response = await get(url);
+
+        if (response.statusCode == 200) {
+          return ServerSchema.fromString(response.body);
+        }
     }
 
-    return ServerSchema.fromString(response.body);
+    throw Exception('Failed to load the server: $domain');
   }
 }
 

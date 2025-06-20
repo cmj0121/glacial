@@ -375,10 +375,11 @@ class AccountRelations extends ConsumerStatefulWidget {
 
 class _AccountRelationsState extends ConsumerState<AccountRelations> {
   final ScrollController controller = ScrollController();
-  final List<AccountSchema> accounts = [];
 
   bool isLoading = false;
   bool isCompleted = false;
+  String? maxID;
+  List<AccountSchema> accounts = [];
 
   @override
   void initState() {
@@ -396,10 +397,29 @@ class _AccountRelationsState extends ConsumerState<AccountRelations> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (accounts.isEmpty && isLoading) {
       return const Center(child: CircularProgressIndicator());
     } else if (accounts.isEmpty && isCompleted) {
-      return const Text("User may set their account private or no relations found.");
+      final String text = "User ${widget.schema.username} hide their relations";
+      final Color color = Theme.of(context).colorScheme.error;
+
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(Icons.visibility_off, size: 48, color: Colors.grey),
+                Text(text, style: TextStyle(color: color, fontSize: 16)),
+              ],
+            ),
+          ),
+        ),
+      );
     }
 
     return Padding(
@@ -436,17 +456,28 @@ class _AccountRelationsState extends ConsumerState<AccountRelations> {
 
     setState(() => isLoading = true);
 
-    final List<AccountSchema> newAccounts = await widget.onLoadMore?.call(
+    final (newAccounts, nextLink) = await widget.onLoadMore?.call(
       account: widget.schema,
       accessToken: accessToken,
-      maxID: accounts.isNotEmpty ? accounts.last.id : null,
+      maxID: maxID,
     ) ?? [];
 
     logger.i('Loaded ${newAccounts.length} accounts for ${widget.schema.username} followers');
     setState(() {
       accounts.addAll(newAccounts);
       isLoading = false;
-      isCompleted = newAccounts.isEmpty;
+
+      final links = nextLink?.split(',') ?? [];
+      maxID = null;
+      for (final link in links) {
+        final match = RegExp(r'<([^>]+)>;\s*rel="([^"]+)"').firstMatch(link.trim());
+        if (match != null && match.group(2) == 'next') {
+          maxID = Uri.parse(match.group(1) ?? '').queryParameters['max_id'];
+          break;
+        }
+      }
+
+      isCompleted = maxID == null || maxID!.isEmpty;
     });
   }
 }
