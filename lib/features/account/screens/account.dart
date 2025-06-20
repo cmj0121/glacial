@@ -27,39 +27,46 @@ class Account extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: maxHeight,
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          late Widget content;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double maxWidth = constraints.maxWidth;
+        final bool showStats = this.showStats && maxWidth > 800;
 
-          if (constraints.maxHeight < 24) {
-            content = Row(
-              children: [
-                buildAvatar(),
-                const SizedBox(width: 6),
-                buildDisplayName(),
-              ]
-            );
-          } else {
-            content = buildContent(context);
-          }
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: maxHeight,
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              late Widget content;
 
-          return InkWellDone(
-            onTap: isTappable ? () {
-              onTap?.call();
-              context.push(RoutePath.profile.path, extra: schema);
-            } : null,
-            child: content,
-          );
-        },
-      ),
+              if (constraints.maxHeight < 24) {
+                content = Row(
+                  children: [
+                    buildAvatar(),
+                    const SizedBox(width: 6),
+                    buildDisplayName(),
+                  ]
+                );
+              } else {
+                content = buildContent(context, showStats);
+              }
+
+              return InkWellDone(
+                onTap: isTappable ? () {
+                  onTap?.call();
+                  context.push(RoutePath.profile.path, extra: schema);
+                } : null,
+                child: content,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
-  Widget buildContent(BuildContext context) {
+  Widget buildContent(BuildContext context, bool showStats) {
     final Widget content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
