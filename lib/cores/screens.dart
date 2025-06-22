@@ -617,7 +617,7 @@ class _SensitiveViewState extends State<SensitiveView> {
 
   Widget buildWithSpoiler() {
     return InkWellDone(
-      onTap: onTap,
+      onDoubleTap: onTap,
       child: Column(
         children: [
           const SizedBox(height: 8),
