@@ -41,6 +41,20 @@ extension TrendsExtension on ServerSchema {
     }
   }
 
+  // Get the hashtag by its name from the server, and return the hashtag schema.
+  Future<HashtagSchema> getHashtag(String tag, {String? accessToken}) async {
+    final Uri uri = UriEx.handle(domain, '/api/v1/tags/$tag');
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: accessToken == null ? {} : headers);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to fetch hashtag: ${response.body}');
+    }
+
+    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+    return HashtagSchema.fromJson(json);
+  }
+
   // List the following hashtags in the server, and return the list of hashtags
   Future<(List<HashtagSchema>, String?)> followedHashtags({String? accessToken, String? maxID}) async {
     if (accessToken == null) {
@@ -64,6 +78,42 @@ extension TrendsExtension on ServerSchema {
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
     final List<HashtagSchema> hashtags = json.map((e) => HashtagSchema.fromJson(e as Map<String, dynamic>)).toList();
     return (hashtags, nextLink);
+  }
+
+  // Follow a hashtag in the server, and return the updated hashtag.
+  Future<HashtagSchema> followHashtag(String tag, {String? accessToken}) async {
+    if (accessToken == null) {
+      throw ArgumentError('Access token is required to follow a hashtag.');
+    }
+
+    final Uri uri = UriEx.handle(domain, '/api/v1/tags/$tag/follow');
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await post(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to follow hashtag: ${response.body}');
+    }
+
+    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+    return HashtagSchema.fromJson(json);
+  }
+
+  // Unfollow a hashtag in the server, and return the updated hashtag.
+  Future<HashtagSchema> unfollowHashtag(String tag, {String? accessToken}) async {
+    if (accessToken == null) {
+      throw ArgumentError('Access token is required to unfollow a hashtag.');
+    }
+
+    final Uri uri = UriEx.handle(domain, '/api/v1/tags/$tag/unfollow');
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await post(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to unfollow hashtag: ${response.body}');
+    }
+
+    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+    return HashtagSchema.fromJson(json);
   }
 }
 

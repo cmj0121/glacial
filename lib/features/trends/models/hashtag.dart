@@ -7,11 +7,15 @@ class HashtagSchema {
   final String name;
   final String url;
   final List<HistorySchema> history;
+  final bool? following;
+  final bool? featuring;
 
   const HashtagSchema({
     required this.name,
     required this.url,
     required this.history,
+    this.following,
+    this.featuring,
   });
 
   factory HashtagSchema.fromJson(Map<String, dynamic> json) {
@@ -19,6 +23,8 @@ class HashtagSchema {
       name: json['name'] as String,
       url: json['url'] as String,
       history: (json['history'] as List<dynamic>).map((e) => HistorySchema.fromJson(e as Map<String, dynamic>)).toList(),
+      following: json['following'] as bool?,
+      featuring: json['featuring'] as bool?,
     );
   }
 }

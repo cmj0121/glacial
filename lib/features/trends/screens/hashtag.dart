@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -26,7 +27,7 @@ class Hashtag extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
         child: InkWellDone(
-          onTap: accessToken == null ? null : () => context.push(RoutePath.hashtag.path, extra: schema.name),
+          onTap: accessToken == null ? null : () => context.push(RoutePath.hashtag.path, extra: schema),
           child: buildContent(context),
         ),
       ),
@@ -61,6 +62,45 @@ class Hashtag extends ConsumerWidget {
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ]
+    );
+  }
+}
+
+// The followed hashttag button that can be used to follow or unfollow the hashtag.
+class FollowedHashtagButton extends ConsumerStatefulWidget {
+  final HashtagSchema schema;
+
+  const FollowedHashtagButton({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  ConsumerState<FollowedHashtagButton> createState() => _FollowedHashtagButtonState();
+}
+
+class _FollowedHashtagButtonState extends ConsumerState<FollowedHashtagButton> {
+  late bool isFollowing = widget.schema.following == true;
+
+  @override
+  Widget build(BuildContext context) {
+    final ServerSchema? server = ref.read(serverProvider);
+    final String? accessToken = ref.read(accessTokenProvider);
+
+    return IconButton(
+      icon: Icon(
+        isFollowing ? Icons.bookmark : Icons.bookmark_border,
+        color: isFollowing ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
+      ),
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onPressed: () async {
+        isFollowing ?
+          await server?.unfollowHashtag(widget.schema.name, accessToken: accessToken) :
+          await server?.followHashtag(widget.schema.name, accessToken: accessToken);
+
+        setState(() => isFollowing = !isFollowing);
+      },
     );
   }
 }

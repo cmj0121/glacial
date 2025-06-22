@@ -234,11 +234,13 @@ class MediaViewer extends StatelessWidget {
 class BackableView extends StatelessWidget {
   final Widget child;
   final String? title;
+  final List<Widget>? actions;
 
   const BackableView({
     super.key,
     required this.child,
     this.title,
+    this.actions,
   });
 
   @override
@@ -260,6 +262,8 @@ class BackableView extends StatelessWidget {
             Expanded(
               child: Center(child: header),
             ),
+
+            ...buildActions(context),
           ],
         ),
         const SizedBox(height: 8),
@@ -273,6 +277,20 @@ class BackableView extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  List<Widget> buildActions(BuildContext context) {
+    if (actions == null || actions!.isEmpty) {
+      return [const SizedBox.shrink()];
+    }
+
+    return [
+      const Spacer(),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: actions!,
+      ),
+    ];
   }
 }
 

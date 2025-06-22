@@ -168,7 +168,7 @@ class GlacialApp extends ConsumerWidget {
           path: RoutePath.hashtag.path,
           builder: (BuildContext context, GoRouterState state) {
             final ServerSchema? server = ref.read(serverProvider);
-            final String hashtag = state.extra as String;
+            final HashtagSchema hashtag = state.extra as HashtagSchema;
 
             if (server == null) {
               logger.w("No server selected, cannot show the hashtag timeline.");
@@ -178,11 +178,14 @@ class GlacialApp extends ConsumerWidget {
             final Widget timeline = Timeline(
               schema: server,
               type: TimelineType.hashtag,
-              keyword: hashtag,
+              keyword: hashtag.name,
             );
 
             return BackableView(
-              title: '#$hashtag',
+              title: '#${hashtag.name}',
+              actions: [
+                FollowedHashtagButton(schema: hashtag)
+              ],
               child: timeline,
             );
           },
