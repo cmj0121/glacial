@@ -281,7 +281,7 @@ class BackableView extends StatelessWidget {
 
   List<Widget> buildActions(BuildContext context) {
     if (actions == null || actions!.isEmpty) {
-      return [const SizedBox.shrink()];
+      return [];
     }
 
     return [
