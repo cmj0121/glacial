@@ -66,7 +66,7 @@ class Hashtag extends ConsumerWidget {
   }
 }
 
-// The followed hashttag button that can be used to follow or unfollow the hashtag.
+// The followed hashtag button that can be used to follow or unfollow the hashtag.
 class FollowedHashtagButton extends ConsumerStatefulWidget {
   final HashtagSchema schema;
 
