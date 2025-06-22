@@ -27,39 +27,46 @@ class Account extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: maxHeight,
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          late Widget content;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double maxWidth = constraints.maxWidth;
+        final bool showStats = this.showStats && maxWidth > 800;
 
-          if (constraints.maxHeight < 24) {
-            content = Row(
-              children: [
-                buildAvatar(),
-                const SizedBox(width: 6),
-                buildDisplayName(),
-              ]
-            );
-          } else {
-            content = buildContent(context);
-          }
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: maxHeight,
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              late Widget content;
 
-          return InkWellDone(
-            onTap: isTappable ? () {
-              onTap?.call();
-              context.push(RoutePath.profile.path, extra: schema);
-            } : null,
-            child: content,
-          );
-        },
-      ),
+              if (constraints.maxHeight < 24) {
+                content = Row(
+                  children: [
+                    buildAvatar(),
+                    const SizedBox(width: 6),
+                    buildDisplayName(),
+                  ]
+                );
+              } else {
+                content = buildContent(context, showStats);
+              }
+
+              return InkWellDone(
+                onTap: isTappable ? () {
+                  onTap?.call();
+                  context.push(RoutePath.profile.path, extra: schema);
+                } : null,
+                child: content,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
-  Widget buildContent(BuildContext context) {
+  Widget buildContent(BuildContext context, bool showStats) {
     final Widget content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -153,13 +160,23 @@ class AccountProfile extends ConsumerStatefulWidget {
 }
 
 class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTickerProviderStateMixin {
-  final List<TimelineType> types = [TimelineType.profile, TimelineType.user, TimelineType.pin, TimelineType.schedule];
-
+  late final List<TimelineType> types;
   late final TabController controller;
 
   @override
   void initState() {
     super.initState();
+
+    final AccountSchema? account = ref.read(accountProvider);
+    final List<TimelineType> allTypes = [
+      TimelineType.profile,
+      TimelineType.user,
+      TimelineType.pin,
+      TimelineType.schedule,
+      TimelineType.hashtag,
+    ];
+
+    types = allTypes.where((type) => type.supportAnonymous || account?.id == widget.schema.id).toList();
     controller = TabController(length: types.length, vsync: this);
   }
 
@@ -206,12 +223,14 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
         switch (type) {
           case TimelineType.profile:
             return buildTimelineHeader(server);
+          case TimelineType.hashtag:
+            return FollowedHashtags(server: server);
           default:
-          return Timeline(
-            schema: server,
-            type: types[index],
-            account: widget.schema,
-          );
+            return Timeline(
+              schema: server,
+              type: types[index],
+              account: widget.schema,
+            );
         }
       },
       onTabTappable: (index) => types[index].supportAnonymous || account?.id == widget.schema.id,
@@ -499,16 +518,91 @@ class _AccountRelationsState extends ConsumerState<AccountRelations> {
       accounts.addAll(newAccounts);
       isLoading = false;
 
-      final links = nextLink?.split(',') ?? [];
-      maxID = null;
-      for (final link in links) {
-        final match = RegExp(r'<([^>]+)>;\s*rel="([^"]+)"').firstMatch(link.trim());
-        if (match != null && match.group(2) == 'next') {
-          maxID = Uri.parse(match.group(1) ?? '').queryParameters['max_id'];
-          break;
-        }
-      }
+      maxID = getMaxIDFromNextLink(nextLink);
+      isCompleted = maxID == null || maxID!.isEmpty;
+    });
+  }
+}
 
+// The followed hashtags widget to show the followed hashtags of the user.
+class FollowedHashtags extends ConsumerStatefulWidget {
+  final ServerSchema server;
+
+  const FollowedHashtags({super.key, required this.server});
+
+  @override
+  ConsumerState<FollowedHashtags> createState() => _FollowedHashtagsState();
+}
+
+class _FollowedHashtagsState extends ConsumerState<FollowedHashtags> {
+  final ScrollController controller = ScrollController();
+
+  String? maxID;
+  bool isLoading = false;
+  bool isCompleted = false;
+  List<HashtagSchema> hashtags = [];
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(onScroll);
+    onLoad();
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(onScroll);
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (hashtags.isEmpty && isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (hashtags.isEmpty && isCompleted) {
+      return SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: buildContent(),
+    );
+  }
+
+  Widget buildContent() {
+    return ListView.builder(
+      controller: controller,
+      itemCount: hashtags.length,
+      itemBuilder: (context, index) {
+        final HashtagSchema hashtag = hashtags[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Hashtag(schema: hashtag),
+        );
+      },
+    );
+  }
+
+  // Handle the scroll event to load more hashtags.
+  void onScroll() {
+    if (controller.position.pixels >= controller.position.maxScrollExtent - 100 && !isLoading) {
+      onLoad();
+    }
+  }
+
+  // Load the followed hashtags from the server.
+  Future<void> onLoad() async {
+    final String? accessToken = ref.read(accessTokenProvider);
+
+    if (isLoading || isCompleted) return;
+    setState(() => isLoading = true);
+
+    final (newHashtags, nextLink) = await widget.server.followedHashtags(accessToken: accessToken, maxID: maxID);
+    setState(() {
+      maxID = getMaxIDFromNextLink(nextLink);
+      hashtags.addAll(newHashtags);
+      isLoading = false;
       isCompleted = maxID == null || maxID!.isEmpty;
     });
   }

@@ -46,4 +46,17 @@ class Debouncer {
   }
 }
 
+// Extracts the max_id from the next link if it exists.
+String? getMaxIDFromNextLink(String? nextLink) {
+  final links = nextLink?.split(',') ?? [];
+  for (final link in links) {
+    final match = RegExp(r'<([^>]+)>;\s*rel="([^"]+)"').firstMatch(link.trim());
+    if (match != null && match.group(2) == 'next') {
+      return Uri.parse(match.group(1) ?? '').queryParameters['max_id'];
+    }
+  }
+
+  return null;
+}
+
 // vim: set ts=2 sw=2 sts=2 et:
