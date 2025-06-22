@@ -160,19 +160,23 @@ class AccountProfile extends ConsumerStatefulWidget {
 }
 
 class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTickerProviderStateMixin {
-  final List<TimelineType> types = [
-    TimelineType.profile,
-    TimelineType.user,
-    TimelineType.pin,
-    TimelineType.schedule,
-    TimelineType.hashtag,
-  ];
-
+  late final List<TimelineType> types;
   late final TabController controller;
 
   @override
   void initState() {
     super.initState();
+
+    final AccountSchema? account = ref.read(accountProvider);
+    final List<TimelineType> allTypes = [
+      TimelineType.profile,
+      TimelineType.user,
+      TimelineType.pin,
+      TimelineType.schedule,
+      TimelineType.hashtag,
+    ];
+
+    types = allTypes.where((type) => type.supportAnonymous || account?.id == widget.schema.id).toList();
     controller = TabController(length: types.length, vsync: this);
   }
 
