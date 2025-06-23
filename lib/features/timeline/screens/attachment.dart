@@ -88,6 +88,10 @@ class Attachment extends StatelessWidget {
       case MediaType.video:
         final Uri url = Uri.parse(schema.url);
         return MediaPlayer(url: url);
+      case MediaType.audio:
+        final Uri url = Uri.parse(schema.url);
+        final Widget cover = Icon(Icons.music_note_rounded, size: 64);
+        return MediaPlayer(url: url, cover: cover);
       default:
         logger.w("unsupported media type: ${schema.type}");
         return const SizedBox.shrink();
@@ -97,10 +101,12 @@ class Attachment extends StatelessWidget {
 
 class MediaPlayer extends StatefulWidget {
   final Uri url;
+  final Widget? cover;
 
   const MediaPlayer({
     super.key,
     required this.url,
+    this.cover,
   });
 
   @override
@@ -155,6 +161,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
+              Center(child:widget.cover ?? const SizedBox.shrink()),
               AspectRatio(
                 aspectRatio: controller.value.aspectRatio,
                 child: VideoPlayer(controller),
