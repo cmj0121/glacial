@@ -141,7 +141,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
       future: playerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              child: ClockProgressIndicator(),
+            ),
+          );
         }
 
         return buildPlayer();

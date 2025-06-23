@@ -248,7 +248,7 @@ class SingleNotification extends ConsumerWidget {
 
           final Widget avatar = CachedNetworkImage(
             imageUrl: account.avatar,
-            placeholder: (context, url) => const CircularProgressIndicator(),
+            placeholder: (context, url) => const ClockProgressIndicator(),
             errorWidget: (context, url, error) => const Icon(Icons.error),
             width: iconSize,
             height: iconSize,

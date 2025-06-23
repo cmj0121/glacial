@@ -103,6 +103,8 @@ class _StatusState extends ConsumerState<Status> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Icon(icon, color: Colors.grey, size: metadataHeight),
           const SizedBox(width: 4),
@@ -269,7 +271,7 @@ class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProvid
             future: isReblog ? server?.rebloggedBy(schema: widget.schema) : server?.favouritedBy(schema: widget.schema),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: ClockProgressIndicator());
               } else if (snapshot.hasError) {
                 return const SizedBox.shrink();
               }
@@ -361,6 +363,8 @@ class StatusLight extends StatelessWidget {
     final String duration = timeago.format(schema.createdAt, locale: 'en_short');
 
     return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Expanded(
           flex: 10,

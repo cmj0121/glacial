@@ -178,7 +178,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
             width: medisWidth,
             height: medisWidth,
             fit: BoxFit.cover,
-            placeholder: (context, url) => const CircularProgressIndicator(),
+            placeholder: (context, url) => const ClockProgressIndicator(),
             errorWidget: (context, url, error) => Icon(Icons.error, color: Colors.red),
           ),
           Positioned(

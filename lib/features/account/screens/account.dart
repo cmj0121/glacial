@@ -69,6 +69,7 @@ class Account extends StatelessWidget {
   Widget buildContent(BuildContext context, bool showStats) {
     final Widget content = Row(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         buildAvatar(),
         const SizedBox(width: 16),
@@ -89,13 +90,22 @@ class Account extends StatelessWidget {
 
   // Build the Avatar of the user.
   Widget buildAvatar() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: CachedNetworkImage(
-        imageUrl: schema.avatar,
-        placeholder: (context, url) => const CircularProgressIndicator(),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
-        fit: BoxFit.cover,
+    return CachedNetworkImage(
+      imageUrl: schema.avatar,
+      placeholder: (context, url) => SizedBox(
+        width: maxHeight,
+        height: maxHeight,
+        child: Center(child: ClockProgressIndicator(size: maxHeight / 2)),
+      ),
+      errorWidget: (context, url, error) => const Icon(Icons.error),
+      imageBuilder: (context, imageProvider) => ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image(
+          image: imageProvider,
+          width: maxHeight,
+          height: maxHeight,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -358,7 +368,7 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
   Widget buildHeader() {
     final Widget banner = CachedNetworkImage(
       imageUrl: widget.schema.header,
-      placeholder: (context, url) => const CircularProgressIndicator(),
+      placeholder: (context, url) => const ClockProgressIndicator(),
       errorWidget: (context, url, error) => const Icon(Icons.error),
     );
 
@@ -377,7 +387,7 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
   Widget buildAvatar() {
     final Widget avatar = CachedNetworkImage(
       imageUrl: widget.schema.avatar,
-      placeholder: (context, url) => const CircularProgressIndicator(),
+      placeholder: (context, url) => const ClockProgressIndicator(),
       errorWidget: (context, url, error) => const Icon(Icons.error),
       fit: BoxFit.cover,
     );
@@ -449,7 +459,7 @@ class _AccountRelationsState extends ConsumerState<AccountRelations> {
   @override
   Widget build(BuildContext context) {
     if (accounts.isEmpty && isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: ClockProgressIndicator());
     } else if (accounts.isEmpty && isCompleted) {
       final String text = "User ${widget.schema.username} hide their relations";
       final Color color = Theme.of(context).colorScheme.error;
@@ -559,7 +569,7 @@ class _FollowedHashtagsState extends ConsumerState<FollowedHashtags> {
   @override
   Widget build(BuildContext context) {
     if (hashtags.isEmpty && isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: ClockProgressIndicator());
     } else if (hashtags.isEmpty && isCompleted) {
       return SizedBox.shrink();
     }

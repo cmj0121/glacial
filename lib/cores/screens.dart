@@ -621,7 +621,7 @@ class _SensitiveViewState extends State<SensitiveView> {
       child: Column(
         children: [
           const SizedBox(height: 8),
-    buildSpoiler(),
+          buildSpoiler(),
           Visibility(
             visible: isVisible,
             child: widget.child,

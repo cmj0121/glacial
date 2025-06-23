@@ -83,7 +83,7 @@ class MastodonServer extends StatelessWidget {
         maxHeight: double.infinity,
         child: CachedNetworkImage(
           imageUrl: schema.thumbnail,
-          placeholder: (context, url) => const CircularProgressIndicator(),
+          placeholder: (context, url) => const ClockProgressIndicator(),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       ),
