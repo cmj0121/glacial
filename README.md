@@ -13,10 +13,10 @@ This project is based on the current Mastodon [API version][2] and implements th
 features to access and manage your Mastodon account. The features are designed to be simple,
 easy to use, and intuitive:
 
-- [ ] Timelines
-- [ ] Trends
+- [x] Timelines
+- [x] Trends
 - [ ] Notifications
-- [ ] Explore / Search
+- [x] Explore / Search
 - [ ] Editor / Posting
 - [ ] User Profile
 - [ ] Administration

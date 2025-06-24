@@ -7,6 +7,12 @@ import 'package:glacial/app.dart';
 import 'package:glacial/core.dart';
 
 void main() async {
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // Handle Flutter errors globally
+    final String stack = details.stack?.toString() ?? "No stack trace available";
+    logger.e("Flutter Error: ${details.exceptionAsString()}\n$stack");
+  };
+
   await dotenv.load(fileName: ".env");
   await Info.init();
   await Storage.init(purge: false);

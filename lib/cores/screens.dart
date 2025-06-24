@@ -616,18 +616,18 @@ class _SensitiveViewState extends State<SensitiveView> {
   }
 
   Widget buildWithSpoiler() {
-    return InkWellDone(
-      onTap: onTap,
-      child: Column(
-        children: [
-          const SizedBox(height: 8),
-    buildSpoiler(),
-          Visibility(
-            visible: isVisible,
-            child: widget.child,
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        InkWellDone(
+          onDoubleTap: onTap,
+          child: buildSpoiler(),
+        ),
+        Visibility(
+          visible: isVisible,
+          child: widget.child,
+        ),
+      ],
     );
   }
 
