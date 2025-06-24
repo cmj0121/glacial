@@ -154,6 +154,17 @@ class HtmlDone extends StatelessWidget {
           color: Theme.of(context).colorScheme.secondary,
           textDecoration: TextDecoration.underline,
         ),
+        'blockquote': Style(
+          color: Theme.of(context).colorScheme.secondary,
+          padding: HtmlPaddings(left: HtmlPadding(8)),
+          textAlign: TextAlign.justify,
+          border: Border(
+            left: BorderSide(
+              color: Theme.of(context).dividerColor,
+              width: 2,
+            ),
+          ),
+        ),
       },
       onLinkTap: onLinkTap,
     );
