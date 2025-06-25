@@ -28,7 +28,7 @@ easy to use, and intuitive:
 ### Trends
 
 <img src="images/trends_hashtag.png" alt="Trends Hashtag" />
-- A list of the trending post, hashtags, accounts, and link on the current Mastodon server.
+- A list of the trending posts, hashtags, accounts, and links on the current Mastodon server.
 
 ### Other Features
 
