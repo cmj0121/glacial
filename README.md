@@ -13,8 +13,25 @@ This project is based on the current Mastodon [API version][2] and implements th
 features to access and manage your Mastodon account. The features are designed to be simple,
 easy to use, and intuitive:
 
-- [x] Timelines
-- [x] Trends
+### Server Explorer
+
+<img src="images/mastodon_server_explorer.png" alt="Mastodon Server Explorer" />
+- Search the Mastodon servers by the server name or the server URL.
+- Historical list of the Mastodon servers you have visited.
+
+### Timelines
+
+<img src="images/federal_timeline.png" alt="Federal Timeline" />
+- A slider to switch between the timelines based on the current Mastodon server.
+- Always show the latest posts in the timeline, and refresh the timeline by pulling down.
+
+### Trends
+
+<img src="images/trends_hashtag.png" alt="Trends Hashtag" />
+- A list of the trending posts, hashtags, accounts, and links on the current Mastodon server.
+
+### Other Features
+
 - [ ] Notifications
 - [x] Explore / Search
 - [ ] Editor / Posting
@@ -22,7 +39,7 @@ easy to use, and intuitive:
 - [ ] Administration
 - [ ] Customized Settings
 
-### Design Concept
+## Design Concept
 
 The design concept of this project is to provide a simple and easy to use Mastodon client that
 allows users to access and manage their Mastodon account with minimal effort. All the interfaces
