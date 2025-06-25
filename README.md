@@ -3,6 +3,7 @@
 > The simple and easy to use Mastodon client
 
 [![License: CC BY-NC-ND 4.0][0]][1]
+[English](README.md) | [繁體中文](README_zh.md)
 
 **Glacial** is the simple and cross-platform Mastodon client that helps you to access and manage
 your Mastodon account, on any device, anywhere, anytime.
