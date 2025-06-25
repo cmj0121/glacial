@@ -3,6 +3,7 @@
 > The simple and easy to use Mastodon client
 
 [![License: CC BY-NC-ND 4.0][0]][1]
+[English](README.md) | [繁體中文](README_zh.md)
 
 **Glacial** is the simple and cross-platform Mastodon client that helps you to access and manage
 your Mastodon account, on any device, anywhere, anytime.
@@ -30,10 +31,15 @@ easy to use, and intuitive:
 <img src="images/trends_hashtag.png" alt="Trends Hashtag" />
 - A list of the trending posts, hashtags, accounts, and links on the current Mastodon server.
 
-### Other Features
+### Explore / Search
+
+<img src="images/search.png" alt="Search" />
+
+- Search the accounts, posts or hashtags on the current Mastodon server.
+
+### Other Unfinished Features
 
 - [ ] Notifications
-- [x] Explore / Search
 - [ ] Editor / Posting
 - [ ] User Profile
 - [ ] Administration

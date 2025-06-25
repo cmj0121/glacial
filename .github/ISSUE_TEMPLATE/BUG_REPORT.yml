@@ -1,0 +1,44 @@
+---
+name: Bug Report
+description: File a bug report.
+
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+projects: ["cmj0121/glacial"]
+
+assignees: ["cmj0121"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please fill out the following sections to help us understand the issue you're experiencing.
+        If you have any screenshots or additional information, please include them as well.
+  - type: input
+    id: server_or_version
+    attributes:
+      label: "Mastodon Server or Version"
+      description: "The Mastodon server or version you are using."
+      placeholder: "e.g., mastodon.social or version 4.0.0"
+    validations:
+      required: true
+  - type: input
+    id: device_or_os
+    attributes:
+      label: "Device or Operating System"
+      description: "The device or operating system you are using."
+      placeholder: "e.g., iPhone 12, macOS 11.2"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: |
+        A clear and concise description of the bug you are experiencing, including the steps to reproduce it,
+        expected behavior, and actual behavior.
+
+        If possible, please include any relevant screenshots or logs.
+      placeholder: "Describe the bug in detail, including steps to reproduce it."
+    validations:
+      required: true
