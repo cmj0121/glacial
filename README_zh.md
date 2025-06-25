@@ -28,10 +28,15 @@
 <img src="images/trends_hashtag.png" alt="Trends Hashtag" />
 - 當前 Mastodon 伺服器上熱門帖子、標籤、帳戶和鏈接的列表。
 
+### 搜索 / 探索
+
+<img src="images/search.png" alt="Search" />
+
+- 在當前 Mastodon 伺服器上搜索帳戶、帖子或標籤。
+
 ### 其他未完成功能
 
 - [ ] 通知
-- [x] 搜索 / 探索
 - [ ] 編輯 / 發嘟
 - [ ] 用戶資料
 - [ ] 管理介面

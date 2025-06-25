@@ -30,10 +30,15 @@ easy to use, and intuitive:
 <img src="images/trends_hashtag.png" alt="Trends Hashtag" />
 - A list of the trending posts, hashtags, accounts, and links on the current Mastodon server.
 
+### Explore / Search
+
+<img src="images/search.png" alt="Search" />
+
+- Search the accounts, posts or hashtags on the current Mastodon server.
+
 ### Other Unfinished Features
 
 - [ ] Notifications
-- [x] Explore / Search
 - [ ] Editor / Posting
 - [ ] User Profile
 - [ ] Administration
