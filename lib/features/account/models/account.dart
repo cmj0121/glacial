@@ -10,7 +10,9 @@ enum AccountProfileType {
   user,          // The statuses posted from the given user.
   pin,           // The pinned statuses for the logged in user.
   schedule,      // The scheduled statuses for the logged in user.
-  hashtag;      // The hashtag timeline for the current server.
+  hashtag,       // The hashtag timeline for the current server.
+  mute,          // The muted accounts for the logged in user.
+  block;         // The blocked accounts for the logged in user.
 
   String tooltip(BuildContext context) {
     switch (this) {
@@ -24,6 +26,10 @@ enum AccountProfileType {
         return AppLocalizations.of(context)?.btn_schedule ?? 'Schedule';
       case hashtag:
         return AppLocalizations.of(context)?.btn_trends_tags ?? 'Hashtag';
+      case mute:
+        return AppLocalizations.of(context)?.btn_mute ?? 'Muted Accounts';
+      case block:
+        return AppLocalizations.of(context)?.btn_block ?? 'Blocked Accounts';
     }
   }
 
@@ -39,6 +45,10 @@ enum AccountProfileType {
         return active ? Icons.schedule : Icons.schedule_outlined;
       case hashtag:
         return active ? Icons.tag : Icons.tag_outlined;
+      case mute:
+        return active ? Icons.volume_off : Icons.volume_off_outlined;
+      case block:
+        return active ? Icons.block : Icons.block_outlined;
     }
   }
 
@@ -50,6 +60,8 @@ enum AccountProfileType {
         return true;
       case AccountProfileType.schedule:
       case AccountProfileType.hashtag:
+      case AccountProfileType.mute:
+      case AccountProfileType.block:
         return false;
     }
   }

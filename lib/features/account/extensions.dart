@@ -261,6 +261,38 @@ extension AccountExtensions on ServerSchema {
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
     return json.map((e) => AccountSchema.fromJson(e["account"] as Map<String, dynamic>)).toList();
   }
+
+  // Get the list of muted accounts from the Mastodon server.
+  Future<(List<AccountSchema>, String?)> mutedAccounts({required String accessToken, String? maxID}) async {
+    final Map<String, String> query = {'max_id': maxID ?? ''};
+    final Uri uri = UriEx.handle(domain, "/api/v1/mutes").replace(queryParameters: query);
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    final String? nextLink = response.headers['link'];
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    return (json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList(), nextLink);
+  }
+
+  // Get the list of blocked accounts from the Mastodon server.
+  Future<(List<AccountSchema>, String?)> blockedAccounts({required String accessToken, String? maxID}) async {
+    final Map<String, String> query = {'max_id': maxID ?? ''};
+    final Uri uri = UriEx.handle(domain, "/api/v1/blocks").replace(queryParameters: query);
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+
+    final String? nextLink = response.headers['link'];
+    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    return (json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList(), nextLink);
+  }
 }
 
 // The extension to the TimelineType enum to list the statuses per timeline type.
