@@ -170,7 +170,7 @@ class AccountProfile extends ConsumerStatefulWidget {
 }
 
 class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTickerProviderStateMixin {
-  late final List<TimelineType> types;
+  late final List<AccountProfileType> types;
   late final TabController controller;
 
   @override
@@ -178,12 +178,12 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
     super.initState();
 
     final AccountSchema? account = ref.read(accountProvider);
-    final List<TimelineType> allTypes = [
-      TimelineType.profile,
-      TimelineType.user,
-      TimelineType.pin,
-      TimelineType.schedule,
-      TimelineType.hashtag,
+    final List<AccountProfileType> allTypes = [
+      AccountProfileType.profile,
+      AccountProfileType.user,
+      AccountProfileType.pin,
+      AccountProfileType.schedule,
+      AccountProfileType.hashtag,
     ];
 
     types = allTypes.where((type) => type.supportAnonymous || account?.id == widget.schema.id).toList();
@@ -215,7 +215,7 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
       tabController: controller,
       itemCount: types.length,
       tabBuilder: (context, index) {
-        final TimelineType type = types[index];
+        final AccountProfileType type = types[index];
         final bool isSelected = controller.index == index;
         final bool isActive = type.supportAnonymous || account?.id == widget.schema.id;
         final Color color = isActive ?
@@ -228,17 +228,17 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
         );
       },
       itemBuilder: (context, index) {
-        final TimelineType type = types[index];
+        final AccountProfileType type = types[index];
 
         switch (type) {
-          case TimelineType.profile:
+          case AccountProfileType.profile:
             return buildTimelineHeader(server);
-          case TimelineType.hashtag:
+          case AccountProfileType.hashtag:
             return FollowedHashtags(server: server);
           default:
             return Timeline(
               schema: server,
-              type: types[index],
+              type: types[index].toTimelineType,
               account: widget.schema,
             );
         }
@@ -287,7 +287,7 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
         TextButton.icon(
           label: Text('$statuses', style: const TextStyle(fontSize: 16)),
           icon: const Icon(Icons.post_add),
-          onPressed: () => controller.animateTo(types.indexOf(TimelineType.user)),
+          onPressed: () => controller.animateTo(types.indexOf(AccountProfileType.user)),
         ),
 
         TextButton.icon(

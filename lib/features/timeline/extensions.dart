@@ -36,8 +36,6 @@ extension TimelineExtensions on ServerSchema {
 
         uri = UriEx.handle(domain, "/api/v1/timelines/home").replace(queryParameters: query);
         break;
-      case TimelineType.profile:
-        throw ArgumentError("TimelineType.profile does not support fetch timeline, use TimelineType.user instead.");
       case TimelineType.user:
         final Map<String, String> query = {};
         query["max_id"] = maxId ?? "";

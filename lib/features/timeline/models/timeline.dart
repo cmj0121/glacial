@@ -7,7 +7,6 @@ import 'package:glacial/core.dart';
 enum TimelineType {
   home,          // The home timeline for the logged in user.
   hashtag,       // The hashtag timeline for the current server.
-  profile,       // The profile of the specified user.
   user,          // The statuses posted from the given user.
   pin,           // The pinned statuses for the logged in user.
   schedule,      // The scheduled statuses for the logged in user.
@@ -21,8 +20,6 @@ enum TimelineType {
     switch (this) {
       case TimelineType.home:
         return AppLocalizations.of(context)?.btn_home ?? 'Home';
-      case TimelineType.profile:
-        return AppLocalizations.of(context)?.btn_profile ?? 'Profile';
       case TimelineType.user:
         return AppLocalizations.of(context)?.btn_user ?? 'User';
       case TimelineType.pin:
@@ -48,8 +45,6 @@ enum TimelineType {
     switch (this) {
       case home:
         return active ? Icons.home : Icons.home_outlined;
-      case profile:
-        return active ? Icons.contact_page : Icons.contact_page_outlined;
       case user:
         return active ? Icons.article : Icons.article_outlined;
       case pin:
@@ -78,7 +73,6 @@ enum TimelineType {
       case public:
       case user:
       case pin:
-      case profile:
         return true;
       default:
         return false;
@@ -91,7 +85,6 @@ enum TimelineType {
       case user:
       case pin:
       case schedule:
-      case profile:
         return false;
       default:
         return true;

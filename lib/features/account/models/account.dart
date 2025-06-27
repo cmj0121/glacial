@@ -1,5 +1,74 @@
 // The Account data schema that is the user account info.
+import 'package:flutter/material.dart';
+
+import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
+
+// The type list for the account profile, based on the Mastodon API.
+enum AccountProfileType {
+  profile,       // The profile of the specified user.
+  user,          // The statuses posted from the given user.
+  pin,           // The pinned statuses for the logged in user.
+  schedule,      // The scheduled statuses for the logged in user.
+  hashtag;      // The hashtag timeline for the current server.
+
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case profile:
+        return AppLocalizations.of(context)?.btn_profile ?? 'Profile';
+      case user:
+        return AppLocalizations.of(context)?.btn_user ?? 'User';
+      case pin:
+        return AppLocalizations.of(context)?.btn_pin ?? 'Pinned';
+      case schedule:
+        return AppLocalizations.of(context)?.btn_schedule ?? 'Schedule';
+      case hashtag:
+        return AppLocalizations.of(context)?.btn_trends_tags ?? 'Hashtag';
+    }
+  }
+
+  IconData icon({bool active = false}) {
+    switch (this) {
+      case profile:
+        return active ? Icons.contact_page : Icons.contact_page_outlined;
+      case user:
+        return active ? Icons.article : Icons.article_outlined;
+      case pin:
+        return active ? Icons.push_pin : Icons.push_pin_outlined;
+      case schedule:
+        return active ? Icons.schedule : Icons.schedule_outlined;
+      case hashtag:
+        return active ? Icons.tag : Icons.tag_outlined;
+    }
+  }
+
+  bool get supportAnonymous {
+    switch (this) {
+      case AccountProfileType.profile:
+      case AccountProfileType.user:
+      case AccountProfileType.pin:
+        return true;
+      case AccountProfileType.schedule:
+      case AccountProfileType.hashtag:
+        return false;
+    }
+  }
+
+  TimelineType get toTimelineType {
+    switch (this) {
+      case AccountProfileType.user:
+        return TimelineType.user;
+      case AccountProfileType.pin:
+        return TimelineType.pin;
+      case AccountProfileType.schedule:
+        return TimelineType.schedule;
+      case AccountProfileType.hashtag:
+        return TimelineType.hashtag;
+      default:
+        throw ArgumentError('invalid AccountProfileType to TimelineType: $this');
+    }
+  }
+}
 
 // The Account data schema that is the user account info.
 class AccountSchema {
