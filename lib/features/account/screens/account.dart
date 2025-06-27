@@ -170,7 +170,7 @@ class AccountProfile extends ConsumerStatefulWidget {
 }
 
 class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTickerProviderStateMixin {
-  late final List<TimelineType> types;
+  late final List<AccountProfileType> types;
   late final TabController controller;
 
   @override
@@ -178,15 +178,8 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
     super.initState();
 
     final AccountSchema? account = ref.read(accountProvider);
-    final List<TimelineType> allTypes = [
-      TimelineType.profile,
-      TimelineType.user,
-      TimelineType.pin,
-      TimelineType.schedule,
-      TimelineType.hashtag,
-    ];
 
-    types = allTypes.where((type) => type.supportAnonymous || account?.id == widget.schema.id).toList();
+    types = AccountProfileType.values.where((type) => type.supportAnonymous || account?.id == widget.schema.id).toList();
     controller = TabController(length: types.length, vsync: this);
   }
 
@@ -215,7 +208,7 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
       tabController: controller,
       itemCount: types.length,
       tabBuilder: (context, index) {
-        final TimelineType type = types[index];
+        final AccountProfileType type = types[index];
         final bool isSelected = controller.index == index;
         final bool isActive = type.supportAnonymous || account?.id == widget.schema.id;
         final Color color = isActive ?
@@ -228,17 +221,21 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
         );
       },
       itemBuilder: (context, index) {
-        final TimelineType type = types[index];
+        final AccountProfileType type = types[index];
 
         switch (type) {
-          case TimelineType.profile:
+          case AccountProfileType.profile:
             return buildTimelineHeader(server);
-          case TimelineType.hashtag:
+          case AccountProfileType.hashtag:
             return FollowedHashtags(server: server);
+          case AccountProfileType.mute:
+            return MutedAccounts(server: server);
+          case AccountProfileType.block:
+            return BlockedAccounts(server: server);
           default:
             return Timeline(
               schema: server,
-              type: types[index],
+              type: types[index].toTimelineType,
               account: widget.schema,
             );
         }
@@ -287,7 +284,7 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
         TextButton.icon(
           label: Text('$statuses', style: const TextStyle(fontSize: 16)),
           icon: const Icon(Icons.post_add),
-          onPressed: () => controller.animateTo(types.indexOf(TimelineType.user)),
+          onPressed: () => controller.animateTo(types.indexOf(AccountProfileType.user)),
         ),
 
         TextButton.icon(
@@ -618,4 +615,173 @@ class _FollowedHashtagsState extends ConsumerState<FollowedHashtags> {
   }
 }
 
+// The muted account list widget to show the muted accounts of the user.
+class MutedAccounts extends ConsumerStatefulWidget {
+  final ServerSchema server;
+
+  const MutedAccounts({super.key, required this.server});
+
+  @override
+  ConsumerState<MutedAccounts> createState() => _MutedAccountsState();
+}
+
+class _MutedAccountsState extends ConsumerState<MutedAccounts> {
+  final ScrollController controller = ScrollController();
+
+  String? maxID;
+  bool isLoading = false;
+  bool isCompleted = false;
+  List<AccountSchema> accounts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(onScroll);
+    onLoad();
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(onScroll);
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (accounts.isEmpty && isLoading) {
+      return const Center(child: ClockProgressIndicator());
+    } else if (accounts.isEmpty && isCompleted) {
+      return SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: buildContent(),
+    );
+  }
+
+  Widget buildContent() {
+    return ListView.builder(
+      controller: controller,
+      itemCount: accounts.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Account(schema: accounts[index], showStats: true, onTap: () => context.pop()),
+        );
+      },
+    );
+  }
+
+  // Handle the scroll event to load more accounts.
+  void onScroll() {
+    if (controller.position.pixels >= controller.position.maxScrollExtent - 100 && !isLoading) {
+      onLoad();
+    }
+  }
+
+  // Load the muted accounts from the server.
+  Future<void> onLoad() async {
+    final String? accessToken = ref.read(accessTokenProvider);
+
+    if (isLoading || isCompleted || accessToken == null) return;
+
+    setState(() => isLoading = true);
+
+    final (newAccounts, nextLink) = await widget.server.mutedAccounts(accessToken: accessToken, maxID: maxID);
+    setState(() {
+      accounts.addAll(newAccounts);
+      isLoading = false;
+
+      maxID = getMaxIDFromNextLink(nextLink);
+      isCompleted = maxID == null || maxID!.isEmpty;
+    });
+  }
+}
+
+// The blocked account list widget to show the blocked accounts of the user.
+class BlockedAccounts extends ConsumerStatefulWidget {
+  final ServerSchema server;
+
+  const BlockedAccounts({super.key, required this.server});
+
+  @override
+  ConsumerState<BlockedAccounts> createState() => _BlockedAccountsState();
+}
+
+class _BlockedAccountsState extends ConsumerState<BlockedAccounts> {
+  final ScrollController controller = ScrollController();
+
+  String? maxID;
+  bool isLoading = false;
+  bool isCompleted = false;
+  List<AccountSchema> accounts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(onScroll);
+    onLoad();
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(onScroll);
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (accounts.isEmpty && isLoading) {
+      return const Center(child: ClockProgressIndicator());
+    } else if (accounts.isEmpty && isCompleted) {
+      return SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: buildContent(),
+    );
+  }
+
+  Widget buildContent() {
+    return ListView.builder(
+      controller: controller,
+      itemCount: accounts.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Account(schema: accounts[index], showStats: true, onTap: () => context.pop()),
+        );
+      },
+    );
+  }
+
+  // Handle the scroll event to load more accounts.
+  void onScroll() {
+    if (controller.position.pixels >= controller.position.maxScrollExtent - 100 && !isLoading) {
+      onLoad();
+    }
+  }
+
+  // Load the blocked accounts from the server.
+  Future<void> onLoad() async {
+    final String? accessToken = ref.read(accessTokenProvider);
+
+    if (isLoading || isCompleted || accessToken == null) return;
+
+    setState(() => isLoading = true);
+
+    final (newAccounts, nextLink) = await widget.server.blockedAccounts(accessToken: accessToken, maxID: maxID);
+    setState(() {
+      accounts.addAll(newAccounts);
+      isLoading = false;
+
+      maxID = getMaxIDFromNextLink(nextLink);
+      isCompleted = maxID == null || maxID!.isEmpty;
+    });
+  }
+}
 // vim: set ts=2 sw=2 sts=2 et:
