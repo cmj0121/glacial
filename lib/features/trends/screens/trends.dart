@@ -76,17 +76,10 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
                     final AccountSchema account = suggestions[index];
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8),
-                      child: Dismissible(
-                        key: ValueKey(account.id),
-                        background: Container(
-                          alignment: Alignment.centerRight,
-                          color: Colors.red,
-                          child: const Icon(Icons.delete_forever_rounded, color: Colors.white, size: 32),
-                        ),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (direction) async {
+                      child: InkWellDone(
+                        onLongPress: () async {
                           await server.removeSuggestion(accountID: account.id, accessToken: accessToken);
-                          suggestions.removeAt(index);
+                          setState(() => suggestions.removeAt(index));
                         },
                         child: Account(
                           schema: account,
