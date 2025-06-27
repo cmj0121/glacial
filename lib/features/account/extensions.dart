@@ -262,6 +262,17 @@ extension AccountExtensions on ServerSchema {
     return json.map((e) => AccountSchema.fromJson(e["account"] as Map<String, dynamic>)).toList();
   }
 
+  // Remove the suggestion account from the Mastodon server.
+  Future<void> removeSuggestion({required String accessToken, required String accountID}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/suggestions/$accountID");
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await delete(uri, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw RequestError(response);
+    }
+  }
+
   // Get the list of muted accounts from the Mastodon server.
   Future<(List<AccountSchema>, String?)> mutedAccounts({required String accessToken, String? maxID}) async {
     final Map<String, String> query = {'max_id': maxID ?? ''};
