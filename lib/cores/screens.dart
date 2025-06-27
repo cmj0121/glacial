@@ -14,12 +14,14 @@ class InkWellDone extends StatelessWidget {
   final Widget child;
   final VoidCallback? onTap;
   final VoidCallback? onDoubleTap;
+  final VoidCallback? onLongPress;
 
   const InkWellDone({
     super.key,
     required this.child,
     this.onTap,
     this.onDoubleTap,
+    this.onLongPress,
   });
 
   @override
@@ -27,6 +29,7 @@ class InkWellDone extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       onDoubleTap: onDoubleTap,
+      onLongPress: onLongPress,
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       hoverColor: Colors.transparent,
