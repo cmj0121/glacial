@@ -133,6 +133,7 @@ class _TrendsState extends State<Trends> {
   void initState() {
     super.initState();
     controller.addListener(onScroll);
+    GlobalController.scrollToTop = controller;
     onLoad();
   }
 

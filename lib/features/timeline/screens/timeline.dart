@@ -131,6 +131,7 @@ class _TimelineState extends ConsumerState<Timeline> {
     super.initState();
     controller.addListener(onScroll);
 
+    GlobalController.scrollToTop = controller;
     onLoad();
   }
 
