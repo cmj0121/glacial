@@ -76,9 +76,15 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
                     final AccountSchema account = suggestions[index];
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8),
-                      child: Account(
-                        schema: account,
-                        showStats: true,
+                      child: InkWellDone(
+                        onLongPress: () async {
+                          await server.removeSuggestion(accountID: account.id, accessToken: accessToken);
+                          setState(() => suggestions.removeAt(index));
+                        },
+                        child: Account(
+                          schema: account,
+                          showStats: true,
+                        ),
                       ),
                     );
                   },
