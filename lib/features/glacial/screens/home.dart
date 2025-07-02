@@ -187,14 +187,25 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
     final SidebarButtonType action = actions[index];
 
-    if (action.route != route) {
-      logger.d("selected action: ${action.name} -> ${action.route.path}");
-      switch (action) {
-        case SidebarButtonType.post:
-          context.push(action.route.path, extra: null);
-        default:
-          context.go(action.route.path, extra: action);
+    if (action.route == route) {
+      if (GlobalController.scrollToTop?.hasClients ?? false) {
+        logger.d("already attached the scroll controller, scroll to top ...");
+        GlobalController.scrollToTop?.animateTo(
+          0,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+        );
       }
+
+      return;
+    }
+
+    logger.d("selected action: ${action.name} -> ${action.route.path}");
+    switch (action) {
+      case SidebarButtonType.post:
+        context.push(action.route.path, extra: null);
+      default:
+        context.go(action.route.path, extra: action);
     }
   }
 

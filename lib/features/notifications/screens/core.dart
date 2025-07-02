@@ -28,6 +28,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
   void initState() {
     super.initState();
     controller.addListener(onScroll);
+    GlobalController.scrollToTop = controller;
     onLoad();
   }
 

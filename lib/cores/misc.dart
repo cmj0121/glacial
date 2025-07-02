@@ -1,5 +1,6 @@
 // The miscellaneous utilities and constants for the Glacial app.
 import 'dart:async';
+import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -57,6 +58,11 @@ String? getMaxIDFromNextLink(String? nextLink) {
   }
 
   return null;
+}
+
+class GlobalController {
+  // The global scroll-to-top controller callback
+  static ScrollController? scrollToTop;
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
