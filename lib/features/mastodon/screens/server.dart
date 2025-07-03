@@ -28,7 +28,7 @@ class MastodonServer extends StatelessWidget {
           return const ClockProgressIndicator();
         } else if (snapshot.hasError) {
           final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: $domain';
-          return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
+          return NoResult(message: text);
         }
 
         final ServerSchema schema = snapshot.data as ServerSchema;

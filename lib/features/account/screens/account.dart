@@ -568,7 +568,7 @@ class _FollowedHashtagsState extends ConsumerState<FollowedHashtags> {
     if (hashtags.isEmpty && isLoading) {
       return const Center(child: ClockProgressIndicator());
     } else if (hashtags.isEmpty && isCompleted) {
-      return SizedBox.shrink();
+      return const NoResult(icon: Icons.coffee);
     }
 
     return Padding(
@@ -652,7 +652,7 @@ class _MutedAccountsState extends ConsumerState<MutedAccounts> {
     if (accounts.isEmpty && isLoading) {
       return const Center(child: ClockProgressIndicator());
     } else if (accounts.isEmpty && isCompleted) {
-      return SizedBox.shrink();
+      return const NoResult(icon: Icons.coffee);
     }
 
     return Padding(
@@ -737,7 +737,7 @@ class _BlockedAccountsState extends ConsumerState<BlockedAccounts> {
     if (accounts.isEmpty && isLoading) {
       return const Center(child: ClockProgressIndicator());
     } else if (accounts.isEmpty && isCompleted) {
-      return SizedBox.shrink();
+      return const NoResult(icon: Icons.coffee);
     }
 
     return Padding(

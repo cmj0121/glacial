@@ -176,7 +176,7 @@ class _TimelineState extends ConsumerState<Timeline> {
   // Build the list of the statuses in the current selected Mastodon server.
   Widget buildStatuses() {
     if (statuses.isEmpty) {
-      const SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     return ListView.builder(
