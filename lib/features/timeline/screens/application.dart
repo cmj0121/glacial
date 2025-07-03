@@ -21,9 +21,9 @@ class Application extends StatelessWidget {
       fontSize: size,
     );
 
-		if (schema == null) {
-			return const SizedBox.shrink();
-		}
+    if (schema == null) {
+      return const SizedBox.shrink();
+    }
 
     return Padding(
       padding: const EdgeInsets.only(top: 12),

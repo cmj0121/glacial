@@ -172,20 +172,7 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
   Widget buildContent(SearchResultSchema schema) {
     if (schema.isEmpty) {
       final String? text = AppLocalizations.of(context)?.txt_no_results_found(widget.keyword);
-      final Widget message = Text(
-        text ?? 'No results found for "${widget.keyword}"',
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          color: Theme.of(context).colorScheme.error,
-        ),
-      );
-
-      return Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: message,
-        ),
-      );
+      return NoResult(message: text ?? 'No results found for "${widget.keyword}"');
     }
 
     return SwipeTabView(

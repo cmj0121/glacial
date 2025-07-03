@@ -753,7 +753,7 @@ class NoResult extends StatelessWidget {
   }
 
   Widget buildContent(BuildContext context) {
-    final Color color = Theme.of(context).colorScheme.secondaryContainer;
+    final Color color = Theme.of(context).colorScheme.secondary;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
