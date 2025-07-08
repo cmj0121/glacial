@@ -22,8 +22,8 @@ class LandingPage extends ConsumerStatefulWidget {
 }
 
 class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProviderStateMixin {
-  final Duration waitToPreload = const Duration(milliseconds: 1800);
-  final int engineerModeClickThreshold = 5;
+  final Duration waitToPreload = const Duration(milliseconds: 300);
+  final int engineerModeClickThreshold = 3;
 
   late final AnimationController controller;
   late final Animation<double> animation;
