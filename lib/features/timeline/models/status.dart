@@ -155,7 +155,7 @@ class StatusSchema {
 class NewStatusSchema {
   final String? status;            // The text content of the status. If media_ids is provided, this becomes optional.
   final List<String> mediaIDs;     // Attachment IDs to be attached as media. If provided, status becomes optional, and poll cannot be used.
-  final PollSchema? poll;          // Poll options to be attached to the status. If provided, media_ids cannot be used.
+  final NewPollSchema? poll;          // Poll options to be attached to the status. If provided, media_ids cannot be used.
   final bool sensitive;            // Mark status and attached media as sensitive? Defaults to false.
   final String? spoiler;           // Text to show when the status is marked as sensitive.
   final VisibilityType visibility; // The visibility of the status. Defaults to public.
@@ -194,7 +194,7 @@ class NewStatusSchema {
   NewStatusSchema copyWith({
     String? status,
     List<String>? mediaIDs,
-    PollSchema? poll,
+    NewPollSchema? poll,
     bool? sensitive,
     String? spoiler,
     VisibilityType? visibility,
@@ -276,17 +276,17 @@ class MentionSchema {
   }
 }
 
-// The options of the Poll in the status.
-class PollSchema {
+// The options of the Poll in the status for create a new poll.
+class NewPollSchema {
   final bool? hideTotals;     // Hide vote counts until the poll ends? Defaults to false.
   final bool? multiple;       // Allow multiple choices? Defaults to false.
-  final int expiresIn;        // Duration that the poll should be open, in seconds.
+  final int expiresIn;        // The duration in seconds until the poll expires. Defaults to 86400 seconds (1 day).
   final List<String> options; // Possible answers to the poll.
 
-  const PollSchema({
+  const NewPollSchema({
     this.hideTotals,
     this.multiple,
-    required this.expiresIn,
+    this.expiresIn = 86400,
     required this.options,
   });
 
@@ -294,12 +294,26 @@ class PollSchema {
     final Map<String, dynamic> json = {
       'hide_totals': hideTotals,
       'multiple': multiple,
-      'expires_in': expiresIn,
       'options': options,
+      'expires_in': expiresIn,
     };
 
     // only return the non-null values
     return json..removeWhere((key, value) => value == null);
+  }
+
+  NewPollSchema copyWith({
+    bool? hideTotals,
+    bool? multiple,
+    int? expiresIn,
+    List<String>? options,
+  }) {
+    return NewPollSchema(
+      hideTotals: hideTotals ?? this.hideTotals,
+      multiple: multiple ?? this.multiple,
+      expiresIn: expiresIn ?? this.expiresIn,
+      options: options ?? this.options,
+    );
   }
 }
 

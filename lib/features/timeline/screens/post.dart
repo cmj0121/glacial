@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -36,7 +37,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
 
   VisibilityType vtype = VisibilityType.public;
   List<AttachmentSchema> medias = [];
-  PollSchema? poll;
+  NewPollSchema? poll;
   String? spoiler;
   DateTime? scheduledAt;
 
@@ -98,6 +99,12 @@ class _StatusFormState extends ConsumerState<StatusForm> {
 
   // Build the content of the status form.
   Widget buildContent() {
+    final ServerSchema? server = ref.read(serverProvider);
+
+    if (server == null) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -106,6 +113,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
         buildSpoilerField(),
         buildTextField(),
         const SizedBox(height: 16),
+        PollForm(server: server, schema: poll, onChanged: (poll) => setState(() => this.poll = poll)),
         buildMedias(),
         Flexible(child: buildActions()),
       ],
@@ -210,13 +218,15 @@ class _StatusFormState extends ConsumerState<StatusForm> {
           icon: Icon(Icons.perm_media_rounded, color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: (poll != null || maxMedias > medias.length) ? onImagePicker : null,
+          onPressed: (poll == null && maxMedias > medias.length) ? onImagePicker : null,
         ),
         IconButton(
           icon: Icon(Icons.poll_outlined,),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: null,
+          onPressed: medias.isNotEmpty ? null : () {
+            setState(() => poll = poll == null ? NewPollSchema(options: ["", ""]) : null);
+          },
         ),
         IconButton(
           icon: Icon(Icons.warning, color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary),
@@ -267,6 +277,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
       // empty content, do nothing
       return;
     }
+
 
     final NewStatusSchema schema = NewStatusSchema(
       status: controller.text,
@@ -424,6 +435,176 @@ class _AutoCompleteFormState extends ConsumerState<AutoCompleteForm> {
     final int index = text.lastIndexOf(type == 'accounts' ? '@' : '#');
 
     return "${text.substring(0, index)}$value ";
+  }
+}
+
+// The poll form for the status, which allows the user to create a poll with options.
+class PollForm extends StatefulWidget {
+  final ServerSchema server;
+  final NewPollSchema? schema;
+  final ValueChanged<NewPollSchema>? onChanged;
+
+  const PollForm({
+    super.key,
+    required this.server,
+    this.schema,
+    this.onChanged,
+  });
+
+  @override
+  State<PollForm> createState() => _PollFormState();
+}
+
+class _PollFormState extends State<PollForm> {
+  final List<Duration> durations = [
+    const Duration(minutes: 5),
+    const Duration(minutes: 30),
+    const Duration(hours: 1),
+    const Duration(hours: 6),
+    const Duration(hours: 12),
+    const Duration(days: 1),
+    const Duration(days: 7),
+  ];
+
+  late final List<TextEditingController> controllers;
+  late final List<FocusNode> focusNodes;
+
+  @override
+  void initState() {
+    final int count = widget.server.config.polls.maxOptions;
+
+    super.initState();
+
+    controllers = List.generate(count, (index) => TextEditingController());
+    focusNodes = List.generate(count, (index) => FocusNode()..addListener(() => onEditCompleted()));
+  }
+
+  @override
+  void dispose() {
+    controllers.map((controller) => controller.dispose());
+    focusNodes.map((focusNode) => focusNode.dispose());
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.schema == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: buildContent(widget.schema!),
+    );
+  }
+
+  // Build the content of the poll form.
+  Widget buildContent(NewPollSchema schema) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ...buildOptions(schema),
+        const SizedBox(height: 8),
+        buildActions(schema),
+      ],
+    );
+  }
+
+  // Build the list of the options for the poll.
+  List<Widget> buildOptions(NewPollSchema schema) {
+    return List.generate(schema.options.length, (index) {
+      final String option = schema.options[index];
+      final IconData icon = option.isEmpty ? Icons.check_box_outline_blank : Icons.check_box;
+
+      final TextEditingController controller = controllers[index];
+      controller.text = option;
+
+      return TextField(
+        controller: controller,
+        focusNode: focusNodes[index],
+        maxLength: widget.server.config.polls.maxCharacters,
+        decoration: InputDecoration(
+          icon: Icon(icon),
+          helperText: "Option ${index + 1}",
+          border: const OutlineInputBorder(),
+        ),
+        onSubmitted: (_) => onEditCompleted(),
+        onTapOutside: (_) => onEditCompleted(),
+      );
+    });
+  }
+
+  // Build the actions for the poll form, such as toggling totals visibility and multiple choice.
+  Widget buildActions(NewPollSchema schema) {
+    final bool hideTotals = schema.hideTotals ?? false;
+    final bool multiple = schema.multiple ?? false;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        buildExpiresDropdown(schema),
+        const SizedBox(width: 8),
+        IconButton(
+          icon: Icon(hideTotals ? Icons.visibility : Icons.visibility_off),
+          onPressed: () {
+            // Toggle the visibility of the poll totals.
+            final NewPollSchema poll = schema.copyWith(hideTotals: !hideTotals);
+            widget.onChanged?.call(poll);
+          },
+        ),
+        const SizedBox(width: 8),
+        IconButton(
+          icon: Icon(multiple ? Icons.checklist_outlined : Icons.check_outlined),
+          onPressed: () {
+            // Toggle the visibility of the poll totals.
+            final NewPollSchema poll = schema.copyWith(multiple: !multiple);
+            widget.onChanged?.call(poll);
+          },
+        ),
+      ],
+    );
+  }
+
+  // The expired dropdown to select the expiration time for the poll.
+  Widget buildExpiresDropdown(NewPollSchema schema) {
+    final Duration expiresIn = Duration(seconds: schema.expiresIn);
+    final DateTime now = DateTime.now().toUtc();
+
+    return DropdownButton(
+      value: expiresIn,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      borderRadius: BorderRadius.circular(8),
+      icon: Icon(Icons.timer),
+      items: durations.map((duration) {
+        final DateTime expiration = now.subtract(duration);
+        final String text = timeago.format(expiration, locale: 'en_short').replaceFirst("~", "");
+
+        return DropdownMenuItem<Duration>(value: duration, child: Text(text));
+      }).toList(),
+      onChanged: (Duration? newValue) {
+        if (newValue == null) return;
+
+        final NewPollSchema poll = schema.copyWith(expiresIn: newValue.inSeconds);
+        widget.onChanged?.call(poll);
+      },
+    );
+  }
+
+  void onEditCompleted() {
+    final List<String> options = controllers.map((controller) => controller.text).where((text) => text.isNotEmpty).toList();
+    final int maxOptionsCount = max(2, options.length + 1);
+
+    final NewPollSchema newPoll = widget.schema!.copyWith(
+      options: [
+        ...options,
+        ...List.generate(
+          min(maxOptionsCount, widget.server.config.polls.maxOptions) - options.length,
+          (_) => "",
+        ),
+      ],
+    );
+
+    widget.onChanged?.call(newPoll);
   }
 }
 

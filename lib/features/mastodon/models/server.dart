@@ -146,14 +146,41 @@ class StatusConfigSchema {
 // The server configuration
 class ServerConfigSchema {
   final StatusConfigSchema statuses;
+  final PollConfigSchema polls;
 
   const ServerConfigSchema({
     required this.statuses,
+    required this.polls,
   });
 
   factory ServerConfigSchema.fromJson(Map<String, dynamic> json) {
     return ServerConfigSchema(
       statuses: StatusConfigSchema.fromJson(json['statuses'] as Map<String, dynamic>),
+      polls: PollConfigSchema.fromJson(json['polls'] as Map<String, dynamic>),
+    );
+  }
+}
+
+// The poll configuration for the server.
+class PollConfigSchema {
+  final int maxOptions;
+  final int maxCharacters;
+  final int minExpiresIn;
+  final int maxExpiresIn;
+
+  const PollConfigSchema({
+    required this.maxOptions,
+    required this.maxCharacters,
+    required this.minExpiresIn,
+    required this.maxExpiresIn,
+  });
+
+  factory PollConfigSchema.fromJson(Map<String, dynamic> json) {
+    return PollConfigSchema(
+      maxOptions: json['max_options'] as int? ?? 0,
+      maxCharacters: json['max_characters_per_option'] as int? ?? 0,
+      minExpiresIn: json['min_expiration'] as int? ?? 0,
+      maxExpiresIn: json['max_expiration'] as int? ?? 0,
     );
   }
 }
