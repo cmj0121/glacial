@@ -155,7 +155,7 @@ class StatusSchema {
 class NewStatusSchema {
   final String? status;            // The text content of the status. If media_ids is provided, this becomes optional.
   final List<String> mediaIDs;     // Attachment IDs to be attached as media. If provided, status becomes optional, and poll cannot be used.
-  final List<String> pollIDs;      // Possible answers to the poll.
+  final PollSchema? poll;          // Poll options to be attached to the status. If provided, media_ids cannot be used.
   final bool sensitive;            // Mark status and attached media as sensitive? Defaults to false.
   final String? spoiler;           // Text to show when the status is marked as sensitive.
   final VisibilityType visibility; // The visibility of the status. Defaults to public.
@@ -165,7 +165,7 @@ class NewStatusSchema {
   const NewStatusSchema({
     required this.status,
     required this.mediaIDs,
-    required this.pollIDs,
+    this.poll,
     this.sensitive = false,
     this.spoiler,
     this.visibility = VisibilityType.public,
@@ -177,7 +177,7 @@ class NewStatusSchema {
     final Map<String, dynamic> json = {
       'status': status,
       'media_ids': mediaIDs,
-      'poll_ids': pollIDs,
+      'poll': poll?.toJson(),
       'sensitive': sensitive,
       'spoiler_text': spoiler,
       'visibility': visibility.name,
@@ -194,7 +194,7 @@ class NewStatusSchema {
   NewStatusSchema copyWith({
     String? status,
     List<String>? mediaIDs,
-    List<String>? pollIDs,
+    PollSchema? poll,
     bool? sensitive,
     String? spoiler,
     VisibilityType? visibility,
@@ -203,7 +203,7 @@ class NewStatusSchema {
     return NewStatusSchema(
       status: status ?? this.status,
       mediaIDs: mediaIDs ?? this.mediaIDs,
-      pollIDs: pollIDs ?? this.pollIDs,
+      poll: poll ?? this.poll,
       sensitive: sensitive ?? this.sensitive,
       spoiler: spoiler ?? this.spoiler,
       visibility: visibility ?? this.visibility,
@@ -273,6 +273,33 @@ class MentionSchema {
       url: json['url'] as String,
       acct: json['acct'] as String,
     );
+  }
+}
+
+// The options of the Poll in the status.
+class PollSchema {
+  final bool? hideTotals;     // Hide vote counts until the poll ends? Defaults to false.
+  final bool? multiple;       // Allow multiple choices? Defaults to false.
+  final int expiresIn;        // Duration that the poll should be open, in seconds.
+  final List<String> options; // Possible answers to the poll.
+
+  const PollSchema({
+    this.hideTotals,
+    this.multiple,
+    required this.expiresIn,
+    required this.options,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> json = {
+      'hide_totals': hideTotals,
+      'multiple': multiple,
+      'expires_in': expiresIn,
+      'options': options,
+    };
+
+    // only return the non-null values
+    return json..removeWhere((key, value) => value == null);
   }
 }
 

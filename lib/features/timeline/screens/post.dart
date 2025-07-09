@@ -36,6 +36,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
 
   VisibilityType vtype = VisibilityType.public;
   List<AttachmentSchema> medias = [];
+  PollSchema? poll;
   String? spoiler;
   DateTime? scheduledAt;
 
@@ -209,7 +210,13 @@ class _StatusFormState extends ConsumerState<StatusForm> {
           icon: Icon(Icons.perm_media_rounded, color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: maxMedias > medias.length ? onImagePicker : null,
+          onPressed: (poll != null || maxMedias > medias.length) ? onImagePicker : null,
+        ),
+        IconButton(
+          icon: Icon(Icons.poll_outlined,),
+          hoverColor: Colors.transparent,
+          focusColor: Colors.transparent,
+          onPressed: null,
         ),
         IconButton(
           icon: Icon(Icons.warning, color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary),
@@ -264,7 +271,7 @@ class _StatusFormState extends ConsumerState<StatusForm> {
     final NewStatusSchema schema = NewStatusSchema(
       status: controller.text,
       mediaIDs: medias.map((media) => media.id).toList(),
-      pollIDs: [],
+      poll: poll,
       spoiler: spoiler,
       visibility: vtype,
       inReplyToID: widget.replyTo?.id,
