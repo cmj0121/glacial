@@ -167,6 +167,7 @@ class _StatusState extends ConsumerState<Status> {
           onLinkTap: onLinkTap,
         ),
 
+        Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
       ],
     );
