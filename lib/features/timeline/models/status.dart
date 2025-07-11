@@ -291,6 +291,7 @@ class PollSchema {
   final List<PollOptionSchema> options; // The options available in the poll.
   final List<EmojiSchema> emojis;       // Custom emoji to be used for rendering poll options.
   final bool? voted;                    // When called with a user token, has the authorized user voted?
+  final List<int>? ownVotes;            // The list of the user's votes in the poll, if they have voted.
 
   const PollSchema({
     required this.id,
@@ -302,6 +303,7 @@ class PollSchema {
     required this.options,
     required this.emojis,
     this.voted,
+    this.ownVotes,
   });
 
   factory PollSchema.fromJson(Map<String, dynamic> json) {
@@ -319,6 +321,9 @@ class PollSchema {
         .map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>))
         .toList(),
       voted: json['voted'] as bool?,
+      ownVotes: (json['own_votes'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList(),
     );
   }
 }

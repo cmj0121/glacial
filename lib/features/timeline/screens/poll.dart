@@ -1,22 +1,27 @@
 // The Poll widget to display a poll with options and a submit button.
 import 'package:flutter/material.dart';
-
-import 'package:glacial/features/models.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class Poll extends StatefulWidget {
+import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
+
+class Poll extends ConsumerStatefulWidget {
   final PollSchema? schema;
+  final ValueChanged<PollSchema>? onChanged;
 
   const Poll({
     super.key,
     this.schema,
+    this.onChanged,
   });
 
   @override
-  State<Poll> createState() => _PollState();
+  ConsumerState<Poll> createState() => _PollState();
 }
 
-class _PollState extends State<Poll> {
+class _PollState extends ConsumerState<Poll> {
   int? selectedOption;
   late List<bool> selectedOptions = widget.schema?.options.map((_) => false).toList() ?? [];
 
@@ -91,7 +96,23 @@ class _PollState extends State<Poll> {
   }
 
   // Submits the selected options to the server.
-  void onVote() {
+  void onVote() async {
+    final ServerSchema? server = ref.read(serverProvider);
+    final String? accessToken = ref.read(accessTokenProvider);
+
+    final List<int?> choices = [
+      selectedOption,
+      ...selectedOptions.asMap().entries.map((entry) => entry.value ? entry.key : null),
+    ];
+    final List<String> selectedChoices = choices.where((entry) => entry != null).map((entry) => entry.toString()).toList();
+
+    if (server == null || accessToken == null || selectedChoices.isEmpty) {
+      logger.w("Cannot vote: server or access token is null, or no choices selected.");
+      return;
+    }
+
+    final PollSchema poll = await server.votePoll(schema: widget.schema!, accessToken: accessToken, choices: selectedChoices);
+    widget.onChanged?.call(poll);
   }
 }
 

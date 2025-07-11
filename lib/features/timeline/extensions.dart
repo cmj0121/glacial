@@ -295,6 +295,21 @@ extension TimelineExtensions on ServerSchema {
 
     return json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
   }
+
+  // Vote the poll in the status.
+  Future<PollSchema> votePoll({required PollSchema schema, required String accessToken, required List<String> choices}) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/polls/${schema.id}/votes");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+    final Map<String, dynamic> body = {"choices": choices};
+
+    final response = await post(uri, headers: headers, body: jsonEncode(body));
+    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+
+    return PollSchema.fromJson(json);
+  }
 }
 
 // The extension of the Storage to save and load the emoji data.
