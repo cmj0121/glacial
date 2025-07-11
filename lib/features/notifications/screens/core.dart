@@ -172,6 +172,7 @@ class SingleNotification extends ConsumerWidget {
           ],
         );
       case NotificationType.mention:
+      case NotificationType.poll:
         return FutureBuilder(
           future: server.getStatus(schema.statusID!, accessToken: accessToken),
           builder: (BuildContext context, AsyncSnapshot<StatusSchema?> snapshot) {

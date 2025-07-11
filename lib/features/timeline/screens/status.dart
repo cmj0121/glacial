@@ -353,6 +353,7 @@ class StatusLight extends StatelessWidget {
           emojis: schema.emojis,
         ),
 
+        Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
       ],
     );
