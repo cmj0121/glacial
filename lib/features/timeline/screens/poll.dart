@@ -49,6 +49,39 @@ class _PollState extends ConsumerState<Poll> {
   List<Widget> buildOptions(PollSchema schema) {
     return schema.options.map((option) {
       final int index = schema.options.indexOf(option);
+      final int totalCount = schema.options.map((o) => o.votesCount ?? 0).reduce((a, b) => a + b);
+
+      if (!canVote) {
+        // If the poll is already voted, display the selected options.
+        final int count = option.votesCount ?? 0;
+        final bool isSelected = schema.ownVotes?.contains(index) ?? false;
+
+        // show the bottom line as the ratio of votes
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final double width = constraints.maxWidth * (totalCount > 0 ? count / totalCount : 0);
+
+            return Stack(
+              alignment: Alignment.bottomLeft,
+              children: [
+                ListTile(
+                  leading: Text('+$count', style: Theme.of(context).textTheme.bodySmall),
+                  title: Text( option.title),
+                  trailing: isSelected ? const Icon(Icons.check) : null,
+                ),
+                Container(
+                  height: 4,
+                  width: width == 0 ? 12 : width,
+                  decoration: BoxDecoration(
+                    color: width > 0 ? Theme.of(context).colorScheme.primary : Theme.of(context).disabledColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ]
+            );
+          },
+        );
+      }
 
       switch (schema.multiple) {
         case true:
@@ -77,20 +110,19 @@ class _PollState extends ConsumerState<Poll> {
 
   // The possible actions and metadata of the poll.
   Widget buildActions(PollSchema schema) {
-    final bool canVote = selectedOption != null || selectedOptions.any((e) => e);
+    final bool showVoteBtn = canVote && selectedOption != null || selectedOptions.any((e) => e);
     final Duration expiresIn = schema.expiresAt?.difference(DateTime.now()) ?? Duration.zero;
     final String remainingTime = timeago.format(DateTime.now().subtract(expiresIn), locale: 'en_short');
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        TextButton(
-          onPressed: canVote ? onVote : null,
-          child: const Text('Vote'),
-        ),
+        if (showVoteBtn) TextButton(onPressed: canVote ? onVote : null, child: const Text('Vote')),
         const Spacer(),
 
-        Text("${schema.votersCount ?? schema.votesCount} votes, ~$remainingTime"),
+        (isClosed) ?
+          Text("${schema.votersCount ?? schema.votesCount} votes", style: TextStyle(color: Theme.of(context).disabledColor)) :
+          Text("${schema.votersCount ?? schema.votesCount} votes / ~$remainingTime"),
       ],
     );
   }
@@ -114,6 +146,9 @@ class _PollState extends ConsumerState<Poll> {
     final PollSchema poll = await server.votePoll(schema: widget.schema!, accessToken: accessToken, choices: selectedChoices);
     widget.onChanged?.call(poll);
   }
+
+  bool get isClosed => widget.schema?.expiresAt?.isAfter(DateTime.now()) == false;
+  bool get canVote => widget.schema?.voted == false && !isClosed;
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

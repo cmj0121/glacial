@@ -167,7 +167,10 @@ class _StatusState extends ConsumerState<Status> {
           onLinkTap: onLinkTap,
         ),
 
-        Poll(schema: schema.poll),
+        Poll(schema: schema.poll, onChanged: (_) async {
+          final StatusSchema? updatedStatus = await ref.read(serverProvider)?.getStatus(schema.id, accessToken: ref.read(accessTokenProvider));
+          if (updatedStatus != null) onReload(updatedStatus);
+        }),
         Attachments(schemas: schema.attachments),
       ],
     );
