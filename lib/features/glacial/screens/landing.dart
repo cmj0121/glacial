@@ -22,8 +22,8 @@ class LandingPage extends ConsumerStatefulWidget {
 }
 
 class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProviderStateMixin {
-  final Duration waitToPreload = const Duration(milliseconds: 1800);
-  final int engineerModeClickThreshold = 5;
+  final Duration waitToPreload = const Duration(milliseconds: 300);
+  final int engineerModeClickThreshold = 3;
 
   late final AnimationController controller;
   late final Animation<double> animation;
@@ -52,7 +52,10 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
       });
 
     controller.forward();
-    preload();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      logger.i("preloading resources ...");
+      await preload();
+    });
   }
 
   @override
@@ -100,7 +103,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
 
   // preload the necessary resources and navigate to the home page
   // if completed
-  void preload() async {
+  Future<void> preload() async {
     await Storage().reloadProvider(ref);
     await Future.delayed(waitToPreload);
 

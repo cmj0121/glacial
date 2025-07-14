@@ -241,6 +241,10 @@ class _TimelineState extends ConsumerState<Timeline> {
       currentUser: ref.read(accountProvider),
     );
 
+    if (mounted == false) {
+      return; // Widget is not mounted, do not update the state.
+    }
+
     setState(() {
       isLoading = false;
 

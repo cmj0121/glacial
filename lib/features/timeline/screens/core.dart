@@ -4,6 +4,7 @@ export 'application.dart';
 export 'attachment.dart';
 export 'interaction.dart';
 export 'post.dart';
+export 'poll.dart';
 export 'status.dart';
 export 'timeline.dart';
 export 'visibility.dart';
