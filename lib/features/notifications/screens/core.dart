@@ -97,7 +97,7 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
   }
 
   // Try to load the unread notifications count when the widget is built.
-  void onLoad() async {
+  Future<void> onLoad() async {
     final int count = await server?.unreadNotificationsCount(accessToken: accessToken) ?? 0;
     ref.read(unreadNotifyCountProvider.notifier).state = count;
   }
