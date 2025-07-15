@@ -20,6 +20,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
 
   late final ScrollController controller = ScrollController();
   late final ServerSchema? server = ref.read(serverProvider);
+  late final String? accessToken = ref.read(accessTokenProvider);
 
   bool isLoading = false;
   List<GroupSchema> groups = [];
@@ -94,10 +95,9 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
     }
     setState(() => isLoading = true);
 
-    final String? accessToken = ref.read(accessTokenProvider);
     final GroupNotificationSchema? schema = await server?.listNotifications(accessToken: accessToken, maxId: maxId);
-    setState(() => groups.addAll(schema?.groups ?? []));
 
+    setState(() => groups.addAll(schema?.groups ?? []));
     setState(() => isLoading = false);
   }
 }

@@ -78,7 +78,7 @@ extension GroupNotificationsExtensions on ServerSchema {
     final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
     final Map<String, dynamic> body = {type.name: {"last_read_id": id}};
 
-    final response = await post(uri, headers: headers, body: body);
+    final response = await post(uri, headers: headers, body: jsonEncode(body));
     return MarkersSchema.fromString(response.body);
   }
 }
