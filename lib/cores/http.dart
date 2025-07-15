@@ -25,6 +25,7 @@ Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
   if (info != null ){
     headers = headers ?? <String, String>{};
     headers['User-Agent'] = userAgent;
+    headers['Content-Type'] = 'application/json; charset=UTF-8';
   }
 
   return http.get(url, headers: headers);
@@ -37,6 +38,7 @@ Future<http.Response> post(Uri url, {Map<String, String>? headers, Object? body,
   if (info != null ){
     headers = headers ?? <String, String>{};
     headers['User-Agent'] = userAgent;
+    headers['Content-Type'] = 'application/json; charset=UTF-8';
   }
 
   return http.post(url, headers: headers, body: body, encoding: encoding);
@@ -49,6 +51,7 @@ Future<http.Response> delete(Uri url, {Map<String, String>? headers, Object? bod
   if (info != null ){
     headers = headers ?? <String, String>{};
     headers['User-Agent'] = userAgent;
+    headers['Content-Type'] = 'application/json; charset=UTF-8';
   }
 
   return http.delete(url, headers: headers, body: body, encoding: encoding);

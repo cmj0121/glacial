@@ -31,6 +31,7 @@ enum NotificationType {
 class GroupSchema {
   final String key;            // Group key identifying the grouped notifications. Should be treated as an opaque value.
   final int count;             // Total number of individual notifications that are part of this notification group.
+  final int id;                // ID of the most recent notification in the group.
   final NotificationType type; // The type of event that resulted in the notifications in this group.
   final List<String> accounts; // IDs of some of the accounts who most recently triggered notifications in this group.
   final String? statusID;      // The ID of the status that triggered this group, if applicable. (4.3.0 - added)
@@ -40,6 +41,7 @@ class GroupSchema {
   const GroupSchema({
     required this.key,
     required this.count,
+    required this.id,
     required this.type,
     required this.accounts,
     this.statusID,
@@ -51,6 +53,7 @@ class GroupSchema {
     return GroupSchema(
       key: json['group_key'] as String,
       count: json['notifications_count'] as int,
+      id: json['most_recent_notification_id'] as int,
       type: NotificationType.fromString(json['type'] as String),
       accounts: (json['sample_account_ids'] as List<dynamic>).map((e) => e as String).toList(),
       statusID: json['status_id'] as String?,
@@ -87,6 +90,62 @@ class GroupNotificationSchema {
       groups: (json['notification_groups'] as List<dynamic>).map((e) {
         return GroupSchema.fromJson(e as Map<String, dynamic>);
       }).toList(),
+    );
+  }
+}
+
+// The possible values of timeline markers.
+enum TimelineMarkerType {
+  home,          // The home timeline
+  notifications, // The notifications timeline
+}
+
+// Represents the last read position within a user's timelines.
+class MarkerSchema {
+  final String lastReadID;   // The ID of the most recently viewed entity.
+  final int version;         // The version of the marker, used for optimistic updates.
+  final DateTime updatedAt; // The date and time when the marker was last updated.
+
+  const MarkerSchema({
+    required this.lastReadID,
+    required this.version,
+    required this.updatedAt,
+  });
+
+  factory MarkerSchema.fromJson(Map<String, dynamic> json) {
+    return MarkerSchema(
+      lastReadID: json['last_read_id'] as String,
+      version: json['version'] as int,
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+    );
+  }
+}
+
+class MarkersSchema {
+  final Map<TimelineMarkerType, MarkerSchema> markers; // The markers for each timeline.
+
+  const MarkersSchema({
+    required this.markers,
+  });
+
+  factory MarkersSchema.fromString(String str) {
+    final Map<String, dynamic> json = jsonDecode(str);
+    return MarkersSchema.fromJson(json);
+  }
+
+  factory MarkersSchema.fromJson(Map<String, dynamic> json) {
+    late final Map<TimelineMarkerType, MarkerSchema> markers;
+
+    markers = json.map((key, value) {
+      final TimelineMarkerType type = TimelineMarkerType.values.where((e) => e.name == key).first;
+      return MapEntry(
+        type,
+        MarkerSchema.fromJson(value as Map<String, dynamic>),
+      );
+    });
+
+    return MarkersSchema(
+      markers: markers,
     );
   }
 }

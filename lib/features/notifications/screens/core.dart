@@ -1,4 +1,6 @@
 // The Notification widget in the current selected Mastodon server.
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -7,6 +9,99 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
+
+// The notification badge that shows the unread notifications count.
+class NotificationBadge extends ConsumerStatefulWidget {
+  final double size;
+  final bool isSelected;
+
+  const NotificationBadge({
+    super.key,
+    this.size = 24,
+    this.isSelected = false,
+  });
+
+  @override
+  ConsumerState<NotificationBadge> createState() => _NotificationBadgeState();
+}
+
+class _NotificationBadgeState extends ConsumerState<NotificationBadge> with WidgetsBindingObserver {
+  late final ServerSchema? server = ref.read(serverProvider);
+  late final String? accessToken = ref.read(accessTokenProvider);
+
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addObserver(this);
+    _startTaskIfForeground();
+  }
+
+  @override
+  void dispose() {
+    _stopTask();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _startTaskIfForeground(state: state);
+  }
+
+  void _startTaskIfForeground({AppLifecycleState? state}) {
+    final currentState = state ?? WidgetsBinding.instance.lifecycleState;
+
+    switch (currentState) {
+      case AppLifecycleState.resumed:
+        onLoad();
+        _startTask();
+        break;
+      default:
+        // logger.d("App is not in foreground, skipping task start: $currentState.");
+        _stopTask();
+        break;
+    }
+  }
+
+  void _startTask() {
+    _stopTask();
+    _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
+      onLoad();
+    });
+  }
+
+  void _stopTask() async {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final int unreadCount = ref.watch(unreadNotifyCountProvider);
+    final SidebarButtonType action = SidebarButtonType.notifications;
+    final Widget icon = Icon(action.icon(active: widget.isSelected), size: widget.size);
+
+    if (unreadCount == 0 || widget.isSelected) {
+      // No need to show the unread count if it's zero or the widget is selected.
+      return icon;
+    }
+
+    return Badge.count(
+      count: unreadCount,
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      child: icon,
+    );
+  }
+
+  // Try to load the unread notifications count when the widget is built.
+  Future<void> onLoad() async {
+    final int count = await server?.unreadNotificationsCount(accessToken: accessToken) ?? 0;
+    ref.read(unreadNotifyCountProvider.notifier).state = count;
+  }
+}
 
 class GroupNotification extends ConsumerStatefulWidget {
   const GroupNotification({super.key});
@@ -20,6 +115,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
 
   late final ScrollController controller = ScrollController();
   late final ServerSchema? server = ref.read(serverProvider);
+  late final String? accessToken = ref.read(accessTokenProvider);
 
   bool isLoading = false;
   List<GroupSchema> groups = [];
@@ -94,11 +190,23 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
     }
     setState(() => isLoading = true);
 
-    final String? accessToken = ref.read(accessTokenProvider);
     final GroupNotificationSchema? schema = await server?.listNotifications(accessToken: accessToken, maxId: maxId);
-    setState(() => groups.addAll(schema?.groups ?? []));
 
+    onResetUnreadCount(schema?.groups.first.id);
+    setState(() => groups.addAll(schema?.groups ?? []));
     setState(() => isLoading = false);
+  }
+
+  Future<void> onResetUnreadCount(int? lastReadId) async {
+    final TimelineMarkerType type = TimelineMarkerType.notifications;
+    final int unreadCount = ref.read(unreadNotifyCountProvider);
+
+    if (unreadCount == 0) {
+      return; // No unread notifications to reset.
+    }
+
+    await server?.updateTimelinePosition(accessToken: accessToken, id: lastReadId.toString(), type: type);
+    ref.read(unreadNotifyCountProvider.notifier).state = 0;
   }
 }
 
@@ -116,7 +224,6 @@ class SingleNotification extends ConsumerWidget {
     final String? accessToken = ref.watch(accessTokenProvider);
 
     if (server == null) {
-      logger.w("No server selected, but it's required to show the notifications.");
       return const SizedBox.shrink();
     }
 
