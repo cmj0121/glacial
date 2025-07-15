@@ -64,13 +64,8 @@ extension GroupNotificationsExtensions on ServerSchema {
   // Update the current timeline position for the user.
   Future<MarkersSchema?> updateTimelinePosition({String? accessToken, required String? id, required TimelineMarkerType type,
   }) async {
-    if (accessToken == null) {
-      logger.w("Access token is required for updating timeline position.");
-      return null;
-    }
-
-    if (id == null) {
-      logger.d("ID is required for updating timeline position.");
+    if (accessToken == null || id == null) {
+      logger.w("Access token and ID is required for updating timeline position.");
       return null;
     }
 

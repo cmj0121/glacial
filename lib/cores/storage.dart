@@ -10,6 +10,7 @@ import 'package:glacial/features/models.dart';
 final serverProvider = StateProvider<ServerSchema?>((ref) => null);
 final accessTokenProvider = StateProvider<String?>((ref) => null);
 final accountProvider = StateProvider<AccountSchema?>((ref) => null);
+final unreadNotifyCountProvider = StateProvider<int>((ref) => 0);
 
 class Storage {
   static SharedPreferences? _prefs;

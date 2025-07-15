@@ -150,7 +150,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
       switch (action) {
         case SidebarButtonType.notifications:
-          icon = Icon(action.icon(active: isSelected), size: sidebarSize);
+          icon = NotificationBadge(isSelected: isSelected, size: sidebarSize);
           break;
         default:
           icon = Icon(action.icon(active: isSelected), size: sidebarSize);
