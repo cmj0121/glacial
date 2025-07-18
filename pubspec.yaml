@@ -61,8 +61,10 @@ dependencies:
   image_picker: ^1.1.2
   flutter_datetime_picker_plus: ^2.2.0
   scrollable_positioned_list: ^0.3.8
+  sentry_flutter: ^9.4.1
 
 dev_dependencies:
+  sentry_dart_plugin: ^3.1.1
   flutter_test:
     sdk: flutter
 
@@ -128,3 +130,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+sentry:
+  upload_debug_symbols: true
+  upload_source_maps: true
+  project: glacial
+  org: glacial
