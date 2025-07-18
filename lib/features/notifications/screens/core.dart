@@ -100,6 +100,7 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
   Future<void> onLoad() async {
     final int count = await server?.unreadNotificationsCount(accessToken: accessToken) ?? 0;
     ref.read(unreadNotifyCountProvider.notifier).state = count;
+    logger.i("update the unread notifications count: $count");
   }
 }
 

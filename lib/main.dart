@@ -1,7 +1,9 @@
 // The entry point of the app that initializes the environment and starts the app.
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:glacial/app.dart';
 import 'package:glacial/core.dart';
@@ -18,6 +20,31 @@ void main() async {
   await Storage.init(purge: false);
 
   logger.d("completely preloaded system-wise settings ...");
+
+  final String? sentryDsn = dotenv.env['SENTRY_DSN'];
+  final String environment = kReleaseMode ? 'production' : 'development';
+
+  switch (sentryDsn) {
+    case null:
+    case '':
+      logger.i("Sentry DSN is not set, Sentry will not be initialized.");
+      _runApp();
+      break;
+    default:
+      logger.i("Sentry DSN is set, initializing Sentry...");
+      await SentryFlutter.init(
+        (options) {
+          options.dsn = sentryDsn;
+          options.tracesSampleRate = 0.1;
+          options.environment = environment;
+        },
+        appRunner: _runApp,
+      );
+      break;
+  }
+}
+
+void _runApp() {
   runApp(
     // Adding ProviderScope enables Riverpod for the entire project
     const ProviderScope(child: GlacialApp()),
