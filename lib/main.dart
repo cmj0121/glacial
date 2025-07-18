@@ -21,8 +21,8 @@ void main() async {
 
   logger.d("completely preloaded system-wise settings ...");
 
-  late final String? sentryDsn = dotenv.env['SENTRY_DSN'];
-  late final String environment = kReleaseMode ? 'production' : 'development';
+  final String? sentryDsn = dotenv.env['SENTRY_DSN'];
+  final String environment = kReleaseMode ? 'production' : 'development';
 
   switch (sentryDsn) {
     case null:
