@@ -34,7 +34,7 @@ void main() async {
       logger.i("Sentry DSN is set, initializing Sentry...");
       await SentryFlutter.init(
         (options) {
-          options.dsn = dotenv.env['SENTRY_DSN'];
+          options.dsn = sentryDsn;
           options.tracesSampleRate = 0.1;
           options.environment = environment;
         },
