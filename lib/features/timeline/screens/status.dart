@@ -194,7 +194,7 @@ class _StatusState extends ConsumerState<Status> {
 
     return Tooltip(
       message: schema.editedAt!.toLocal().toString(),
-      child: Icon(Icons.edit_outlined),
+      child: Icon(Icons.edit_outlined, size: 16),
     );
   }
 
@@ -410,7 +410,7 @@ class StatusLight extends StatelessWidget {
 
     return Tooltip(
       message: schema.editedAt!.toLocal().toString(),
-      child: Icon(Icons.edit_outlined),
+      child: Icon(Icons.edit_outlined, size: 16),
     );
   }
 }

@@ -342,6 +342,9 @@ class SingleNotification extends ConsumerWidget {
       case NotificationType.reblog:
         icon = StatusInteraction.reblog.icon(active: true);
         break;
+      case NotificationType.update:
+        icon = Icons.edit_note;
+        break;
       default:
         icon = null;
     }
