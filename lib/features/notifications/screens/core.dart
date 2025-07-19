@@ -241,6 +241,7 @@ class SingleNotification extends ConsumerWidget {
     switch (schema.type) {
       case NotificationType.favourite:
       case NotificationType.reblog:
+      case NotificationType.update:
         content = FutureBuilder(
           future: server.getStatus(schema.statusID!, accessToken: accessToken),
           builder: (BuildContext context, AsyncSnapshot<StatusSchema?> snapshot) {
