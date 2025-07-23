@@ -36,8 +36,8 @@ class _StatusFormState extends ConsumerState<StatusForm> {
   final String ikey = Uuid().v4();
 
   late final TextEditingController controller;
+  late VisibilityType vtype = widget.replyTo?.visibility ?? VisibilityType.public;
 
-  VisibilityType vtype = VisibilityType.public;
   List<AttachmentSchema> medias = [];
   NewPollSchema? poll;
   String? spoiler;
