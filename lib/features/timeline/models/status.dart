@@ -8,6 +8,7 @@ import 'package:glacial/features/models.dart';
 class StatusSchema {
   final String id;                          // ID of the status in the database.
   final String content;                     // HTML-encoded status content.
+  final String? text;                       // Plain-text source of a status, if available.
   final VisibilityType visibility;          // The visibility of the status.
   final bool sensitive;                     // Is this status marked as sensitive content?
   final String spoiler;                     // Subject or summary line, below which status content is collapsed.
@@ -38,6 +39,7 @@ class StatusSchema {
   const StatusSchema({
     required this.id,
     required this.content,
+    this.text,
     required this.visibility,
     required this.sensitive,
     required this.spoiler,
@@ -75,6 +77,7 @@ class StatusSchema {
     return StatusSchema(
       id: json['id'] as String,
       content: json['content'] as String,
+      text: json['text'] as String?,
       visibility: VisibilityType.fromString(json['visibility'] as String),
       sensitive: json['sensitive'] as bool,
       spoiler: json['spoiler_text'] as String,
@@ -152,6 +155,17 @@ class StatusSchema {
       scheduledAt: DateTime.parse(json['scheduled_at'] as String),
       editedAt: null,
     );
+  }
+
+  // Return the plain text content of the status.
+  String get plainText {
+    if (text != null && text!.isNotEmpty) {
+      return text!;
+    }
+
+    return content
+        .replaceAll(RegExp(r'<[^>]*>'), '') // Remove HTML tags
+        .replaceAll(RegExp(r'&[a-z]+;'), ''); // Remove HTML entities
   }
 }
 

@@ -20,6 +20,7 @@ enum RoutePath {
   status,            // The list of statuses in the context of the app.
   statusInfo,        // The status info page of the app to show the status details.
   post,              // The post page of the app to create a new post.
+  edit,              // The edit page of the app to edit an existing post.
   wip;               // The work-in-progress page of the app.
 
   // Get the string path for the route.
@@ -57,6 +58,8 @@ enum RoutePath {
         return '/home/status/info';
       case RoutePath.post:
         return '/home/post';
+      case RoutePath.edit:
+        return '/home/edit';
       case RoutePath.wip:
         return '/wip';
     }

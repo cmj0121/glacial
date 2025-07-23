@@ -266,6 +266,8 @@ class _InteractionState extends ConsumerState<Interaction> {
         widget.onDeleted?.call();
         widget.onPressed?.call();
         return;
+      case StatusInteraction.edit:
+        context.push(RoutePath.edit.path, extra: widget.schema);
       default:
         break;
     }

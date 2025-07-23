@@ -219,6 +219,22 @@ extension TimelineExtensions on ServerSchema {
     await post(uri, headers: headers, body: body);
   }
 
+  // Edit an existing status on the Mastodon server
+  Future<void> editStatus({
+    required String id,
+    required NewStatusSchema status,
+    required String accessToken,
+  }) async {
+    final Uri uri = UriEx.handle(domain, "/api/v1/statuses/$id");
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $accessToken",
+      "Content-Type": "application/json",
+    };
+    final String body = jsonEncode(status.toJson());
+
+    await put(uri, headers: headers, body: body);
+  }
+
   // Upload a media file to the Mastodon server
   Future<AttachmentSchema> uploadMedia({required String filepath, required String accessToken}) async {
     final Uri uri = UriEx.handle(domain, "/api/v2/media");
