@@ -239,6 +239,16 @@ class GlacialApp extends ConsumerWidget {
             );
           },
         ),
+        // The post page to edit an existing post in the selected Mastodon server
+        GoRoute(
+          path: RoutePath.edit.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema? schema = state.extra as StatusSchema?;
+            return BackableView(
+              child: StatusForm(editFrom: schema),
+            );
+          },
+        ),
       ],
     );
   }

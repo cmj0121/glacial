@@ -30,7 +30,7 @@ class InteractionBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AccountSchema? account = ref.read(accountProvider);
     final List<StatusInteraction> actions = StatusInteraction.values.where((v) {
-      return v != StatusInteraction.delete || (schema.account.id == account?.id);
+      return !v.isSelfAction || (schema.account.id == account?.id);
     }).toList();
 
     return LayoutBuilder(
@@ -266,6 +266,8 @@ class _InteractionState extends ConsumerState<Interaction> {
         widget.onDeleted?.call();
         widget.onPressed?.call();
         return;
+      case StatusInteraction.edit:
+        context.push(RoutePath.edit.path, extra: widget.schema);
       default:
         break;
     }

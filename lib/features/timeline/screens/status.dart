@@ -129,6 +129,7 @@ class _StatusState extends ConsumerState<Status> {
 
         const Spacer(),
 
+        buildUpdated(),
         IconButton(
           icon: const Icon(Icons.info_outline, size: 20),
           hoverColor: Colors.transparent,
@@ -182,6 +183,18 @@ class _StatusState extends ConsumerState<Status> {
     return SensitiveView(
       spoiler: schema.spoiler,
       child: content,
+    );
+  }
+
+  // Build the update icon for the latest updated timeline status.
+  Widget buildUpdated() {
+    if (schema.editedAt == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Tooltip(
+      message: schema.editedAt!.toLocal().toString(),
+      child: Icon(Icons.edit_outlined, size: 16),
     );
   }
 
@@ -378,6 +391,7 @@ class StatusLight extends StatelessWidget {
 
         const Spacer(),
 
+        buildUpdated(),
         Tooltip(
           message: schema.createdAt.toLocal().toString(),
           child: Text(duration, style: const TextStyle(color: Colors.grey)),
@@ -385,6 +399,18 @@ class StatusLight extends StatelessWidget {
         const SizedBox(width: 4),
         StatusVisibility(type: schema.visibility, size: 16, isCompact: true),
       ],
+    );
+  }
+
+  // Build the update icon for the latest updated timeline status.
+  Widget buildUpdated() {
+    if (schema.editedAt == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Tooltip(
+      message: schema.editedAt!.toLocal().toString(),
+      child: Icon(Icons.edit_outlined, size: 16),
     );
   }
 }

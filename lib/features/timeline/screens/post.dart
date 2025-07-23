@@ -17,10 +17,12 @@ import 'package:glacial/features/screens.dart';
 // The form of the new status that user can fill in to create a new status.
 class StatusForm extends ConsumerStatefulWidget {
   final StatusSchema? replyTo;
+  final StatusSchema? editFrom;
 
   const StatusForm({
     super.key,
     this.replyTo,
+    this.editFrom,
   });
 
   @override
@@ -34,8 +36,8 @@ class _StatusFormState extends ConsumerState<StatusForm> {
   final String ikey = Uuid().v4();
 
   late final TextEditingController controller;
+  late VisibilityType vtype = widget.replyTo?.visibility ?? VisibilityType.public;
 
-  VisibilityType vtype = VisibilityType.public;
   List<AttachmentSchema> medias = [];
   NewPollSchema? poll;
   String? spoiler;
@@ -45,18 +47,29 @@ class _StatusFormState extends ConsumerState<StatusForm> {
   void initState() {
     super.initState();
 
-    late final AccountSchema? account = ref.read(accountProvider);
+    switch (widget.editFrom) {
+      case null:
+        late final AccountSchema? account = ref.read(accountProvider);
 
-    List<String> accts = [
-      ...(widget.replyTo?.mentions ?? []).map((mention) => mention.acct),
-      widget.replyTo?.account.acct ?? "",
-    ];
+        List<String> accts = [
+          ...(widget.replyTo?.mentions ?? []).map((mention) => mention.acct),
+          widget.replyTo?.account.acct ?? "",
+        ];
 
-    // remove self mentions and empty mentions
-    accts.removeWhere((acct) => acct == account?.acct || acct.isEmpty);
+        // remove self mentions and empty mentions
+        accts.removeWhere((acct) => acct == account?.acct || acct.isEmpty);
 
-    final String mentioned = accts.toSet().toList().map((acct) => "@$acct").join(" ");
-    controller = TextEditingController(text: mentioned.isEmpty ? "" : "$mentioned ");
+        final String mentioned = accts.toSet().toList().map((acct) => "@$acct").join(" ");
+        controller = TextEditingController(text: mentioned.isEmpty ? "" : "$mentioned ");
+      default:
+        final String spoilerText = widget.editFrom?.spoiler ?? "";
+
+        controller = TextEditingController(text: widget.editFrom?.plainText ?? "");
+        vtype = widget.editFrom?.visibility ?? VisibilityType.public;
+        medias = widget.editFrom?.attachments ?? [];
+        spoiler = spoilerText.isEmpty ? null : spoilerText;
+        scheduledAt = widget.editFrom?.scheduledAt;
+    }
   }
 
   @override
@@ -209,11 +222,17 @@ class _StatusFormState extends ConsumerState<StatusForm> {
   Widget buildActions() {
     final ServerSchema? server = ref.read(serverProvider);
     final int maxMedias = server?.config.statuses.maxAttachments ?? 0;
+    final Widget visibility = widget.editFrom == null ?
+      VisibilitySelector(type: vtype, onChanged: (type) => setState(() => vtype = type)) :
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: StatusVisibility(type: vtype),
+      );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        VisibilitySelector(type: vtype, onChanged: (type) => setState(() => vtype = type)),
+        visibility,
         IconButton(
           icon: Icon(Icons.perm_media_rounded, color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary),
           hoverColor: Colors.transparent,
@@ -278,7 +297,6 @@ class _StatusFormState extends ConsumerState<StatusForm> {
       return;
     }
 
-
     final NewStatusSchema schema = NewStatusSchema(
       status: controller.text,
       mediaIDs: medias.map((media) => media.id).toList(),
@@ -304,7 +322,14 @@ class _StatusFormState extends ConsumerState<StatusForm> {
       return;
     }
 
-    await server.createStatus(status: schema, accessToken: accessToken, ikey: ikey);
+    switch (widget.editFrom) {
+      case null:
+        await server.createStatus(status: schema, accessToken: accessToken, ikey: ikey);
+        break;
+      case StatusSchema s:
+        await server.editStatus(id: s.id, status: schema, accessToken: accessToken);
+        break;
+    }
     if (mounted) {
       context.pop();
     }

@@ -45,6 +45,19 @@ Future<http.Response> post(Uri url, {Map<String, String>? headers, Object? body,
 }
 
 // The wrapper of the HTTP request and add the package info as the user agent
+Future<http.Response> put(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
+  final PackageInfo? info = Info().info;
+
+  if (info != null ){
+    headers = headers ?? <String, String>{};
+    headers['User-Agent'] = userAgent;
+    headers['Content-Type'] = 'application/json; charset=UTF-8';
+  }
+
+  return http.put(url, headers: headers, body: body, encoding: encoding);
+}
+
+// The wrapper of the HTTP request and add the package info as the user agent
 Future<http.Response> delete(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
   final PackageInfo? info = Info().info;
 

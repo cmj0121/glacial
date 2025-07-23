@@ -8,6 +8,7 @@ enum StatusInteraction {
   favourite,
   bookmark,
   share,
+  edit,
   mute,
   block,
   delete;
@@ -34,6 +35,8 @@ enum StatusInteraction {
         return active ? Icons.block : Icons.block_outlined;
       case delete:
         return active ? Icons.delete : Icons.delete_outline_outlined;
+      case edit:
+        return active ? Icons.edit : Icons.edit_outlined;
     }
   }
 
@@ -50,6 +53,16 @@ enum StatusInteraction {
     switch (this) {
       case mute:
       case block:
+      case delete:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  bool get isSelfAction {
+    switch (this) {
+      case edit:
       case delete:
         return true;
       default:

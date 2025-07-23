@@ -241,6 +241,7 @@ class SingleNotification extends ConsumerWidget {
     switch (schema.type) {
       case NotificationType.favourite:
       case NotificationType.reblog:
+      case NotificationType.update:
         content = FutureBuilder(
           future: server.getStatus(schema.statusID!, accessToken: accessToken),
           builder: (BuildContext context, AsyncSnapshot<StatusSchema?> snapshot) {
@@ -340,6 +341,9 @@ class SingleNotification extends ConsumerWidget {
         break;
       case NotificationType.reblog:
         icon = StatusInteraction.reblog.icon(active: true);
+        break;
+      case NotificationType.update:
+        icon = Icons.edit_note;
         break;
       default:
         icon = null;
