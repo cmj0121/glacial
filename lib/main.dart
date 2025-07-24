@@ -9,6 +9,31 @@ import 'package:glacial/app.dart';
 import 'package:glacial/core.dart';
 
 void main() async {
+  await prologue();
+  final String? sentryDsn = dotenv.env['SENTRY_DSN'];
+
+  switch (sentryDsn) {
+    case null:
+    case '':
+      logger.i("Sentry DSN is not set, Sentry will not be initialized.");
+      start();
+      break;
+    default:
+      logger.i("Sentry DSN is set, initializing Sentry...");
+      await SentryFlutter.init(
+        (options) {
+          options.dsn = sentryDsn;
+          options.tracesSampleRate = 0.1;
+          options.environment = kReleaseMode ? 'production' : 'development';
+        },
+        appRunner: start,
+      );
+      break;
+  }
+}
+
+// The function that runs before the app starts.
+Future<void> prologue() async {
   FlutterError.onError = (FlutterErrorDetails details) {
     // Handle Flutter errors globally
     final String stack = details.stack?.toString() ?? "No stack trace available";
@@ -17,37 +42,15 @@ void main() async {
 
   await dotenv.load(fileName: ".env");
   await Info.init();
-  await Storage.init(purge: false);
 
   logger.d("completely preloaded system-wise settings ...");
-
-  final String? sentryDsn = dotenv.env['SENTRY_DSN'];
-  final String environment = kReleaseMode ? 'production' : 'development';
-
-  switch (sentryDsn) {
-    case null:
-    case '':
-      logger.i("Sentry DSN is not set, Sentry will not be initialized.");
-      _runApp();
-      break;
-    default:
-      logger.i("Sentry DSN is set, initializing Sentry...");
-      await SentryFlutter.init(
-        (options) {
-          options.dsn = sentryDsn;
-          options.tracesSampleRate = 0.1;
-          options.environment = environment;
-        },
-        appRunner: _runApp,
-      );
-      break;
-  }
 }
 
-void _runApp() {
+// The entry point of the app that starts the Flutter application.
+void start() {
   runApp(
     // Adding ProviderScope enables Riverpod for the entire project
-    const ProviderScope(child: GlacialApp()),
+    const ProviderScope(child: CoreApp()),
   );
 }
 
