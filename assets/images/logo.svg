@@ -32,5 +32,6 @@
     </g>
   </defs>
 
+  <rect x="48" y="48" width="416" height="416" rx="102" ry="102" fill="#2196F3" />
   <use href="#elephant" fill="#FFFFFF" transform="translate(256, 256) scale(0.85) translate(-256, -256)" />
 </svg>

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/screens.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -42,20 +43,43 @@ class CoreApp extends ConsumerWidget {
   // with the optional animation
   GoRouter router(WidgetRef ref) {
     return GoRouter(
-      initialLocation: RoutePath.landing.path,
+      initialLocation: RoutePath.timeline.path,
       navigatorKey: navigatorKey,
       routes: <RouteBase>[
-        // The landing page, show the icon and preload the necessary resources
-        GoRoute(
-          path: RoutePath.landing.path,
-          builder: (_, _) => const WIP(),
-        ),
+        // The core home page and show the possible operations
+        homeRoutes(ref),
       ],
       // The fallback page, show the WIP screen if the route is not found
       errorBuilder: (BuildContext context, GoRouterState state) {
         logger.w("the route ${state.uri} does not implement yet ...");
         return const WIP();
       }
+    );
+  }
+
+  // Build the home page with the sidebar and the main content
+  RouteBase homeRoutes(WidgetRef ref) {
+    final Map<RoutePath, Widget> routerMap = {
+      RoutePath.timeline: const WIP(),
+      RoutePath.trends: const WIP(),
+      RoutePath.notifications: WIP(),
+      RoutePath.settings: const WIP(),
+      RoutePath.admin: const WIP(),
+      RoutePath.post: const WIP(),
+    };
+
+    return ShellRoute(
+      builder: (BuildContext context, GoRouterState state, Widget child) {
+        return GlacialHome(child: child);
+      },
+      routes: routerMap.entries.map((entry) {
+        return GoRoute(
+          path: entry.key.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return entry.value;
+          },
+        );
+      }).toList(),
     );
   }
 }
