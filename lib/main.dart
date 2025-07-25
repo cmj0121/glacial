@@ -2,6 +2,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -10,6 +11,7 @@ import 'package:glacial/core.dart';
 
 void main() async {
   await prologue();
+
   final String? sentryDsn = dotenv.env['SENTRY_DSN'];
 
   switch (sentryDsn) {
@@ -34,6 +36,9 @@ void main() async {
 
 // The function that runs before the app starts.
 Future<void> prologue() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   FlutterError.onError = (FlutterErrorDetails details) {
     // Handle Flutter errors globally
     final String stack = details.stack?.toString() ?? "No stack trace available";
@@ -48,6 +53,8 @@ Future<void> prologue() async {
 
 // The entry point of the app that starts the Flutter application.
 void start() {
+  FlutterNativeSplash.remove();
+
   runApp(
     // Adding ProviderScope enables Riverpod for the entire project
     const ProviderScope(child: CoreApp()),
