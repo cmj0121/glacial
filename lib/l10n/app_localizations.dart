@@ -94,6 +94,72 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('en')];
 
+  /// No description provided for @btn_search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get btn_search;
+
+  /// No description provided for @btn_close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get btn_close;
+
+  /// No description provided for @btn_sidebar_timelines.
+  ///
+  /// In en, this message translates to:
+  /// **'Timelines'**
+  String get btn_sidebar_timelines;
+
+  /// No description provided for @btn_sidebar_trendings.
+  ///
+  /// In en, this message translates to:
+  /// **'Trendings'**
+  String get btn_sidebar_trendings;
+
+  /// No description provided for @btn_sidebar_notificatios.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get btn_sidebar_notificatios;
+
+  /// No description provided for @btn_sidebar_management.
+  ///
+  /// In en, this message translates to:
+  /// **'Managements'**
+  String get btn_sidebar_management;
+
+  /// No description provided for @btn_sidebar_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Toot'**
+  String get btn_sidebar_post;
+
+  /// No description provided for @btn_drawer_switch_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch Server'**
+  String get btn_drawer_switch_server;
+
+  /// No description provided for @btn_drawer_profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get btn_drawer_profile;
+
+  /// No description provided for @btn_drawer_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get btn_drawer_settings;
+
+  /// No description provided for @btn_drawer_logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get btn_drawer_logout;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

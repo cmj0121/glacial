@@ -27,6 +27,22 @@ enum SidebarButtonType {
     }
   }
 
+  // The tooltip text for the sidebar button type, localized if possible.
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case SidebarButtonType.timeline:
+        return AppLocalizations.of(context)?.btn_sidebar_timelines ?? "Timelines";
+      case SidebarButtonType.trending:
+        return AppLocalizations.of(context)?.btn_sidebar_trendings ?? "Trendings";
+      case SidebarButtonType.notifications:
+        return AppLocalizations.of(context)?.btn_sidebar_notificatios ?? "Notifications";
+      case SidebarButtonType.admin:
+        return AppLocalizations.of(context)?.btn_sidebar_management ?? "Management";
+      case SidebarButtonType.post:
+        return AppLocalizations.of(context)?.btn_sidebar_post ?? "Toot";
+    }
+  }
+
   RoutePath get route {
     switch (this) {
       case timeline:
@@ -39,6 +55,42 @@ enum SidebarButtonType {
         return RoutePath.admin;
       case post:
         return RoutePath.post;
+    }
+  }
+}
+
+// The possible actions in the drawer and used to interact with the current server.
+enum DrawerButtonType {
+  switchServer,
+  profile,
+  settings,
+  logout;
+
+  // The icon associated with the drawer button type, returns the active or not
+  IconData icon() {
+    switch (this) {
+      case switchServer:
+        return Icons.swap_horiz;
+      case profile:
+        return Icons.person;
+      case settings:
+        return Icons.settings;
+      case logout:
+        return Icons.logout;
+    }
+  }
+
+  // The tooltip text for the drawer button type, localized if possible.
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case switchServer:
+        return AppLocalizations.of(context)?.btn_drawer_switch_server ?? "Switch Server";
+      case profile:
+        return AppLocalizations.of(context)?.btn_drawer_profile ?? "Profile";
+      case settings:
+        return AppLocalizations.of(context)?.btn_drawer_settings ?? "Settings";
+      case logout:
+        return AppLocalizations.of(context)?.btn_drawer_logout ?? "Logout";
     }
   }
 }

@@ -133,6 +133,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       if (action == SidebarButtonType.post) {
         return IconButton.filledTonal(
           icon: icon,
+          tooltip: action.tooltip(context),
           color: isSelected ? Theme.of(context).colorScheme.primary : null,
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
@@ -142,6 +143,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
       return IconButton(
         icon: icon,
+        tooltip: action.tooltip(context),
         color: isSelected ? Theme.of(context).colorScheme.primary : null,
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
@@ -168,27 +170,22 @@ class GlacialDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int logoutIndex = DrawerButtonType.values.indexWhere((action) => action == DrawerButtonType.logout);
+    final List<Widget> children = DrawerButtonType.values.map((action) {
+      return ListTile(
+        leading: Icon(action.icon()),
+        title: Text(action.tooltip(context)),
+      );
+    }).toList();
+
     return Drawer(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const DrawerHeader(child: Text('Glacial')),
-          ListTile(
-            leading: Icon(Icons.account_circle),
-            title: const Text('Profile'),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () {},
-          ),
+          ...children.sublist(0, logoutIndex),
           const Spacer(),
-          ListTile(
-            leading: Icon(Icons.logout),
-            title: const Text('Logout'),
-            onTap: () {},
-          ),
+          children[logoutIndex],
           const SizedBox(height: 8),
         ],
       ),

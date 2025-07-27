@@ -1,4 +1,15 @@
 {
   "@@locale": "en",
+  "btn_search": "Search",
+  "btn_close": "Close",
+  "btn_sidebar_timelines": "Timelines",
+  "btn_sidebar_trendings": "Trendings",
+  "btn_sidebar_notificatios": "Notifications",
+  "btn_sidebar_management": "Managements",
+  "btn_sidebar_post": "Toot",
+  "btn_drawer_switch_server": "Switch Server",
+  "btn_drawer_profile": "Profile",
+  "btn_drawer_settings": "Settings",
+  "btn_drawer_logout": "Logout",
   "dots": "..."
 }

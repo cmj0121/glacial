@@ -1,6 +1,8 @@
 // The Search widget is used to search for a Mastodon server.
 import 'package:flutter/material.dart';
 
+import 'package:glacial/core.dart';
+
 class Explorer extends StatefulWidget {
   final double size;
   final double maxWidth;
@@ -33,7 +35,7 @@ class _ExplorerState extends State<Explorer> with SingleTickerProviderStateMixin
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: widget.maxWidth),
       child: Padding(
-        padding: const EdgeInsets.only(right: 8.0),
+        padding: const EdgeInsets.only(top: 4.0, right: 8.0),
         child: buildContent(),
       ),
     );
@@ -42,6 +44,7 @@ class _ExplorerState extends State<Explorer> with SingleTickerProviderStateMixin
   Widget buildContent() {
     final Widget icon = IconButton(
       icon: Icon(Icons.search, size: widget.size),
+      tooltip: AppLocalizations.of(context)?.btn_search ?? "Search",
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
       onPressed: onShowSearch,
@@ -78,6 +81,7 @@ class _ExplorerState extends State<Explorer> with SingleTickerProviderStateMixin
   Widget buildCleanButton() {
     return  IconButton(
       icon: Icon(Icons.clear, size: widget.size),
+      tooltip: AppLocalizations.of(context)?.btn_close ?? "Close",
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
       onPressed: () {
