@@ -43,11 +43,20 @@ class CoreApp extends ConsumerWidget {
   // with the optional animation
   GoRouter router(WidgetRef ref) {
     return GoRouter(
-      initialLocation: RoutePath.timeline.path,
+      initialLocation: RoutePath.landing.path,
       navigatorKey: navigatorKey,
       routes: <RouteBase>[
         // The core home page and show the possible operations
         homeRoutes(ref),
+
+        // The landing page of the app, shows the welcome message and navigation to the
+        // next pages.
+        GoRoute(
+          path: RoutePath.landing.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return const LandingPage();
+          },
+        ),
 
         // The mastodon server explorer page
         GoRoute(

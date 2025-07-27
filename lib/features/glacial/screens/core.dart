@@ -194,4 +194,45 @@ class GlacialDrawer extends StatelessWidget {
   }
 }
 
+// The landing page that shows the icon of the app and flips intermittently.
+class LandingPage extends StatefulWidget {
+  final double size;
+
+  const LandingPage({
+    super.key,
+    this.size = 64,
+  });
+
+  @override
+  State<LandingPage> createState() => _LandingPageState();
+}
+
+class _LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      logger.i("preloading resources ...");
+      onLoading();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double size = widget.size;
+    final Widget icon = Image.asset('assets/images/icon.png', width: size, height: size);
+
+    return Scaffold(
+      body: SafeArea(
+        child: Center(child: Flipping(child: icon)),
+      ),
+    );
+  }
+
+  // Called when the preloading is completed, it will navigate to the next page.
+  void onLoading() async {
+    context.go(RoutePath.explorer.path);
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:
