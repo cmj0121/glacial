@@ -93,6 +93,19 @@ enum DrawerButtonType {
         return AppLocalizations.of(context)?.btn_drawer_logout ?? "Logout";
     }
   }
+
+  RoutePath get route {
+    switch (this) {
+      case switchServer:
+        return RoutePath.explorer;
+      case profile:
+        return RoutePath.profile;
+      case settings:
+        return RoutePath.settings;
+      case logout:
+        return RoutePath.landing;
+    }
+  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

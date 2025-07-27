@@ -15,6 +15,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_close => 'Close';
 
   @override
+  String get btn_clear => 'Clear';
+
+  @override
+  String get btn_history => 'History';
+
+  @override
   String get btn_sidebar_timelines => 'Timelines';
 
   @override
@@ -40,6 +46,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btn_drawer_logout => 'Logout';
+
+  @override
+  String get txt_search_history => 'Search History';
+
+  @override
+  String get txt_helper_server_explorer => 'Search for a Mastodon server';
+
+  @override
+  String get txt_hint_server_explorer => 'mastodon.social or keyword';
 
   @override
   String get dots => '...';

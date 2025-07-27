@@ -48,6 +48,14 @@ class CoreApp extends ConsumerWidget {
       routes: <RouteBase>[
         // The core home page and show the possible operations
         homeRoutes(ref),
+
+        // The mastodon server explorer page
+        GoRoute(
+          path: RoutePath.explorer.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return const ServerExplorer();
+          },
+        ),
       ],
       // The fallback page, show the WIP screen if the route is not found
       errorBuilder: (BuildContext context, GoRouterState state) {

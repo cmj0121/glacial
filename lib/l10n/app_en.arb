@@ -2,6 +2,8 @@
   "@@locale": "en",
   "btn_search": "Search",
   "btn_close": "Close",
+  "btn_clear": "Clear",
+  "btn_history": "History",
   "btn_sidebar_timelines": "Timelines",
   "btn_sidebar_trendings": "Trendings",
   "btn_sidebar_notificatios": "Notifications",
@@ -11,5 +13,8 @@
   "btn_drawer_profile": "Profile",
   "btn_drawer_settings": "Settings",
   "btn_drawer_logout": "Logout",
+  "txt_search_history": "Search History",
+  "txt_helper_server_explorer": "Search for a Mastodon server",
+  "txt_hint_server_explorer": "mastodon.social or keyword",
   "dots": "..."
 }

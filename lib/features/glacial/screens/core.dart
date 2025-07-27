@@ -175,6 +175,7 @@ class GlacialDrawer extends StatelessWidget {
       return ListTile(
         leading: Icon(action.icon()),
         title: Text(action.tooltip(context)),
+        onTap: () => context.go(action.route.path),
       );
     }).toList();
 

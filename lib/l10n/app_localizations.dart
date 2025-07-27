@@ -106,6 +106,18 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get btn_close;
 
+  /// No description provided for @btn_clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get btn_clear;
+
+  /// No description provided for @btn_history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get btn_history;
+
   /// No description provided for @btn_sidebar_timelines.
   ///
   /// In en, this message translates to:
@@ -159,6 +171,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logout'**
   String get btn_drawer_logout;
+
+  /// No description provided for @txt_search_history.
+  ///
+  /// In en, this message translates to:
+  /// **'Search History'**
+  String get txt_search_history;
+
+  /// No description provided for @txt_helper_server_explorer.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a Mastodon server'**
+  String get txt_helper_server_explorer;
+
+  /// No description provided for @txt_hint_server_explorer.
+  ///
+  /// In en, this message translates to:
+  /// **'mastodon.social or keyword'**
+  String get txt_hint_server_explorer;
 
   /// No description provided for @dots.
   ///
