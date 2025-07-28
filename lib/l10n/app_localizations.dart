@@ -112,6 +112,12 @@ abstract class AppLocalizations {
   /// **'Clear'**
   String get btn_clear;
 
+  /// No description provided for @btn_exit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get btn_exit;
+
   /// No description provided for @btn_history.
   ///
   /// In en, this message translates to:
@@ -160,11 +166,11 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get btn_drawer_profile;
 
-  /// No description provided for @btn_drawer_settings.
+  /// No description provided for @btn_drawer_preference.
   ///
   /// In en, this message translates to:
-  /// **'Settings'**
-  String get btn_drawer_settings;
+  /// **'Preference'**
+  String get btn_drawer_preference;
 
   /// No description provided for @btn_drawer_logout.
   ///

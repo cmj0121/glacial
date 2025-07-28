@@ -57,12 +57,18 @@ class CoreApp extends ConsumerWidget {
             return const LandingPage();
           },
         ),
-
         // The mastodon server explorer page
         GoRoute(
           path: RoutePath.explorer.path,
           builder: (BuildContext context, GoRouterState state) {
             return const ServerExplorer();
+          },
+        ),
+        // The system preference page to view or edit the app settings
+        GoRoute(
+          path: RoutePath.preference.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return const SystemPreference();
           },
         ),
       ],
@@ -80,7 +86,6 @@ class CoreApp extends ConsumerWidget {
       RoutePath.timeline: const WIP(),
       RoutePath.trends: const WIP(),
       RoutePath.notifications: WIP(),
-      RoutePath.settings: const WIP(),
       RoutePath.admin: const WIP(),
       RoutePath.post: const WIP(),
     };

@@ -18,6 +18,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_clear => 'Clear';
 
   @override
+  String get btn_exit => 'Exit';
+
+  @override
   String get btn_history => 'History';
 
   @override
@@ -42,7 +45,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_drawer_profile => 'Profile';
 
   @override
-  String get btn_drawer_settings => 'Settings';
+  String get btn_drawer_preference => 'Preference';
 
   @override
   String get btn_drawer_logout => 'Logout';

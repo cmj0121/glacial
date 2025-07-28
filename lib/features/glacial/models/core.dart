@@ -63,7 +63,7 @@ enum SidebarButtonType {
 enum DrawerButtonType {
   switchServer,
   profile,
-  settings,
+  preference,
   logout;
 
   // The icon associated with the drawer button type, returns the active or not
@@ -73,7 +73,7 @@ enum DrawerButtonType {
         return Icons.swap_horiz;
       case profile:
         return Icons.person;
-      case settings:
+      case preference:
         return Icons.settings;
       case logout:
         return Icons.logout;
@@ -87,8 +87,8 @@ enum DrawerButtonType {
         return AppLocalizations.of(context)?.btn_drawer_switch_server ?? "Switch Server";
       case profile:
         return AppLocalizations.of(context)?.btn_drawer_profile ?? "Profile";
-      case settings:
-        return AppLocalizations.of(context)?.btn_drawer_settings ?? "Settings";
+      case preference:
+        return AppLocalizations.of(context)?.btn_drawer_preference ?? "Preference";
       case logout:
         return AppLocalizations.of(context)?.btn_drawer_logout ?? "Logout";
     }
@@ -100,10 +100,10 @@ enum DrawerButtonType {
         return RoutePath.explorer;
       case profile:
         return RoutePath.profile;
-      case settings:
-        return RoutePath.settings;
+      case preference:
+        return RoutePath.preference;
       case logout:
-        return RoutePath.landing;
+        return RoutePath.timeline; // Logout does not have a specific route, it will be handled in the app logic.
     }
   }
 }

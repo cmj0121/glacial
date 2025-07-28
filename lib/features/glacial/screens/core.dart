@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -175,7 +176,11 @@ class GlacialDrawer extends StatelessWidget {
       return ListTile(
         leading: Icon(action.icon()),
         title: Text(action.tooltip(context)),
-        onTap: () => context.go(action.route.path),
+        onTap: () {
+          context.pop(); // Close the drawer before navigating
+          logger.d("selected drawer action: ${action.name} -> ${action.route.path}");
+          context.go(action.route.path);
+        }
       );
     }).toList();
 
@@ -195,7 +200,7 @@ class GlacialDrawer extends StatelessWidget {
 }
 
 // The landing page that shows the icon of the app and flips intermittently.
-class LandingPage extends StatefulWidget {
+class LandingPage extends ConsumerStatefulWidget {
   final double size;
 
   const LandingPage({
@@ -204,10 +209,10 @@ class LandingPage extends StatefulWidget {
   });
 
   @override
-  State<LandingPage> createState() => _LandingPageState();
+  ConsumerState<LandingPage> createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
+class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
@@ -231,7 +236,12 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
 
   // Called when the preloading is completed, it will navigate to the next page.
   void onLoading() async {
-    context.go(RoutePath.explorer.path);
+    await Storage().loadPreference(ref);
+
+    if (mounted) {
+      context.go(RoutePath.timeline.path);
+      return;
+    }
   }
 }
 
