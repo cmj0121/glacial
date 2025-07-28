@@ -21,6 +21,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_exit => 'Exit';
 
   @override
+  String get btn_reload => 'Reload';
+
+  @override
   String get btn_history => 'History';
 
   @override
@@ -58,6 +61,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_hint_server_explorer => 'mastodon.social or keyword';
+
+  @override
+  String get txt_desc_preference_system_theme => 'The system theme';
 
   @override
   String get dots => '...';

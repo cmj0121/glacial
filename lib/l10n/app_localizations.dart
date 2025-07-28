@@ -118,6 +118,12 @@ abstract class AppLocalizations {
   /// **'Exit'**
   String get btn_exit;
 
+  /// No description provided for @btn_reload.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload'**
+  String get btn_reload;
+
   /// No description provided for @btn_history.
   ///
   /// In en, this message translates to:
@@ -195,6 +201,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'mastodon.social or keyword'**
   String get txt_hint_server_explorer;
+
+  /// No description provided for @txt_desc_preference_system_theme.
+  ///
+  /// In en, this message translates to:
+  /// **'The system theme'**
+  String get txt_desc_preference_system_theme;
 
   /// No description provided for @dots.
   ///

@@ -8,6 +8,8 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:glacial/app.dart';
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
 
 void main() async {
   await prologue();
@@ -47,17 +49,19 @@ Future<void> prologue() async {
 
   await dotenv.load(fileName: ".env");
   await Info.init();
+  await Storage.init();
 
   logger.d("completely preloaded system-wise settings ...");
 }
 
 // The entry point of the app that starts the Flutter application.
-void start() {
+void start() async {
   FlutterNativeSplash.remove();
+  final SystemPreferenceSchema? schema = await Storage().loadPreference();
 
   runApp(
     // Adding ProviderScope enables Riverpod for the entire project
-    const ProviderScope(child: CoreApp()),
+    ProviderScope(child: CoreApp(schema: schema)),
   );
 }
 

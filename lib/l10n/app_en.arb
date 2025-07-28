@@ -4,6 +4,7 @@
   "btn_close": "Close",
   "btn_clear": "Clear",
   "btn_exit": "Exit",
+  "btn_reload": "Reload",
   "btn_history": "History",
   "btn_sidebar_timelines": "Timelines",
   "btn_sidebar_trendings": "Trendings",
@@ -17,5 +18,6 @@
   "txt_search_history": "Search History",
   "txt_helper_server_explorer": "Search for a Mastodon server",
   "txt_hint_server_explorer": "mastodon.social or keyword",
+  "txt_desc_preference_system_theme": "The system theme",
   "dots": "..."
 }

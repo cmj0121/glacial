@@ -236,11 +236,11 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
 
   // Called when the preloading is completed, it will navigate to the next page.
   void onLoading() async {
-    await Storage().loadPreference(ref);
+    await Storage().loadPreference(ref: ref);
 
     if (mounted) {
+      logger.i("preloading completed, navigating to the home page ...");
       context.go(RoutePath.timeline.path);
-      return;
     }
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:glacial/features/models.dart';
 
 // The provider to declare the system preference settings or global variables.
+final reloadProvider = StateProvider<bool>((ref) => false);
 final preferenceProvider = StateProvider<SystemPreferenceSchema?>((ref) => null);
 
 class Storage {
@@ -32,6 +33,11 @@ class Storage {
   // Get the raw string value from the storage.
   Future<String?> getString(String key, {bool secure = false}) async {
     return secure ? await _secureStorage.read(key: key) : _prefs?.getString(key);
+  }
+
+  // Save the raw string value to the storage.
+  Future<void> setString(String key, String value, {bool secure = false}) async {
+    return secure ? await _secureStorage.write(key: key, value: value) : await _prefs?.setString(key, value);
   }
 
   // Remove the raw string value from the storage.
