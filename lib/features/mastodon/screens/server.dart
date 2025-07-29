@@ -177,6 +177,40 @@ class MastodonServer extends StatelessWidget {
   }
 }
 
+// The brief information of the server, which shows the server's title, and the thumbnail.
+class MastodonServerInfo extends StatelessWidget {
+  final ServerInfoSchema schema;
+  final double size;
+
+  const MastodonServerInfo({
+    super.key,
+    required this.schema,
+    this.size = 32,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: CachedNetworkImage(
+            imageUrl: schema.thumbnail,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => const ClockProgressIndicator(),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Text(schema.domain, style: Theme.of(context).textTheme.bodyLarge),
+      ],
+    );
+  }
+}
+
 // The rules of the server, which shows the rules that the server has.
 class ServerRules extends StatelessWidget {
   final List<RuleSchema> rules;

@@ -166,21 +166,17 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
 // The Glacial SideDrawer, used to show the current sign-in user, the advanced
 // operations and the server switcher.
-class GlacialDrawer extends StatelessWidget {
+class GlacialDrawer extends ConsumerWidget {
   const GlacialDrawer({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final int logoutIndex = DrawerButtonType.values.indexWhere((action) => action == DrawerButtonType.logout);
     final List<Widget> children = DrawerButtonType.values.map((action) {
       return ListTile(
         leading: Icon(action.icon()),
         title: Text(action.tooltip(context)),
-        onTap: () {
-          context.pop(); // Close the drawer before navigating
-          logger.d("selected drawer action: ${action.name} -> ${action.route.path}");
-          context.go(action.route.path);
-        }
+        onTap: () => onTap(context, ref, action),
       );
     }).toList();
 
@@ -196,6 +192,24 @@ class GlacialDrawer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void onTap(BuildContext context, WidgetRef ref, DrawerButtonType action) {
+    final Storage storage = Storage();
+    context.pop(); // Close the drawer before navigating
+
+    switch (action) {
+      case DrawerButtonType.switchServer:
+        final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
+
+        storage.saveAccessStatus(status.copyWith(server: ''), ref: ref);
+        break;
+      default:
+        break;
+    }
+
+    logger.d("selected drawer action: ${action.name} -> ${action.route.path}");
+    context.go(action.route.path);
   }
 }
 
@@ -236,11 +250,17 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
 
   // Called when the preloading is completed, it will navigate to the next page.
   void onLoading() async {
-    await Storage().loadPreference(ref: ref);
+    final Storage storage = Storage();
+
+    await storage.loadPreference(ref: ref);
+    await storage.loadAccessStatus(ref: ref);
+
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final RoutePath route = status?.server?.isEmpty ?? true ? RoutePath.explorer : RoutePath.timeline;
 
     if (mounted) {
-      logger.i("preloading completed, navigating to the home page ...");
-      context.go(RoutePath.timeline.path);
+      logger.i("preloading completed, navigating to the ${route.path} page (${status?.server}) ...");
+      context.go(route.path);
     }
   }
 }

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The history drawer that shows the search history of the user.
 class HistoryDrawer extends ConsumerStatefulWidget {
@@ -18,7 +21,15 @@ class HistoryDrawer extends ConsumerStatefulWidget {
 }
 
 class _HistoryDrawerState extends ConsumerState<HistoryDrawer> {
-  List<String> history = [];
+  late List<ServerInfoSchema> history;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    history = status?.history ?? [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,22 +67,22 @@ class _HistoryDrawerState extends ConsumerState<HistoryDrawer> {
     return ReorderableListView.builder(
       itemCount: history.length,
       itemBuilder: (context, index) {
-        final String domain = history[index];
+        final ServerInfoSchema info = history[index];
         final Widget item = ListTile(
-          title: Text(domain, overflow: TextOverflow.ellipsis),
+          title: MastodonServerInfo(schema: info),
           selectedTileColor: Theme.of(context).colorScheme.primary,
-          onTap: () => widget.onTap?.call(domain),
+          onTap: () => widget.onTap?.call(info.domain),
         );
 
         return Dismissible(
-          key: ValueKey(domain),
+          key: ValueKey(info.domain),
           background: Container(
             alignment: Alignment.centerLeft,
             color: Colors.red,
             child: const Icon(Icons.delete_forever_rounded, color: Colors.white),
           ),
           direction: DismissDirection.startToEnd,
-          onDismissed: (direction) => onRemoveHistory(domain),
+          onDismissed: (direction) => onRemoveHistory(info),
           child: item,
         );
       },
@@ -85,13 +96,13 @@ class _HistoryDrawerState extends ConsumerState<HistoryDrawer> {
       newIndex--;
     }
 
-    final String domain = history.removeAt(oldIndex);
+    final ServerInfoSchema domain = history.removeAt(oldIndex);
     history.insert(newIndex, domain);
     onUpdateHistory();
   }
 
   // Remove a specific history item when the user swipes it away.
-  void onRemoveHistory(String domain) async {
+  void onRemoveHistory(ServerInfoSchema domain) async {
     history.remove(domain);
     onUpdateHistory();
   }
@@ -105,6 +116,10 @@ class _HistoryDrawerState extends ConsumerState<HistoryDrawer> {
 
   // Update the history in the state and notify the parent widget.
   void onUpdateHistory() async {
+    final Storage storage = Storage();
+    final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
+
+    storage.saveAccessStatus(status.copyWith(history: history), ref: ref);
     setState(() {});
   }
 }

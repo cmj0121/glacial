@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -34,7 +35,11 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
           ),
         ),
       ),
-      drawer: HistoryDrawer(),
+      drawer: HistoryDrawer(onTap: (String server) {
+        controller.text = server;
+        onSearch();
+        context.pop();
+      }),
     );
   }
 
@@ -53,6 +58,7 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
   // The header of the explorer page, shows the search bar and the history button to show the search history.
   Widget buildHeader() {
     final double iconSize = 36;
+    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -66,7 +72,7 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
             return IconButton(
               icon: Icon(Icons.history, size: iconSize),
               tooltip: AppLocalizations.of(context)?.btn_history ?? "History",
-              onPressed: () => Scaffold.of(context).openDrawer(),
+              onPressed: status?.history.isEmpty ?? true ? null : () => Scaffold.of(context).openDrawer(),
             );
           },
         ),
@@ -132,8 +138,16 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
   // The callback when user clicks the mastodon server.
   void onSelect(ServerSchema schema) async {
     final String server = schema.domain;
+    final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
+    List<ServerInfoSchema> history = status.history.toList();
+
+    // If the server not already in the history, add it.
+    if (!history.any((ServerInfoSchema info) => info.domain == server)) {
+      history.add(schema.toInfo());
+    }
 
     logger.i("onTap: $server");
+    storage.saveAccessStatus(status.copyWith(server: schema.domain, history: history), ref: ref);
     context.go(RoutePath.timeline.path);
   }
 

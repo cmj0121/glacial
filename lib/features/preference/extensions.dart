@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
-extension SystemPreferenceSchemaExtension on Storage {
+extension SystemPreferenceExtension on Storage {
   // Load the system preference settings from the storage.
   Future<SystemPreferenceSchema?> loadPreference({WidgetRef? ref}) async {
     final String? json = await getString(SystemPreferenceSchema.key);

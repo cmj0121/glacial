@@ -9,6 +9,7 @@ import 'package:glacial/features/models.dart';
 // The provider to declare the system preference settings or global variables.
 final reloadProvider = StateProvider<bool>((ref) => false);
 final preferenceProvider = StateProvider<SystemPreferenceSchema?>((ref) => null);
+final accessStatusProvider = StateProvider<AccessStatusSchema?>((ref) => null);
 
 class Storage {
   static SharedPreferences? _prefs;
