@@ -19,5 +19,6 @@
   "txt_helper_server_explorer": "Search for a Mastodon server",
   "txt_hint_server_explorer": "mastodon.social or keyword",
   "txt_desc_preference_system_theme": "The system theme",
+  "err_invalid_instance": "invalid Mastodon server domain: {domain}",
   "dots": "..."
 }

@@ -66,5 +66,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_desc_preference_system_theme => 'The system theme';
 
   @override
+  String err_invalid_instance(Object domain) {
+    return 'invalid Mastodon server domain: $domain';
+  }
+
+  @override
   String get dots => '...';
 }

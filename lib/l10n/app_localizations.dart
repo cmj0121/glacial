@@ -208,6 +208,12 @@ abstract class AppLocalizations {
   /// **'The system theme'**
   String get txt_desc_preference_system_theme;
 
+  /// No description provided for @err_invalid_instance.
+  ///
+  /// In en, this message translates to:
+  /// **'invalid Mastodon server domain: {domain}'**
+  String err_invalid_instance(Object domain);
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:
