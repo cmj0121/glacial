@@ -1,8 +1,13 @@
 // The miscellaneous utilities and constants for the Glacial app.
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+
 import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+const double iconSize = 32.0; // The default icon size used in the app.
+const double tabSize = 24.0; // The default tab size used in the app.
 
 // The logger instance.
 final Logger logger = Logger(
@@ -49,6 +54,16 @@ class Debouncer {
   void cancel() {
     _timer?.cancel();
   }
+}
+
+// Show a snackbar with the given message and duration.
+Future<void> showSnackbar(BuildContext context, String message, {
+  Duration duration = const Duration(seconds: 2),
+  TextStyle? textStyle,
+}) async {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message, style: textStyle), duration: duration),
+  );
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

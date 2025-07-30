@@ -54,6 +54,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_drawer_logout => 'Logout';
 
   @override
+  String get btn_preference_theme => 'Theme';
+
+  @override
+  String get btn_preference_engineer => 'Engineer Settings';
+
+  @override
+  String get btn_preference_engineer_clear_cache => 'Clear All Cache';
+
+  @override
+  String get desc_preference_engineer_clear_cache =>
+      'Clear all cached data and reset the app';
+
+  @override
   String get txt_search_history => 'Search History';
 
   @override
@@ -69,6 +82,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String err_invalid_instance(Object domain) {
     return 'invalid Mastodon server domain: $domain';
   }
+
+  @override
+  String get msg_preference_engineer_clear_cache =>
+      'Cache cleared successfully';
 
   @override
   String get dots => '...';

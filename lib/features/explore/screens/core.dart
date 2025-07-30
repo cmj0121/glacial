@@ -9,7 +9,7 @@ class Explorer extends StatefulWidget {
 
   const Explorer({
     super.key,
-    this.size = 24,
+    this.size = iconSize,
     this.maxWidth = 320,
   });
 

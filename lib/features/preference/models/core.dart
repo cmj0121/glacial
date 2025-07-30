@@ -1,6 +1,35 @@
 // The system preference settings to control the app"s behavior and features.
 import "dart:convert";
+
 import "package:flutter/material.dart";
+
+import 'package:glacial/core.dart';
+
+// The tab type of the system preference settings.
+enum SystemPreferenceType {
+  theme,    // The theme settings of the app.
+  engineer; // The engineer settings of the app.
+
+  // The icon associated with the system preference type.
+  IconData icon({bool active = false}) {
+    switch (this) {
+      case theme:
+        return active ? Icons.color_lens : Icons.color_lens_outlined;
+      case engineer:
+        return active ? Icons.engineering : Icons.engineering_outlined;
+    }
+  }
+
+  // The tooltip text for the system preference type, localized if possible.
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case theme:
+        return AppLocalizations.of(context)?.btn_preference_theme ?? "Theme";
+      case engineer:
+        return AppLocalizations.of(context)?.btn_preference_engineer ?? "Engineer Settings";
+    }
+  }
+}
 
 // The global data schema of the system preference settings.
 class SystemPreferenceSchema {

@@ -23,7 +23,7 @@ class GlacialHome extends ConsumerStatefulWidget {
 
 class _GlacialHomeState extends ConsumerState<GlacialHome> {
   final double appBarHeight = 44;
-  final double sidebarSize = 32;
+  final double sidebarSize = iconSize;
 
   late final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late final List<SidebarButtonType> actions = SidebarButtonType.values;

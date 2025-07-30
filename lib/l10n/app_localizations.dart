@@ -184,6 +184,30 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get btn_drawer_logout;
 
+  /// No description provided for @btn_preference_theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get btn_preference_theme;
+
+  /// No description provided for @btn_preference_engineer.
+  ///
+  /// In en, this message translates to:
+  /// **'Engineer Settings'**
+  String get btn_preference_engineer;
+
+  /// No description provided for @btn_preference_engineer_clear_cache.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All Cache'**
+  String get btn_preference_engineer_clear_cache;
+
+  /// No description provided for @desc_preference_engineer_clear_cache.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all cached data and reset the app'**
+  String get desc_preference_engineer_clear_cache;
+
   /// No description provided for @txt_search_history.
   ///
   /// In en, this message translates to:
@@ -213,6 +237,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'invalid Mastodon server domain: {domain}'**
   String err_invalid_instance(Object domain);
+
+  /// No description provided for @msg_preference_engineer_clear_cache.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared successfully'**
+  String get msg_preference_engineer_clear_cache;
 
   /// No description provided for @dots.
   ///

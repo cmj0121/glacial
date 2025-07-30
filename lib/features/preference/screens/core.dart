@@ -14,6 +14,8 @@ class SystemPreference extends ConsumerStatefulWidget {
 }
 
 class _SystemPreferenceState extends ConsumerState<SystemPreference> {
+  int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +51,39 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
 
   // Build the tab view that contains the settings per category.
   Widget buildTabView() {
-    return buildSystemSettings();
+    final List<SystemPreferenceType> types = SystemPreferenceType.values;
+
+    return SwipeTabView(
+      itemCount: types.length,
+      tabBuilder: (BuildContext context, int index) {
+        final bool selected = index == selectedIndex;
+
+        return Tooltip(
+          message: types[index].tooltip(context),
+          child: Icon(
+            types[index].icon(active: selected),
+            size: tabSize,
+            color: selected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
+          ),
+        );
+      },
+      itemBuilder: (BuildContext context, int index) {
+        final SystemPreferenceType type = types[index];
+        late final Widget child;
+
+        switch (type) {
+          case SystemPreferenceType.theme:
+            child = buildSystemSettings();
+          case SystemPreferenceType.engineer:
+            child = buildEngineerSettings();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+          child: child,
+        );
+      }
+    );
   }
 
   // Build the system-wide settings that control the app's behavior and features.
@@ -61,10 +95,34 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
         SwitchListTile(
           title: Text(AppLocalizations.of(context)?.txt_desc_preference_system_theme ?? "The system theme"),
           value: schema.theme == ThemeMode.dark,
-          secondary: Icon(schema.theme == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode),
+          secondary: Icon(schema.theme == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode, size: iconSize),
           onChanged: (bool value) {
             final ThemeMode theme = value ? ThemeMode.dark : ThemeMode.light;
             Storage().savePreference(schema.copyWith(theme: theme), ref: ref);
+          },
+        ),
+      ],
+    );
+  }
+
+  // Build the engineer settings that are not meant for the general user.
+  Widget buildEngineerSettings() {
+    final Storage storage = Storage();
+
+    // The list of button to clear the cache or reset the app.
+    return ListView(
+      children: [
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.btn_preference_engineer_clear_cache ?? "Clear All Cache"),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_clear_cache ?? "Clear all cached data and reset the app."),
+          leading: Icon(Icons.delete_outline_outlined, size: iconSize, color: Theme.of(context).colorScheme.error),
+          onTap: () async {
+            await storage.purge();
+
+            if (mounted) {
+              final String message = AppLocalizations.of(context)?.msg_preference_engineer_clear_cache ?? "Cache cleared successfully.";
+              await showSnackbar(context, message);
+            }
           },
         ),
       ],

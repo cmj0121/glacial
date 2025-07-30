@@ -15,10 +15,15 @@
   "btn_drawer_profile": "Profile",
   "btn_drawer_preference": "Preference",
   "btn_drawer_logout": "Logout",
+  "btn_preference_theme": "Theme",
+  "btn_preference_engineer": "Engineer Settings",
+  "btn_preference_engineer_clear_cache": "Clear All Cache",
+  "desc_preference_engineer_clear_cache": "Clear all cached data and reset the app",
   "txt_search_history": "Search History",
   "txt_helper_server_explorer": "Search for a Mastodon server",
   "txt_hint_server_explorer": "mastodon.social or keyword",
   "txt_desc_preference_system_theme": "The system theme",
   "err_invalid_instance": "invalid Mastodon server domain: {domain}",
+  "msg_preference_engineer_clear_cache": "Cache cleared successfully",
   "dots": "..."
 }
