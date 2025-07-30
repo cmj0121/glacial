@@ -4,13 +4,13 @@ import 'package:go_router/go_router.dart';
 
 enum RoutePath {
   landing,           // The landing page of the app when user opens it.
-  engineer,          // The engineer page of the app.
   explorer,          // The server explorer page of the app to explore the Mastodon server.
   webview,           // The in-app webview page of the app.
   media,             // The media viewer page of the app to view the media content.
   preference,        // The preference settings page of the app.
   // The home page of the Glacial, showing the timeline, trends, notifications, and other features.
   timeline,          // The timeline page of the app.
+  list,              // The list page of the app to show the pinned lists.
   trends,            // The trends page of the app.
   notifications,     // The notifications page of the app.
   admin,             // The admin page of the app.
@@ -28,8 +28,6 @@ enum RoutePath {
     switch (this) {
       case RoutePath.landing:
         return '/';
-      case RoutePath.engineer:
-        return '/engineer';
       case RoutePath.explorer:
         return '/explorer';
       case RoutePath.webview:
@@ -40,6 +38,8 @@ enum RoutePath {
         return '/media';
       case RoutePath.timeline:
         return '/home/timeline';
+      case RoutePath.list:
+        return '/home/list';
       case RoutePath.trends:
         return '/home/trends';
       case RoutePath.notifications:

@@ -136,6 +136,12 @@ abstract class AppLocalizations {
   /// **'Timelines'**
   String get btn_sidebar_timelines;
 
+  /// No description provided for @btn_sidebar_lists.
+  ///
+  /// In en, this message translates to:
+  /// **'Lists'**
+  String get btn_sidebar_lists;
+
   /// No description provided for @btn_sidebar_trendings.
   ///
   /// In en, this message translates to:

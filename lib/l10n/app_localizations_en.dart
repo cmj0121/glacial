@@ -30,6 +30,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_sidebar_timelines => 'Timelines';
 
   @override
+  String get btn_sidebar_lists => 'Lists';
+
+  @override
   String get btn_sidebar_trendings => 'Trendings';
 
   @override

@@ -6,6 +6,7 @@ import 'package:glacial/core.dart';
 // The possible actions in sidebar and used to interact with the current server.
 enum SidebarButtonType {
   timeline,
+  list,
   trending,
   notifications,
   admin,
@@ -15,6 +16,8 @@ enum SidebarButtonType {
   IconData icon({bool active = false}) {
     switch (this) {
       case timeline:
+        return active ? Icons.view_timeline : Icons.view_timeline_outlined;
+      case list:
         return active ? Icons.view_list : Icons.view_list_outlined;
       case trending:
         return active ? Icons.bar_chart : Icons.trending_up_outlined;
@@ -32,6 +35,8 @@ enum SidebarButtonType {
     switch (this) {
       case SidebarButtonType.timeline:
         return AppLocalizations.of(context)?.btn_sidebar_timelines ?? "Timelines";
+      case SidebarButtonType.list:
+        return AppLocalizations.of(context)?.btn_sidebar_lists ?? "Lists";
       case SidebarButtonType.trending:
         return AppLocalizations.of(context)?.btn_sidebar_trendings ?? "Trendings";
       case SidebarButtonType.notifications:
@@ -47,6 +52,8 @@ enum SidebarButtonType {
     switch (this) {
       case timeline:
         return RoutePath.timeline;
+      case list:
+        return RoutePath.list;
       case trending:
         return RoutePath.trends;
       case notifications:
