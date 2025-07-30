@@ -207,7 +207,7 @@ class GlacialDrawer extends ConsumerWidget {
     }
 
     logger.d("selected drawer action: ${action.name} -> ${action.route.path}");
-    context.go(action.route.path);
+    context.push(action.route.path);
   }
 }
 

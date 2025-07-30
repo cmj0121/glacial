@@ -79,11 +79,24 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             return const ServerExplorer();
           },
         ),
+        // The user profile page to view the user details
+        GoRoute(
+          path: RoutePath.profile.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return BackableView(
+              title: RoutePath.profile.name,
+              child: const WIP(),
+            );
+          },
+        ),
         // The system preference page to view or edit the app settings
         GoRoute(
           path: RoutePath.preference.path,
           builder: (BuildContext context, GoRouterState state) {
-            return const SystemPreference();
+            return BackableView(
+              title: RoutePath.preference.name,
+              child: SystemPreference(),
+            );
           },
         ),
       ],

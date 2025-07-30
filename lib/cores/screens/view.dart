@@ -254,4 +254,41 @@ class _SwipeTabBarState extends State<SwipeTabBar> with TickerProviderStateMixin
   }
 }
 
+// The backable widget that can be used to show the back button and the optional
+// title of the widget.
+class BackableView extends StatelessWidget {
+  final Widget child;
+  final String title;
+
+  const BackableView({
+    super.key,
+    required this.child,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(title, style: Theme.of(context).textTheme.titleLarge),
+      ),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: SafeArea(
+          child: Dismissible(
+            key: UniqueKey(),
+            direction: DismissDirection.startToEnd,
+            onDismissed: (_) => Navigator.of(context).pop(),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:
