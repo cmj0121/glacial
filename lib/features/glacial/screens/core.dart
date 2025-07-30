@@ -158,9 +158,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   // Select the action in the sidebar and show the corresponding content.
   void onSelect(int index) {
     final SidebarButtonType action = actions[index];
-
-    logger.d("selected action: ${action.name} -> ${action.route.path}");
-    context.go(action.route.path, extra: action);
+    context.push(action.route.path, extra: action);
   }
 }
 

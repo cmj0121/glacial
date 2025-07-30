@@ -98,7 +98,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
   // Build the home page with the sidebar and the main content
   RouteBase homeRoutes() {
     final Map<RoutePath, Widget> routerMap = {
-      RoutePath.timeline: const WIP(),
+      RoutePath.timeline: const TimelineTab(),
       RoutePath.trends: const WIP(),
       RoutePath.notifications: WIP(),
       RoutePath.admin: const WIP(),
@@ -107,7 +107,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
 
     return ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        return GlacialHome(child: child);
+        return GlacialHome(key: ValueKey(state.uri.path), child: child);
       },
       routes: routerMap.entries.map((entry) {
         return GoRoute(
