@@ -10,6 +10,9 @@ import 'package:glacial/features/screens.dart';
 // The main home page of the app, interacts with the current server and show the
 // server timeline and other features.
 class GlacialHome extends ConsumerStatefulWidget {
+  // The global scroll-to-top controller callback
+  static ScrollController? scrollToTop;
+
   final Widget child;
 
   const GlacialHome({
@@ -164,6 +167,18 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   // Select the action in the sidebar and show the corresponding content.
   void onSelect(int index) {
     final SidebarButtonType action = actions[index];
+    final String path = GoRouter.of(context).state.uri.toString();
+    final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
+
+    if (route == action.route) {
+      logger.d("already on the ${action.name} page, no need to navigate.");
+      GlacialHome.scrollToTop?.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+
     context.push(action.route.path, extra: action);
   }
 }

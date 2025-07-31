@@ -38,7 +38,11 @@ class Account extends StatelessWidget {
   Widget buildAvatar() {
     return CachedNetworkImage(
       imageUrl: schema.avatar,
-      placeholder: (context, url) => ClockProgressIndicator(size: size),
+      placeholder: (context, url) => SizedBox(
+        width: size,
+        height: size,
+        child: ClockProgressIndicator(size: size),
+      ),
       errorWidget: (context, url, error) => const Icon(Icons.error),
       imageBuilder: (context, imageProvider) => ClipRRect(
         borderRadius: BorderRadius.circular(8),

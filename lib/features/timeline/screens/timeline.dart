@@ -1,6 +1,7 @@
 // The Timeline widget in the current selected Mastodon server.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -117,6 +118,7 @@ class _TimelineState extends State<Timeline> {
   final double loadingThreshold = 180;
   late final ScrollController controller = widget.controller ?? ScrollController();
 
+  bool isRefresh = false;
   bool isLoading = false;
   bool isCompleted = false;
   List<StatusSchema> statuses = [];
@@ -126,7 +128,17 @@ class _TimelineState extends State<Timeline> {
     super.initState();
     controller.addListener(onScroll);
 
+    GlacialHome.scrollToTop = controller;
     onLoad();
+  }
+
+  @override
+  void dispose() {
+    if (widget.controller == null) {
+      controller.removeListener(onScroll);
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -136,7 +148,7 @@ class _TimelineState extends State<Timeline> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          isLoading ? ClockProgressIndicator() : const SizedBox.shrink(),
+          (isLoading && !isRefresh) ? ClockProgressIndicator() : const SizedBox.shrink(),
           Flexible(child: buildContent()),
         ],
       ),
@@ -149,26 +161,30 @@ class _TimelineState extends State<Timeline> {
       return const SizedBox.shrink();
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: ListView.builder(
-        controller: controller,
-        shrinkWrap: true,
-        itemCount: statuses.length,
-        itemBuilder: (context, index) {
-          final StatusSchema status = statuses[index];
-          final Widget child = Status(schema: status);
+    return CustomMaterialIndicator(
+      onRefresh: onRefresh,
+      indicatorBuilder: (_, __) => const ClockProgressIndicator(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: ListView.builder(
+          controller: controller,
+          shrinkWrap: true,
+          itemCount: statuses.length,
+          itemBuilder: (context, index) {
+            final StatusSchema status = statuses[index];
+            final Widget child = Status(schema: status);
 
-          return Container(
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(right: 16),
-              child: child,
-            ),
-          );
-        },
+            return Container(
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(right: 16),
+                child: child,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -184,6 +200,7 @@ class _TimelineState extends State<Timeline> {
   // Clean-up and refresh the timeline when the user pulls down the list.
   Future<void> onRefresh() async {
     setState(() {
+      isRefresh = true;
       isLoading = false;
       isCompleted = false;
     });
@@ -205,6 +222,7 @@ class _TimelineState extends State<Timeline> {
 
     if (mounted) {
       setState(() {
+        isRefresh = false;
         isLoading = false;
         isCompleted = schemas.isEmpty;
         statuses.addAll(schemas);
