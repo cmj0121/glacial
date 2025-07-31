@@ -1,5 +1,6 @@
 // The miscellaneous widget library of the app.
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 // The placeholder for the app's Work-In-Progress screen
 class WIP extends StatelessWidget {
@@ -49,6 +50,45 @@ class InkWellDone extends StatelessWidget {
       highlightColor: Colors.transparent,
       hoverColor: Colors.transparent,
       child: child,
+    );
+  }
+}
+
+// The customize HTML render
+class HtmlDone extends StatelessWidget {
+  final String html;
+  final OnTap? onLinkTap;
+
+  const HtmlDone({
+    super.key,
+    required this.html,
+    this.onLinkTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SelectionArea(
+      child: Html(
+        data: html,
+        style: {
+          'a': Style(
+            color: Theme.of(context).colorScheme.secondary,
+            textDecoration: TextDecoration.underline,
+          ),
+          'blockquote': Style(
+            color: Theme.of(context).colorScheme.secondary,
+            padding: HtmlPaddings(left: HtmlPadding(8)),
+            textAlign: TextAlign.justify,
+            border: Border(
+              left: BorderSide(
+                color: Theme.of(context).dividerColor,
+                width: 2,
+              ),
+            ),
+          ),
+        },
+        onLinkTap: onLinkTap,
+      ),
     );
   }
 }

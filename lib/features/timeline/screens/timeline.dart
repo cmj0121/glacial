@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The timeline tab that shows the all possible timelines in the current
 // selected Mastodon server.
@@ -144,7 +145,32 @@ class _TimelineState extends State<Timeline> {
 
   // Build the list of the statuses and optionally header widget.
   Widget buildContent() {
-    return const WIP();
+    if (statuses.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: ListView.builder(
+        controller: controller,
+        shrinkWrap: true,
+        itemCount: statuses.length,
+        itemBuilder: (context, index) {
+          final StatusSchema status = statuses[index];
+          final Widget child = Status(schema: status);
+
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: child,
+            ),
+          );
+        },
+      ),
+    );
   }
 
   // Detect the scroll event and load more statuses when the user scrolls to the

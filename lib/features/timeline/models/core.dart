@@ -1,5 +1,6 @@
 // The Timeline related data schema.
 
+export 'interaction.dart';
 export 'status.dart';
 export 'timeline.dart';
 

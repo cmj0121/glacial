@@ -272,6 +272,60 @@ abstract class AppLocalizations {
   /// **'Clear All Cache'**
   String get btn_preference_engineer_clear_cache;
 
+  /// No description provided for @btn_interaction_reply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get btn_interaction_reply;
+
+  /// No description provided for @btn_interaction_reblog.
+  ///
+  /// In en, this message translates to:
+  /// **'Reblog'**
+  String get btn_interaction_reblog;
+
+  /// No description provided for @btn_interaction_favourite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite'**
+  String get btn_interaction_favourite;
+
+  /// No description provided for @btn_interaction_bookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark'**
+  String get btn_interaction_bookmark;
+
+  /// No description provided for @btn_interaction_share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get btn_interaction_share;
+
+  /// No description provided for @btn_interaction_mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get btn_interaction_mute;
+
+  /// No description provided for @btn_interaction_block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get btn_interaction_block;
+
+  /// No description provided for @btn_interaction_edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get btn_interaction_edit;
+
+  /// No description provided for @btn_interaction_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get btn_interaction_delete;
+
   /// No description provided for @desc_preference_engineer_clear_cache.
   ///
   /// In en, this message translates to:
@@ -313,6 +367,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cache cleared successfully'**
   String get msg_preference_engineer_clear_cache;
+
+  /// No description provided for @msg_copied_to_clipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy to clipboard'**
+  String get msg_copied_to_clipboard;
 
   /// No description provided for @dots.
   ///

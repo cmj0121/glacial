@@ -29,6 +29,15 @@
   "btn_preference_theme": "Theme",
   "btn_preference_engineer": "Engineer Settings",
   "btn_preference_engineer_clear_cache": "Clear All Cache",
+  "btn_interaction_reply": "Reply",
+  "btn_interaction_reblog" : "Reblog",
+  "btn_interaction_favourite" : "Favourite",
+  "btn_interaction_bookmark" : "Bookmark",
+  "btn_interaction_share" : "Share",
+  "btn_interaction_mute" : "Mute",
+  "btn_interaction_block" : "Block",
+  "btn_interaction_edit" : "Edit",
+  "btn_interaction_delete" : "Delete",
   "desc_preference_engineer_clear_cache": "Clear all cached data and reset the app",
   "txt_search_history": "Search History",
   "txt_helper_server_explorer": "Search for a Mastodon server",
@@ -36,5 +45,6 @@
   "txt_desc_preference_system_theme": "The system theme",
   "err_invalid_instance": "invalid Mastodon server domain: {domain}",
   "msg_preference_engineer_clear_cache": "Cache cleared successfully",
+  "msg_copied_to_clipboard": "Copy to clipboard",
   "dots": "..."
 }

@@ -96,6 +96,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_preference_engineer_clear_cache => 'Clear All Cache';
 
   @override
+  String get btn_interaction_reply => 'Reply';
+
+  @override
+  String get btn_interaction_reblog => 'Reblog';
+
+  @override
+  String get btn_interaction_favourite => 'Favourite';
+
+  @override
+  String get btn_interaction_bookmark => 'Bookmark';
+
+  @override
+  String get btn_interaction_share => 'Share';
+
+  @override
+  String get btn_interaction_mute => 'Mute';
+
+  @override
+  String get btn_interaction_block => 'Block';
+
+  @override
+  String get btn_interaction_edit => 'Edit';
+
+  @override
+  String get btn_interaction_delete => 'Delete';
+
+  @override
   String get desc_preference_engineer_clear_cache =>
       'Clear all cached data and reset the app';
 
@@ -119,6 +146,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get msg_preference_engineer_clear_cache =>
       'Cache cleared successfully';
+
+  @override
+  String get msg_copied_to_clipboard => 'Copy to clipboard';
 
   @override
   String get dots => '...';

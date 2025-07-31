@@ -81,7 +81,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_timeline_public => '公開';
 
   @override
-  String get btn_timeline_favourites => '喜愛';
+  String get btn_timeline_favourites => '最愛';
 
   @override
   String get btn_timeline_bookmarks => '書籤';
@@ -94,6 +94,33 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get btn_preference_engineer_clear_cache => '清除快取';
+
+  @override
+  String get btn_interaction_reply => '回嘟';
+
+  @override
+  String get btn_interaction_reblog => '轉發';
+
+  @override
+  String get btn_interaction_favourite => '最愛';
+
+  @override
+  String get btn_interaction_bookmark => '書籤';
+
+  @override
+  String get btn_interaction_share => '分享';
+
+  @override
+  String get btn_interaction_mute => '靜音';
+
+  @override
+  String get btn_interaction_block => '封鎖';
+
+  @override
+  String get btn_interaction_edit => '編輯';
+
+  @override
+  String get btn_interaction_delete => '刪除';
 
   @override
   String get desc_preference_engineer_clear_cache => '清除快取並重設';
@@ -117,6 +144,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_preference_engineer_clear_cache => '清除快取成功';
+
+  @override
+  String get msg_copied_to_clipboard => '複製到剪貼簿';
 
   @override
   String get dots => '...';
