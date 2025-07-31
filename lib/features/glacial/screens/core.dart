@@ -49,6 +49,10 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(appBarHeight),
             child: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => scaffoldKey.currentState?.openDrawer(),
+              ),
               actions: [
                 Explorer(size: sidebarSize),
               ],

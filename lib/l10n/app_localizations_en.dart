@@ -69,6 +69,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_trends_tags => 'Tags';
 
   @override
+  String get btn_timeline_home => 'Home';
+
+  @override
+  String get btn_timeline_local => 'Local';
+
+  @override
+  String get btn_timeline_federal => 'Federal';
+
+  @override
+  String get btn_timeline_public => 'Public';
+
+  @override
+  String get btn_timeline_favourites => 'Favourites';
+
+  @override
+  String get btn_timeline_bookmarks => 'Bookmarks';
+
+  @override
   String get btn_preference_theme => 'Theme';
 
   @override

@@ -1,6 +1,7 @@
 // The Timeline related data schema.
 import 'package:flutter/material.dart';
 
+import 'package:glacial/core.dart';
 
 // The type list for the timeline, based on the Mastodon API.
 enum TimelineType {
@@ -27,6 +28,24 @@ enum TimelineType {
         return active ? Icons.star : Icons.star_outline_outlined;
       case bookmarks:
         return active ? Icons.bookmarks : Icons.bookmarks_outlined;
+    }
+  }
+
+  // The tooltip text for the timeline type, localized if possible.
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case home:
+        return AppLocalizations.of(context)?.btn_timeline_home ?? "Home";
+      case local:
+        return AppLocalizations.of(context)?.btn_timeline_local ?? "Local";
+      case federal:
+        return AppLocalizations.of(context)?.btn_timeline_federal ?? "Federal";
+      case public:
+        return AppLocalizations.of(context)?.btn_timeline_public ?? "Public";
+      case favourites:
+        return AppLocalizations.of(context)?.btn_timeline_favourites ?? "Favourites";
+      case bookmarks:
+        return AppLocalizations.of(context)?.btn_timeline_bookmarks ?? "Bookmarks";
     }
   }
 }

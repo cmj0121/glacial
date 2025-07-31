@@ -57,7 +57,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
         final Color color = isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface;
 
         return Tooltip(
-          message: type.name,
+          message: type.tooltip(context),
           child: Icon(type.icon(active: isSelected), color: color, size: tabSize),
         );
       },

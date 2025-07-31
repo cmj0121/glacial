@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,7 +93,10 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('zh'),
+  ];
 
   /// No description provided for @btn_search.
   ///
@@ -214,6 +218,42 @@ abstract class AppLocalizations {
   /// **'Tags'**
   String get btn_trends_tags;
 
+  /// No description provided for @btn_timeline_home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get btn_timeline_home;
+
+  /// No description provided for @btn_timeline_local.
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get btn_timeline_local;
+
+  /// No description provided for @btn_timeline_federal.
+  ///
+  /// In en, this message translates to:
+  /// **'Federal'**
+  String get btn_timeline_federal;
+
+  /// No description provided for @btn_timeline_public.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get btn_timeline_public;
+
+  /// No description provided for @btn_timeline_favourites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourites'**
+  String get btn_timeline_favourites;
+
+  /// No description provided for @btn_timeline_bookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks'**
+  String get btn_timeline_bookmarks;
+
   /// No description provided for @btn_preference_theme.
   ///
   /// In en, this message translates to:
@@ -292,7 +332,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+      <String>['en', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -303,6 +343,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'en':
       return AppLocalizationsEn();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(
