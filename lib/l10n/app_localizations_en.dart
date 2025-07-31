@@ -57,6 +57,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_drawer_logout => 'Logout';
 
   @override
+  String get btn_trends_links => 'Links';
+
+  @override
+  String get btn_trends_toots => 'Toots';
+
+  @override
+  String get btn_trends_users => 'Users';
+
+  @override
+  String get btn_trends_tags => 'Tags';
+
+  @override
   String get btn_preference_theme => 'Theme';
 
   @override

@@ -113,7 +113,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
     final Map<RoutePath, Widget> routerMap = {
       RoutePath.timeline: const TimelineTab(),
       RoutePath.list: const WIP(),
-      RoutePath.trends: const WIP(),
+      RoutePath.trends: const TrendsTab(),
       RoutePath.notifications: WIP(),
       RoutePath.admin: const WIP(),
       RoutePath.post: const WIP(),

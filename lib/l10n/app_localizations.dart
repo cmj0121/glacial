@@ -190,6 +190,30 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get btn_drawer_logout;
 
+  /// No description provided for @btn_trends_links.
+  ///
+  /// In en, this message translates to:
+  /// **'Links'**
+  String get btn_trends_links;
+
+  /// No description provided for @btn_trends_toots.
+  ///
+  /// In en, this message translates to:
+  /// **'Toots'**
+  String get btn_trends_toots;
+
+  /// No description provided for @btn_trends_users.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get btn_trends_users;
+
+  /// No description provided for @btn_trends_tags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get btn_trends_tags;
+
   /// No description provided for @btn_preference_theme.
   ///
   /// In en, this message translates to:
