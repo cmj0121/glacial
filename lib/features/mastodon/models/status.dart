@@ -10,10 +10,12 @@ class AccessStatusSchema {
   static const String key = "access_status";
 
   final String? server;
+  final ServerSchema? schema;
   final List<ServerInfoSchema> history;
 
   const AccessStatusSchema({
     this.server,
+    this.schema,
     this.history = const [],
   });
 
@@ -32,9 +34,14 @@ class AccessStatusSchema {
   }
 
   // Create a copy of the current access status schema with new values.
-  AccessStatusSchema copyWith({String? server, List<ServerInfoSchema>? history}) {
+  AccessStatusSchema copyWith({
+    String? server,
+    ServerSchema? schema,
+    List<ServerInfoSchema>? history,
+  }) {
     return AccessStatusSchema(
       server: server ?? this.server,
+      schema: schema ?? this.schema,
       history: history ?? this.history,
     );
   }

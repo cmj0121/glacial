@@ -7,13 +7,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
+export 'api/timeline.dart';
+
 extension AccessStatusExtension on Storage {
   // Load the access status from the storage.
   Future<AccessStatusSchema?> loadAccessStatus({WidgetRef? ref}) async {
     final String? json = await getString(AccessStatusSchema.key);
     final AccessStatusSchema? status = json == null ? null : AccessStatusSchema.fromString(json);
+    final String? domain = status?.server?.isNotEmpty == true ? status?.server : null;
+    final ServerSchema? schema = domain == null ? null : await ServerSchema.fetch(domain);
 
-    ref?.read(accessStatusProvider.notifier).state = status;
+    ref?.read(accessStatusProvider.notifier).state = status?.copyWith(schema: schema);
     return status;
   }
 
