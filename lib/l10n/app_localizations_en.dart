@@ -139,6 +139,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_desc_preference_system_theme => 'The system theme';
 
   @override
+  String get txt_visibility_public => 'Public';
+
+  @override
+  String get txt_visibility_unlisted => 'Unlisted';
+
+  @override
+  String get txt_visibility_private => 'Private';
+
+  @override
+  String get txt_visibility_direct => 'Direct';
+
+  @override
   String err_invalid_instance(Object domain) {
     return 'invalid Mastodon server domain: $domain';
   }

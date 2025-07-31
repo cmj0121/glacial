@@ -356,6 +356,30 @@ abstract class AppLocalizations {
   /// **'The system theme'**
   String get txt_desc_preference_system_theme;
 
+  /// No description provided for @txt_visibility_public.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get txt_visibility_public;
+
+  /// No description provided for @txt_visibility_unlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlisted'**
+  String get txt_visibility_unlisted;
+
+  /// No description provided for @txt_visibility_private.
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get txt_visibility_private;
+
+  /// No description provided for @txt_visibility_direct.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct'**
+  String get txt_visibility_direct;
+
   /// No description provided for @err_invalid_instance.
   ///
   /// In en, this message translates to:

@@ -138,6 +138,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_desc_preference_system_theme => '系統主體';
 
   @override
+  String get txt_visibility_public => '公開';
+
+  @override
+  String get txt_visibility_unlisted => '不公開';
+
+  @override
+  String get txt_visibility_private => '追隨';
+
+  @override
+  String get txt_visibility_direct => '私訊';
+
+  @override
   String err_invalid_instance(Object domain) {
     return '不合法/不存在的 Mastodon 伺服器: $domain';
   }
