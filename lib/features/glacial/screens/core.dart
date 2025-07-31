@@ -50,7 +50,9 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
             preferredSize: Size.fromHeight(appBarHeight),
             child: AppBar(
               leading: IconButton(
-                icon: const Icon(Icons.menu),
+                icon: const Icon(Icons.read_more_rounded),
+                hoverColor: Colors.transparent,
+                focusColor: Colors.transparent,
                 onPressed: () => scaffoldKey.currentState?.openDrawer(),
               ),
               actions: [

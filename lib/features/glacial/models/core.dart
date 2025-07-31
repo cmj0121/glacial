@@ -26,7 +26,7 @@ enum SidebarButtonType {
       case admin:
         return active ? Icons.admin_panel_settings : Icons.admin_panel_settings_outlined;
       case post:
-        return active ? Icons.post_add : Icons.post_add_outlined;
+        return active ? Icons.chat : Icons.chat_outlined;
     }
   }
 
