@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
+import 'package:glacial/core.dart';
+
 // The placeholder for the app's Work-In-Progress screen
 class WIP extends StatelessWidget {
   final String? title;
@@ -129,6 +131,81 @@ class NoResult extends StatelessWidget {
         const SizedBox(height: 8),
         Text(message, style: Theme.of(context).textTheme.bodyLarge),
       ],
+    );
+  }
+}
+
+// The hero media that show the media and show to full-screen when tap on it.
+class MediaHero extends StatelessWidget {
+  final Widget child;
+
+  const MediaHero({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWellDone(
+      onTap: () {
+        // Pop-up the media as full-screen and blur the background.
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return Center(
+                child: Hero(
+                  tag: 'media-hero',
+                  child: MediaViewer(child: child),
+                ),
+              );
+            },
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+}
+
+// The media viewer that can be used to show the media content in the app.
+class MediaViewer extends StatelessWidget {
+  final Widget child;
+
+  const MediaViewer({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: const Key('media-viewer'),
+      direction: DismissDirection.vertical,
+      child: Stack(
+        alignment: Alignment.topRight,
+        fit: StackFit.expand,
+        children: [
+           InteractiveViewer(
+            panEnabled: true,
+            scaleEnabled: true,
+            child: SizedBox.expand(
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: child,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
+              onPressed: () => context.pop()
+            ),
+          ),
+        ],
+      ),
+      onDismissed: (direction) => context.pop(),
     );
   }
 }

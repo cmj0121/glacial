@@ -40,12 +40,24 @@ class _StatusState extends ConsumerState<Status> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildHeader(),
+        buildCoreContent(),
 
-        HtmlDone(
-          html: schema.content,
-        ),
+        Application(schema: schema.application),
         const SizedBox(height: 8),
         InteractionBar(schema: schema),
+      ],
+    );
+  }
+
+  // Build the core content of the status which may be hidden or shown by the
+  // status visibility.
+  Widget buildCoreContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        HtmlDone(html: schema.content),
+        Poll(schema: schema.poll),
+        Attachments(schemas: schema.attachments),
       ],
     );
   }
