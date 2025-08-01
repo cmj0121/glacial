@@ -27,6 +27,7 @@ class GlacialHome extends ConsumerStatefulWidget {
 class _GlacialHomeState extends ConsumerState<GlacialHome> {
   final double appBarHeight = 44;
   final double sidebarSize = iconSize;
+  final Debouncer debounce = Debouncer();
 
   late final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late final List<SidebarButtonType> actions = SidebarButtonType.values;
@@ -147,7 +148,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           color: isSelected ? Theme.of(context).colorScheme.primary : null,
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: () => onSelect(index),
+          onPressed: () => debounce.callOnce(() => onSelect(index)),
         );
       }
 
@@ -157,7 +158,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
         color: isSelected ? Theme.of(context).colorScheme.primary : null,
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
-        onPressed: () => onSelect(index),
+        onPressed: () => debounce.callOnce(() => onSelect(index)),
       );
     }).toList();
 
@@ -172,11 +173,12 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
     if (route == action.route) {
       logger.d("already on the ${action.name} page, no need to navigate.");
-      GlacialHome.scrollToTop?.animateTo(
-        0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+
+      if (GlacialHome.scrollToTop?.hasClients == true) {
+        final Duration duration = const Duration(milliseconds: 300);
+
+        GlacialHome.scrollToTop?.animateTo(0, duration: duration, curve: Curves.easeInOut);
+      }
     }
 
     context.push(action.route.path, extra: action);

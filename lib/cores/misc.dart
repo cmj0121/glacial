@@ -37,11 +37,14 @@ class Debouncer {
 
   Debouncer({this.duration = const Duration(milliseconds: 250)});
 
+  // Only call the action once after the time duration has passed.
   void call(Function() action) {
     _timer?.cancel();
     _timer = Timer(duration, action);
   }
 
+  // Only call the action once when it called, and lock the action
+  // until the duration has passed.
   void callOnce(Function() action) {
     if (_locked) return;
 
