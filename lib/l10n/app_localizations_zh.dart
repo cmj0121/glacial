@@ -87,7 +87,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_timeline_bookmarks => '書籤';
 
   @override
-  String get btn_preference_theme => '主體';
+  String get btn_preference_theme => '主題';
 
   @override
   String get btn_preference_engineer => '工程設定';
@@ -135,7 +135,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_hint_server_explorer => 'mastodon.social 或者關鍵字';
 
   @override
-  String get txt_desc_preference_system_theme => '系統主體';
+  String get txt_desc_preference_system_theme => '系統主題';
 
   @override
   String get txt_visibility_public => '公開';
