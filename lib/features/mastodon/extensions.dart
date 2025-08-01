@@ -8,6 +8,7 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
 export 'api/timeline.dart';
+export 'api/trends.dart';
 
 extension AccessStatusExtension on Storage {
   // Load the access status from the storage.

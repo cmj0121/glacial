@@ -1,6 +1,7 @@
 // The access status of the Mastodon server.
 import 'dart:convert';
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
 // The access status of the Mastodon server, including the server access server and
@@ -52,6 +53,21 @@ class AccessStatusSchema {
       'server': server,
       'history': history.map((e) => e.toJson()).toList(),
     };
+  }
+
+  // Call the API endpoint with the GET method and return the response body as a string.
+  Future<String?> getAPI(String endpoint, {Map<String, String>? queryParameters}) async {
+    final String? domain = schema?.domain;
+
+    if (domain == null) {
+      logger.w("No server selected, but it's required to fetch the API.");
+      return null;
+    }
+
+    final Uri uri = UriEx.handle(domain, endpoint).replace(queryParameters: queryParameters);
+    final response = await get(uri);
+
+    return response.body;
   }
 }
 

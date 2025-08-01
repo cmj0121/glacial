@@ -208,7 +208,6 @@ class _TimelineState extends State<Timeline> {
     await onLoad();
   }
 
-
   // Load the statuses from the current selected Mastodon server.
   Future<void> onLoad() async {
     if (isLoading || isCompleted) {

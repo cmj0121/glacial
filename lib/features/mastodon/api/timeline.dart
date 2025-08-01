@@ -1,4 +1,5 @@
 // The timeline APIs for the mastdon server.
+//
 // ref: https://docs.joinmastodon.org/methods/timelines/
 import 'dart:async';
 import 'dart:convert';
@@ -10,44 +11,38 @@ import 'package:glacial/features/models.dart';
 extension TimelineExtensions on AccessStatusSchema {
   // Fetch timeline's statuses based on the timeline type.
   Future<List<StatusSchema>> fetchTimeline(TimelineType type, {String? maxId}) async {
-    final String? domain = schema?.domain;
     final Map<String, String> query = {"max_id": maxId ?? ""};
-    late final Uri uri;
-
-    if (domain == null) {
-      logger.w("No server selected, but it's required to fetch the timeline.");
-      return [];
-    }
+    late final String endpoint;
 
     switch (type) {
       case TimelineType.home:
-        uri = UriEx.handle(domain, "/api/v1/timelines/home").replace(queryParameters: query);
+        endpoint = "/api/v1/timelines/home";
         break;
       case TimelineType.local:
         query["local"] = "true";
         query["remote"] = "false";
-        uri = UriEx.handle(domain, "/api/v1/timelines/public").replace(queryParameters: query);
+        endpoint = "/api/v1/timelines/public";
         break;
       case TimelineType.federal:
         query["local"] = "false";
         query["remote"] = "true";
-        uri = UriEx.handle(domain, "/api/v1/timelines/public").replace(queryParameters: query);
+        endpoint = "/api/v1/timelines/public";
         break;
       case TimelineType.public:
         query["local"] = "false";
         query["remote"] = "false";
-        uri = UriEx.handle(domain, "/api/v1/timelines/public").replace(queryParameters: query);
+        endpoint = "/api/v1/timelines/public";
         break;
       case TimelineType.bookmarks:
-        uri = UriEx.handle(domain, "/api/v1/bookmarks").replace(queryParameters: query);
+        endpoint = "/api/v1/bookmarks";
         break;
       case TimelineType.favourites:
-        uri = UriEx.handle(domain, "/api/v1/favourites").replace(queryParameters: query);
+        endpoint = "/api/v1/favourites";
         break;
     }
 
-    final response = await get(uri);
-    final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
+    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
     final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
 
     logger.d("complete load the timeline of type: $type, count: ${status.length}");
