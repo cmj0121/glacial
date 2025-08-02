@@ -134,6 +134,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   // may not be available for the anonymous user.
   List<Widget> buildActions() {
     final String path = GoRouter.of(context).state.uri.toString();
+    final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
     final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
 
     final List<Widget> children = actions.map((action) {
@@ -142,14 +143,19 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       late final Widget icon = Icon(action.icon(active: isSelected), size: sidebarSize);
 
       if (action == SidebarButtonType.post) {
-        return IconButton.filledTonal(
-          icon: icon,
-          tooltip: action.tooltip(context),
-          color: isSelected ? Theme.of(context).colorScheme.primary : null,
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
-          onPressed: () => debounce.callOnce(() => onSelect(index)),
-        );
+        if (status.accessToken?.isNotEmpty == true) {
+          // Already signed in, show the post button.
+          return IconButton.filledTonal(
+            icon: icon,
+            tooltip: action.tooltip(context),
+            color: isSelected ? Theme.of(context).colorScheme.primary : null,
+            hoverColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            onPressed: () => debounce.callOnce(() => onSelect(index)),
+          );
+        }
+
+        return SignIn(status: status, size: sidebarSize);
       }
 
       return IconButton(

@@ -170,6 +170,12 @@ abstract class AppLocalizations {
   /// **'Toot'**
   String get btn_sidebar_post;
 
+  /// No description provided for @btn_sidebar_sign_in.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get btn_sidebar_sign_in;
+
   /// No description provided for @btn_drawer_switch_server.
   ///
   /// In en, this message translates to:

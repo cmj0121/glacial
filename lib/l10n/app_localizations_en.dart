@@ -45,6 +45,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_sidebar_post => 'Toot';
 
   @override
+  String get btn_sidebar_sign_in => 'Sign In';
+
+  @override
   String get btn_drawer_switch_server => 'Switch Server';
 
   @override

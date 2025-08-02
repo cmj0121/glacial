@@ -45,6 +45,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_sidebar_post => '嘟文';
 
   @override
+  String get btn_sidebar_sign_in => '登入';
+
+  @override
   String get btn_drawer_switch_server => '切換伺服器';
 
   @override
