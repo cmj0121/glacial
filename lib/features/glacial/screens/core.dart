@@ -231,6 +231,13 @@ class GlacialDrawer extends ConsumerWidget {
 
         storage.saveAccessStatus(status.copyWith(server: ''), ref: ref);
         break;
+      case DrawerButtonType.logout:
+        final AccessStatusSchema status = (ref.read(accessStatusProvider) ?? AccessStatusSchema())
+            ..copyWith(accessToken: null, server: null);
+
+        storage.saveAccessStatus(status, ref: ref);
+        context.push(RoutePath.explorer.path);
+        break;
       default:
         break;
     }

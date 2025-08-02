@@ -1,11 +1,13 @@
 // The User button to navigate to the sign-in page of the Master server.
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 // The Sign-In widget to navigate to the sign-in page of the Mastodon server.
-class SignIn extends StatelessWidget {
+class SignIn extends StatefulWidget {
   final AccessStatusSchema status;
   final double size;
 
@@ -14,6 +16,13 @@ class SignIn extends StatelessWidget {
     required this.status,
     this.size = 48.0,
   });
+
+  @override
+  State<SignIn> createState() => _SignInState();
+}
+
+class _SignInState extends State<SignIn> {
+  late final String state = const Uuid().v4();
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +39,30 @@ class SignIn extends StatelessWidget {
   // Get the register application and navigate to the sign-in page based on the
   // current selected Mastodon server.
   void onSignIn() async {
+    final String? domain = widget.status.server;
+
+    if (domain == null || domain.isEmpty) {
+      logger.w("No Mastodon server selected, cannot sign in.");
+      return;
+    }
+
+    final Storage storage = Storage();
+    final OAuth2Info info = await storage.getOAuth2Info(domain);
+    final Map<String, dynamic> query = {
+      "client_id": info.clientId,
+      "response_type": "code",
+      "scope": info.scopes.join(" "),
+      "redirect_uri": info.redirectUri,
+      "state": state,
+    }
+        ..removeWhere((key, value) => value == null);
+
+    storage.saveStateServer(state, domain);
+
+    if (mounted) {
+      final Uri uri = UriEx.handle(domain, "/oauth/authorize", query);
+      context.push(RoutePath.webview.path, extra: uri);
+    }
   }
 }
 

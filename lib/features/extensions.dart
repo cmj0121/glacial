@@ -1,5 +1,6 @@
 // The core exposed extensions for the Glacial app.
 
+export 'auth/extensions.dart';
 export 'mastodon/extensions.dart';
 export 'preference/extensions.dart';
 

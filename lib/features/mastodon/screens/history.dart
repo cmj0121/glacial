@@ -119,8 +119,10 @@ class _HistoryDrawerState extends ConsumerState<HistoryDrawer> {
     final Storage storage = Storage();
     final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
 
-    storage.saveAccessStatus(status.copyWith(history: history), ref: ref);
-    setState(() {});
+    if (mounted) {
+      storage.saveAccessStatus(status.copyWith(history: history), ref: ref);
+      setState(() {});
+    }
   }
 }
 

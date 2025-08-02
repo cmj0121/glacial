@@ -47,9 +47,9 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
-    if (status == null || status.schema == null) {
+    if (status == null || status.server == null) {
       logger.w("No server selected, but it's required to show the timeline.");
       return const SizedBox.shrink();
     }
@@ -78,6 +78,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
         );
       },
       itemBuilder: (context, index) => Timeline(
+         key: Key("timeline_${status.server}_${types[index].name}"),
          type: types[index],
          status: status,
          controller: scrollControllers[index],
@@ -193,7 +194,7 @@ class _TimelineState extends State<Timeline> {
   // almost bottom of the list.
   void onScroll() async {
     if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
-      onLoad();
+      await onLoad();
     }
   }
 

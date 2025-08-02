@@ -99,6 +99,14 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             );
           },
         ),
+        // The webview page to view the external links
+        GoRoute(
+          path: RoutePath.webview.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final Uri uri = state.extra as Uri;
+            return WebViewPage(url: uri);
+          },
+        ),
       ],
       // The fallback page, show the WIP screen if the route is not found
       errorBuilder: (BuildContext context, GoRouterState state) {
@@ -121,7 +129,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
 
     return ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        return GlacialHome(key: ValueKey(state.uri.path), child: child);
+        return GlacialHome(key: UniqueKey(), child: child);
       },
       routes: routerMap.entries.map((entry) {
         return GoRoute(

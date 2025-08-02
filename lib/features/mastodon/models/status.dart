@@ -9,18 +9,24 @@ import 'package:glacial/features/models.dart';
 class AccessStatusSchema {
   // The static key to access the access status schema.
   static const String key = "access_status";
+  // The static key to store the access token.
+  static const String keyAccessToken = "access_token";
 
+  // The data store in the presistence storage.
   final String? server;
   final String? accessToken;
-  final ServerSchema? schema;
   final List<ServerInfoSchema> history;
 
   const AccessStatusSchema({
     this.server,
-    this.schema,
     this.accessToken,
     this.history = const [],
   });
+
+  @override
+  String toString() {
+    return jsonEncode(toJson());
+  }
 
   // Convert the JSON string to an AccessStatusSchema object.
   factory AccessStatusSchema.fromString(String str) {
@@ -31,7 +37,7 @@ class AccessStatusSchema {
   // Convert the JSON map to an AccessStatusSchema object.
   factory AccessStatusSchema.fromJson(Map<String, dynamic> json) {
     return AccessStatusSchema(
-      server: json['server'] as String,
+      server: json['server'] as String?,
       history: (json['history'] as List<dynamic>).map((e) => ServerInfoSchema.fromJson(e as Map<String, dynamic>)).toList(),
     );
   }
@@ -40,13 +46,11 @@ class AccessStatusSchema {
   AccessStatusSchema copyWith({
     String? server,
     String? accessToken,
-    ServerSchema? schema,
     List<ServerInfoSchema>? history,
   }) {
     return AccessStatusSchema(
       server: server ?? this.server,
       accessToken: accessToken ?? this.accessToken,
-      schema: schema ?? this.schema,
       history: history ?? this.history,
     );
   }
@@ -61,14 +65,12 @@ class AccessStatusSchema {
 
   // Call the API endpoint with the GET method and return the response body as a string.
   Future<String?> getAPI(String endpoint, {Map<String, String>? queryParameters}) async {
-    final String? domain = schema?.domain;
-
-    if (domain == null) {
+    if (server?.isNotEmpty != true) {
       logger.w("No server selected, but it's required to fetch the API.");
       return null;
     }
 
-    final Uri uri = UriEx.handle(domain, endpoint).replace(queryParameters: queryParameters);
+    final Uri uri = UriEx.handle(server!, endpoint).replace(queryParameters: queryParameters);
     final response = await get(uri);
 
     return response.body;

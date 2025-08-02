@@ -137,18 +137,21 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
 
   // The callback when user clicks the mastodon server.
   void onSelect(ServerSchema schema) async {
-    final String server = schema.domain;
     final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
     List<ServerInfoSchema> history = status.history.toList();
 
     // If the server not already in the history, add it.
-    if (!history.any((ServerInfoSchema info) => info.domain == server)) {
+    if (!history.any((ServerInfoSchema info) => info.domain == schema.domain)) {
       history.add(schema.toInfo());
     }
 
-    logger.i("onTap: $server");
-    storage.saveAccessStatus(status.copyWith(server: schema.domain, history: history), ref: ref);
-    context.go(RoutePath.timeline.path);
+    logger.i("onTap: ${schema.domain}");
+    storage.saveAccessStatus(status.copyWith(server: schema.domain, history: history));
+    await storage.loadAccessStatus(ref: ref);
+
+    if (mounted) {
+      context.go(RoutePath.timeline.path);
+    }
   }
 
   // Clear the search text field and reset the search results.
