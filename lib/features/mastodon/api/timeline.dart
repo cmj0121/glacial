@@ -22,6 +22,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 // The API extensions for the timeline endpoints in the Mastodon server.
@@ -61,6 +62,10 @@ extension TimelineExtensions on AccessStatusSchema {
     final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
     final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
+
+    // save the related info to the in-memory cache.
+    status.map((s) => cacheAccount(s.account)).toList();
+    status.map((s) async => await getAccount(s.inReplyToAccountID)).toList();
 
     logger.d("complete load the timeline of type: $type, count: ${status.length}");
     return status;

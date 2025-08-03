@@ -9,11 +9,13 @@ import 'package:glacial/features/models.dart';
 class Account extends StatelessWidget {
   final AccountSchema schema;
   final double size;
+  final bool isCompact;
 
   const Account({
     super.key,
     required this.schema,
     this.size = 48,
+    this.isCompact = false,
   });
 
   @override
@@ -58,12 +60,14 @@ class Account extends StatelessWidget {
 
   // Build the display name and the account name of the user.
   Widget buildName() {
-    return Column(
+    final Widget name = Text(schema.displayName.isEmpty ? schema.username : schema.displayName);
+
+    return isCompact ? name : Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(schema.displayName.isEmpty ? schema.username : schema.displayName),
+        name,
         Text('@${schema.acct}', style: const TextStyle(color: Colors.grey), overflow: TextOverflow.ellipsis),
       ],
     );

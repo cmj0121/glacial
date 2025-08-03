@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -22,8 +23,9 @@ class Status extends ConsumerStatefulWidget {
 
 class _StatusState extends ConsumerState<Status> {
   final double headerHeight = 48.0;
+  final double metadataHeight = 22.0;
   final double iconSize = 16.0;
-  late StatusSchema schema = widget.schema;
+  late StatusSchema schema = widget.schema.reblog ?? widget.schema;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class _StatusState extends ConsumerState<Status> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        buildMetadata(),
         buildHeader(),
         buildCoreContent(),
 
@@ -59,6 +62,49 @@ class _StatusState extends ConsumerState<Status> {
         Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
       ],
+    );
+  }
+
+  // The optional metadata of the status, including the status reply or reblog
+  // from the user.
+  Widget buildMetadata() {
+    if (widget.schema.reblog == null && widget.schema.inReplyToAccountID == null) {
+      // The status is a normal status, so no need to show the metadata.
+      return SizedBox.shrink();
+    }
+
+    final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
+    late final AccountSchema account;
+    late final StatusInteraction action;
+
+    if (widget.schema.inReplyToAccountID != null) {
+      // The status is a reply to another status, so show the reply account.
+      final AccountSchema? inReplyToAccount = status.lookupAccount(widget.schema.inReplyToAccountID!);
+
+      if (inReplyToAccount == null) {
+        // If the account is not found, we cannot show the reply metadata.
+        logger.w("cannot get the account from cache: ${widget.schema.inReplyToAccountID}");
+        return SizedBox.shrink();
+      }
+
+      account = inReplyToAccount;
+      action = StatusInteraction.reply;
+    } else {
+      account = widget.schema.account;
+      action = StatusInteraction.reblog;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(action.icon(active: true), color: Colors.grey, size: metadataHeight),
+          const SizedBox(width: 4),
+          Account(schema: account, size: metadataHeight, isCompact: true),
+        ],
+      ),
     );
   }
 
