@@ -64,14 +64,15 @@ class AccessStatusSchema {
   }
 
   // Call the API endpoint with the GET method and return the response body as a string.
-  Future<String?> getAPI(String endpoint, {Map<String, String>? queryParameters}) async {
+  Future<String?> getAPI(String endpoint, {Map<String, String>? queryParameters, String? accessToken}) async {
     if (server?.isNotEmpty != true) {
       logger.w("No server selected, but it's required to fetch the API.");
       return null;
     }
 
     final Uri uri = UriEx.handle(server!, endpoint).replace(queryParameters: queryParameters);
-    final response = await get(uri);
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await get(uri, headers: accessToken == null ? {} : headers);
 
     return response.body;
   }

@@ -1,6 +1,23 @@
 // The timeline APIs for the mastdon server.
 //
-// ref: https://docs.joinmastodon.org/methods/timelines/
+// ## Timeline APIs
+//     - [+] GET /api/v1/timelines/public
+//     - [ ] GET /api/v1/timelines/tag/:hashtag
+//     - [+] GET /api/v1/timelines/home
+//     - [ ] GET /api/v1/timelines/link?url=:url
+//     - [ ] GET /api/v1/timelines/list/:list_id
+//     - [x] GET /api/v1/timelines/direct          (deprecated in 3.0.0)
+//
+// ## Bookmark APIs
+//     - [+] GET /api/v1/bookmarks
+//
+// ## Favourite APIs
+//     - [+] GET /api/v1/favourites
+//
+// ref:
+//   - https://docs.joinmastodon.org/methods/timelines/
+//   - https://docs.joinmastodon.org/methods/bookmarks/
+//   - https://docs.joinmastodon.org/methods/favourites/
 import 'dart:async';
 import 'dart:convert';
 
@@ -41,7 +58,7 @@ extension TimelineExtensions on AccessStatusSchema {
         break;
     }
 
-    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
+    final String body = await getAPI(endpoint, queryParameters: query, accessToken: accessToken) ?? '[]';
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
     final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
 

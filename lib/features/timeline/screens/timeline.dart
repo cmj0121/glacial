@@ -58,7 +58,8 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
   }
 
   Widget buildContent(BuildContext context, AccessStatusSchema status) {
-    final TimelineType initType = TimelineType.local;
+    final bool isSignIn = status.accessToken?.isNotEmpty == true;
+    final TimelineType initType = isSignIn ? TimelineType.home : TimelineType.local;
     controller.index = types.indexWhere((type) => type == initType);
 
     return SwipeTabView(
@@ -67,7 +68,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
       tabBuilder: (context, index) {
         final TimelineType type = types[index];
         final bool isSelected = controller.index == index;
-        final bool isActivate = type.supportAnonymous;
+        final bool isActivate = isSignIn || type.supportAnonymous;
         final Color color = isActivate ?
             isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface :
             Theme.of(context).disabledColor;
@@ -83,7 +84,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
          status: status,
          controller: scrollControllers[index],
       ),
-      onTabTappable: (index) => types[index].supportAnonymous,
+      onTabTappable: (index) => isSignIn || types[index].supportAnonymous,
       onDoubleTap: onDoubleTap,
     );
   }

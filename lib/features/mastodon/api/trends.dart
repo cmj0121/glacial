@@ -1,6 +1,12 @@
 // The trends APIs for the mastdon server.
 //
-// ref: https://docs.joinmastodon.org/methods/trends/
+// ## Trends APIs
+//   - [+] GET /api/v1/trends/tags
+//   - [+] GET /api/v1/trends/statuses
+//   - [+] GET /api/v1/trends/links
+//
+// ref:
+//   - https://docs.joinmastodon.org/methods/trends/
 import 'dart:async';
 import 'dart:convert';
 
@@ -28,7 +34,7 @@ extension TrendsExtensions on AccessStatusSchema {
     }
 
     final Map<String, String> query = {"offset": offset?.toString() ?? "0"};
-    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
+    final String body = await getAPI(endpoint, queryParameters: query, accessToken: accessToken) ?? '[]';
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
 
     logger.d("complete load the trends of type: $type, count: ${json.length}");
