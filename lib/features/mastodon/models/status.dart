@@ -64,7 +64,7 @@ class AccessStatusSchema {
   }
 
   // Call the API endpoint with the GET method and return the response body as a string.
-  Future<String?> getAPI(String endpoint, {Map<String, String>? queryParameters, String? accessToken}) async {
+  Future<String?> getAPI(String endpoint, {Map<String, String>? queryParameters}) async {
     if (server?.isNotEmpty != true) {
       logger.w("No server selected, but it's required to fetch the API.");
       return null;
@@ -75,6 +75,28 @@ class AccessStatusSchema {
     final response = await get(uri, headers: accessToken == null ? {} : headers);
 
     return response.body;
+  }
+
+  // Call the API endpoint with the DELETE method and return the response body as a string.
+  Future<String?> deleteAPI(String endpoint, {Map<String, String>? queryParameters}) async {
+    if (server?.isNotEmpty != true) {
+      logger.w("No server selected, but it's required to fetch the API.");
+      return null;
+    }
+
+    final Uri uri = UriEx.handle(server!, endpoint).replace(queryParameters: queryParameters);
+    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
+    final response = await delete(uri, headers: accessToken == null ? {} : headers);
+
+    return response.body;
+  }
+
+  // Ensure the access token is set for the current server.
+  void checkSignedIn() {
+    if (accessToken?.isNotEmpty != true) {
+      logger.w("try to access the API that should be signed in, but no access token is set.");
+      throw Exception('Access token is required to access the server: $server');
+    }
   }
 }
 

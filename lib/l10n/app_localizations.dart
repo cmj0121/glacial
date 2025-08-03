@@ -386,6 +386,24 @@ abstract class AppLocalizations {
   /// **'Direct'**
   String get txt_visibility_direct;
 
+  /// No description provided for @txt_suggestion_staff.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff Recommendation'**
+  String get txt_suggestion_staff;
+
+  /// No description provided for @txt_suggestion_past_interactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Interacted previously'**
+  String get txt_suggestion_past_interactions;
+
+  /// No description provided for @txt_suggestion_global.
+  ///
+  /// In en, this message translates to:
+  /// **'Global Popularity'**
+  String get txt_suggestion_global;
+
   /// No description provided for @err_invalid_instance.
   ///
   /// In en, this message translates to:

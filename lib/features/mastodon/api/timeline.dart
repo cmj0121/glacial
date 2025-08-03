@@ -58,7 +58,7 @@ extension TimelineExtensions on AccessStatusSchema {
         break;
     }
 
-    final String body = await getAPI(endpoint, queryParameters: query, accessToken: accessToken) ?? '[]';
+    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
     final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
 

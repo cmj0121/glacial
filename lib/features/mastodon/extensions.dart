@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
+export 'api/suggestions.dart';
 export 'api/timeline.dart';
 export 'api/trends.dart';
 

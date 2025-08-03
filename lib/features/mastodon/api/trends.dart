@@ -11,6 +11,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 // The API extensions for the timeline endpoints in the Mastodon server.
@@ -29,12 +30,12 @@ extension TrendsExtensions on AccessStatusSchema {
       case TrendsType.links:
         endpoint = '/api/v1/trends/links';
         break;
-      default:
-        throw UnimplementedError('Users trends are not implemented yet.');
+      case TrendsType.users:
+        return (offset ?? 0) == 0 ? fetchSuggestion() : <dynamic>[];
     }
 
     final Map<String, String> query = {"offset": offset?.toString() ?? "0"};
-    final String body = await getAPI(endpoint, queryParameters: query, accessToken: accessToken) ?? '[]';
+    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
 
     logger.d("complete load the trends of type: $type, count: ${json.length}");

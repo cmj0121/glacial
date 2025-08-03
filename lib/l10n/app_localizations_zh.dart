@@ -153,6 +153,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_visibility_direct => '私訊';
 
   @override
+  String get txt_suggestion_staff => '由管理者推薦';
+
+  @override
+  String get txt_suggestion_past_interactions => '最近互動過';
+
+  @override
+  String get txt_suggestion_global => '30 天內的活躍使用者';
+
+  @override
   String err_invalid_instance(Object domain) {
     return '不合法/不存在的 Mastodon 伺服器: $domain';
   }

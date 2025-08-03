@@ -154,6 +154,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_visibility_direct => 'Direct';
 
   @override
+  String get txt_suggestion_staff => 'Staff Recommendation';
+
+  @override
+  String get txt_suggestion_past_interactions => 'Interacted previously';
+
+  @override
+  String get txt_suggestion_global => 'Global Popularity';
+
+  @override
   String err_invalid_instance(Object domain) {
     return 'invalid Mastodon server domain: $domain';
   }

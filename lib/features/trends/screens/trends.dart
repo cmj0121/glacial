@@ -42,13 +42,15 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
       return const SizedBox.shrink();
     }
 
+    final bool isSignedIn = status?.accessToken?.isNotEmpty == true;
+
     return SwipeTabView(
       tabController: controller,
       itemCount: tabs.length,
       tabBuilder: (context, index) {
         final TrendsType type = tabs[index];
         final bool isSelected = controller.index == index;
-        final bool isActivate = type != TrendsType.users;
+        final bool isActivate = type != TrendsType.users || isSignedIn;
         final Color color = isActivate ?
             isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface :
             Theme.of(context).disabledColor;
@@ -63,7 +65,7 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
          status: status!,
          controller: scrollControllers[index],
       ),
-      onTabTappable: (index) => tabs[index] != TrendsType.users,
+      onTabTappable: (index) => tabs[index] != TrendsType.users || isSignedIn,
     );
   }
 }
@@ -157,8 +159,17 @@ class _TrendsState extends State<Trends> {
                 final HashtagSchema hashtag = trends[index] as HashtagSchema;
                 child = Hashtag(schema: hashtag);
                 break;
-              default:
-                return const SizedBox.shrink();
+              case TrendsType.users:
+                final SuggestionSchema suggestion = trends[index] as SuggestionSchema;
+                child = Account(schema: suggestion.account);
+
+                return Tooltip(
+                  message: suggestion.source.tooltip(context),
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 6),
+                    child: child,
+                  ),
+                );
             }
 
             return Container(
