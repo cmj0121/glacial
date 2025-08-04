@@ -126,8 +126,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_interaction_delete => 'Delete';
 
   @override
+  String get btn_status_toot => 'Toot';
+
+  @override
+  String get btn_status_scheduled => 'Scheduled Toot';
+
+  @override
   String get desc_preference_engineer_clear_cache =>
       'Clear all cached data and reset the app';
+
+  @override
+  String get txt_spoiler => 'Spoiler';
 
   @override
   String get txt_search_history => 'Search History';
@@ -161,6 +170,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_suggestion_global => 'Global Popularity';
+
+  @override
+  String get txt_poll_show_total => 'Show Total';
+
+  @override
+  String get txt_poll_hide_total => 'Hide Total';
+
+  @override
+  String get txt_poll_single => 'Single Choice';
+
+  @override
+  String get txt_poll_multiple => 'Multiple Choices';
+
+  @override
+  String get desc_poll_show_hide_total =>
+      'Show/Hide vote counts until the poll ends';
+
+  @override
+  String get desc_visibility_public => 'Everyone can list and view this toot';
+
+  @override
+  String get desc_visibility_unlisted =>
+      'Public but not been listed in the timeline';
+
+  @override
+  String get desc_visibility_private => 'The follower and the mentioned user';
+
+  @override
+  String get desc_visibility_direct => 'Only the mentioned user';
 
   @override
   String err_invalid_instance(Object domain) {

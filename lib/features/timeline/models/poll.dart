@@ -57,4 +57,45 @@ class PollOptionSchema {
   }
 }
 
+// The options of the Poll in the status for create a new poll.
+class NewPollSchema {
+  final bool? hideTotals;     // Hide vote counts until the poll ends? Defaults to false.
+  final bool? multiple;       // Allow multiple choices? Defaults to false.
+  final int expiresIn;        // The duration in seconds until the poll expires. Defaults to 86400 seconds (1 day).
+  final List<String> options; // Possible answers to the poll.
+
+  const NewPollSchema({
+    this.hideTotals,
+    this.multiple,
+    this.expiresIn = 86400,
+    this.options = const ["", ""],
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> json = {
+      'hide_totals': hideTotals,
+      'multiple': multiple,
+      'options': options,
+      'expires_in': expiresIn,
+    };
+
+    // only return the non-null values
+    return json..removeWhere((key, value) => value == null);
+  }
+
+  NewPollSchema copyWith({
+    bool? hideTotals,
+    bool? multiple,
+    int? expiresIn,
+    List<String>? options,
+  }) {
+    return NewPollSchema(
+      hideTotals: hideTotals ?? this.hideTotals,
+      multiple: multiple ?? this.multiple,
+      expiresIn: expiresIn ?? this.expiresIn,
+      options: options ?? this.options,
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

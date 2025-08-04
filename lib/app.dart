@@ -118,27 +118,36 @@ class _CoreAppState extends ConsumerState<CoreApp> {
 
   // Build the home page with the sidebar and the main content
   RouteBase homeRoutes() {
-    final Map<RoutePath, Widget> routerMap = {
-      RoutePath.timeline: const TimelineTab(),
-      RoutePath.list: const WIP(),
-      RoutePath.trends: const TrendsTab(),
-      RoutePath.notifications: WIP(),
-      RoutePath.admin: const WIP(),
-      RoutePath.post: const WIP(),
-    };
-
     return ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
         return GlacialHome(key: UniqueKey(), child: child);
       },
-      routes: routerMap.entries.map((entry) {
-        return GoRoute(
-          path: entry.key.path,
-          builder: (BuildContext context, GoRouterState state) {
-            return entry.value;
-          },
-        );
-      }).toList(),
+      routes: [
+        GoRoute(
+          path: RoutePath.timeline.path,
+          builder: (_, _) => const TimelineTab(),
+        ),
+        GoRoute(
+          path: RoutePath.list.path,
+          builder: (_, _) => const WIP(),
+        ),
+        GoRoute(
+          path: RoutePath.trends.path,
+          builder: (_, _) => const TrendsTab(),
+        ),
+        GoRoute(
+          path: RoutePath.notifications.path,
+          builder: (_, _) => const WIP(),
+        ),
+        GoRoute(
+          path: RoutePath.admin.path,
+          builder: (_, _) => const WIP(),
+        ),
+        GoRoute(
+          path: RoutePath.post.path,
+          builder: (_, __) => const PostStatusForm(),
+        ),
+      ],
     );
   }
 }

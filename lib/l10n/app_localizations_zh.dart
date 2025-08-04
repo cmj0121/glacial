@@ -126,7 +126,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_interaction_delete => '刪除';
 
   @override
+  String get btn_status_toot => '嘟文';
+
+  @override
+  String get btn_status_scheduled => '排程嘟文';
+
+  @override
   String get desc_preference_engineer_clear_cache => '清除快取並重設';
+
+  @override
+  String get txt_spoiler => '暴雷';
 
   @override
   String get txt_search_history => '搜尋紀錄';
@@ -160,6 +169,33 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_suggestion_global => '30 天內的活躍使用者';
+
+  @override
+  String get txt_poll_show_total => '顯示';
+
+  @override
+  String get txt_poll_hide_total => '隱藏';
+
+  @override
+  String get txt_poll_single => '單選';
+
+  @override
+  String get txt_poll_multiple => '多選';
+
+  @override
+  String get desc_poll_show_hide_total => '投票前顯示/隱藏投票結果';
+
+  @override
+  String get desc_visibility_public => '任何人';
+
+  @override
+  String get desc_visibility_unlisted => '公開但不會顯示在時間軸上';
+
+  @override
+  String get desc_visibility_private => '所有跟隨者跟提到的使用者';
+
+  @override
+  String get desc_visibility_direct => '僅提到的使用者';
 
   @override
   String err_invalid_instance(Object domain) {

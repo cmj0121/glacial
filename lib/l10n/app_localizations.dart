@@ -332,11 +332,29 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get btn_interaction_delete;
 
+  /// No description provided for @btn_status_toot.
+  ///
+  /// In en, this message translates to:
+  /// **'Toot'**
+  String get btn_status_toot;
+
+  /// No description provided for @btn_status_scheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled Toot'**
+  String get btn_status_scheduled;
+
   /// No description provided for @desc_preference_engineer_clear_cache.
   ///
   /// In en, this message translates to:
   /// **'Clear all cached data and reset the app'**
   String get desc_preference_engineer_clear_cache;
+
+  /// No description provided for @txt_spoiler.
+  ///
+  /// In en, this message translates to:
+  /// **'Spoiler'**
+  String get txt_spoiler;
 
   /// No description provided for @txt_search_history.
   ///
@@ -403,6 +421,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Global Popularity'**
   String get txt_suggestion_global;
+
+  /// No description provided for @txt_poll_show_total.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Total'**
+  String get txt_poll_show_total;
+
+  /// No description provided for @txt_poll_hide_total.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Total'**
+  String get txt_poll_hide_total;
+
+  /// No description provided for @txt_poll_single.
+  ///
+  /// In en, this message translates to:
+  /// **'Single Choice'**
+  String get txt_poll_single;
+
+  /// No description provided for @txt_poll_multiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple Choices'**
+  String get txt_poll_multiple;
+
+  /// No description provided for @desc_poll_show_hide_total.
+  ///
+  /// In en, this message translates to:
+  /// **'Show/Hide vote counts until the poll ends'**
+  String get desc_poll_show_hide_total;
+
+  /// No description provided for @desc_visibility_public.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone can list and view this toot'**
+  String get desc_visibility_public;
+
+  /// No description provided for @desc_visibility_unlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'Public but not been listed in the timeline'**
+  String get desc_visibility_unlisted;
+
+  /// No description provided for @desc_visibility_private.
+  ///
+  /// In en, this message translates to:
+  /// **'The follower and the mentioned user'**
+  String get desc_visibility_private;
+
+  /// No description provided for @desc_visibility_direct.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the mentioned user'**
+  String get desc_visibility_direct;
 
   /// No description provided for @err_invalid_instance.
   ///
