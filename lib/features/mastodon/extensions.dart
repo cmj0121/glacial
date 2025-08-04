@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 export 'api/account.dart';
@@ -21,8 +22,9 @@ extension AccessStatusExtension on Storage {
 
     final String? domain = status.server?.isNotEmpty == true ? status.server : null;
     final String? accessToken = await loadAccessToken(domain);
+    final AccountSchema? account = await status.getAccountByAccessToken(accessToken);
 
-    status = status.copyWith(accessToken: accessToken);
+    status = status.copyWith(accessToken: accessToken, account: account);
     ref?.read(accessStatusProvider.notifier).state = status;
 
     logger.d("load access status: ${status.server}");

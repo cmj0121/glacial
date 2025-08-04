@@ -3,7 +3,7 @@
 // ## Account APIs
 //
 //   - [ ] POST  /api/v1/accounts
-//   - [ ] GET   /api/v1/accounts/verify_credentials
+//   - [+] GET   /api/v1/accounts/verify_credentials
 //   - [ ] PATCH /api/v1/accounts/update_credentials
 //   - [ ] GET   /api/v1/accounts/:id
 //   - [ ] GET   /api/v1/accounts
@@ -86,6 +86,31 @@ extension AccountsExtensions on AccessStatusSchema {
   // Get the account data schema from the in-memory cache by account ID.
   AccountSchema? lookupAccount(String accountID) {
     return _accountCache[server]?[accountID];
+  }
+
+  // Get the account data schema from the access token.
+  Future<AccountSchema?> getAccountByAccessToken(String? token) async {
+    if (token == null || server == null) {
+      return null;
+    }
+
+    final Uri uri = UriEx.handle(server!, "/api/v1/accounts/verify_credentials");
+    final Map<String, String> headers = {"Authorization": "Bearer $token"};
+    final response = await get(uri, headers: headers);
+    try {
+      final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+      final AccountSchema account = AccountSchema.fromJson(json);
+
+      return account;
+    } catch (e) {
+      logger.w("failed to get account by access token: $token, error: $e");
+      return null;
+    }
+  }
+
+  // The raw action to interact with the account, such as follow, unfollow, block, or mute.
+  Future<void> interactWithAcount(StatusSchema status) async {
+    return;
   }
 }
 

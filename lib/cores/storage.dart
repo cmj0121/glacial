@@ -10,7 +10,6 @@ import 'package:glacial/features/models.dart';
 final reloadProvider = StateProvider<bool>((ref) => false);
 final preferenceProvider = StateProvider<SystemPreferenceSchema?>((ref) => null);
 final accessStatusProvider = StateProvider<AccessStatusSchema?>((ref) => null);
-final serverProvider = StateProvider<ServerSchema?>((ref) => null);
 
 class Storage {
   static SharedPreferences? _prefs;

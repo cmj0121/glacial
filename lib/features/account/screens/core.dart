@@ -74,4 +74,52 @@ class Account extends StatelessWidget {
   }
 }
 
+// The light account widget to show the avatar and the account name only.
+class AccountLite extends StatelessWidget {
+  final AccountSchema? schema;
+  final double size;
+  final VoidCallback? onTap;
+
+  const AccountLite({
+    super.key,
+    this.schema,
+    this.size = 32,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (schema == null) {
+      return const SizedBox.shrink();
+    }
+
+    final String name = schema?.displayName ?? schema?.username ?? '-';
+    return ListTile(
+      leading: buildAvatar(),
+      title: Text(name, overflow: TextOverflow.ellipsis),
+      onTap: onTap,
+    );
+  }
+
+  Widget buildAvatar() {
+    return ClipOval(
+      child: CachedNetworkImage(
+        imageUrl: schema!.avatar,
+        placeholder: (context, url) => SizedBox(
+          width: size,
+          height: size,
+          child: ClockProgressIndicator(size: size),
+        ),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+        imageBuilder: (context, imageProvider) => Image(
+          image: imageProvider,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

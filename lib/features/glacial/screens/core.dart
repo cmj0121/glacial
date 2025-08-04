@@ -199,6 +199,8 @@ class GlacialDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int logoutIndex = DrawerButtonType.values.indexWhere((action) => action == DrawerButtonType.logout);
+    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final String server = status?.server ?? 'Glacial Server';
     final List<Widget> children = DrawerButtonType.values.map((action) {
       return ListTile(
         leading: Icon(action.icon()),
@@ -211,8 +213,11 @@ class GlacialDrawer extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const DrawerHeader(child: Text('Glacial')),
+          DrawerHeader(child: Text(server)),
+
+          AccountLite(schema: status?.account, size: tabSize),
           ...children.sublist(0, logoutIndex),
+
           const Spacer(),
           children[logoutIndex],
           const SizedBox(height: 8),

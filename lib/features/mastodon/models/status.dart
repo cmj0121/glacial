@@ -15,11 +15,13 @@ class AccessStatusSchema {
   // The data store in the presistence storage.
   final String? server;
   final String? accessToken;
+  final AccountSchema? account;
   final List<ServerInfoSchema> history;
 
   const AccessStatusSchema({
     this.server,
     this.accessToken,
+    this.account,
     this.history = const [],
   });
 
@@ -46,11 +48,13 @@ class AccessStatusSchema {
   AccessStatusSchema copyWith({
     String? server,
     String? accessToken,
+    AccountSchema? account,
     List<ServerInfoSchema>? history,
   }) {
     return AccessStatusSchema(
       server: server ?? this.server,
       accessToken: accessToken ?? this.accessToken,
+      account: account ?? this.account,
       history: history ?? this.history,
     );
   }
