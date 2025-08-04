@@ -37,11 +37,11 @@ class _WebViewPageState extends ConsumerState<WebViewPage> {
               case 'glacial':
                 final Storage storage = Storage();
                 final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
-                final String? accessToken = await storage.gainAccessToken(uri: uri, expectedServer: status.server);
 
-                logger.i("gain the access token: $accessToken for ${status.server}");
+                await storage.gainAccessToken(uri: uri, expectedServer: status.server);
+                await storage.loadAccessStatus(ref: ref);
+
                 if (mounted) {
-                  ref.read(accessStatusProvider.notifier).state = status.copyWith(accessToken: accessToken);
                   // always back to the previous screen
                   context.pop();
                 }

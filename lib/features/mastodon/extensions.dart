@@ -68,6 +68,31 @@ extension AccessStatusExtension on Storage {
 
     return json[domain] as String?;
   }
+
+  // Remove the access token for the given domain from the storage.
+  Future<void> removeAccessToken(String? domain) async {
+    if (domain == null || domain.isEmpty) {
+      return;
+    }
+
+    final String? body = await getString(AccessStatusSchema.keyAccessToken, secure: true);
+    final Map<String, dynamic> json = jsonDecode(body ?? '{}');
+
+    json.remove(domain);
+    await setString(AccessStatusSchema.keyAccessToken, jsonEncode(json), secure: true);
+  }
+
+
+  // Logout the current Mastodon server.
+  Future<void> logout(AccessStatusSchema? schema, {WidgetRef? ref}) async {
+    final AccessStatusSchema status = AccessStatusSchema().copyWith(
+      server: schema?.server,
+      history: schema?.history ?? [],
+    );
+
+    await removeAccessToken(schema?.server);
+    ref?.read(accessStatusProvider.notifier).state = status;
+  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

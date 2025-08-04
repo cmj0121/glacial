@@ -1,5 +1,6 @@
 // The User button to navigate to the sign-in page of the Master server.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:glacial/core.dart';
@@ -7,21 +8,19 @@ import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 // The Sign-In widget to navigate to the sign-in page of the Mastodon server.
-class SignIn extends StatefulWidget {
-  final AccessStatusSchema status;
+class SignIn extends ConsumerStatefulWidget {
   final double size;
 
   const SignIn({
     super.key,
-    required this.status,
     this.size = 48.0,
   });
 
   @override
-  State<SignIn> createState() => _SignInState();
+  ConsumerState<SignIn> createState() => _SignInState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignInState extends ConsumerState<SignIn> {
   late final String state = const Uuid().v4();
 
   @override
@@ -39,7 +38,8 @@ class _SignInState extends State<SignIn> {
   // Get the register application and navigate to the sign-in page based on the
   // current selected Mastodon server.
   void onSignIn() async {
-    final String? domain = widget.status.server;
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final String? domain = status?.server;
 
     if (domain == null || domain.isEmpty) {
       logger.w("No Mastodon server selected, cannot sign in.");

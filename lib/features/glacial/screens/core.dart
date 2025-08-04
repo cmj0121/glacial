@@ -70,7 +70,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
               child: buildContent(isMobile: isMobile),
             ),
           ),
-          drawer: const GlacialDrawer(),
+          drawer: GlacialDrawer(),
           bottomNavigationBar: buildBottomNavigationBar(isMobile: isMobile),
         );
       },
@@ -134,8 +134,8 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   // may not be available for the anonymous user.
   List<Widget> buildActions() {
     final String path = GoRouter.of(context).state.uri.toString();
-    final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
     final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
+    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
 
     final List<Widget> children = actions.map((action) {
       final int index = actions.indexOf(action);
@@ -143,7 +143,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       late final Widget icon = Icon(action.icon(active: isSelected), size: sidebarSize);
 
       if (action == SidebarButtonType.post) {
-        if (status.accessToken?.isNotEmpty == true) {
+        if (status?.accessToken?.isNotEmpty == true) {
           // Already signed in, show the post button.
           return IconButton.filledTonal(
             icon: icon,
@@ -155,7 +155,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           );
         }
 
-        return SignIn(status: status, size: sidebarSize);
+        return SignIn(size: sidebarSize);
       }
 
       return IconButton(
@@ -193,19 +193,23 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
 // The Glacial SideDrawer, used to show the current sign-in user, the advanced
 // operations and the server switcher.
-class GlacialDrawer extends ConsumerWidget {
+class GlacialDrawer extends ConsumerStatefulWidget {
   const GlacialDrawer({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final int logoutIndex = DrawerButtonType.values.indexWhere((action) => action == DrawerButtonType.logout);
+  ConsumerState<GlacialDrawer> createState() => _GlacialDrawerState();
+}
+
+class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
+  @override
+  Widget build(BuildContext context) {
     final AccessStatusSchema? status = ref.watch(accessStatusProvider);
-    final String server = status?.server ?? 'Glacial Server';
+    final int logoutIndex = DrawerButtonType.values.indexWhere((action) => action == DrawerButtonType.logout);
     final List<Widget> children = DrawerButtonType.values.map((action) {
       return ListTile(
         leading: Icon(action.icon()),
         title: Text(action.tooltip(context)),
-        onTap: () => onTap(context, ref, action),
+        onTap: () => onTap(status, action),
       );
     }).toList();
 
@@ -213,42 +217,39 @@ class GlacialDrawer extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          DrawerHeader(child: Text(server)),
+          DrawerHeader(child: Text(status?.server ?? 'Glacial Server')),
 
           AccountLite(schema: status?.account, size: tabSize),
           ...children.sublist(0, logoutIndex),
 
           const Spacer(),
-          children[logoutIndex],
+          if (status?.accessToken?.isNotEmpty ?? false) children[logoutIndex],
           const SizedBox(height: 8),
         ],
       ),
     );
   }
 
-  void onTap(BuildContext context, WidgetRef ref, DrawerButtonType action) {
+  void onTap(AccessStatusSchema? status, DrawerButtonType action) async {
     final Storage storage = Storage();
+
     context.pop(); // Close the drawer before navigating
 
     switch (action) {
       case DrawerButtonType.switchServer:
-        final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
-
-        storage.saveAccessStatus(status.copyWith(server: ''), ref: ref);
+        storage.saveAccessStatus((status ?? AccessStatusSchema()).copyWith(server: ''), ref: ref);
         break;
       case DrawerButtonType.logout:
-        final AccessStatusSchema status = (ref.read(accessStatusProvider) ?? AccessStatusSchema())
-            ..copyWith(accessToken: null, server: null);
-
-        storage.saveAccessStatus(status, ref: ref);
-        context.push(RoutePath.explorer.path);
-        break;
+        await storage.logout(status, ref: ref);
+        return;
       default:
         break;
     }
 
-    logger.d("selected drawer action: ${action.name} -> ${action.route.path}");
-    context.push(action.route.path);
+    if (mounted) {
+      logger.d("selected drawer action: ${action.name} -> ${action.route.path}");
+      context.push(action.route.path);
+    }
   }
 }
 
