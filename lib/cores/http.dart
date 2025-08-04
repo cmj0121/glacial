@@ -28,6 +28,7 @@ Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
     headers['Content-Type'] = 'application/json; charset=UTF-8';
   }
 
+  logger.d("[GET] $url");
   return http.get(url, headers: headers);
 }
 
@@ -41,6 +42,7 @@ Future<http.Response> post(Uri url, {Map<String, String>? headers, Object? body,
     headers['Content-Type'] = 'application/json; charset=UTF-8';
   }
 
+  logger.d("[POST] $url");
   return http.post(url, headers: headers, body: body, encoding: encoding);
 }
 
@@ -54,6 +56,7 @@ Future<http.Response> put(Uri url, {Map<String, String>? headers, Object? body, 
     headers['Content-Type'] = 'application/json; charset=UTF-8';
   }
 
+  logger.d("[PUT] $url");
   return http.put(url, headers: headers, body: body, encoding: encoding);
 }
 
@@ -67,6 +70,7 @@ Future<http.Response> delete(Uri url, {Map<String, String>? headers, Object? bod
     headers['Content-Type'] = 'application/json; charset=UTF-8';
   }
 
+  logger.d("[DELETE] $url");
   return http.delete(url, headers: headers, body: body, encoding: encoding);
 }
 

@@ -38,7 +38,7 @@ class _WebViewPageState extends ConsumerState<WebViewPage> {
                 final Storage storage = Storage();
                 final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
 
-                await storage.gainAccessToken(uri: uri, expectedServer: status.server);
+                await storage.gainAccessToken(uri: uri, expectedServer: status.domain);
                 await storage.loadAccessStatus(ref: ref);
 
                 if (mounted) {

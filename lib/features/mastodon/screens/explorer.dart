@@ -146,7 +146,7 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
     }
 
     logger.i("onTap: ${schema.domain}");
-    storage.saveAccessStatus(status.copyWith(server: schema.domain, history: history));
+    storage.saveAccessStatus(status.copyWith(domain: schema.domain, history: history));
     await storage.loadAccessStatus(ref: ref);
 
     if (mounted) {

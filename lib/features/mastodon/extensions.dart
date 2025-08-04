@@ -20,14 +20,14 @@ extension AccessStatusExtension on Storage {
     final String? json = await getString(AccessStatusSchema.key);
     AccessStatusSchema status = (json == null ? null : AccessStatusSchema.fromString(json)) ?? AccessStatusSchema();
 
-    final String? domain = status.server?.isNotEmpty == true ? status.server : null;
+    final String? domain = status.domain?.isNotEmpty == true ? status.domain : null;
     final String? accessToken = await loadAccessToken(domain);
     final AccountSchema? account = await status.getAccountByAccessToken(accessToken);
+    final ServerSchema? server = await ServerSchema.fetch(domain);
 
-    status = status.copyWith(accessToken: accessToken, account: account);
+    status = status.copyWith(accessToken: accessToken, account: account, server: server);
     ref?.read(accessStatusProvider.notifier).state = status;
 
-    logger.d("load access status: ${status.server}");
     return status;
   }
 
@@ -86,11 +86,11 @@ extension AccessStatusExtension on Storage {
   // Logout the current Mastodon server.
   Future<void> logout(AccessStatusSchema? schema, {WidgetRef? ref}) async {
     final AccessStatusSchema status = AccessStatusSchema().copyWith(
-      server: schema?.server,
+      domain: schema?.domain,
       history: schema?.history ?? [],
     );
 
-    await removeAccessToken(schema?.server);
+    await removeAccessToken(schema?.domain);
     ref?.read(accessStatusProvider.notifier).state = status;
   }
 }

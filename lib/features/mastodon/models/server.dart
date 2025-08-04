@@ -64,9 +64,12 @@ class ServerSchema {
   }
 
   // fetch the server information from the specified domain.
-  static Future<ServerSchema> fetch(String domain) async {
-    logger.i('search the mastodon server: $domain');
+  static Future<ServerSchema?> fetch(String? domain) async {
+    if (domain == null || domain.isNotEmpty != true) {
+      return null;
+    }
 
+    logger.i('search the mastodon server: $domain');
     final Uri url = UriEx.handle(domain, '/api/v2/instance');
     final response = await get(url);
 

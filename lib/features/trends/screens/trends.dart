@@ -37,7 +37,7 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    if (status?.server?.isEmpty == true) {
+    if (status?.domain?.isEmpty == true) {
       logger.w("No server selected, but it's required to show the trends.");
       return const SizedBox.shrink();
     }

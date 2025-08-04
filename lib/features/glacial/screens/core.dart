@@ -1,4 +1,7 @@
 // The Glacial home page.
+import 'dart:math';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -213,20 +216,53 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
       );
     }).toList();
 
-    return Drawer(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          DrawerHeader(child: Text(status?.server ?? 'Glacial Server')),
 
-          AccountLite(schema: status?.account, size: tabSize),
-          ...children.sublist(0, logoutIndex),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double width = constraints.maxWidth;
+        final double height = min(constraints.maxHeight, 85);
 
-          const Spacer(),
-          if (status?.accessToken?.isNotEmpty ?? false) children[logoutIndex],
-          const SizedBox(height: 8),
-        ],
-      ),
+        return Drawer(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DrawerHeader(
+                child: Column(
+                  children: [
+                    Text(status?.domain ?? 'Glacial Server'),
+                    const SizedBox(height: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        imageUrl: status?.server?.thumbnail ?? '-',
+                        placeholder: (context, url) => SizedBox(
+                          width: width,
+                          height: height,
+                          child: ClockProgressIndicator(size: min(width, height) / 2),
+                        ),
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                        imageBuilder: (context, imageProvider) => Image(
+                          image: imageProvider,
+                          width: width,
+                          height: height,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              AccountLite(schema: status?.account, size: tabSize),
+              ...children.sublist(0, logoutIndex),
+
+              const Spacer(),
+              if (status?.accessToken?.isNotEmpty ?? false) children[logoutIndex],
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -237,7 +273,7 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
 
     switch (action) {
       case DrawerButtonType.switchServer:
-        storage.saveAccessStatus((status ?? AccessStatusSchema()).copyWith(server: ''), ref: ref);
+        storage.saveAccessStatus((status ?? AccessStatusSchema()).copyWith(domain: ''), ref: ref);
         break;
       case DrawerButtonType.logout:
         await storage.logout(status, ref: ref);
@@ -296,10 +332,10 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
     await storage.loadAccessStatus(ref: ref);
 
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
-    final RoutePath route = status?.server?.isEmpty ?? true ? RoutePath.explorer : RoutePath.timeline;
+    final RoutePath route = status?.domain?.isEmpty ?? true ? RoutePath.explorer : RoutePath.timeline;
 
     if (mounted) {
-      logger.i("preloading completed, navigating to the ${route.path} page (${status?.server}) ...");
+      logger.i("preloading completed, navigating to the ${route.path} page (${status?.domain}) ...");
       context.go(route.path);
     }
   }

@@ -63,7 +63,7 @@ extension AccountsExtensions on AccessStatusSchema {
       final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
       final AccountSchema account = AccountSchema.fromJson(json);
 
-      logger.i("complete get the account from $accountID on $server");
+      logger.i("complete get the account from $accountID on $domain");
       cacheAccount(account);
       return account;
     } catch (e) {
@@ -74,27 +74,27 @@ extension AccountsExtensions on AccessStatusSchema {
 
   // Save the account data schema to the in-memory cache.
   void cacheAccount(AccountSchema account) {
-    if (server == null || server?.isNotEmpty != true) {
+    if (domain == null || domain?.isNotEmpty != true) {
       logger.w("server is not set, cannot save account: ${account.id}");
       return;
     }
 
-    _accountCache[server] ??= {};
-    _accountCache[server]?[account.id] = account;
+    _accountCache[domain] ??= {};
+    _accountCache[domain]?[account.id] = account;
   }
 
   // Get the account data schema from the in-memory cache by account ID.
   AccountSchema? lookupAccount(String accountID) {
-    return _accountCache[server]?[accountID];
+    return _accountCache[domain]?[accountID];
   }
 
   // Get the account data schema from the access token.
   Future<AccountSchema?> getAccountByAccessToken(String? token) async {
-    if (token == null || server == null) {
+    if (token == null || domain == null) {
       return null;
     }
 
-    final Uri uri = UriEx.handle(server!, "/api/v1/accounts/verify_credentials");
+    final Uri uri = UriEx.handle(domain!, "/api/v1/accounts/verify_credentials");
     final Map<String, String> headers = {"Authorization": "Bearer $token"};
     final response = await get(uri, headers: headers);
     try {

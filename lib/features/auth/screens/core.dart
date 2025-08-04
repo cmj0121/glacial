@@ -39,7 +39,7 @@ class _SignInState extends ConsumerState<SignIn> {
   // current selected Mastodon server.
   void onSignIn() async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
-    final String? domain = status?.server;
+    final String? domain = status?.domain;
 
     if (domain == null || domain.isEmpty) {
       logger.w("No Mastodon server selected, cannot sign in.");

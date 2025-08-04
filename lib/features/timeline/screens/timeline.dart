@@ -49,8 +49,8 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
   Widget build(BuildContext context) {
     final AccessStatusSchema? status = ref.watch(accessStatusProvider);
 
-    if (status == null || status.server == null) {
-      logger.w("No server selected, but it's required to show the timeline: ${status?.server}.");
+    if (status == null || status.domain == null) {
+      logger.w("No server selected, but it's required to show the timeline.");
       return const SizedBox.shrink();
     }
 
@@ -79,7 +79,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
         );
       },
       itemBuilder: (context, index) => Timeline(
-         key: Key("timeline_${status.server}_${types[index].name}"),
+         key: Key("timeline_${status.domain}_${types[index].name}"),
          type: types[index],
          status: status,
          controller: scrollControllers[index],
