@@ -11,10 +11,12 @@ import 'package:glacial/features/screens.dart';
 // The single Status widget that contains the status information.
 class Status extends ConsumerStatefulWidget {
   final StatusSchema schema;
+  final ValueChanged<StatusSchema>? onReload;
 
   const Status({
     super.key,
     required this.schema,
+    this.onReload,
   });
 
   @override
@@ -25,6 +27,7 @@ class _StatusState extends ConsumerState<Status> {
   final double headerHeight = 48.0;
   final double metadataHeight = 22.0;
   final double iconSize = 16.0;
+
   late StatusSchema schema = widget.schema.reblog ?? widget.schema;
 
   @override
@@ -47,7 +50,7 @@ class _StatusState extends ConsumerState<Status> {
 
         Application(schema: schema.application),
         const SizedBox(height: 8),
-        InteractionBar(schema: schema),
+        InteractionBar(schema: schema, onReload: onReload),
       ],
     );
   }
@@ -144,6 +147,13 @@ class _StatusState extends ConsumerState<Status> {
         ]
       ),
     );
+  }
+
+  void onReload(StatusSchema status) {
+    if (mounted) {
+      setState(() => schema = status.reblog ?? status);
+      widget.onReload?.call(status);
+    }
   }
 }
 
