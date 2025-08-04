@@ -2,8 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-import 'package:glacial/core.dart';
-
 // The placeholder for the app's Work-In-Progress screen
 class WIP extends StatelessWidget {
   final String? title;
@@ -168,7 +166,7 @@ class MediaHero extends StatelessWidget {
 }
 
 // The media viewer that can be used to show the media content in the app.
-class MediaViewer extends StatelessWidget {
+class MediaViewer extends StatefulWidget {
   final Widget child;
 
   const MediaViewer({
@@ -177,37 +175,132 @@ class MediaViewer extends StatelessWidget {
   });
 
   @override
+  State<MediaViewer> createState() => _MediaViewerState();
+}
+
+class _MediaViewerState extends State<MediaViewer> with SingleTickerProviderStateMixin {
+  final TransformationController controller = TransformationController();
+
+  late AnimationController animationController;
+  late Animation<Offset> offsetAnimation;
+
+  Offset offset = Offset.zero;
+  bool isDismissed = false;
+  double threshold = 0.18; // 20% of the screen height
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize the animation controller for the dismiss animation.
+    final Duration duration = const Duration(milliseconds: 300);
+    animationController = AnimationController(vsync: this, duration: duration);
+
+    offsetAnimation = Tween<Offset>(begin: Offset.zero, end: Offset.zero).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.easeInOut)
+    )
+        ..addListener(() => setState(() {}));
+
+    animationController.addStatusListener((state) {
+      if (state == AnimationStatus.completed) {
+        // When the animation is completed, pop the media viewer.
+        offset = Offset.zero;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: const Key('media-viewer'),
-      direction: DismissDirection.vertical,
-      child: Stack(
-        alignment: Alignment.topRight,
-        fit: StackFit.expand,
-        children: [
-           InteractiveViewer(
-            panEnabled: true,
-            scaleEnabled: true,
-            child: SizedBox.expand(
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: child,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: IconButton(
-              icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
-              onPressed: () => context.pop()
-            ),
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ValueListenableBuilder(
+        valueListenable: controller,
+        builder: (context, Matrix4 value, child) => buildContent(),
       ),
-      onDismissed: (direction) => context.pop(),
     );
   }
+
+  // Build the interactive content of the media viewer and control the zoom and pan.
+  Widget buildContent() {
+    final bool isZoomed = controller.value != Matrix4.identity();
+
+    return GestureDetector(
+      onVerticalDragUpdate: isZoomed ? null : (details) {
+        setState(() => offset += Offset(0, details.delta.dy));
+      },
+      onVerticalDragEnd: isZoomed ? null : (details) {
+        final screenHeight = MediaQuery.of(context).size.height;
+
+        if (offset.dy.abs() > threshold * screenHeight) {
+          onDismiss();
+        }
+
+        offsetAnimation = Tween<Offset>(begin: offset, end: Offset.zero).animate(
+          CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
+        );
+
+        animationController.reset();
+        animationController.forward();
+      },
+      onDoubleTap: () => controller.value = Matrix4.identity(),
+      child: buildLayout(),
+    );
+  }
+
+  // Build the core layout of the media viewer that show the media content and the close button.
+  Widget buildLayout() {
+    return Stack(
+      alignment: Alignment.topCenter,
+      fit: StackFit.expand,
+      children: [
+        Transform.translate(
+          offset: offset,
+          child: buildMedia(),
+        ),
+        Positioned(
+          top: 8,
+          right: 8,
+          child: IconButton(
+            icon: Icon(Icons.close, color: Theme.of(context).colorScheme.error),
+            onPressed: onDismiss,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Build the interactive media content that can be zoomed and panned.
+  Widget buildMedia() {
+    return InteractiveViewer(
+      transformationController: controller,
+      panEnabled: true,
+      scaleEnabled: true,
+      child: SizedBox.expand(
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: isZoomed ? widget.child : ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: widget.child,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // The callback function to handle the dismiss action of the media viewer.
+  void onDismiss() {
+    // Reset the transformation controller when dismissing the media viewer.
+    Navigator.of(context).maybePop();
+  }
+
+  bool get isZoomed => controller.value != Matrix4.identity();
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
