@@ -458,12 +458,6 @@ abstract class AppLocalizations {
   /// **'Visibility'**
   String get txt_preference_visibiliby;
 
-  /// No description provided for @txt_preference_spoiler.
-  ///
-  /// In en, this message translates to:
-  /// **'Spoiler Text'**
-  String get txt_preference_spoiler;
-
   /// No description provided for @txt_preference_sensitive.
   ///
   /// In en, this message translates to:
@@ -499,12 +493,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Control who can see and list the status'**
   String get desc_preference_visibility;
-
-  /// No description provided for @desc_preference_spoiler.
-  ///
-  /// In en, this message translates to:
-  /// **'Show the spoile text before read the status'**
-  String get desc_preference_spoiler;
 
   /// No description provided for @desc_preference_sensitive.
   ///

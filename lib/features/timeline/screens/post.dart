@@ -51,7 +51,6 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
     super.initState();
 
     vtype = pref?.visibility ?? VisibilityType.public;
-    spoiler = pref?.spoiler;
   }
 
   @override

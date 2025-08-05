@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
-import 'package:glacial/features/screens.dart';
 
 class SystemPreference extends ConsumerStatefulWidget {
   const SystemPreference({super.key});
@@ -90,6 +89,7 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
   // Build the system-wide settings that control the app's behavior and features.
   Widget buildSystemSettings() {
     final SystemPreferenceSchema schema = ref.watch(preferenceProvider) ?? SystemPreferenceSchema();
+    final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor);
 
     return ListView(
       children: <Widget>[
@@ -107,11 +107,17 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
 
         ListTile(
           title: Text(AppLocalizations.of(context)?.txt_preference_status ?? "Status Settings"),
-          subtitle: Text(AppLocalizations.of(context)?.desc_preference_status ?? "Control the default status settings."),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_status ?? "Control the default status settings.",
+            style: labelStyle,
+          ),
         ),
         SwitchListTile(
           title: Text(AppLocalizations.of(context)?.txt_preference_sensitive ?? "Sensitive Content"),
-          subtitle: Text(AppLocalizations.of(context)?.desc_preference_sensitive ?? "Show/Hide sensitive content in statuses."),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_sensitive ?? "Show/Hide sensitive content in statuses.",
+            style: labelStyle,
+          ),
           value: schema.sensitive,
           secondary: Icon(schema.sensitive ? Icons.visibility_off : Icons.visibility, size: iconSize),
           onChanged: (bool value) {
@@ -120,31 +126,17 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
         ),
         // Build the default status settings, including the visibility and spoiler text.
         ListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_visibiliby ?? "Status Visibility"),
-          subtitle: Text(AppLocalizations.of(context)?.desc_preference_visibility ?? "The visibility for new statuses."),
+          title: Text(schema.visibility.tooltip(context)),
+          subtitle: Text(schema.visibility.description(context), style: labelStyle),
           leading: Icon(schema.visibility.icon(), size: iconSize),
-          trailing: VisibilitySelector(
-            type: schema.visibility,
-            onChanged: (VisibilityType? type) {
-              if (type != null) {
-                Storage().savePreference(schema.copyWith(visibility: type), ref: ref);
-              }
-            },
-          ),
-        ),
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_spoiler ?? "Spoiler Text"),
-          subtitle: Text(AppLocalizations.of(context)?.desc_preference_spoiler ?? "The default spoiler text for new statuses."),
-          leading: Icon(Icons.warning_amber_outlined, size: iconSize),
-          trailing: SizedBox(
-            width: 200,
-            child: TextField(
-              decoration: InputDecoration(hintText:  "Spoiler text"),
-              onChanged: (String value) {
-                Storage().savePreference(schema.copyWith(spoiler: value), ref: ref);
-              },
-            ),
-          ),
+          onTap: () async {
+            final int index = VisibilityType.values.indexOf(schema.visibility);
+            final int nextIndex = (index + 1) % VisibilityType.values.length;
+            Storage().savePreference(
+              schema.copyWith(visibility: VisibilityType.values[nextIndex]),
+              ref: ref,
+            );
+          },
         ),
       ],
     );

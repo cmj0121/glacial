@@ -190,9 +190,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_preference_visibiliby => 'Visibility';
 
   @override
-  String get txt_preference_spoiler => 'Spoiler Text';
-
-  @override
   String get txt_preference_sensitive => 'Sensitive Content';
 
   @override
@@ -212,10 +209,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get desc_preference_visibility =>
       'Control who can see and list the status';
-
-  @override
-  String get desc_preference_spoiler =>
-      'Show the spoile text before read the status';
 
   @override
   String get desc_preference_sensitive =>

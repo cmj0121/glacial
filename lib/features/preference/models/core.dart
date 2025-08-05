@@ -40,14 +40,12 @@ class SystemPreferenceSchema {
   final String? server;
   final ThemeMode theme;
   final VisibilityType visibility;
-  final String? spoiler;
   final bool sensitive;
 
   const SystemPreferenceSchema({
     this.server,
     this.theme = ThemeMode.dark,
     this.visibility = VisibilityType.public,
-    this.spoiler,
     this.sensitive = true,
   });
 
@@ -66,7 +64,6 @@ class SystemPreferenceSchema {
         (v) => v.name == json["visibility"],
         orElse: () => VisibilityType.public,
       ),
-      spoiler: (json["spoiler"] as String?)?.isNotEmpty == true ? json["spoiler"] as String? : null,
       sensitive: json["sensitive"] as bool? ?? false,
     );
   }
@@ -77,7 +74,6 @@ class SystemPreferenceSchema {
       "server": server,
       "theme": theme.name,
       "visibility": visibility.name,
-      "spoiler": spoiler?.isNotEmpty == true ? spoiler : null,
       "sensitive": sensitive,
     };
   }
@@ -87,14 +83,12 @@ class SystemPreferenceSchema {
     String? server,
     ThemeMode? theme,
     VisibilityType? visibility,
-    String? spoiler,
     bool? sensitive,
   }) {
     return SystemPreferenceSchema(
       server: server ?? this.server,
       theme: theme ?? this.theme,
       visibility: visibility ?? this.visibility,
-      spoiler: spoiler ?? this.spoiler,
       sensitive: sensitive ?? this.sensitive,
     );
   }

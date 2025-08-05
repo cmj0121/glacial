@@ -189,9 +189,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_preference_visibiliby => '能見度';
 
   @override
-  String get txt_preference_spoiler => '暴雷警告';
-
-  @override
   String get txt_preference_sensitive => '敏感內容';
 
   @override
@@ -208,9 +205,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_preference_visibility => '控制嘟文可以被哪些人看到';
-
-  @override
-  String get desc_preference_spoiler => '顯示文章前的暴雷警告';
 
   @override
   String get desc_preference_sensitive => '預設顯示/隱藏敏感內容';
