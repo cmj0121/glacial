@@ -34,6 +34,11 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
       vsync: this,
     );
     scrollControllers = List.generate(types.length, (index) => ScrollController());
+
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final bool isSignIn = status?.accessToken?.isNotEmpty == true;
+    final TimelineType initType = isSignIn ? TimelineType.home : TimelineType.local;
+    controller.index = types.indexWhere((type) => type == initType);
   }
 
   @override
@@ -59,8 +64,6 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
 
   Widget buildContent(BuildContext context, AccessStatusSchema status) {
     final bool isSignIn = status.accessToken?.isNotEmpty == true;
-    final TimelineType initType = isSignIn ? TimelineType.home : TimelineType.local;
-    controller.index = types.indexWhere((type) => type == initType);
 
     return SwipeTabView(
       tabController: controller,

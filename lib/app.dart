@@ -118,6 +118,8 @@ class _CoreAppState extends ConsumerState<CoreApp> {
 
   // Build the home page with the sidebar and the main content
   RouteBase homeRoutes() {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
     return ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
         return GlacialHome(key: UniqueKey(), child: child);
@@ -125,7 +127,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
       routes: [
         GoRoute(
           path: RoutePath.timeline.path,
-          builder: (_, _) => const TimelineTab(),
+          builder: (_, _) => TimelineTab(key: ValueKey('timeline_tab_${status?.domain}')),
         ),
         GoRoute(
           path: RoutePath.list.path,

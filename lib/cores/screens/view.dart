@@ -1,7 +1,7 @@
 // The view widget library of the app.
 import 'package:flutter/material.dart';
 
-import 'package:glacial/cores/screens/misc.dart';
+import 'package:glacial/core.dart';
 
 // The customized tab view that can be used to show the active and inactive
 // tabs and slide the content to trigger the animation.
@@ -256,7 +256,7 @@ class _SwipeTabBarState extends State<SwipeTabBar> with TickerProviderStateMixin
 
 // The backable widget that can be used to show the back button and the optional
 // title of the widget.
-class BackableView extends StatelessWidget {
+class BackableView extends StatefulWidget {
   final String? title;
   final Widget child;
 
@@ -267,26 +267,40 @@ class BackableView extends StatelessWidget {
   });
 
   @override
+  State<BackableView> createState() => _BackableViewState();
+}
+
+class _BackableViewState extends State<BackableView> {
+  bool isDisposed = false;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
-        title: title == null ? null : Text(title!, style: Theme.of(context).textTheme.titleLarge),
+        title: widget.title == null ? null : Text(widget.title!, style: Theme.of(context).textTheme.titleLarge),
       ),
       body: Align(
         alignment: Alignment.topCenter,
         child: SafeArea(
-          child: Dismissible(
-            key: UniqueKey(),
-            direction: DismissDirection.startToEnd,
-            onDismissed: (_) => Navigator.of(context).pop(),
-            child: child,
-          ),
+          child: isDisposed ? const SizedBox.shrink() : buildContent(),
         ),
       ),
+    );
+  }
+
+  Widget buildContent() {
+    return Dismissible(
+      key: UniqueKey(),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (_) async {
+        setState(() => isDisposed = true);
+        context.pop();
+      },
+      child: widget.child,
     );
   }
 }
