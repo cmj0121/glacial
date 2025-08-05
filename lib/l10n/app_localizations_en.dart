@@ -184,8 +184,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_poll_multiple => 'Multiple Choices';
 
   @override
+  String get txt_preference_visibiliby => 'Visibility';
+
+  @override
+  String get txt_preference_spoiler => 'Spoiler Text';
+
+  @override
   String get desc_poll_show_hide_total =>
       'Show/Hide vote counts until the poll ends';
+
+  @override
+  String get desc_preference_visibility =>
+      'Control who can see and list the status';
+
+  @override
+  String get desc_preference_spoiler =>
+      'Show the spoile text before read the status';
 
   @override
   String get desc_visibility_public => 'Everyone can list and view this toot';

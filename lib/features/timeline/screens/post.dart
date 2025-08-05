@@ -2,6 +2,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -14,11 +15,13 @@ import 'package:glacial/features/screens.dart';
 class PostStatusForm extends ConsumerStatefulWidget {
   final StatusSchema? replyTo;
   final StatusSchema? editFrom;
+  final ValueChanged<StatusSchema>? onPost;
 
   const PostStatusForm({
     super.key,
     this.replyTo,
     this.editFrom,
+    this.onPost,
   });
 
   @override
@@ -33,14 +36,23 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
 
   late final TextEditingController controller = TextEditingController();
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
-  late VisibilityType vtype = VisibilityType.public;
+  late final SystemPreferenceSchema? pref = ref.read(preferenceProvider);
 
   bool isScheduled = false;
   bool isSensitive = false;
   List<AttachmentSchema> medias = [];
   NewPollSchema? poll;
+  VisibilityType vtype = VisibilityType.public;
   String? spoiler;
   DateTime? scheduledAt;
+
+  @override
+  void initState() {
+    super.initState();
+
+    vtype = pref?.visibility ?? VisibilityType.public;
+    spoiler = pref?.spoiler;
+  }
 
   @override
   void dispose() {
@@ -184,7 +196,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
 
         // The media icon button to open the image picker and upload media files.
         IconButton(
-          icon: Icon(Icons.perm_media_rounded, size: tabSize, color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary),
+          icon: Icon(
+            Icons.perm_media_rounded,
+            size: tabSize,
+            color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary,
+          ),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
           onPressed: (poll == null && maxMedias > medias.length && isSignedIn) ? onImagePicker : null,
@@ -198,7 +214,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
         ),
         // The spoiler icon button to toggle the spoiler text field.
         IconButton(
-          icon: Icon(Icons.warning, size: tabSize, color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary),
+          icon: Icon(
+            Icons.warning,
+            size: tabSize,
+            color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary
+          ),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
           onPressed: () => setState(() => spoiler = spoiler == null ? "" : null),
@@ -229,9 +249,8 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
         AppLocalizations.of(context)?.btn_sidebar_post ?? "Toot";
 
     return TextButton.icon(
-      icon: Icon(icon, size: tabSize, color: Theme.of(context).colorScheme.primary),
+      icon: Icon(icon, size: tabSize),
       label: Text(text),
-      style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.primary),
       onPressed: isScheduled ? onSchedulePost : onPost,
       onLongPress: () => setState(() => isScheduled = !isScheduled),
     );
@@ -254,15 +273,42 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
 
   // The callback when the user clicks the post button.
   void onPost() async {
-    context.pop();
+    if (!isReadyToPost) { return; }
+
+    final PostStatusSchema schema = PostStatusSchema(
+      status: controller.text,
+      mediaIDs: medias.map((media) => media.id).toList(),
+      poll: poll,
+      spoiler: spoiler,
+      visibility: vtype,
+      sensitive: isSensitive,
+      inReplyToID: widget.replyTo?.id,
+      scheduledAt: scheduledAt,
+    );
+
+    final StatusSchema? post = await status?.createStatus(schema: schema, idempotentKey: idempotentKey);
+    if (mounted) {
+      if (post != null) widget.onPost?.call(post);
+      context.pop();
+    }
   }
 
   // The callback when the user long presses the post button to schedule the post.
   void onSchedulePost() async {
-    context.pop();
+    final DateTime now = DateTime.now();
+    final DateTime? datetime = await picker.DatePicker.showDateTimePicker(context, currentTime: now);
+
+    if (datetime == null) {
+      logger.d("No date selected for scheduling the post.");
+      return;
+    }
+
+    setState(() => scheduledAt = datetime.toUtc());
+    onPost();
   }
 
   bool get isSignedIn => status?.domain?.isNotEmpty == true && status?.accessToken?.isNotEmpty == true;
+  bool get isReadyToPost => controller.text.isNotEmpty || medias.isNotEmpty || (poll?.isValid ?? false);
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

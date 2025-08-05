@@ -446,11 +446,35 @@ abstract class AppLocalizations {
   /// **'Multiple Choices'**
   String get txt_poll_multiple;
 
+  /// No description provided for @txt_preference_visibiliby.
+  ///
+  /// In en, this message translates to:
+  /// **'Visibility'**
+  String get txt_preference_visibiliby;
+
+  /// No description provided for @txt_preference_spoiler.
+  ///
+  /// In en, this message translates to:
+  /// **'Spoiler Text'**
+  String get txt_preference_spoiler;
+
   /// No description provided for @desc_poll_show_hide_total.
   ///
   /// In en, this message translates to:
   /// **'Show/Hide vote counts until the poll ends'**
   String get desc_poll_show_hide_total;
+
+  /// No description provided for @desc_preference_visibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Control who can see and list the status'**
+  String get desc_preference_visibility;
+
+  /// No description provided for @desc_preference_spoiler.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the spoile text before read the status'**
+  String get desc_preference_spoiler;
 
   /// No description provided for @desc_visibility_public.
   ///

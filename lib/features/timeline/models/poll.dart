@@ -96,6 +96,10 @@ class NewPollSchema {
       options: options ?? this.options,
     );
   }
+
+  bool get isValid {
+    return options.where((e) => e.isNotEmpty).length >= 2;
+  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

@@ -72,44 +72,63 @@ class AccessStatusSchema {
   }
 
   // Call the API endpoint with the GET method and return the response body as a string.
-  Future<String?> getAPI(String endpoint, {Map<String, String>? queryParameters}) async {
+  Future<String?> getAPI(String endpoint, {Map<String, String>? queryParameters, Map<String, String>? headers}) async {
     if (domain?.isNotEmpty != true) {
       logger.w("No server selected, but it's required to fetch the API.");
       return null;
     }
 
     final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
-    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
-    final response = await get(uri, headers: accessToken == null ? {} : headers);
+    final response = await get(
+      uri,
+      headers: {
+        ...?headers,
+        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+      },
+    );
 
     return response.body;
   }
 
   // Call the API endpoint with the POST method and return the response body as a string.
-  Future<String?> postAPI(String endpoint, {Map<String, String>? queryParameters, Map<String, dynamic>? body}) async {
+  Future<String?> postAPI(String endpoint, {
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  }) async {
     if (domain?.isNotEmpty != true) {
       logger.w("No server selected, but it's required to fetch the API.");
       return null;
     }
 
     final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
-    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
     final String? payload = body != null ? jsonEncode(body) : null;
-    final response = await post(uri, headers: accessToken == null ? {} : headers, body: payload);
+    final response = await post(uri,
+      headers: {
+        ...?headers,
+        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+      },
+      body: payload,
+    );
 
     return response.body;
   }
 
   // Call the API endpoint with the DELETE method and return the response body as a string.
-  Future<String?> deleteAPI(String endpoint, {Map<String, String>? queryParameters}) async {
+  Future<String?> deleteAPI(String endpoint, {Map<String, String>? queryParameters, Map<String, String>? headers}) async {
     if (domain?.isNotEmpty != true) {
       logger.w("No server selected, but it's required to fetch the API.");
       return null;
     }
 
     final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
-    final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
-    final response = await delete(uri, headers: accessToken == null ? {} : headers);
+    final response = await delete(
+      uri,
+      headers: {
+        ...?headers,
+        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+      },
+    );
 
     return response.body;
   }

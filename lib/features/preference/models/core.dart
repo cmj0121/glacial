@@ -4,6 +4,7 @@ import "dart:convert";
 import "package:flutter/material.dart";
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/models.dart';
 
 // The tab type of the system preference settings.
 enum SystemPreferenceType {
@@ -38,10 +39,14 @@ class SystemPreferenceSchema {
 
   final String? server;
   final ThemeMode theme;
+  final VisibilityType visibility;
+  final String? spoiler;
 
   const SystemPreferenceSchema({
     this.server,
     this.theme = ThemeMode.dark,
+    this.visibility = VisibilityType.public,
+    this.spoiler,
   });
 
   // Convert the JSON string to a SystemPreferenceSchema object.
@@ -55,6 +60,11 @@ class SystemPreferenceSchema {
     return SystemPreferenceSchema(
       server: json["server"] as String?,
       theme:  ThemeMode.values.firstWhere((t) => t.name == json["theme"], orElse: () => ThemeMode.dark),
+      visibility: VisibilityType.values.firstWhere(
+        (v) => v.name == json["visibility"],
+        orElse: () => VisibilityType.public,
+      ),
+      spoiler: (json["spoiler"] as String?)?.isNotEmpty == true ? json["spoiler"] as String? : null,
     );
   }
 
@@ -63,6 +73,8 @@ class SystemPreferenceSchema {
     return <String, dynamic>{
       "server": server,
       "theme": theme.name,
+      "visibility": visibility.name,
+      "spoiler": spoiler?.isNotEmpty == true ? spoiler : null,
     };
   }
 
@@ -70,10 +82,14 @@ class SystemPreferenceSchema {
   SystemPreferenceSchema copyWith({
     String? server,
     ThemeMode? theme,
+    VisibilityType? visibility,
+    String? spoiler,
   }) {
     return SystemPreferenceSchema(
       server: server ?? this.server,
       theme: theme ?? this.theme,
+      visibility: visibility ?? this.visibility,
+      spoiler: spoiler ?? this.spoiler,
     );
   }
 }

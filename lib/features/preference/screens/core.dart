@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 class SystemPreference extends ConsumerStatefulWidget {
   const SystemPreference({super.key});
@@ -100,6 +101,35 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             final ThemeMode theme = value ? ThemeMode.dark : ThemeMode.light;
             Storage().savePreference(schema.copyWith(theme: theme), ref: ref);
           },
+        ),
+
+        // Build the default status settings, including the visibility and spoiler text.
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_visibiliby ?? "Status Visibility"),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_visibility ?? "The visibility for new statuses."),
+          leading: Icon(schema.visibility.icon(), size: iconSize),
+          trailing: VisibilitySelector(
+            type: schema.visibility,
+            onChanged: (VisibilityType? type) {
+              if (type != null) {
+                Storage().savePreference(schema.copyWith(visibility: type), ref: ref);
+              }
+            },
+          ),
+        ),
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_spoiler ?? "Spoiler Text"),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_spoiler ?? "The default spoiler text for new statuses."),
+          leading: Icon(Icons.warning_amber_outlined, size: iconSize),
+          trailing: SizedBox(
+            width: 200,
+            child: TextField(
+              decoration: InputDecoration(hintText:  "Spoiler text"),
+              onChanged: (String value) {
+                Storage().savePreference(schema.copyWith(spoiler: value), ref: ref);
+              },
+            ),
+          ),
         ),
       ],
     );

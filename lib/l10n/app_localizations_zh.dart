@@ -183,7 +183,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_poll_multiple => '多選';
 
   @override
+  String get txt_preference_visibiliby => '能見度';
+
+  @override
+  String get txt_preference_spoiler => '暴雷警告';
+
+  @override
   String get desc_poll_show_hide_total => '投票前顯示/隱藏投票結果';
+
+  @override
+  String get desc_preference_visibility => '控制嘟文可以被哪些人看到';
+
+  @override
+  String get desc_preference_spoiler => '顯示文章前的暴雷警告';
 
   @override
   String get desc_visibility_public => '任何人';
