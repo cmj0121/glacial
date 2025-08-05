@@ -183,10 +183,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_poll_multiple => '多選';
 
   @override
+  String get txt_preference_status => '嘟文設定';
+
+  @override
   String get txt_preference_visibiliby => '能見度';
 
   @override
   String get txt_preference_spoiler => '暴雷警告';
+
+  @override
+  String get txt_preference_sensitive => '敏感內容';
+
+  @override
+  String get txt_show_less => '顯示更少';
+
+  @override
+  String get txt_show_more => '顯示更多';
+
+  @override
+  String get desc_preference_status => '控制你嘟文的預設行為';
 
   @override
   String get desc_poll_show_hide_total => '投票前顯示/隱藏投票結果';
@@ -196,6 +211,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_preference_spoiler => '顯示文章前的暴雷警告';
+
+  @override
+  String get desc_preference_sensitive => '預設顯示/隱藏敏感內容';
 
   @override
   String get desc_visibility_public => '任何人';

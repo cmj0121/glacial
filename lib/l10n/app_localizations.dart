@@ -446,6 +446,12 @@ abstract class AppLocalizations {
   /// **'Multiple Choices'**
   String get txt_poll_multiple;
 
+  /// No description provided for @txt_preference_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status Settings'**
+  String get txt_preference_status;
+
   /// No description provided for @txt_preference_visibiliby.
   ///
   /// In en, this message translates to:
@@ -457,6 +463,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Spoiler Text'**
   String get txt_preference_spoiler;
+
+  /// No description provided for @txt_preference_sensitive.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensitive Content'**
+  String get txt_preference_sensitive;
+
+  /// No description provided for @txt_show_less.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Less'**
+  String get txt_show_less;
+
+  /// No description provided for @txt_show_more.
+  ///
+  /// In en, this message translates to:
+  /// **'Show More'**
+  String get txt_show_more;
+
+  /// No description provided for @desc_preference_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup and control your default status behavior'**
+  String get desc_preference_status;
 
   /// No description provided for @desc_poll_show_hide_total.
   ///
@@ -475,6 +505,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show the spoile text before read the status'**
   String get desc_preference_spoiler;
+
+  /// No description provided for @desc_preference_sensitive.
+  ///
+  /// In en, this message translates to:
+  /// **'Show/Hide the sensitive content as default action'**
+  String get desc_preference_sensitive;
 
   /// No description provided for @desc_visibility_public.
   ///

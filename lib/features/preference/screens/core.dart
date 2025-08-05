@@ -39,7 +39,7 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Expanded(child: buildTabView()),
+        Expanded(flex: 10, child: buildTabView()),
         const Spacer(),
         TextButton.icon(
           icon: Icon(Icons.refresh, size: size, color: Theme.of(context).colorScheme.secondary),
@@ -103,6 +103,21 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           },
         ),
 
+        const SizedBox(height: 32),
+
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_status ?? "Status Settings"),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_status ?? "Control the default status settings."),
+        ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_sensitive ?? "Sensitive Content"),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_sensitive ?? "Show/Hide sensitive content in statuses."),
+          value: schema.sensitive,
+          secondary: Icon(schema.sensitive ? Icons.visibility_off : Icons.visibility, size: iconSize),
+          onChanged: (bool value) {
+            Storage().savePreference(schema.copyWith(sensitive: value), ref: ref);
+          },
+        ),
         // Build the default status settings, including the visibility and spoiler text.
         ListTile(
           title: Text(AppLocalizations.of(context)?.txt_preference_visibiliby ?? "Status Visibility"),

@@ -184,10 +184,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_poll_multiple => 'Multiple Choices';
 
   @override
+  String get txt_preference_status => 'Status Settings';
+
+  @override
   String get txt_preference_visibiliby => 'Visibility';
 
   @override
   String get txt_preference_spoiler => 'Spoiler Text';
+
+  @override
+  String get txt_preference_sensitive => 'Sensitive Content';
+
+  @override
+  String get txt_show_less => 'Show Less';
+
+  @override
+  String get txt_show_more => 'Show More';
+
+  @override
+  String get desc_preference_status =>
+      'Setup and control your default status behavior';
 
   @override
   String get desc_poll_show_hide_total =>
@@ -200,6 +216,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get desc_preference_spoiler =>
       'Show the spoile text before read the status';
+
+  @override
+  String get desc_preference_sensitive =>
+      'Show/Hide the sensitive content as default action';
 
   @override
   String get desc_visibility_public => 'Everyone can list and view this toot';
