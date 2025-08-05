@@ -98,4 +98,31 @@ class StatusSchema {
   }
 }
 
+// Represents the tree around a given status. Used for reconstructing threads of statuses.
+class StatusContextSchema {
+  final List<StatusSchema> ancestors;
+  final List<StatusSchema> descendants;
+
+  const StatusContextSchema({
+    required this.ancestors,
+    required this.descendants,
+  });
+
+  factory StatusContextSchema.fromString(String str) {
+    final Map<String, dynamic> json = jsonDecode(str);
+    return StatusContextSchema.fromJson(json);
+  }
+
+  factory StatusContextSchema.fromJson(Map<String, dynamic> json) {
+    return StatusContextSchema(
+      ancestors: (json['ancestors'] as List<dynamic>)
+        .map((e) => StatusSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      descendants: (json['descendants'] as List<dynamic>)
+        .map((e) => StatusSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

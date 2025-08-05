@@ -257,13 +257,13 @@ class _SwipeTabBarState extends State<SwipeTabBar> with TickerProviderStateMixin
 // The backable widget that can be used to show the back button and the optional
 // title of the widget.
 class BackableView extends StatelessWidget {
+  final String? title;
   final Widget child;
-  final String title;
 
   const BackableView({
     super.key,
+    this.title,
     required this.child,
-    required this.title,
   });
 
   @override
@@ -274,7 +274,7 @@ class BackableView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(title, style: Theme.of(context).textTheme.titleLarge),
+        title: title == null ? null : Text(title!, style: Theme.of(context).textTheme.titleLarge),
       ),
       body: Align(
         alignment: Alignment.topCenter,
@@ -285,6 +285,54 @@ class BackableView extends StatelessWidget {
             onDismissed: (_) => Navigator.of(context).pop(),
             child: child,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// The indent wrapper widget to show the indent of the content.
+class Indent extends StatelessWidget {
+  final int indent;
+  final Widget child;
+  final double width;
+  final EdgeInsetsGeometry padding;
+
+  const Indent({
+    super.key,
+    required this.indent,
+    required this.child,
+    this.width = 2.0,
+    this.padding = const EdgeInsets.only(left: 4.0),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    switch (indent) {
+    case 0:
+      return child;
+    case 1:
+      return buildContent(context);
+    default:
+      return Indent(indent: indent - 1, child: buildContent(context));
+    }
+  }
+
+  Widget buildContent(BuildContext context) {
+    return Padding(
+      padding: padding,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(
+              color: Theme.of(context).dividerColor,
+              width: width,
+            ),
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.only(left: width),
+          child: child,
         ),
       ),
     );

@@ -67,28 +67,26 @@ class HtmlDone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SelectionArea(
-      child: Html(
-        data: html,
-        style: {
-          'a': Style(
-            color: Theme.of(context).colorScheme.secondary,
-            textDecoration: TextDecoration.underline,
-          ),
-          'blockquote': Style(
-            color: Theme.of(context).colorScheme.secondary,
-            padding: HtmlPaddings(left: HtmlPadding(8)),
-            textAlign: TextAlign.justify,
-            border: Border(
-              left: BorderSide(
-                color: Theme.of(context).dividerColor,
-                width: 2,
-              ),
+    return Html(
+      data: html,
+      style: {
+        'a': Style(
+          color: Theme.of(context).colorScheme.secondary,
+          textDecoration: TextDecoration.underline,
+        ),
+        'blockquote': Style(
+          color: Theme.of(context).colorScheme.secondary,
+          padding: HtmlPaddings(left: HtmlPadding(8)),
+          textAlign: TextAlign.justify,
+          border: Border(
+            left: BorderSide(
+              color: Theme.of(context).dividerColor,
+              width: 2,
             ),
           ),
-        },
-        onLinkTap: onLinkTap,
-      ),
+        ),
+      },
+      onLinkTap: onLinkTap,
     );
   }
 }

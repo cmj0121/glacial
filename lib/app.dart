@@ -140,12 +140,18 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (_, _) => const WIP(),
         ),
         GoRoute(
-          path: RoutePath.admin.path,
-          builder: (_, _) => const WIP(),
+          path: RoutePath.post.path,
+          builder: (_, _) => const PostStatusForm(),
         ),
         GoRoute(
-          path: RoutePath.post.path,
-          builder: (_, __) => const PostStatusForm(),
+          path: RoutePath.status.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema status = state.extra as StatusSchema;
+
+            return BackableView(
+              child: StatusContext(schema: status),
+            );
+          },
         ),
       ],
     );

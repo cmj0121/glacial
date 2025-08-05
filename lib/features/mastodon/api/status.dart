@@ -6,7 +6,7 @@
 //    - [+] GET    /api/v1/statuses/:id
 //    - [ ] GET    /api/v1/statuses
 //    - [ ] DELETE /api/v1/statuses/:id
-//    - [ ] GET    /api/v1/statuses/:id/context
+//    - [x] GET    /api/v1/statuses/:id/context
 //    - [ ] POST   /api/v1/statuses/:id/translate
 //    - [ ] GET    /api/v1/statuses/:id/reblogged_by
 //	  - [ ] GET    /api/v1/statuses/:id/favourited_by
@@ -80,6 +80,13 @@ extension StatusExtensions on AccessStatusSchema {
 
     final String body = await postAPI(endpoint) ?? '{}';
     return StatusSchema.fromString(body);
+  }
+
+  // View statuses above and below this status in the thread.
+  Future<StatusContextSchema> getStatusContext({required StatusSchema schema}) async {
+    final String endpoint = '/api/v1/statuses/${schema.id}/context';
+    final String body = await getAPI(endpoint) ?? '{}';
+    return StatusContextSchema.fromString(body);
   }
 }
 

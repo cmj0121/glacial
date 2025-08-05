@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
@@ -12,11 +13,13 @@ import 'package:glacial/features/screens.dart';
 
 // The single Status widget that contains the status information.
 class Status extends ConsumerStatefulWidget {
+  final int indent;
   final StatusSchema schema;
   final ValueChanged<StatusSchema>? onReload;
 
   const Status({
     super.key,
+    this.indent = 0,
     required this.schema,
     this.onReload,
   });
@@ -37,7 +40,21 @@ class _StatusState extends ConsumerState<Status> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 16, bottom: 8),
-      child: buildContent(),
+      child: InkWellDone(
+        onTap: () {
+          final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
+
+          switch (path) {
+            case RoutePath.status:
+              context.replace(RoutePath.status.path, extra: schema);
+              break;
+            default:
+              context.push(RoutePath.status.path, extra: schema);
+              break;
+          }
+        },
+        child: buildContent(),
+      ),
     );
   }
 
@@ -49,9 +66,12 @@ class _StatusState extends ConsumerState<Status> {
       children: [
         buildMetadata(),
         buildHeader(),
-        SpoilerView(
-          spoiler: schema.spoiler,
-          child: buildCoreContent(),
+        Indent(
+          indent: widget.indent,
+          child: SpoilerView(
+            spoiler: schema.spoiler,
+            child: buildCoreContent(),
+          ),
         ),
 
         Application(schema: schema.application),
@@ -285,6 +305,95 @@ class _SpoilerViewState extends State<SpoilerView> {
           ],
         ),
       ),
+    );
+  }
+}
+
+// The List of statuses that shows the context of the status, including the
+// previous statuses and the next statuses.
+class StatusContext extends ConsumerStatefulWidget {
+  final StatusSchema schema;
+
+  const StatusContext({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  ConsumerState<StatusContext> createState() => _StatusContextState();
+}
+
+class _StatusContextState extends ConsumerState<StatusContext> {
+  final ItemScrollController itemScrollController = ItemScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+
+    if (status == null) {
+      return const SizedBox.shrink();
+    }
+
+    return FutureBuilder(
+      future: status.getStatusContext(schema: widget.schema),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Align(
+            alignment: Alignment.topCenter,
+            child: ClockProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return const SizedBox.shrink();
+        }
+
+        final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // scroll to the current status when the widget is built
+          itemScrollController.scrollTo(
+            index: ctx.ancestors.length,
+            duration: const Duration(milliseconds: 300),
+          );
+        });
+        return buildContent(ctx);
+      }
+    );
+  }
+
+  // Build the list of the context statuses, including the ancestors and descendants
+  Widget buildContent(StatusContextSchema ctx) {
+    Map<String, int> indents = {widget.schema.id: 1};
+
+    final List<Widget> children = [
+      ...ctx.ancestors.map((StatusSchema status) {
+        final int indent = indents[status.inReplyToID] ?? 1;
+
+        indents[status.id] = indent + 1;
+        return Status(schema: status, indent: indent);
+      }),
+
+      Status(schema: widget.schema),
+
+      ...ctx.descendants.map((StatusSchema status) {
+        final int indent = indents[status.inReplyToID] ?? 1;
+
+        indents[status.id] = indent + 1;
+        return Status(schema: status, indent: indent);
+      }),
+    ];
+
+    return ScrollablePositionedList.builder(
+      itemScrollController: itemScrollController,
+      itemCount: children.length,
+      itemBuilder: (context, index) {
+        final Widget child = children[index];
+
+        return Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+          ),
+          child: child,
+        );
+      },
     );
   }
 }
