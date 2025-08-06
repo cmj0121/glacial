@@ -11,7 +11,12 @@ import 'package:glacial/features/screens.dart';
 // The timeline tab that shows the all possible timelines in the current
 // selected Mastodon server.
 class TimelineTab extends ConsumerStatefulWidget {
-  const TimelineTab({super.key});
+  final TimelineType initialType;
+
+  const TimelineTab({
+    super.key,
+    this.initialType = TimelineType.local,
+  });
 
   @override
   ConsumerState<TimelineTab> createState() => _TimelineTabState();
@@ -33,12 +38,9 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
       initialIndex: 0,
       vsync: this,
     );
-    scrollControllers = List.generate(types.length, (index) => ScrollController());
 
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
-    final bool isSignIn = status?.accessToken?.isNotEmpty == true;
-    final TimelineType initType = isSignIn ? TimelineType.home : TimelineType.local;
-    controller.index = types.indexWhere((type) => type == initType);
+    scrollControllers = List.generate(types.length, (index) => ScrollController());
+    controller.index = types.indexWhere((type) => type == widget.initialType);
   }
 
   @override
