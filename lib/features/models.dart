@@ -5,6 +5,7 @@ export 'auth/models/core.dart';
 export 'glacial/models/core.dart';
 export 'mastodon/models/core.dart';
 export 'preference/models/core.dart';
+export 'search/models/core.dart';
 export 'timeline/models/core.dart';
 export 'trends/models/core.dart';
 

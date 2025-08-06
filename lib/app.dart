@@ -155,6 +155,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             );
           },
         ),
+        GoRoute(
+          path: RoutePath.search.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final String keyword = state.extra as String;
+            return ExplorerTab(keyword: keyword);
+          },
+        ),
       ],
     );
   }

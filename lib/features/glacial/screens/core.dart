@@ -63,7 +63,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
                 onPressed: () => scaffoldKey.currentState?.openDrawer(),
               ),
               actions: [
-                Explorer(size: sidebarSize),
+                SearchExplorer(size: sidebarSize),
               ],
             ),
           ),
