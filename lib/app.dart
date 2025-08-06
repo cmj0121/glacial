@@ -171,7 +171,11 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           path: RoutePath.profile.path,
           builder: (BuildContext context, GoRouterState state) {
             final AccountSchema acocunt = state.extra as AccountSchema;
-            return AccountProfile(schema: acocunt);
+
+            return BackableView(
+              title: acocunt.displayName,
+              child: AccountProfile(schema: acocunt),
+            );
           },
         ),
       ],

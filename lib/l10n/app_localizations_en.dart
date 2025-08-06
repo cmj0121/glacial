@@ -220,6 +220,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_show_more => 'Show More';
 
   @override
+  String get txt_no_result => 'No results found';
+
+  @override
   String get desc_preference_status =>
       'Setup and control your default status behavior';
 

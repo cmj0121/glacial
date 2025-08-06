@@ -25,7 +25,7 @@ class TimelineTab extends ConsumerStatefulWidget {
 class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderStateMixin {
   // Exclude TimelineType.hashtag from the timeline tab as hashtag timelines are handled differently
   // or are not supported in the current implementation.
-  final List<TimelineType> types = TimelineType.values;
+  final List<TimelineType> types = TimelineType.values.where((type) => type.inTimelineTab).toList();
 
   late final TabController controller;
   late List<ScrollController> scrollControllers = [];
@@ -108,12 +108,14 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
 class Timeline extends StatefulWidget {
   final TimelineType type;
   final AccessStatusSchema status;
+  final AccountSchema? account;
   final ScrollController? controller;
 
   const Timeline({
     super.key,
     required this.type,
     required this.status,
+    this.account,
     this.controller,
   });
 
@@ -150,6 +152,11 @@ class _TimelineState extends State<Timeline> {
 
   @override
   Widget build(BuildContext context) {
+    if (isCompleted && !isLoading && statuses.isEmpty) {
+      final String message = AppLocalizations.of(context)?.txt_no_result ?? "No results found";
+      return NoResult(message: message, icon: Icons.coffee);
+    }
+
     return Align(
       alignment: Alignment.topCenter,
       child: Column(
@@ -224,7 +231,7 @@ class _TimelineState extends State<Timeline> {
     if (mounted) setState(() => isLoading = true);
 
     final String? maxId = statuses.isNotEmpty ? statuses.last.id : null;
-    final List<StatusSchema> schemas = await widget.status.fetchTimeline(widget.type, maxId: maxId);
+    final List<StatusSchema> schemas = await widget.status.fetchTimeline(widget.type, account: widget.account, maxId: maxId);
 
     if (mounted) {
       setState(() {

@@ -25,10 +25,21 @@
 //    - [ ] GET    /api/v1/statuses/:id/source
 //    - [-] GET    /api/v1/statuses/:id/card            (deprecated in 3.0.0)
 //
+// ## Scheduled Status APIs
+//
+//    - [ ] GET    /api/v1/scheduled_statuses
+//    - [ ] POST   /api/v1/scheduled_statuses
+//    - [ ] GET    /api/v1/scheduled_statuses/:id
+//    - [ ] DELETE /api/v1/scheduled_statuses/:id
+//    - [ ] PUT    /api/v1/scheduled_statuses/:id
 // ref:
 //   - https://docs.joinmastodon.org/methods/statuses/
+//   - https://docs.joinmastodon.org/methods/scheduled_statuses/
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 extension StatusExtensions on AccessStatusSchema {
@@ -87,6 +98,26 @@ extension StatusExtensions on AccessStatusSchema {
     final String endpoint = '/api/v1/statuses/${schema.id}/context';
     final String body = await getAPI(endpoint) ?? '{}';
     return StatusContextSchema.fromString(body);
+  }
+
+  // List the scheduled statuses on the Mastodon server.
+  Future<List<StatusSchema>> fetchScheduledStatuses({String? maxId}) async {
+    if (isSignedIn == false) {
+      throw Exception("You must be signed in to fetch scheduled statuses.");
+    }
+
+    final Map<String, String> query = {"max_id": maxId ?? ""};
+    final String endpoint = '/api/v1/scheduled_statuses';
+    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
+
+    // save the related info to the in-memory cache.
+    status.map((s) => cacheAccount(s.account)).toList();
+    status.map((s) async => await getAccount(s.inReplyToAccountID)).toList();
+
+    logger.d("complete load the scheduled status timeline, count: ${status.length}");
+    return status;
   }
 }
 

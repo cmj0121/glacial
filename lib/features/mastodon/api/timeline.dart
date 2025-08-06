@@ -28,7 +28,7 @@ import 'package:glacial/features/models.dart';
 // The API extensions for the timeline endpoints in the Mastodon server.
 extension TimelineExtensions on AccessStatusSchema {
   // Fetch timeline's statuses based on the timeline type.
-  Future<List<StatusSchema>> fetchTimeline(TimelineType type, {String? maxId}) async {
+  Future<List<StatusSchema>> fetchTimeline(TimelineType type, {String? maxId, AccountSchema? account}) async {
     final Map<String, String> query = {"max_id": maxId ?? ""};
     late final String endpoint;
 
@@ -57,6 +57,13 @@ extension TimelineExtensions on AccessStatusSchema {
       case TimelineType.favourites:
         endpoint = "/api/v1/favourites";
         break;
+      case TimelineType.user:
+      case TimelineType.pin:
+        return fetchAccountTimeline(account: account, maxId: maxId, pinned: type == TimelineType.pin);
+      case TimelineType.schedule:
+        return fetchScheduledStatuses(maxId: maxId);
+      default:
+        throw Exception("Unsupported timeline type: $type");
     }
 
     final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';

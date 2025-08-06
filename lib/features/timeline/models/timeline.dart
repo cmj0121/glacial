@@ -11,7 +11,12 @@ enum TimelineType {
   federal,       // The federated timeline for the current server.
   public,        // The public timeline for the connected server.
   favourites,    // The favourite timeline for the logged in user.
-  bookmarks;     // The bookmark timeline for the logged in user.
+  bookmarks,     // The bookmark timeline for the logged in user.
+  // The extra timeline types, not shown in the timeline tab.
+  user,          // The statuses posted from the given user.
+  pin,           // The pinned statuses for the logged in user.
+  schedule,      // The scheduled statuses for the logged in user.
+  hashtag;       // The hashtag timeline for the current server.
 
   // The icon associated with the timeline type.
   IconData icon({bool active = false}) {
@@ -28,6 +33,14 @@ enum TimelineType {
         return active ? Icons.star : Icons.star_outline_outlined;
       case bookmarks:
         return active ? Icons.bookmarks : Icons.bookmarks_outlined;
+      case user:
+        return active ? Icons.article : Icons.article_outlined;
+      case pin:
+        return active ? Icons.push_pin : Icons.push_pin_outlined;
+      case schedule:
+        return active ? Icons.schedule : Icons.schedule_outlined;
+      case hashtag:
+        return active ? Icons.tag : Icons.tag_outlined;
     }
   }
 
@@ -46,6 +59,14 @@ enum TimelineType {
         return AppLocalizations.of(context)?.btn_timeline_favourites ?? "Favourites";
       case bookmarks:
         return AppLocalizations.of(context)?.btn_timeline_bookmarks ?? "Bookmarks";
+      case user:
+        return AppLocalizations.of(context)?.btn_profile_post ?? "Posts";
+      case pin:
+        return AppLocalizations.of(context)?.btn_profile_pin ?? "Pinned Posts";
+      case schedule:
+        return AppLocalizations.of(context)?.btn_profile_scheduled ?? "Scheduled Posts";
+      case hashtag:
+        return AppLocalizations.of(context)?.btn_profile_hashtag ?? "Hashtags";
     }
   }
 
@@ -58,6 +79,21 @@ enum TimelineType {
         return true; // Can be accessed anonymously.
       default:
         return false; // Requires authentication.
+    }
+  }
+
+  // The timeline type is shown in the timeline tab.
+  bool get inTimelineTab {
+    switch (this) {
+      case home:
+      case local:
+      case federal:
+      case public:
+      case favourites:
+      case bookmarks:
+        return true; // Shown in the timeline tab.
+      default:
+        return false; // Not shown in the timeline tab.
     }
   }
 }

@@ -70,6 +70,7 @@
   "txt_preference_sensitive": "敏感內容",
   "txt_show_less": "顯示更少",
   "txt_show_more": "顯示更多",
+  "txt_no_result": "未找到結果",
   "desc_preference_status": "控制你嘟文的預設行為",
   "desc_poll_show_hide_total": "投票前顯示/隱藏投票結果",
   "desc_preference_visibility": "控制嘟文可以被哪些人看到",

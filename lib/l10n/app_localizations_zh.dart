@@ -219,6 +219,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_show_more => '顯示更多';
 
   @override
+  String get txt_no_result => '未找到結果';
+
+  @override
   String get desc_preference_status => '控制你嘟文的預設行為';
 
   @override

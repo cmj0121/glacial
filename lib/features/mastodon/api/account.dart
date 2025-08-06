@@ -7,7 +7,7 @@
 //   - [ ] PATCH /api/v1/accounts/update_credentials
 //   - [ ] GET   /api/v1/accounts/:id
 //   - [ ] GET   /api/v1/accounts
-//   - [ ] GET   /api/v1/accounts/:id/statuses
+//   - [+] GET   /api/v1/accounts/:id/statuses
 //   - [ ] GET   /api/v1/accounts/:id/followers
 //   - [ ] GET   /api/v1/accounts/:id/following
 //   - [ ] GET   /api/v1/accounts/:id/featured_tags
@@ -31,8 +31,18 @@
 //   - [ ] GET   /api/v1/accounts/lookup
 //   - [ ] GET   /api/v1/accounts/:id/identity_proofs        (deprecated in 3.5.0)
 //
+// ## Mute APIs
+//
+//   - [ ] GET   /api/v1/mutes
+//
+// ## Block APIs
+//
+//   - [ ] GET   /api/v1/blocks
+//
 // ref:
 //   - https://docs.joinmastodon.org/methods/accounts/
+//   - https://docs.joinmastodon.org/methods/mutes/
+//   - https://docs.joinmastodon.org/methods/blocks/
 import 'dart:async';
 import 'dart:convert';
 
@@ -58,18 +68,12 @@ extension AccountsExtensions on AccessStatusSchema {
 
     final String endpoint = '/api/v1/accounts/$accountID';
     final String body = await getAPI(endpoint) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+    final AccountSchema account = AccountSchema.fromJson(json);
 
-    try {
-      final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
-      final AccountSchema account = AccountSchema.fromJson(json);
-
-      logger.i("complete get the account from $accountID on $domain");
-      cacheAccount(account);
-      return account;
-    } catch (e) {
-      logger.d("failed to get or parse the account: $accountID, error: $e");
-      return null;
-    }
+    logger.i("complete get the account from $accountID on $domain");
+    cacheAccount(account);
+    return account;
   }
 
   // Save the account data schema to the in-memory cache.
@@ -111,6 +115,62 @@ extension AccountsExtensions on AccessStatusSchema {
   // The raw action to interact with the account, such as follow, unfollow, block, or mute.
   Future<void> interactWithAcount(StatusSchema status) async {
     return;
+  }
+
+  // Get the account timeline by account ID, return the list of statuses.
+  Future<List<StatusSchema>> fetchAccountTimeline({AccountSchema? account, String? maxId, bool? pinned}) async {
+    if (account == null) {
+      logger.w("account is not set, cannot fetch the timeline.");
+      return [];
+    }
+
+    final Map<String, String> query = {"max_id": maxId ?? "", "pinned": pinned == true ? "true" : "false"};
+    final String endpoint = '/api/v1/accounts/${account.id}/statuses';
+
+    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
+
+    // save the related info to the in-memory cache.
+    status.map((s) => cacheAccount(s.account)).toList();
+    status.map((s) async => await getAccount(s.inReplyToAccountID)).toList();
+
+    logger.d("complete load the account timelnie: ${status.length}");
+    return status;
+  }
+
+  // Get the account be muted by account ID, return the list of accounts.
+  Future<(List<AccountSchema>, String?)> fetchMutedAccounts({String? maxId}) async {
+    if (isSignedIn == false) {
+      throw Exception("You must be signed in to fetch muted accounts.");
+    }
+
+    final Map<String, String> query = {"max_id": maxId ?? ""};
+    final String endpoint = '/api/v1/mutes';
+    final (body, nextId) = await getAPIEx(endpoint, queryParameters: query);
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+
+    logger.d("complete load the muted accounts: ${accounts.length}");
+    accounts.map((a) => cacheAccount(a)).toList();
+    return (accounts, nextId);
+  }
+
+  // Get the account be blocked by account ID, return the list of accounts.
+  Future<(List<AccountSchema>, String?)> fetchBlockedAccounts({String? maxId}) async {
+    if (isSignedIn == false) {
+      throw Exception("You must be signed in to fetch blocked accounts.");
+    }
+
+    final Map<String, String> query = {"max_id": maxId ?? ""};
+    final String endpoint = '/api/v1/blocks';
+    final (body, nextId) = await getAPIEx(endpoint, queryParameters: query);
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+
+    logger.d("complete load the muted accounts: ${accounts.length}");
+    accounts.map((a) => cacheAccount(a)).toList();
+    return (accounts, nextId);
   }
 }
 

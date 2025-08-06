@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/models.dart';
 
 // The Account data schema that is the user account info.
 class AccountSchema {
@@ -131,6 +132,22 @@ enum AccountProfileType {
         return true;
       default:
         return false;
+    }
+  }
+
+  // Get the related timeline type for the profile type.
+  TimelineType get timelineType {
+    switch (this) {
+      case AccountProfileType.post:
+        return TimelineType.user;
+      case AccountProfileType.schedule:
+        return TimelineType.schedule;
+      case AccountProfileType.pin:
+        return TimelineType.pin;
+      case AccountProfileType.hashtag:
+        return TimelineType.hashtag;
+      default:
+        throw ArgumentError("Invalid profile type for timeline: $this");
     }
   }
 }

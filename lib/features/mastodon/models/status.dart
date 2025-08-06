@@ -90,6 +90,28 @@ class AccessStatusSchema {
     return response.body;
   }
 
+  // Similar to getAPI, but returns the response body and optional next link.
+  Future<(String, String?)> getAPIEx(String endpoint, {Map<String, String>? queryParameters, Map<String, String>? headers}) async {
+    if (domain?.isNotEmpty != true) {
+      logger.w("No server selected, but it's required to fetch the API.");
+      throw Exception('No server selected to fetch the API.');
+    }
+
+    final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
+    final response = await get(
+      uri,
+      headers: {
+        ...?headers,
+        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+      },
+    );
+
+    final String body = response.body;
+    final String? nextLink = response.headers['link'];
+
+    return (body, getMaxIDFromNextLink(nextLink));
+  }
+
   // Call the API endpoint with the POST method and return the response body as a string.
   Future<String?> postAPI(String endpoint, {
     Map<String, String>? queryParameters,
@@ -140,6 +162,19 @@ class AccessStatusSchema {
       throw Exception('Access token is required to access the server: $domain');
     }
   }
+
+  // Extracts the max_id from the next link if it exists.
+  String? getMaxIDFromNextLink(String? nextLink) {
+    final links = nextLink?.split(',') ?? [];
+    for (final link in links) {
+      final match = RegExp(r'<([^>]+)>;\s*rel="([^"]+)"').firstMatch(link.trim());
+      if (match != null && match.group(2) == 'next') {
+        return Uri.parse(match.group(1) ?? '').queryParameters['max_id'];
+      }
+  }
+
+  return null;
+}
 
   bool get isSignedIn =>  accessToken?.isNotEmpty == true;
 }

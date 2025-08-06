@@ -70,6 +70,7 @@
   "txt_preference_sensitive": "Sensitive Content",
   "txt_show_less": "Show Less",
   "txt_show_more": "Show More",
+  "txt_no_result": "No results found",
   "desc_preference_status": "Setup and control your default status behavior",
   "desc_poll_show_hide_total": "Show/Hide vote counts until the poll ends",
   "desc_preference_visibility": "Control who can see and list the status",

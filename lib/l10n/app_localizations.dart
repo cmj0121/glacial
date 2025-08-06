@@ -518,6 +518,12 @@ abstract class AppLocalizations {
   /// **'Show More'**
   String get txt_show_more;
 
+  /// No description provided for @txt_no_result.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get txt_no_result;
+
   /// No description provided for @desc_preference_status.
   ///
   /// In en, this message translates to:

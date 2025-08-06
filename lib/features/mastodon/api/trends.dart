@@ -5,8 +5,13 @@
 //   - [+] GET /api/v1/trends/statuses
 //   - [+] GET /api/v1/trends/links
 //
+// ## Following Hashtag APIs
+//
+//  - [+] GET /api/v1/followed_tags
+//
 // ref:
 //   - https://docs.joinmastodon.org/methods/trends/
+//   - https://docs.joinmastodon.org/methods/followed_tags/
 import 'dart:async';
 import 'dart:convert';
 
@@ -49,6 +54,22 @@ extension TrendsExtensions on AccessStatusSchema {
       default:
         throw UnimplementedError('trends $type are not implemented yet.');
     }
+  }
+
+  // Fetch the following hashtags for the current user, and return the list of hashtags and next page offset.
+  Future<(List<HashtagSchema>, String?)> fetchFollowedHashtags({String? maxId}) async {
+    if (isSignedIn == false) {
+      throw Exception("You must be signed in to fetch scheduled statuses.");
+    }
+
+    final Map<String, String> query = {"max_id": maxId ?? ""};
+    final String endpoint = '/api/v1/followed_tags';
+    final (body, nextId) = await getAPIEx(endpoint, queryParameters: query);
+
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<HashtagSchema> hashtags = json.map((e) => HashtagSchema.fromJson(e as Map<String, dynamic>)).toList();
+
+    return (hashtags, nextId);
   }
 }
 
