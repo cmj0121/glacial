@@ -1,4 +1,7 @@
 // The Account data schema that is the user account info.
+import 'package:flutter/material.dart';
+
+import 'package:glacial/core.dart';
 
 // The Account data schema that is the user account info.
 class AccountSchema {
@@ -66,6 +69,69 @@ class AccountSchema {
       followersCount: json['followers_count'] as int,
       followingCount: json['following_count'] as int,
     );
+  }
+}
+
+// The type list for the account profile, based on the Mastodon API.
+enum AccountProfileType {
+  profile,       // The profile of the specified user.
+  post,          // The statuses posted from the given user.
+  pin,           // The pinned statuses for the logged in user.
+  schedule,      // The scheduled statuses for the logged in user.
+  hashtag,       // The hashtag timeline for the current server.
+  mute,          // The muted accounts for the logged in user.
+  block;         // The blocked accounts for the logged in user.
+
+  // The tooltip text for the profile type, localized if possible.
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case profile:
+        return AppLocalizations.of(context)?.btn_profile_core ?? "Profile";
+      case post:
+        return AppLocalizations.of(context)?.btn_profile_post ?? "Posts";
+      case pin:
+        return AppLocalizations.of(context)?.btn_profile_pin ?? "Pinned Posts";
+      case schedule:
+        return AppLocalizations.of(context)?.btn_profile_scheduled ?? "Scheduled Posts";
+      case hashtag:
+        return AppLocalizations.of(context)?.btn_profile_hashtag ?? "Hashtags";
+      case mute:
+        return AppLocalizations.of(context)?.btn_profile_mute ?? "Muted Accounts";
+      case block:
+        return AppLocalizations.of(context)?.btn_profile_block ?? "Blocked Accounts";
+    }
+  }
+
+  // The icon associated with the profile type, based on the action type.
+  IconData icon({bool active = false}) {
+    switch (this) {
+      case profile:
+        return active ? Icons.contact_page : Icons.contact_page_outlined;
+      case post:
+        return active ? Icons.article : Icons.article_outlined;
+      case pin:
+        return active ? Icons.push_pin : Icons.push_pin_outlined;
+      case schedule:
+        return active ? Icons.schedule : Icons.schedule_outlined;
+      case hashtag:
+        return active ? Icons.tag : Icons.tag_outlined;
+      case mute:
+        return active ? Icons.volume_off : Icons.volume_off_outlined;
+      case block:
+        return active ? Icons.block : Icons.block_outlined;
+    }
+  }
+
+  // The type of the profile button, used to determine the profile type related on self-profile.
+  bool get selfProfile {
+    switch (this) {
+      case AccountProfileType.profile:
+      case AccountProfileType.post:
+      case AccountProfileType.pin:
+        return true;
+      default:
+        return false;
+    }
   }
 }
 

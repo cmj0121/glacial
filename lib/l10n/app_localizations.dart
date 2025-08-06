@@ -332,6 +332,48 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get btn_interaction_delete;
 
+  /// No description provided for @btn_profile_core.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get btn_profile_core;
+
+  /// No description provided for @btn_profile_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Toots'**
+  String get btn_profile_post;
+
+  /// No description provided for @btn_profile_pin.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get btn_profile_pin;
+
+  /// No description provided for @btn_profile_scheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled Toots'**
+  String get btn_profile_scheduled;
+
+  /// No description provided for @btn_profile_hashtag.
+  ///
+  /// In en, this message translates to:
+  /// **'Following Hashtags'**
+  String get btn_profile_hashtag;
+
+  /// No description provided for @btn_profile_mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Muted Users'**
+  String get btn_profile_mute;
+
+  /// No description provided for @btn_profile_block.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked Users'**
+  String get btn_profile_block;
+
   /// No description provided for @btn_status_toot.
   ///
   /// In en, this message translates to:

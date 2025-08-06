@@ -135,11 +135,13 @@ class AccessStatusSchema {
 
   // Ensure the access token is set for the current server.
   void checkSignedIn() {
-    if (accessToken?.isNotEmpty != true) {
+    if (!isSignedIn) {
       logger.w("try to access the API that should be signed in, but no access token is set.");
       throw Exception('Access token is required to access the server: $domain');
     }
   }
+
+  bool get isSignedIn =>  accessToken?.isNotEmpty == true;
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

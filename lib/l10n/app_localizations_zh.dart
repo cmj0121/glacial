@@ -126,6 +126,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_interaction_delete => '刪除';
 
   @override
+  String get btn_profile_core => '使用者頁面';
+
+  @override
+  String get btn_profile_post => '嘟文';
+
+  @override
+  String get btn_profile_pin => '釘選文章';
+
+  @override
+  String get btn_profile_scheduled => '排程都文';
+
+  @override
+  String get btn_profile_hashtag => '追蹤標籤';
+
+  @override
+  String get btn_profile_mute => '靜音用戶';
+
+  @override
+  String get btn_profile_block => '封鎖用戶';
+
+  @override
   String get btn_status_toot => '嘟文';
 
   @override

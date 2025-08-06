@@ -162,6 +162,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             return ExplorerTab(keyword: keyword);
           },
         ),
+        GoRoute(
+          path: RoutePath.profile.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final AccountSchema acocunt = state.extra as AccountSchema;
+            return AccountProfile(schema: acocunt);
+          },
+        ),
       ],
     );
   }

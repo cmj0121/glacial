@@ -126,6 +126,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_interaction_delete => 'Delete';
 
   @override
+  String get btn_profile_core => 'Profile';
+
+  @override
+  String get btn_profile_post => 'Toots';
+
+  @override
+  String get btn_profile_pin => 'Pinned';
+
+  @override
+  String get btn_profile_scheduled => 'Scheduled Toots';
+
+  @override
+  String get btn_profile_hashtag => 'Following Hashtags';
+
+  @override
+  String get btn_profile_mute => 'Muted Users';
+
+  @override
+  String get btn_profile_block => 'Blocked Users';
+
+  @override
   String get btn_status_toot => 'Toot';
 
   @override
