@@ -70,7 +70,10 @@ class _StatusState extends ConsumerState<Status> {
           indent: widget.indent,
           child: SpoilerView(
             spoiler: schema.spoiler,
-            child: buildCoreContent(),
+            child: SensitiveView(
+              isSensitive: (pref?.sensitive ?? true) && widget.schema.sensitive && schema.spoiler.isEmpty == true,
+              child: buildCoreContent(),
+            ),
           ),
         ),
 
@@ -87,10 +90,7 @@ class _StatusState extends ConsumerState<Status> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SensitiveView(
-          isSensitive: (pref?.sensitive ?? true) && widget.schema.sensitive,
-          child: HtmlDone(html: schema.content),
-        ),
+        HtmlDone(html: schema.content),
         Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
       ],
