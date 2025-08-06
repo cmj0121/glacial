@@ -5,8 +5,8 @@
 //    - [+] POST   /api/v1/statuses
 //    - [+] GET    /api/v1/statuses/:id
 //    - [ ] GET    /api/v1/statuses
-//    - [ ] DELETE /api/v1/statuses/:id
-//    - [x] GET    /api/v1/statuses/:id/context
+//    - [+] DELETE /api/v1/statuses/:id
+//    - [+] GET    /api/v1/statuses/:id/context
 //    - [ ] POST   /api/v1/statuses/:id/translate
 //    - [ ] GET    /api/v1/statuses/:id/reblogged_by
 //	  - [ ] GET    /api/v1/statuses/:id/favourited_by
@@ -54,6 +54,17 @@ extension StatusExtensions on AccessStatusSchema {
     return StatusSchema.fromString(body);
   }
 
+  // Edit the exists status on the Mastodon server with the given content and media.
+  Future<StatusSchema> editStatus({required String id, required PostStatusSchema schema, required String idempotentKey}) async {
+    final String endpoint = '/api/v1/statuses/$id';
+    final Map<String, String> headers = {
+      'Idempotency-Key': idempotentKey,
+    };
+
+    final String body = await putAPI(endpoint, body: schema.toJson(), headers: headers) ?? '{}';
+    return StatusSchema.fromString(body);
+  }
+
   // Get the status data schema from the Mastodon server by status ID, return null
   // if the status does not exist or the request fails.
   Future<StatusSchema?> getStatus(String? statusID) async {
@@ -66,6 +77,14 @@ extension StatusExtensions on AccessStatusSchema {
     final StatusSchema status = StatusSchema.fromString(body);
 
     return status;
+  }
+
+  // Delete the status by the given status ID, return the deleted status
+  // schema if the deletion was successful, or null if the status does not exist.
+  Future<StatusSchema?> deleteStatus(StatusSchema schema) async {
+    final String endpoint = '/api/v1/statuses/${schema.id}';
+    final String? body = await deleteAPI(endpoint);
+    return body == null ? null : StatusSchema.fromString(body);
   }
 
   // The raw action to interact with the status, such as reblog, favourite, or delete.

@@ -27,8 +27,9 @@ class InteractionBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final double itemWidth = 68.0;
-    final List<StatusInteraction> actions = StatusInteraction.values;
     final AccessStatusSchema status = ref.watch(accessStatusProvider) ?? AccessStatusSchema();
+    final bool isSelfStatus = schema.account.id == status.account?.id;
+    final List<StatusInteraction> actions = StatusInteraction.values.where((a) => !a.isSelfAction || isSelfStatus).toList();
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -172,10 +173,11 @@ class _InteractionState extends State<Interaction> {
         return isSignedIn;
       case StatusInteraction.share:
         return true;
-      case StatusInteraction.mute:
-      case StatusInteraction.block:
       case StatusInteraction.edit:
       case StatusInteraction.delete:
+        return isSignedIn && isSelfPost;
+      case StatusInteraction.mute:
+      case StatusInteraction.block:
         return false; // Other actions are not available
     }
   }
@@ -195,7 +197,7 @@ class _InteractionState extends State<Interaction> {
         return widget.schema.bookmarked ?? false;
       case StatusInteraction.delete:
       case StatusInteraction.edit:
-        return false;
+        return isSelfPost;
       default:
         return isSignedIn;
     }
@@ -249,6 +251,9 @@ class _InteractionState extends State<Interaction> {
 
   void onPressed() async {
     switch (widget.action) {
+      case StatusInteraction.reply:
+        context.push(RoutePath.post.path, extra: widget.schema);
+        break;
       case StatusInteraction.reblog:
       case StatusInteraction.favourite:
       case StatusInteraction.bookmark:
@@ -259,10 +264,13 @@ class _InteractionState extends State<Interaction> {
         );
 
         widget.onReload?.call(updatedStatus);
+        break;
       case StatusInteraction.edit:
-        widget.onPressed?.call();
+        context.pop();
+        context.push(RoutePath.edit.path, extra: widget.schema);
         break;
       case StatusInteraction.delete:
+        await widget.status.deleteStatus(widget.schema);
         widget.onDeleted?.call();
         break;
       case StatusInteraction.share:
@@ -270,12 +278,14 @@ class _InteractionState extends State<Interaction> {
 
         Clipboard.setData(ClipboardData(text: widget.schema.uri));
         showSnackbar(context, text);
+        break;
       default:
         break;
     }
   }
 
   bool get isSignedIn => widget.status.accessToken?.isNotEmpty == true;
+  bool get isSelfPost => widget.schema.account.id == widget.status.account?.id;
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

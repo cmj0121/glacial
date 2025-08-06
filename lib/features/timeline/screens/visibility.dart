@@ -49,7 +49,7 @@ class StatusVisibility extends StatelessWidget {
 class VisibilitySelector extends StatefulWidget {
   final double size;
   final VisibilityType? type;
-  final ValueChanged<VisibilityType>? onChanged;
+  final ValueChanged<VisibilityType?>? onChanged;
 
   const VisibilitySelector({
     super.key,
@@ -93,11 +93,9 @@ class _VisibilitySelectorState extends State<VisibilitySelector> {
             child: StatusVisibility(type: value, size: widget.size, isCompact: false),
           );
         }).toList(),
-        onChanged: (VisibilityType? newValue) {
-          if (newValue != null) {
-            setState(() => type = newValue);
-            widget.onChanged?.call(newValue);
-          }
+        onChanged: (v) {
+          setState(() => type = v ?? type);
+          widget.onChanged?.call(v);
         },
       ),
     );

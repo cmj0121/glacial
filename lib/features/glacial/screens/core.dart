@@ -190,7 +190,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       }
     }
 
-    context.push(action.route.path, extra: action);
+    context.push(action.route.path);
   }
 }
 

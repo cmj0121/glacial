@@ -47,6 +47,7 @@
   "btn_profile_mute": "Muted Users",
   "btn_profile_block": "Blocked Users",
   "btn_status_toot": "Toot",
+  "btn_status_edit": "Edit",
   "btn_status_scheduled": "Scheduled Toot",
   "desc_preference_engineer_clear_cache": "Clear all cached data and reset the app",
   "txt_spoiler": "Spoiler",

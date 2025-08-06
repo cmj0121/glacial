@@ -34,24 +34,17 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   final double medisWidth = 100;
   final String idempotentKey = const Uuid().v4();
 
-  late final TextEditingController controller = TextEditingController();
+  late final TextEditingController controller = TextEditingController(text: widget.editFrom?.plainText ?? "");
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   late final SystemPreferenceSchema? pref = ref.read(preferenceProvider);
 
   bool isScheduled = false;
-  bool isSensitive = false;
-  List<AttachmentSchema> medias = [];
   NewPollSchema? poll;
-  VisibilityType vtype = VisibilityType.public;
-  String? spoiler;
-  DateTime? scheduledAt;
-
-  @override
-  void initState() {
-    super.initState();
-
-    vtype = pref?.visibility ?? VisibilityType.public;
-  }
+  late bool isSensitive = widget.editFrom?.sensitive ?? false;
+  late String? spoiler = widget.editFrom?.spoiler.isNotEmpty == true ? widget.editFrom?.spoiler : null;
+  late List<AttachmentSchema> medias = widget.editFrom?.attachments ?? [];
+  late VisibilityType vtype = widget.editFrom?.visibility ?? pref?.visibility ?? VisibilityType.public;
+  late DateTime? scheduledAt = widget.editFrom?.scheduledAt;
 
   @override
   void dispose() {
@@ -85,6 +78,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        buildReplyTo(),
         buildSpoilerField(),
         buildTextField(),
 
@@ -93,6 +87,21 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
         buildMedias(),
         Flexible(child: buildActions()),
       ],
+    );
+  }
+
+  // Build the optional reply-to widget with the greyed out reply-to status.
+  Widget buildReplyTo() {
+    if (widget.replyTo == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: ColorFiltered(
+        colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
+        child: StatusLite(schema: widget.replyTo!),
+      ),
     );
   }
 
@@ -191,7 +200,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        VisibilitySelector(type: vtype, size: tabSize, onChanged: (type) => setState(() => vtype = type)),
+        VisibilitySelector(
+          type: vtype,
+          size: tabSize,
+          onChanged: widget.editFrom == null ? (type) => setState(() => vtype = type ?? vtype) : null,
+        ),
 
         // The media icon button to open the image picker and upload media files.
         IconButton(
@@ -242,16 +255,19 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
 
   // Build the submit button that can post the status or schedule the post.
   Widget buildSubmitButton() {
-    final IconData icon = isScheduled ? Icons.schedule : Icons.chat;
-    final String text = isScheduled ?
-        AppLocalizations.of(context)?.btn_status_scheduled ?? "Scheduled Toot" :
-        AppLocalizations.of(context)?.btn_sidebar_post ?? "Toot";
+    final IconData icon = widget.editFrom == null ? (isScheduled ? Icons.schedule : Icons.chat) : Icons.edit;
+    final String text = widget.editFrom == null ?
+        (isScheduled ?
+          AppLocalizations.of(context)?.btn_status_scheduled ?? "Scheduled Toot" :
+          AppLocalizations.of(context)?.btn_status_toot ?? "Toot") :
+        AppLocalizations.of(context)?.btn_status_edit ?? "Edit Toot";
+
 
     return TextButton.icon(
       icon: Icon(icon, size: tabSize),
       label: Text(text),
-      onPressed: isScheduled ? onSchedulePost : onPost,
-      onLongPress: () => setState(() => isScheduled = !isScheduled),
+      onPressed: widget.editFrom == null ? (isScheduled ? onSchedulePost : onPost) : onPost,
+      onLongPress: widget.editFrom == null ? () => setState(() => isScheduled = !isScheduled) : null,
     );
   }
 
@@ -271,7 +287,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   }
 
   // The callback when the user clicks the post button.
-  void onPost() async {
+  void onPost({bool? edit}) async {
     if (!isReadyToPost) { return; }
 
     final PostStatusSchema schema = PostStatusSchema(
@@ -285,7 +301,9 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       scheduledAt: scheduledAt,
     );
 
-    final StatusSchema? post = await status?.createStatus(schema: schema, idempotentKey: idempotentKey);
+    final StatusSchema? post = widget.editFrom == null ?
+        await status?.createStatus(schema: schema, idempotentKey: idempotentKey) :
+        await status?.editStatus(id: widget.editFrom!.id, schema: schema, idempotentKey: idempotentKey);
     if (mounted) {
       if (post != null) widget.onPost?.call(post);
       context.pop();

@@ -150,6 +150,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_status_toot => '嘟文';
 
   @override
+  String get btn_status_edit => '編輯';
+
+  @override
   String get btn_status_scheduled => '排程嘟文';
 
   @override

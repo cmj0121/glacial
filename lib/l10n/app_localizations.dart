@@ -380,6 +380,12 @@ abstract class AppLocalizations {
   /// **'Toot'**
   String get btn_status_toot;
 
+  /// No description provided for @btn_status_edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get btn_status_edit;
+
   /// No description provided for @btn_status_scheduled.
   ///
   /// In en, this message translates to:

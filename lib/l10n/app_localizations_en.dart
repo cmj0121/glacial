@@ -150,6 +150,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_status_toot => 'Toot';
 
   @override
+  String get btn_status_edit => 'Edit';
+
+  @override
   String get btn_status_scheduled => 'Scheduled Toot';
 
   @override

@@ -71,7 +71,7 @@ class StatusSchema {
   factory StatusSchema.fromJson(Map<String, dynamic> json) {
     return StatusSchema(
       id: json['id'] as String,
-      content: json['content'] as String,
+      content: json['content'] as String? ?? '',
       text: json['text'] as String?,
       visibility: VisibilityType.values.where((e) => e.name == json["visibility"]).first,
       sensitive: json['sensitive'] as bool,
@@ -100,6 +100,17 @@ class StatusSchema {
       createdAt: DateTime.parse(json['created_at'] as String),
       editedAt: json['edited_at'] == null ? null : DateTime.parse(json['edited_at'] as String),
     );
+  }
+
+  // Return the plain text content of the status.
+  String get plainText {
+    if (text != null && text!.isNotEmpty) {
+      return text!;
+    }
+
+    return content
+        .replaceAll(RegExp(r'<[^>]*>'), '') // Remove HTML tags
+        .replaceAll(RegExp(r'&[a-z]+;'), ''); // Remove HTML entities
   }
 }
 

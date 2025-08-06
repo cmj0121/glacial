@@ -186,7 +186,14 @@ class _TimelineState extends State<Timeline> {
           itemCount: statuses.length,
           itemBuilder: (context, index) {
             final StatusSchema status = statuses[index];
-            final Widget child = Status(schema: status);
+            final Widget child = Status(
+              key: ValueKey('status_${status.id}'),
+              schema: status,
+              onDeleted: () {
+                setState(() => statuses.removeAt(index));
+                context.pop();
+              }
+            );
 
             return Container(
               decoration: BoxDecoration(

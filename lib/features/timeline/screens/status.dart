@@ -16,12 +16,14 @@ class Status extends ConsumerStatefulWidget {
   final int indent;
   final StatusSchema schema;
   final ValueChanged<StatusSchema>? onReload;
+  final VoidCallback? onDeleted;
 
   const Status({
     super.key,
     this.indent = 0,
     required this.schema,
     this.onReload,
+    this.onDeleted,
   });
 
   @override
@@ -79,7 +81,11 @@ class _StatusState extends ConsumerState<Status> {
 
         Application(schema: schema.application),
         const SizedBox(height: 8),
-        InteractionBar(schema: schema, onReload: onReload),
+        InteractionBar(
+          schema: schema,
+          onReload: onReload,
+          onDeleted: widget.onDeleted,
+        ),
       ],
     );
   }
@@ -183,6 +189,72 @@ class _StatusState extends ConsumerState<Status> {
       setState(() => schema = status.reblog ?? status);
       widget.onReload?.call(status);
     }
+  }
+}
+
+// The lightweight widget that can be used to show the status without the interaction
+// bar and the sensitive view.
+class StatusLite extends StatelessWidget {
+  final StatusSchema schema;
+
+  final double headerHeight = 48.0;
+  final double iconSize = 16.0;
+
+  const StatusLite({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildHeader(),
+
+        HtmlDone(html: schema.content, emojis: schema.emojis),
+        Poll(schema: schema.poll),
+        Attachments(schemas: schema.attachments),
+      ],
+    );
+  }
+
+  // Build the header of the status, including the author and the date and
+  // visibility information.
+  Widget buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Account(schema: schema.account, size: headerHeight),
+        const Spacer(),
+        buildTimeInfo(),
+        StatusVisibility(type: schema.visibility, size: iconSize),
+        const SizedBox(width: 4),
+      ],
+    );
+  }
+
+  // Build the post time information, showing the time since the post was created.
+  Widget buildTimeInfo() {
+    final String duration = timeago.format(schema.createdAt, locale: 'en_short');
+    final Widget editedAt = Tooltip(
+      message: schema.editedAt?.toLocal().toString() ?? '-',
+      child: Icon(Icons.edit_outlined, size: iconSize, color: Colors.grey),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Row(
+        children: [
+          schema.editedAt == null ? const SizedBox.shrink() : editedAt,
+          const SizedBox(width: 8),
+          Tooltip(
+            message: schema.createdAt.toLocal().toString(),
+            child: Text(duration, style: const TextStyle(color: Colors.grey)),
+          ),
+        ]
+      ),
+    );
   }
 }
 
