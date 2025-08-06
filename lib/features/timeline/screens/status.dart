@@ -90,7 +90,7 @@ class _StatusState extends ConsumerState<Status> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        HtmlDone(html: schema.content),
+        HtmlDone(html: schema.content, emojis: schema.emojis),
         Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
       ],
@@ -134,7 +134,7 @@ class _StatusState extends ConsumerState<Status> {
         children: [
           Icon(action.icon(active: true), color: Colors.grey, size: metadataHeight),
           const SizedBox(width: 4),
-          Account(schema: account, size: metadataHeight, isCompact: true),
+          AccountAvatar(schema: account, size: metadataHeight),
         ],
       ),
     );

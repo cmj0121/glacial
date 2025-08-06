@@ -17,6 +17,7 @@ class AccountSchema {
   final String avatarStatic;        // A static version of the avatar. Equal to avatar if its value is a static image.
   final String header;              // An image banner that is shown above the profile and in profile cards.
   final bool locked;                // Whether the account manually approves follow requests.
+  final List<EmojiSchema> emojis;   // Custom emoji entities to be used when rendering the profile.
   final bool bot;                   // Indicates that the account may perform automated actions.
   final bool? discoverable;         // Whether the account has opted into discovery features such as the profile directory.
   final bool? noindex;              // Whether the local user has opted out of being indexed by search engines.
@@ -38,6 +39,7 @@ class AccountSchema {
     required this.avatarStatic,
     required this.header,
     required this.locked,
+    this.emojis = const [],
     required this.bot,
     this.discoverable,
     this.noindex,
@@ -61,6 +63,9 @@ class AccountSchema {
       avatarStatic: json['avatar_static'] as String,
       header: json['header'] as String,
       locked: json['locked'] as bool,
+      emojis: (json['emojis'] as List<dynamic>?)
+          ?.map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>))
+          .toList() ?? [],
       bot: json['bot'] as bool,
       discoverable: json['discoverable'] as bool?,
       noindex: json['noindex'] as bool?,

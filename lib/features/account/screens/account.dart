@@ -9,13 +9,11 @@ import 'package:glacial/features/models.dart';
 class Account extends StatelessWidget {
   final AccountSchema schema;
   final double size;
-  final bool isCompact;
 
   const Account({
     super.key,
     required this.schema,
     this.size = 48,
-    this.isCompact = false,
   });
 
   @override
@@ -61,16 +59,19 @@ class Account extends StatelessWidget {
           fit: BoxFit.cover,
         );
 
-        return isCompact ? ClipOval(child: image) : ClipRRect(borderRadius: BorderRadius.circular(8), child: image);
+        return ClipRRect(borderRadius: BorderRadius.circular(8), child: image);
       }
     );
   }
 
   // Build the display name and the account name of the user.
   Widget buildName() {
-    final Widget name = Text(schema.displayName.isEmpty ? schema.username : schema.displayName);
+    final Widget name = EmojiSchema.replaceEmojiToWidget(
+      schema.displayName.isEmpty ? schema.username : schema.displayName,
+      emojis: schema.emojis,
+    );
 
-    return isCompact ? name : Column(
+    return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,6 +79,49 @@ class Account extends StatelessWidget {
         name,
         Text('@${schema.acct}', style: const TextStyle(color: Colors.grey), overflow: TextOverflow.ellipsis),
       ],
+    );
+  }
+}
+
+// The Avatar only widget to show the avatar of the account.
+class AccountAvatar extends StatelessWidget {
+  final AccountSchema schema;
+  final double size;
+
+  const AccountAvatar({
+    super.key,
+    required this.schema,
+    this.size = 48,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWellDone(
+      onTap: () => context.push(RoutePath.profile.path, extra: schema),
+      child: Tooltip(
+        message: schema.acct,
+        child: buildContent(),
+      ),
+    );
+  }
+
+  Widget buildContent() {
+    return ClipOval(
+      child: CachedNetworkImage(
+        imageUrl: schema.avatar,
+        placeholder: (context, url) => SizedBox(
+          width: size,
+          height: size,
+          child: ClockProgressIndicator(size: size),
+        ),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+        imageBuilder: (context, imageProvider) => Image(
+          image: imageProvider,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }

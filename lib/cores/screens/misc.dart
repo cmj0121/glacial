@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
+import 'package:glacial/features/models.dart';
+
 // The placeholder for the app's Work-In-Progress screen
 class WIP extends StatelessWidget {
   final String? title;
@@ -57,18 +59,20 @@ class InkWellDone extends StatelessWidget {
 // The customize HTML render
 class HtmlDone extends StatelessWidget {
   final String html;
+  final List<EmojiSchema> emojis;
   final OnTap? onLinkTap;
 
   const HtmlDone({
     super.key,
     required this.html,
+    this.emojis = const [],
     this.onLinkTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Html(
-      data: html,
+      data: EmojiSchema.replaceEmojiToHTML(html, emojis: emojis),
       style: {
         'a': Style(
           color: Theme.of(context).colorScheme.secondary,
