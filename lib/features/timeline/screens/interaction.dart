@@ -29,7 +29,18 @@ class InteractionBar extends ConsumerWidget {
     final double itemWidth = 68.0;
     final AccessStatusSchema status = ref.watch(accessStatusProvider) ?? AccessStatusSchema();
     final bool isSelfStatus = schema.account.id == status.account?.id;
-    final List<StatusInteraction> actions = StatusInteraction.values.where((a) => !a.isSelfAction || isSelfStatus).toList();
+    final List<StatusInteraction> actions = StatusInteraction.values.where((a) {
+      switch (a) {
+        case StatusInteraction.edit:
+        case StatusInteraction.delete:
+          return isSelfStatus;
+        case StatusInteraction.mute:
+        case StatusInteraction.block:
+          return !isSelfStatus;
+        default:
+          return true; // All other actions are available
+      }
+    }).toList();
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -178,7 +189,7 @@ class _InteractionState extends State<Interaction> {
         return isSignedIn && isSelfPost;
       case StatusInteraction.mute:
       case StatusInteraction.block:
-        return false; // Other actions are not available
+        return isSignedIn && !isSelfPost;
     }
   }
 
@@ -253,7 +264,7 @@ class _InteractionState extends State<Interaction> {
     switch (widget.action) {
       case StatusInteraction.reply:
         context.push(RoutePath.post.path, extra: widget.schema);
-        break;
+        return;
       case StatusInteraction.reblog:
       case StatusInteraction.favourite:
       case StatusInteraction.bookmark:
@@ -266,7 +277,6 @@ class _InteractionState extends State<Interaction> {
         widget.onReload?.call(updatedStatus);
         break;
       case StatusInteraction.edit:
-        context.pop();
         context.push(RoutePath.edit.path, extra: widget.schema);
         break;
       case StatusInteraction.delete:
@@ -279,9 +289,15 @@ class _InteractionState extends State<Interaction> {
         Clipboard.setData(ClipboardData(text: widget.schema.uri));
         showSnackbar(context, text);
         break;
-      default:
+      case StatusInteraction.mute:
+        await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.mute);
+        break;
+      case StatusInteraction.block:
+        await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.block);
         break;
     }
+
+    if (mounted) { context.pop(); }
   }
 
   bool get isSignedIn => widget.status.accessToken?.isNotEmpty == true;

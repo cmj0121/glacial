@@ -156,6 +156,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_status_scheduled => 'Scheduled Toot';
 
   @override
+  String get btn_relationship_following => 'Following';
+
+  @override
+  String get btn_relationship_followed_by => 'Followed by';
+
+  @override
+  String get btn_relationship_follow_each_other => 'Be friend';
+
+  @override
+  String get btn_relationship_stranger => 'Stranger';
+
+  @override
+  String get btn_relationship_blocked_by => 'Blocked By';
+
+  @override
+  String btn_relationship_mute(Object acct) {
+    return 'Mute $acct';
+  }
+
+  @override
+  String btn_relationship_unmute(Object acct) {
+    return 'Unmute $acct';
+  }
+
+  @override
+  String btn_relationship_block(Object acct) {
+    return 'Block $acct';
+  }
+
+  @override
+  String btn_relationship_unblock(Object acct) {
+    return 'Unblock $acct';
+  }
+
+  @override
+  String btn_relationship_report(Object acct) {
+    return 'Report $acct';
+  }
+
+  @override
   String get desc_preference_engineer_clear_cache =>
       'Clear all cached data and reset the app';
 

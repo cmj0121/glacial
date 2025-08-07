@@ -202,10 +202,21 @@ class ProfilePage extends ConsumerWidget {
 
   // Build the account information section that shows the username, display name, and bio.
   Widget buildAccountInfo(BuildContext context, AccessStatusSchema status) {
-    final String acct = schema.acct.contains('@') ? schema.acct : '${schema.acct}@${status.domain}';
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildAccountName(context, status),
+        const SizedBox(height: 4),
+        HtmlDone(html: schema.note),
+      ],
+    );
+  }
+
+  // Build the account name and relationship buttons.
+  Widget buildAccountName(BuildContext context, AccessStatusSchema status) {
+    final String acct = schema.acct.contains('@') ? schema.acct : '${schema.acct}@${status.domain}';
+
+    return Row(
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -215,8 +226,9 @@ class ProfilePage extends ConsumerWidget {
           ),
           child: Text(acct, style: Theme.of(context).textTheme.labelSmall),
         ),
-        const SizedBox(height: 4),
-        HtmlDone(html: schema.note),
+
+        const Spacer(),
+        schema.id == status.account?.id ? const SizedBox.shrink() : Relationship(schema: schema),
       ],
     );
   }

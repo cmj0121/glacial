@@ -392,6 +392,66 @@ abstract class AppLocalizations {
   /// **'Scheduled Toot'**
   String get btn_status_scheduled;
 
+  /// No description provided for @btn_relationship_following.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get btn_relationship_following;
+
+  /// No description provided for @btn_relationship_followed_by.
+  ///
+  /// In en, this message translates to:
+  /// **'Followed by'**
+  String get btn_relationship_followed_by;
+
+  /// No description provided for @btn_relationship_follow_each_other.
+  ///
+  /// In en, this message translates to:
+  /// **'Be friend'**
+  String get btn_relationship_follow_each_other;
+
+  /// No description provided for @btn_relationship_stranger.
+  ///
+  /// In en, this message translates to:
+  /// **'Stranger'**
+  String get btn_relationship_stranger;
+
+  /// No description provided for @btn_relationship_blocked_by.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked By'**
+  String get btn_relationship_blocked_by;
+
+  /// No description provided for @btn_relationship_mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute {acct}'**
+  String btn_relationship_mute(Object acct);
+
+  /// No description provided for @btn_relationship_unmute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute {acct}'**
+  String btn_relationship_unmute(Object acct);
+
+  /// No description provided for @btn_relationship_block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {acct}'**
+  String btn_relationship_block(Object acct);
+
+  /// No description provided for @btn_relationship_unblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock {acct}'**
+  String btn_relationship_unblock(Object acct);
+
+  /// No description provided for @btn_relationship_report.
+  ///
+  /// In en, this message translates to:
+  /// **'Report {acct}'**
+  String btn_relationship_report(Object acct);
+
   /// No description provided for @desc_preference_engineer_clear_cache.
   ///
   /// In en, this message translates to:

@@ -156,6 +156,46 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_status_scheduled => '排程嘟文';
 
   @override
+  String get btn_relationship_following => '追隨中';
+
+  @override
+  String get btn_relationship_followed_by => '被跟隨';
+
+  @override
+  String get btn_relationship_follow_each_other => '互為朋友';
+
+  @override
+  String get btn_relationship_stranger => '陌生人';
+
+  @override
+  String get btn_relationship_blocked_by => '被封鎖';
+
+  @override
+  String btn_relationship_mute(Object acct) {
+    return '靜音 $acct';
+  }
+
+  @override
+  String btn_relationship_unmute(Object acct) {
+    return '解除靜音 $acct';
+  }
+
+  @override
+  String btn_relationship_block(Object acct) {
+    return '封鎖 $acct';
+  }
+
+  @override
+  String btn_relationship_unblock(Object acct) {
+    return '解除封鎖 $acct';
+  }
+
+  @override
+  String btn_relationship_report(Object acct) {
+    return '回報 $acct';
+  }
+
+  @override
   String get desc_preference_engineer_clear_cache => '清除快取並重設';
 
   @override

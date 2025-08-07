@@ -77,17 +77,6 @@ enum StatusInteraction {
         return false; // Not built-in, requires custom handling.
     }
   }
-
-  // The self status action, for edit or delete.
-  bool get isSelfAction {
-    switch (this) {
-      case edit:
-      case delete:
-        return true; // Actions that can only be performed on the user's own status.
-      default:
-        return false; // Not self actions.
-    }
-  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
