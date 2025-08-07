@@ -196,10 +196,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   // Build the possible actions for the post status form.
   Widget buildActions() {
     final int maxMedias = status?.server?.config.statuses.maxAttachments ?? 4;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
+    final List<Widget> actions = [
         VisibilitySelector(
           type: vtype,
           size: tabSize,
@@ -246,15 +243,42 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           focusColor: Colors.transparent,
           onPressed: () => setState(() => isSensitive = !isSensitive),
         ),
+    ];
 
-        const Spacer(),
-        buildSubmitButton(),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double width = constraints.maxWidth;
+
+        if (width < 400) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: actions,
+              ),
+              const SizedBox(height: 8),
+              buildSubmitButton(fullWidth: true),
+            ],
+          );
+        } else {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              ...actions,
+              const Spacer(),
+              buildSubmitButton(fullWidth: false),
+            ],
+          );
+        }
+      },
     );
   }
 
   // Build the submit button that can post the status or schedule the post.
-  Widget buildSubmitButton() {
+  Widget buildSubmitButton({bool fullWidth = false}) {
     final IconData icon = widget.editFrom == null ? (isScheduled ? Icons.schedule : Icons.chat) : Icons.edit;
     final String text = widget.editFrom == null ?
         (isScheduled ?
@@ -262,13 +286,25 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           AppLocalizations.of(context)?.btn_status_toot ?? "Toot") :
         AppLocalizations.of(context)?.btn_status_edit ?? "Edit Toot";
 
-
-    return TextButton.icon(
-      icon: Icon(icon, size: tabSize),
-      label: Text(text),
-      onPressed: widget.editFrom == null ? (isScheduled ? onSchedulePost : onPost) : onPost,
-      onLongPress: widget.editFrom == null ? () => setState(() => isScheduled = !isScheduled) : null,
-    );
+    switch (fullWidth) {
+      case true:
+        return SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            icon: Icon(icon, size: tabSize),
+            label: Text(text),
+            onPressed: widget.editFrom == null ? (isScheduled ? onSchedulePost : onPost) : onPost,
+            onLongPress: widget.editFrom == null ? () => setState(() => isScheduled = !isScheduled) : null,
+          ),
+        );
+      case false:
+        return FilledButton.icon(
+          icon: Icon(icon, size: tabSize),
+          label: Text(text),
+          onPressed: widget.editFrom == null ? (isScheduled ? onSchedulePost : onPost) : onPost,
+          onLongPress: widget.editFrom == null ? () => setState(() => isScheduled = !isScheduled) : null,
+        );
+    }
   }
 
   // The atction to image picker and upload media files.
