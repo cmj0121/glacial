@@ -143,9 +143,16 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             title = EmojiSchema.replaceEmojiToWidget(account.displayName, emojis: account.emojis);
             backable = true;
             break;
+          case RoutePath.hashtag:
+            final String hashtag = state.extra as String;
+
+            title = Text('#$hashtag');
+            backable = true;
+            break;
           default:
             break;
         }
+
         return GlacialHome(
           key: UniqueKey(),
           backable: backable,
@@ -212,6 +219,24 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (BuildContext context, GoRouterState state) {
             final AccountSchema acocunt = state.extra as AccountSchema;
             return AccountProfile(schema: acocunt);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.hashtag.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final AccessStatusSchema? status = ref.read(accessStatusProvider);
+            final String hashtag = state.extra as String;
+
+            if (status == null) {
+              logger.w("No server selected, but it's required to show the hashtag timeline.");
+              return const SizedBox.shrink();
+            }
+
+            return Timeline(
+              type: TimelineType.hashtag,
+              status: status,
+              hashtag: hashtag,
+            );
           },
         ),
       ],

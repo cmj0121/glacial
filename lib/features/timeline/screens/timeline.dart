@@ -109,6 +109,7 @@ class Timeline extends StatefulWidget {
   final TimelineType type;
   final AccessStatusSchema status;
   final AccountSchema? account;
+  final String? hashtag;
   final ScrollController? controller;
 
   const Timeline({
@@ -116,6 +117,7 @@ class Timeline extends StatefulWidget {
     required this.type,
     required this.status,
     this.account,
+    this.hashtag,
     this.controller,
   });
 
@@ -238,7 +240,12 @@ class _TimelineState extends State<Timeline> {
     if (mounted) setState(() => isLoading = true);
 
     final String? maxId = statuses.isNotEmpty ? statuses.last.id : null;
-    final List<StatusSchema> schemas = await widget.status.fetchTimeline(widget.type, account: widget.account, maxId: maxId);
+    final List<StatusSchema> schemas = await widget.status.fetchTimeline(
+      widget.type,
+      account: widget.account,
+      tag: widget.hashtag,
+      maxId: maxId,
+    );
 
     if (mounted) {
       setState(() {

@@ -96,7 +96,7 @@ class _StatusState extends ConsumerState<Status> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        HtmlDone(html: schema.content, emojis: schema.emojis),
+        HtmlDone(html: schema.content, emojis: schema.emojis, onLinkTap: onLinkTap),
         Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
       ],
@@ -184,10 +184,51 @@ class _StatusState extends ConsumerState<Status> {
     );
   }
 
+  // Reload the status when the status is reblogged or updated.
   void onReload(StatusSchema status) {
     if (mounted) {
       setState(() => schema = status.reblog ?? status);
       widget.onReload?.call(status);
+    }
+  }
+
+  // Handle the link tap event, and open the link in the in-app webview.
+  void onLinkTap(String? url, Map<String, String> attributes, _) async {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final Uri? uri = url == null ? null : Uri.parse(url);
+
+    if (uri == null) {
+      return;
+    }
+
+    // Link belong to the same domain, so we can open it in the app.
+    final String path = uri.path;
+
+    if (path.startsWith('/@')) {
+      // The link is an account link, so we can open the profile.
+      final String acct = uri.pathSegments.isNotEmpty ? uri.pathSegments.first.substring(1) : '';
+      final List<AccountSchema> accounts = await status?.searchAccounts(acct) ?? [];
+      final AccountSchema? account = accounts.where((a) => a.acct == acct).firstOrNull;
+
+      if (mounted && account != null) {
+        // only push the profile route if the account is found
+        context.push(RoutePath.profile.path, extra: account);
+        return;
+      }
+    } else if (path.startsWith('/tags/')) {
+      // The link is a tag link, so we can open the tag search.
+      final String tag = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : '';
+
+      if (mounted && tag.isNotEmpty) {
+        // only push the hashtag route if the tag is not empty
+        context.push(RoutePath.hashtag.path, extra: tag);
+        return;
+      }
+    }
+
+    if (mounted) {
+      // Open the link in the in-app webview.
+      context.push(RoutePath.webview.path, extra: uri);
     }
   }
 }

@@ -2,7 +2,7 @@
 //
 // ## Timeline APIs
 //     - [+] GET /api/v1/timelines/public
-//     - [ ] GET /api/v1/timelines/tag/:hashtag
+//     - [+] GET /api/v1/timelines/tag/:hashtag
 //     - [+] GET /api/v1/timelines/home
 //     - [ ] GET /api/v1/timelines/link?url=:url
 //     - [ ] GET /api/v1/timelines/list/:list_id
@@ -28,7 +28,7 @@ import 'package:glacial/features/models.dart';
 // The API extensions for the timeline endpoints in the Mastodon server.
 extension TimelineExtensions on AccessStatusSchema {
   // Fetch timeline's statuses based on the timeline type.
-  Future<List<StatusSchema>> fetchTimeline(TimelineType type, {String? maxId, AccountSchema? account}) async {
+  Future<List<StatusSchema>> fetchTimeline(TimelineType type, {String? maxId, AccountSchema? account, String? tag}) async {
     final Map<String, String> query = {"max_id": maxId ?? ""};
     late final String endpoint;
 
@@ -62,8 +62,16 @@ extension TimelineExtensions on AccessStatusSchema {
         return fetchAccountTimeline(account: account, maxId: maxId, pinned: type == TimelineType.pin);
       case TimelineType.schedule:
         return fetchScheduledStatuses(maxId: maxId);
-      default:
-        throw Exception("Unsupported timeline type: $type");
+      case TimelineType.hashtag:
+        if (tag?.isNotEmpty != true) {
+          throw Exception("Tag must be provided for hashtag timeline.");
+        }
+
+        query["max_id"] = maxId ?? "";
+        query["local"] = "true";
+        query["remote"] = "true";
+        endpoint = "/api/v1/timelines/tag/$tag";
+        break;
     }
 
     final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';

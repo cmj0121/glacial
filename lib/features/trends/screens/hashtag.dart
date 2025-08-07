@@ -1,6 +1,7 @@
 // The Trends link that have been shared more than others.
 import 'package:flutter/material.dart';
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -21,14 +22,17 @@ class Hashtag extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
-        child: buildContent(context),
+        child: InkWellDone(
+          onTap: () => context.push(RoutePath.hashtag.path, extra: schema.name),
+          child: buildContent(context),
+        ),
       ),
     );
   }
 
   Widget buildContent(BuildContext context) {
     return Row(
-    children: [
+      children: [
         Expanded(child: buildHashtag(context)),
         const Spacer(),
         HistoryLineChart(schemas: schema.history),

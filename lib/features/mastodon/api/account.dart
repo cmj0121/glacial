@@ -27,7 +27,7 @@
 //   - [ ] POST  /api/v1/accounts/:id/note
 //   - [+] GET   /api/v1/accounts/relationships
 //   - [ ] GET   /api/v1/accounts/familiar_followers
-//   - [ ] GET   /api/v1/accounts/search
+//   - [+] GET   /api/v1/accounts/search
 //   - [ ] GET   /api/v1/accounts/lookup
 //   - [ ] GET   /api/v1/accounts/:id/identity_proofs        (deprecated in 3.5.0)
 //
@@ -224,6 +224,23 @@ extension AccountsExtensions on AccessStatusSchema {
 
     logger.i("complete change the relationship to ${relationship.type} for account: ${account.id}");
     return relationship;
+  }
+
+  // Search for matching accounts by username or display name.
+  Future<List<AccountSchema>> searchAccounts(String query, {int? limit}) async {
+    if (query.isEmpty) {
+      return [];
+    }
+
+    final Map<String, String> queryParameters = {"q": query, "limit": limit?.toString() ?? "40"};
+    final String endpoint = '/api/v1/accounts/search';
+    final String body = await getAPI(endpoint, queryParameters: queryParameters) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+
+    logger.d("complete search accounts: ${accounts.length}");
+    accounts.map((a) => cacheAccount(a)).toList();
+    return accounts;
   }
 }
 
