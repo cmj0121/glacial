@@ -16,10 +16,14 @@ class GlacialHome extends ConsumerStatefulWidget {
   // The global scroll-to-top controller callback
   static ScrollController? scrollToTop;
 
+  final bool backable;
+  final Widget? title;
   final Widget child;
 
   const GlacialHome({
     super.key,
+    this.backable = false,
+    this.title,
     required this.child,
   });
 
@@ -50,6 +54,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final bool isMobile = constraints.maxWidth < 600;
+        final IconData icon = widget.backable ? Icons.arrow_back_ios_new_rounded : Icons.read_more_rounded;
 
         return Scaffold(
           key: scaffoldKey,
@@ -57,11 +62,12 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
             preferredSize: Size.fromHeight(appBarHeight),
             child: AppBar(
               leading: IconButton(
-                icon: const Icon(Icons.read_more_rounded),
+                icon: Icon(icon, size: iconSize, color: Theme.of(context).colorScheme.onSurface),
                 hoverColor: Colors.transparent,
                 focusColor: Colors.transparent,
-                onPressed: () => scaffoldKey.currentState?.openDrawer(),
+                onPressed: widget.backable ? () => context.pop() : () => scaffoldKey.currentState?.openDrawer(),
               ),
+              title: widget.title,
               actions: [
                 SearchExplorer(size: sidebarSize),
               ],
@@ -178,9 +184,9 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   void onSelect(int index) {
     final SidebarButtonType action = actions[index];
     final String path = GoRouter.of(context).state.uri.toString();
-    final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
+    final RoutePath curRoute = RoutePath.values.where((r) => r.path == path).first;
 
-    if (route == action.route) {
+    if (curRoute == action.route) {
       logger.d("already on the ${action.name} page, no need to navigate.");
 
       if (GlacialHome.scrollToTop?.hasClients == true) {
@@ -188,9 +194,17 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
         GlacialHome.scrollToTop?.animateTo(0, duration: duration, curve: Curves.easeInOut);
       }
+      return ;
     }
 
-    context.push(action.route.path);
+    switch (action.route) {
+      case RoutePath.post:
+        context.push(action.route.path);
+        break;
+      default:
+        context.go(action.route.path);
+        break;
+    }
   }
 }
 

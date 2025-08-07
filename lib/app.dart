@@ -116,11 +116,42 @@ class _CoreAppState extends ConsumerState<CoreApp> {
     );
   }
 
-  // Build the home page with the sidebar and the main content
+  // Build the home page with the sidebar and the main content.
   RouteBase homeRoutes() {
     return ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        return GlacialHome(key: UniqueKey(), child: child);
+        final RoutePath path = RoutePath.values.where((p) => p.path == state.uri.path).first;
+
+        Widget? title;
+        bool backable = false;
+
+        switch (path) {
+          case RoutePath.post:
+          case RoutePath.edit:
+          case RoutePath.status:
+            backable = true;
+            break;
+          case RoutePath.search:
+            final String keyword = state.extra as String;
+
+            title = Text(keyword);
+            backable = true;
+            break;
+          case RoutePath.profile:
+            final AccountSchema account = state.extra as AccountSchema;
+
+            title = EmojiSchema.replaceEmojiToWidget(account.displayName, emojis: account.emojis);
+            backable = true;
+            break;
+          default:
+            break;
+        }
+        return GlacialHome(
+          key: UniqueKey(),
+          backable: backable,
+          title: title,
+          child: child,
+        );
       },
       routes: [
         GoRoute(
@@ -146,34 +177,27 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           path: RoutePath.notifications.path,
           builder: (_, _) => const WIP(),
         ),
+
+        // The backable sub-routes that can be used to navigate to the and pop-back.
         GoRoute(
           path: RoutePath.post.path,
           builder: (BuildContext context, GoRouterState state) {
             final StatusSchema? schema = state.extra as StatusSchema?;
-
-            return BackableView(
-              child: PostStatusForm(replyTo: schema),
-            );
+            return PostStatusForm(replyTo: schema);
           },
         ),
         GoRoute(
           path: RoutePath.edit.path,
           builder: (BuildContext context, GoRouterState state) {
             final StatusSchema schema = state.extra as StatusSchema;
-
-            return BackableView(
-              child: PostStatusForm(editFrom: schema),
-            );
+            return PostStatusForm(editFrom: schema);
           },
         ),
         GoRoute(
           path: RoutePath.status.path,
           builder: (BuildContext context, GoRouterState state) {
             final StatusSchema status = state.extra as StatusSchema;
-
-            return BackableView(
-              child: StatusContext(schema: status),
-            );
+            return StatusContext(schema: status);
           },
         ),
         GoRoute(
@@ -187,11 +211,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           path: RoutePath.profile.path,
           builder: (BuildContext context, GoRouterState state) {
             final AccountSchema acocunt = state.extra as AccountSchema;
-
-            return BackableView(
-              title: acocunt.displayName,
-              child: AccountProfile(schema: acocunt),
-            );
+            return AccountProfile(schema: acocunt);
           },
         ),
       ],
