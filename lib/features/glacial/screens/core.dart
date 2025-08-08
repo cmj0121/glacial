@@ -18,12 +18,14 @@ class GlacialHome extends ConsumerStatefulWidget {
 
   final bool backable;
   final Widget? title;
+  final List<Widget> actions;
   final Widget child;
 
   const GlacialHome({
     super.key,
     this.backable = false,
     this.title,
+    this.actions = const [],
     required this.child,
   });
 
@@ -69,6 +71,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
               ),
               title: widget.title,
               actions: [
+                ...widget.actions,
                 SearchExplorer(size: sidebarSize),
               ],
             ),

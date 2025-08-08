@@ -124,6 +124,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
 
         Widget? title;
         bool backable = false;
+        List<Widget> actions = [];
 
         switch (path) {
           case RoutePath.post:
@@ -148,6 +149,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
 
             title = Text('#$hashtag');
             backable = true;
+            actions.add(FollowedHashtagButton(hashtag: hashtag));
             break;
           case RoutePath.statusInfo:
             backable = true;
@@ -163,6 +165,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           key: UniqueKey(),
           backable: backable,
           title: title,
+          actions: actions,
           child: child,
         );
       },

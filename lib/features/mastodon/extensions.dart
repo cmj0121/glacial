@@ -13,6 +13,7 @@ export 'api/media.dart';
 export 'api/search.dart';
 export 'api/status.dart';
 export 'api/suggestions.dart';
+export 'api/tags.dart';
 export 'api/timeline.dart';
 export 'api/trends.dart';
 

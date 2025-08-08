@@ -1,7 +1,9 @@
 // The Trends link that have been shared more than others.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -59,6 +61,58 @@ class Hashtag extends StatelessWidget {
         ),
       ]
     );
+  }
+}
+
+// The followed hashtag button that can be used to follow or unfollow the hashtag.
+class FollowedHashtagButton extends ConsumerStatefulWidget {
+  final String hashtag;
+
+  const FollowedHashtagButton({
+    super.key,
+    required this.hashtag,
+  });
+
+  @override
+  ConsumerState<FollowedHashtagButton> createState() => _FollowedHashtagButtonState();
+}
+
+class _FollowedHashtagButtonState extends ConsumerState<FollowedHashtagButton> {
+  HashtagSchema? schema;
+
+  @override
+  void initState() {
+    super.initState();
+    onReload();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (schema == null) {
+      return const SizedBox.shrink();
+    }
+
+    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final bool isFollowing = schema?.following == true;
+
+    return IconButton(
+      icon: Icon(
+        isFollowing ? Icons.bookmark : Icons.bookmark_border,
+        color: isFollowing ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
+      ),
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onPressed: () async {
+        await (isFollowing ? status?.unfollowHashtag(widget.hashtag) : status?.followHashtag(widget.hashtag));
+        onReload();
+      },
+    );
+  }
+
+  void onReload() async {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final HashtagSchema? hashtag = await status?.getHashtag(widget.hashtag);
+    setState(() => schema = hashtag);
   }
 }
 
