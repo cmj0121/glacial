@@ -8,8 +8,8 @@
 //    - [+] DELETE /api/v1/statuses/:id
 //    - [+] GET    /api/v1/statuses/:id/context
 //    - [ ] POST   /api/v1/statuses/:id/translate
-//    - [ ] GET    /api/v1/statuses/:id/reblogged_by
-//	  - [ ] GET    /api/v1/statuses/:id/favourited_by
+//    - [+] GET    /api/v1/statuses/:id/reblogged_by
+//	  - [+] GET    /api/v1/statuses/:id/favourited_by
 //    - [+] POST   /api/v1/statuses/:id/favourite
 //    - [+] POST   /api/v1/statuses/:id/unfavourite
 //    - [+] POST   /api/v1/statuses/:id/reblog
@@ -137,6 +137,32 @@ extension StatusExtensions on AccessStatusSchema {
 
     logger.d("complete load the scheduled status timeline, count: ${status.length}");
     return status;
+  }
+
+  // List the accounts that have reblogged the given status.
+  Future<List<AccountSchema>> fetchRebloggedBy({required StatusSchema schema}) async {
+    final String endpoint = '/api/v1/statuses/${schema.id}/reblogged_by';
+    final String body = await getAPI(endpoint) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e)).toList();
+
+    // save the related info to the in-memory cache.
+    accounts.map((a) => cacheAccount(a)).toList();
+    logger.d("complete load the reblogged by accounts, count: ${accounts.length}");
+    return accounts;
+  }
+
+  // List the accounts that have favourited the given status.
+  Future<List<AccountSchema>> fetchFavouritedBy({required StatusSchema schema}) async {
+    final String endpoint = '/api/v1/statuses/${schema.id}/favourited_by';
+    final String body = await getAPI(endpoint) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e)).toList();
+
+    // save the related info to the in-memory cache.
+    accounts.map((a) => cacheAccount(a)).toList();
+    logger.d("complete load the favourited by accounts, count: ${accounts.length}");
+    return accounts;
   }
 }
 

@@ -42,6 +42,8 @@
   "btn_profile_core": "Profile",
   "btn_profile_post": "Toots",
   "btn_profile_pin": "Pinned",
+  "btn_profile_followers": "Followers",
+  "btn_profile_following": "Following",
   "btn_profile_scheduled": "Scheduled Toots",
   "btn_profile_hashtag": "Following Hashtags",
   "btn_profile_mute": "Muted Users",

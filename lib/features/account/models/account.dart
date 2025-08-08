@@ -83,6 +83,8 @@ enum AccountProfileType {
   profile,       // The profile of the specified user.
   post,          // The statuses posted from the given user.
   pin,           // The pinned statuses for the logged in user.
+  followers,     // The followers of the logged in user.
+  following,     // The accounts followed by the logged in user.
   schedule,      // The scheduled statuses for the logged in user.
   hashtag,       // The hashtag timeline for the current server.
   mute,          // The muted accounts for the logged in user.
@@ -97,6 +99,10 @@ enum AccountProfileType {
         return AppLocalizations.of(context)?.btn_profile_post ?? "Posts";
       case pin:
         return AppLocalizations.of(context)?.btn_profile_pin ?? "Pinned Posts";
+      case followers:
+        return AppLocalizations.of(context)?.btn_profile_followers ?? "Followers";
+      case following:
+        return AppLocalizations.of(context)?.btn_profile_following ?? "Following";
       case schedule:
         return AppLocalizations.of(context)?.btn_profile_scheduled ?? "Scheduled Posts";
       case hashtag:
@@ -117,6 +123,10 @@ enum AccountProfileType {
         return active ? Icons.article : Icons.article_outlined;
       case pin:
         return active ? Icons.push_pin : Icons.push_pin_outlined;
+      case followers:
+        return active ? Icons.visibility : Icons.visibility_outlined;
+      case following:
+        return active ? Icons.star : Icons.star_outline_outlined;
       case schedule:
         return active ? Icons.schedule : Icons.schedule_outlined;
       case hashtag:
@@ -134,6 +144,8 @@ enum AccountProfileType {
       case AccountProfileType.profile:
       case AccountProfileType.post:
       case AccountProfileType.pin:
+      case AccountProfileType.followers:
+      case AccountProfileType.following:
         return true;
       default:
         return false;

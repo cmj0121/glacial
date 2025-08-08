@@ -149,6 +149,9 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             title = Text('#$hashtag');
             backable = true;
             break;
+          case RoutePath.statusInfo:
+            backable = true;
+            break;
           default:
             break;
         }
@@ -237,6 +240,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
               status: status,
               hashtag: hashtag,
             );
+          },
+        ),
+        GoRoute(
+          path: RoutePath.statusInfo.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema status = state.extra as StatusSchema;
+            return StatusInfo(schema: status);
           },
         ),
       ],

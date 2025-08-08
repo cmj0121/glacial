@@ -275,7 +275,7 @@ class _InteractionState extends State<Interaction> {
         );
 
         widget.onReload?.call(updatedStatus);
-        break;
+        return;
       case StatusInteraction.edit:
         context.push(RoutePath.edit.path, extra: widget.schema);
         break;
@@ -288,7 +288,7 @@ class _InteractionState extends State<Interaction> {
 
         Clipboard.setData(ClipboardData(text: widget.schema.uri));
         showSnackbar(context, text);
-        break;
+        return;
       case StatusInteraction.mute:
         await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.mute);
         break;

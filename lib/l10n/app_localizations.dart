@@ -350,6 +350,18 @@ abstract class AppLocalizations {
   /// **'Pinned'**
   String get btn_profile_pin;
 
+  /// No description provided for @btn_profile_followers.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get btn_profile_followers;
+
+  /// No description provided for @btn_profile_following.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get btn_profile_following;
+
   /// No description provided for @btn_profile_scheduled.
   ///
   /// In en, this message translates to:

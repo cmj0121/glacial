@@ -76,6 +76,16 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
             return ProfilePage(
               schema: widget.schema,
               onStatusesTap: () => controller.animateTo(AccountProfileType.post.index),
+              onFollowersTap: () => controller.animateTo(AccountProfileType.followers.index),
+              onFollowingTap: () => controller.animateTo(AccountProfileType.following.index),
+            );
+          case AccountProfileType.followers:
+            return AccountList(loader: ({String? maxId}) =>
+              status?.fetchFollowers(account: widget.schema, maxId: maxId) ?? Future.value((<AccountSchema>[], null))
+            );
+          case AccountProfileType.following:
+            return AccountList(loader: ({String? maxId}) =>
+              status?.fetchFollowing(account: widget.schema, maxId: maxId) ?? Future.value((<AccountSchema>[], null))
             );
           case AccountProfileType.post:
           case AccountProfileType.pin:
@@ -105,6 +115,8 @@ class ProfilePage extends ConsumerWidget {
   final double bannerHeight;
   final double avatarSize;
   final VoidCallback? onStatusesTap;
+  final VoidCallback? onFollowersTap;
+  final VoidCallback? onFollowingTap;
 
   const ProfilePage({
     super.key,
@@ -112,6 +124,8 @@ class ProfilePage extends ConsumerWidget {
     this.bannerHeight = 200,
     this.avatarSize = 80,
     this.onStatusesTap,
+    this.onFollowersTap,
+    this.onFollowingTap,
   });
 
   @override
@@ -136,6 +150,8 @@ class ProfilePage extends ConsumerWidget {
           UserStatistics(
             schema: schema,
             onStatusesTap: onStatusesTap,
+            onFollowersTap: onFollowersTap,
+            onFollowingTap: onFollowingTap,
           ),
         ],
       ),

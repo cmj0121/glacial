@@ -135,6 +135,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_profile_pin => 'Pinned';
 
   @override
+  String get btn_profile_followers => 'Followers';
+
+  @override
+  String get btn_profile_following => 'Following';
+
+  @override
   String get btn_profile_scheduled => 'Scheduled Toots';
 
   @override

@@ -135,6 +135,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_profile_pin => '釘選文章';
 
   @override
+  String get btn_profile_followers => '追隨者';
+
+  @override
+  String get btn_profile_following => '追隨中';
+
+  @override
   String get btn_profile_scheduled => '排程都文';
 
   @override

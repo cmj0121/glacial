@@ -8,8 +8,8 @@
 //   - [ ] GET   /api/v1/accounts/:id
 //   - [ ] GET   /api/v1/accounts
 //   - [+] GET   /api/v1/accounts/:id/statuses
-//   - [ ] GET   /api/v1/accounts/:id/followers
-//   - [ ] GET   /api/v1/accounts/:id/following
+//   - [+] GET   /api/v1/accounts/:id/followers
+//   - [+] GET   /api/v1/accounts/:id/following
 //   - [ ] GET   /api/v1/accounts/:id/featured_tags
 //   - [ ] GET   /api/v1/accounts/:id/lists
 //   - [+] POST  /api/v1/accounts/:id/follow
@@ -137,6 +137,32 @@ extension AccountsExtensions on AccessStatusSchema {
 
     logger.d("complete load the account timelnie: ${status.length}");
     return status;
+  }
+
+  // Get the followers of the account by account ID, return the list of accounts.
+  Future<(List<AccountSchema>, String?)> fetchFollowers({required AccountSchema account, String? maxId}) async {
+    final String endpoint = '/api/v1/accounts/${account.id}/followers';
+    final Map<String, String> query = {"max_id": maxId ?? ""};
+    final (body, nextId) = await getAPIEx(endpoint, queryParameters: query);
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+
+    logger.d("complete load the followers of account: ${account.id}, count: ${accounts.length}");
+    accounts.map((a) => cacheAccount(a)).toList();
+    return (accounts, nextId);
+  }
+
+  // Get the accounts followed by the account by account ID, return the list of accounts.
+  Future<(List<AccountSchema>, String?)> fetchFollowing({required AccountSchema account, String? maxId}) async {
+    final String endpoint = '/api/v1/accounts/${account.id}/following';
+    final Map<String, String> query = {"max_id": maxId ?? ""};
+    final (body, nextId) = await getAPIEx(endpoint, queryParameters: query);
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+
+    logger.d("complete load the following accounts of account: ${account.id}, count: ${accounts.length}");
+    accounts.map((a) => cacheAccount(a)).toList();
+    return (accounts, nextId);
   }
 
   // Get the account be muted by account ID, return the list of accounts.
