@@ -151,6 +151,51 @@ class StatusContextSchema {
   }
 }
 
+// Represents a revision of a status that has been edited.
+class StatusEditSchema {
+  final String content;                     // The content of the status at this revision.
+  final String spoiler;                     // The content of the subject or content warning at this revision.
+  final bool sensitive;                     // Whether the status was marked as sensitive at this revision.
+  final DateTime createdAt;                 // The date when this revision was created.
+  final AccountSchema account;              // The account that created this revision.
+  final PollSchema? poll;                   // The poll attached to the status at this revision.
+  final List<AttachmentSchema> attachments; // Media that was attached to the status at this revision.
+  final List<EmojiSchema> emojis;           // Custom emoji used in the status at this revision.
+
+  const StatusEditSchema({
+    required this.content,
+    required this.spoiler,
+    required this.sensitive,
+    required this.createdAt,
+    required this.account,
+    this.poll,
+    this.attachments = const [],
+    this.emojis = const [],
+  });
+
+  factory StatusEditSchema.fromString(String str) {
+    final Map<String, dynamic> json = jsonDecode(str);
+    return StatusEditSchema.fromJson(json);
+  }
+
+  factory StatusEditSchema.fromJson(Map<String, dynamic> json) {
+    return StatusEditSchema(
+      content: json['content'] as String? ?? '',
+      spoiler: json['spoiler_text'] as String,
+      sensitive: json['sensitive'] as bool,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      account: AccountSchema.fromJson(json['account'] as Map<String, dynamic>),
+      poll: json['poll'] == null ? null : PollSchema.fromJson(json['poll'] as Map<String, dynamic>),
+      attachments: (json['media_attachments'] as List<dynamic>?)
+        ?.map((e) => AttachmentSchema.fromJson(e as Map<String, dynamic>)).toList() ?? [],
+      emojis: (json['emojis'] as List<dynamic>?)
+        ?.map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>))
+        .toList() ?? [],
+    );
+  }
+
+}
+
 // The hashtags used within the status content.
 class TagSchema {
   final String name;

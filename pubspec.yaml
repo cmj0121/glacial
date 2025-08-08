@@ -64,6 +64,7 @@ dependencies:
   sentry_flutter: ^9.4.1
   flutter_native_splash: ^2.4.6
   custom_refresh_indicator: ^4.0.1
+  syncfusion_flutter_sliders: ^30.2.4
 
 dev_dependencies:
   sentry_dart_plugin: ^3.1.1

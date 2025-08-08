@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
@@ -150,12 +151,16 @@ class _StatusState extends ConsumerState<Status> {
   // visibility information.
   Widget buildHeader() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Account(schema: schema.account, size: headerHeight),
+
         const Spacer(),
+
         buildTimeInfo(),
+        buildEditLog(),
         StatusVisibility(type: schema.visibility, size: iconSize),
+        buildLikes(),
         const SizedBox(width: 4),
       ],
     );
@@ -164,24 +169,10 @@ class _StatusState extends ConsumerState<Status> {
   // Build the post time information, showing the time since the post was created.
   Widget buildTimeInfo() {
     final String duration = timeago.format(schema.createdAt, locale: 'en_short');
-    final Widget editedAt = Tooltip(
-      message: schema.editedAt?.toLocal().toString() ?? '-',
-      child: Icon(Icons.edit_outlined, size: iconSize, color: Colors.grey),
-    );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        children: [
-          buildLikes(),
-          schema.editedAt == null ? const SizedBox.shrink() : editedAt,
-          const SizedBox(width: 8),
-          Tooltip(
-            message: schema.createdAt.toLocal().toString(),
-            child: Text(duration, style: const TextStyle(color: Colors.grey)),
-          ),
-        ]
-      ),
+    return Tooltip(
+      message: schema.createdAt.toLocal().toString(),
+      child: Text(duration, style: const TextStyle(color: Colors.grey)),
     );
   }
 
@@ -189,15 +180,23 @@ class _StatusState extends ConsumerState<Status> {
   Widget buildLikes() {
     final int count = schema.reblogsCount + schema.favouritesCount;
 
-    if (count == 0) {
-      return const SizedBox.shrink();
-    }
-
     return IconButton(
       icon: Icon(Icons.info_outline, size: iconSize),
+      padding: EdgeInsets.zero,
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
-      onPressed: () => context.push(RoutePath.statusInfo.path, extra: schema),
+      onPressed: count == 0 ? null : () => context.push(RoutePath.statusInfo.path, extra: schema),
+    );
+  }
+
+  // Build the post's edit log, which shows the edit history of the post.
+  Widget buildEditLog() {
+    return IconButton(
+      icon: Icon(Icons.edit_outlined, size: iconSize),
+      padding: EdgeInsets.zero,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onPressed: widget.schema.editedAt == null ? null : () => context.push(RoutePath.statusHistory.path, extra: schema),
     );
   }
 
@@ -621,6 +620,123 @@ class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProvid
       default:
         return false;
     }
+  }
+}
+
+class StatusHistory extends ConsumerStatefulWidget {
+  final StatusSchema schema;
+
+  const StatusHistory({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  ConsumerState<StatusHistory> createState() => _StatusHistoryState();
+}
+
+class _StatusHistoryState extends ConsumerState<StatusHistory> {
+  int selectedIndex = 0;
+  List<StatusEditSchema> history = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: buildContent(),
+    );
+  }
+
+  // Build the content of the status history, showing the edit history of the status and the
+  // slider of timestamp.
+  Widget buildContent() {
+    if (history.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      children: [
+        Expanded(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return SlideTransition(
+                position: Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(animation),
+                child: FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            },
+            child: buildHistory(),
+          ),
+        ),
+        buildSlider(),
+      ],
+    );
+  }
+
+  // Build the slider of the status history, showing the timestamp of the status edit history.
+  Widget buildSlider() {
+    return SfSlider.vertical(
+      min: 0,
+      max: history.length - 1,
+      value: selectedIndex.toDouble(),
+      interval: 1,
+      showTicks: true,
+      onChanged: (dynamic value) => setState(() => selectedIndex = value.toInt()),
+    );
+  }
+
+  // Build the history of the status, showing the edit history of the status.
+  Widget buildHistory() {
+    final StatusEditSchema schema = history[selectedIndex];
+    return Align(
+      key: ValueKey(selectedIndex),
+      alignment: Alignment.topLeft,
+      child: StatusEdit(schema: schema),
+    );
+  }
+
+  void onLoad() async {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final List<StatusEditSchema> history = await status?.fetchHistory(schema: widget.schema) ?? [];
+
+    setState(() {
+      this.history = history;
+      selectedIndex = history.isEmpty ? 0 : history.length - 1;
+    });
+  }
+}
+
+class StatusEdit extends StatelessWidget {
+  final StatusEditSchema schema;
+
+  const StatusEdit({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        HtmlDone(html: schema.content, emojis: schema.emojis),
+        Poll(schema: schema.poll),
+        Attachments(schemas: schema.attachments),
+
+        const Spacer(),
+
+        Text(schema.createdAt.toLocal().toString(), style: const TextStyle(color: Colors.grey)),
+      ],
+    );
   }
 }
 

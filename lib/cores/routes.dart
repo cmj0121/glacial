@@ -19,6 +19,7 @@ enum RoutePath {
   profile,           // The user's profile page of the app.
   status,            // The list of statuses in the context of the app.
   statusInfo,        // The status info page of the app to show the status details.
+  statusHistory,     // The status history page of the app to show the status history.
   post,              // The post page of the app to create a new post.
   edit,              // The edit page of the app to edit an existing post.
   wip;               // The work-in-progress page of the app.
@@ -56,6 +57,8 @@ enum RoutePath {
         return '/home/status';
       case RoutePath.statusInfo:
         return '/home/status/info';
+      case RoutePath.statusHistory:
+        return '/home/status/history';
       case RoutePath.post:
         return '/home/post';
       case RoutePath.edit:

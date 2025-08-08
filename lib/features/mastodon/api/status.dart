@@ -21,7 +21,7 @@
 //    - [ ] POST   /api/v1/statuses/:id/pin
 //    - [ ] POST   /api/v1/statuses/:id/unpin
 //    - [ ] PUT    /api/v1/statuses/:id
-//    - [ ] GET    /api/v1/statuses/:id/history
+//    - [+] GET    /api/v1/statuses/:id/history
 //    - [ ] GET    /api/v1/statuses/:id/source
 //    - [-] GET    /api/v1/statuses/:id/card            (deprecated in 3.0.0)
 //
@@ -163,6 +163,17 @@ extension StatusExtensions on AccessStatusSchema {
     accounts.map((a) => cacheAccount(a)).toList();
     logger.d("complete load the favourited by accounts, count: ${accounts.length}");
     return accounts;
+  }
+
+  // List the history of the given status.
+  Future<List<StatusEditSchema>> fetchHistory({required StatusSchema schema}) async {
+    final String endpoint = '/api/v1/statuses/${schema.id}/history';
+    final String body = await getAPI(endpoint) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<StatusEditSchema> history = json.map((e) => StatusEditSchema.fromJson(e)).toList();
+
+    logger.d("complete load the status history, count: ${history.length}");
+    return history;
   }
 }
 

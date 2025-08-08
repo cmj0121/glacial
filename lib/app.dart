@@ -152,6 +152,9 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           case RoutePath.statusInfo:
             backable = true;
             break;
+          case RoutePath.statusHistory:
+            backable = true;
+            break;
           default:
             break;
         }
@@ -247,6 +250,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (BuildContext context, GoRouterState state) {
             final StatusSchema status = state.extra as StatusSchema;
             return StatusInfo(schema: status);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.statusHistory.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema status = state.extra as StatusSchema;
+            return StatusHistory(schema: status);
           },
         ),
       ],
