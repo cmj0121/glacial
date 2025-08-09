@@ -191,6 +191,10 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         ),
         GoRoute(
           path: RoutePath.notifications.path,
+          builder: (_, _) => const GroupNotification(),
+        ),
+        GoRoute(
+          path: RoutePath.admin.path,
           builder: (_, _) => const WIP(),
         ),
 

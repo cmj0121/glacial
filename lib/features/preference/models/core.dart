@@ -41,12 +41,14 @@ class SystemPreferenceSchema {
   final ThemeMode theme;
   final VisibilityType visibility;
   final bool sensitive;
+  final Duration refreshInterval;
 
   const SystemPreferenceSchema({
     this.server,
     this.theme = ThemeMode.dark,
     this.visibility = VisibilityType.public,
     this.sensitive = true,
+    this.refreshInterval = const Duration(seconds: 30),
   });
 
   // Convert the JSON string to a SystemPreferenceSchema object.
@@ -65,6 +67,9 @@ class SystemPreferenceSchema {
         orElse: () => VisibilityType.public,
       ),
       sensitive: json["sensitive"] as bool? ?? false,
+      refreshInterval: Duration(
+        seconds: json["refresh_interval"] as int? ?? 30,
+      ),
     );
   }
 
@@ -75,6 +80,7 @@ class SystemPreferenceSchema {
       "theme": theme.name,
       "visibility": visibility.name,
       "sensitive": sensitive,
+      "refresh_interval": refreshInterval.inSeconds,
     };
   }
 
@@ -84,12 +90,14 @@ class SystemPreferenceSchema {
     ThemeMode? theme,
     VisibilityType? visibility,
     bool? sensitive,
+    Duration? refreshInterval,
   }) {
     return SystemPreferenceSchema(
       server: server ?? this.server,
       theme: theme ?? this.theme,
       visibility: visibility ?? this.visibility,
       sensitive: sensitive ?? this.sensitive,
+      refreshInterval: refreshInterval ?? this.refreshInterval,
     );
   }
 }

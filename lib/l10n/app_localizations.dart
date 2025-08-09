@@ -464,6 +464,60 @@ abstract class AppLocalizations {
   /// **'Report {acct}'**
   String btn_relationship_report(Object acct);
 
+  /// No description provided for @btn_notification_mention.
+  ///
+  /// In en, this message translates to:
+  /// **'Mentioned'**
+  String get btn_notification_mention;
+
+  /// No description provided for @btn_notification_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get btn_notification_status;
+
+  /// No description provided for @btn_notification_reblog.
+  ///
+  /// In en, this message translates to:
+  /// **'Reblog'**
+  String get btn_notification_reblog;
+
+  /// No description provided for @btn_notification_follow.
+  ///
+  /// In en, this message translates to:
+  /// **'Followed'**
+  String get btn_notification_follow;
+
+  /// No description provided for @btn_notification_follow_request.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow Reqeust'**
+  String get btn_notification_follow_request;
+
+  /// No description provided for @btn_notification_favourite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite'**
+  String get btn_notification_favourite;
+
+  /// No description provided for @btn_notification_poll.
+  ///
+  /// In en, this message translates to:
+  /// **'Poll'**
+  String get btn_notification_poll;
+
+  /// No description provided for @btn_notification_update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get btn_notification_update;
+
+  /// No description provided for @btn_notification_unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get btn_notification_unknown;
+
   /// No description provided for @desc_preference_engineer_clear_cache.
   ///
   /// In en, this message translates to:

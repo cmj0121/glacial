@@ -154,10 +154,29 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       final bool isSelected = action.route == route;
       late final Widget icon = Icon(action.icon(active: isSelected), size: sidebarSize);
 
-      if (action == SidebarButtonType.post) {
-        if (status?.accessToken?.isNotEmpty == true) {
-          // Already signed in, show the post button.
-          return IconButton.filledTonal(
+      switch (action) {
+        case SidebarButtonType.notifications:
+          return NotificationBadge(
+            size: sidebarSize,
+            isSelected: isSelected,
+            onPressed: () => debounce.callOnce(() => onSelect(index)),
+          );
+        case SidebarButtonType.post:
+          if (status?.accessToken?.isNotEmpty == true) {
+            // Already signed in, show the post button.
+            return IconButton.filledTonal(
+              icon: icon,
+              tooltip: action.tooltip(context),
+              color: isSelected ? Theme.of(context).colorScheme.primary : null,
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              onPressed: () => debounce.callOnce(() => onSelect(index)),
+            );
+          }
+
+          return SignIn(size: sidebarSize);
+        default:
+          return IconButton(
             icon: icon,
             tooltip: action.tooltip(context),
             color: isSelected ? Theme.of(context).colorScheme.primary : null,
@@ -165,19 +184,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
             focusColor: Colors.transparent,
             onPressed: () => debounce.callOnce(() => onSelect(index)),
           );
-        }
-
-        return SignIn(size: sidebarSize);
       }
-
-      return IconButton(
-        icon: icon,
-        tooltip: action.tooltip(context),
-        color: isSelected ? Theme.of(context).colorScheme.primary : null,
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
-        onPressed: () => debounce.callOnce(() => onSelect(index)),
-      );
     }).toList();
 
     return children;

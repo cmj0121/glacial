@@ -195,10 +195,10 @@ class AccessStatusSchema {
       if (match != null && match.group(2) == 'next') {
         return Uri.parse(match.group(1) ?? '').queryParameters['max_id'];
       }
-  }
+    }
 
-  return null;
-}
+    return null;
+  }
 
   bool get isSignedIn =>  accessToken?.isNotEmpty == true;
 }

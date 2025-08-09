@@ -264,6 +264,13 @@ class StatusLite extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return InkWellDone(
+      onTap: () => context.push(RoutePath.status.path, extra: schema),
+      child: buildContent(context),
+    );
+  }
+
+  Widget buildContent(BuildContext content) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

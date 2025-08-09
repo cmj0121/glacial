@@ -202,6 +202,33 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get btn_notification_mention => 'Mentioned';
+
+  @override
+  String get btn_notification_status => 'Notification';
+
+  @override
+  String get btn_notification_reblog => 'Reblog';
+
+  @override
+  String get btn_notification_follow => 'Followed';
+
+  @override
+  String get btn_notification_follow_request => 'Follow Reqeust';
+
+  @override
+  String get btn_notification_favourite => 'Favourite';
+
+  @override
+  String get btn_notification_poll => 'Poll';
+
+  @override
+  String get btn_notification_update => 'Update';
+
+  @override
+  String get btn_notification_unknown => 'Unknown';
+
+  @override
   String get desc_preference_engineer_clear_cache =>
       'Clear all cached data and reset the app';
 

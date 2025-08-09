@@ -202,6 +202,33 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get btn_notification_mention => '提及';
+
+  @override
+  String get btn_notification_status => '通知';
+
+  @override
+  String get btn_notification_reblog => '轉嘟';
+
+  @override
+  String get btn_notification_follow => '追隨';
+
+  @override
+  String get btn_notification_follow_request => '請求追隨';
+
+  @override
+  String get btn_notification_favourite => '加入最愛';
+
+  @override
+  String get btn_notification_poll => '投票結果';
+
+  @override
+  String get btn_notification_update => '編輯';
+
+  @override
+  String get btn_notification_unknown => '未知';
+
+  @override
   String get desc_preference_engineer_clear_cache => '清除快取並重設';
 
   @override

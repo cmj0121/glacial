@@ -5,8 +5,8 @@
 //   - [ ] POST  /api/v1/accounts
 //   - [+] GET   /api/v1/accounts/verify_credentials
 //   - [ ] PATCH /api/v1/accounts/update_credentials
-//   - [ ] GET   /api/v1/accounts/:id
-//   - [ ] GET   /api/v1/accounts
+//   - [+] GET   /api/v1/accounts/:id
+//   - [+] GET   /api/v1/accounts
 //   - [+] GET   /api/v1/accounts/:id/statuses
 //   - [+] GET   /api/v1/accounts/:id/followers
 //   - [+] GET   /api/v1/accounts/:id/following
@@ -74,6 +74,31 @@ extension AccountsExtensions on AccessStatusSchema {
     logger.i("complete get the account from $accountID on $domain");
     cacheAccount(account);
     return account;
+  }
+
+  // View information about multiple profiles.
+  Future<List<AccountSchema>> getAccounts(List<String> accountIDs) async {
+    if (accountIDs.isEmpty) {
+      return [];
+    }
+
+    // Check if the accounts are already cached.
+    final List<AccountSchema?> cached = accountIDs.map((id) => lookupAccount(id)).where((a) => a != null).toList();
+    final List<AccountSchema> cachedAccounts = cached.cast<AccountSchema>();
+    final List<String> uncachedIDs = accountIDs.where((id) => lookupAccount(id) == null).toList();
+
+    if (uncachedIDs.isEmpty) {
+      return cachedAccounts;
+    }
+
+    final String endpoint = '/api/v1/accounts';
+    final Map<String, String> query = {"id[]": uncachedIDs.join(',')};
+    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+
+    accounts.map((a) => cacheAccount(a)).toList();
+    return [...cachedAccounts, ...accounts];
   }
 
   // Save the account data schema to the in-memory cache.
