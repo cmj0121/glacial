@@ -1,6 +1,7 @@
 // The Notification widget in the current selected Mastodon server.
 import 'dart:async';
 
+import 'package:app_badge_plus/app_badge_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -62,8 +63,7 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
         _startTask();
         break;
       default:
-        logger.d("App is not in foreground, skipping task start: $currentState.");
-        _stopTask();
+        logger.d("App is not in foreground");
         break;
     }
   }
@@ -213,7 +213,10 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
     });
 
     final int? id = schema?.groups.firstOrNull?.id;
-    if (id != null) { await status?.setMarker(id: id.toString(), type: type); }
+    if (id != null) {
+      AppBadgePlus.updateBadge(0);
+      await status?.setMarker(id: id.toString(), type: type);
+    }
   }
 }
 

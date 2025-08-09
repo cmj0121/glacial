@@ -278,6 +278,12 @@ abstract class AppLocalizations {
   /// **'Clear All Cache'**
   String get btn_preference_engineer_clear_cache;
 
+  /// No description provided for @btn_preference_engineer_test_notifier.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Notification'**
+  String get btn_preference_engineer_test_notifier;
+
   /// No description provided for @btn_interaction_reply.
   ///
   /// In en, this message translates to:
@@ -523,6 +529,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear all cached data and reset the app'**
   String get desc_preference_engineer_clear_cache;
+
+  /// No description provided for @desc_preference_engineer_test_notifier.
+  ///
+  /// In en, this message translates to:
+  /// **'Test send the notification in local device'**
+  String get desc_preference_engineer_test_notifier;
 
   /// No description provided for @txt_spoiler.
   ///

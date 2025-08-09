@@ -2,9 +2,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 const double iconSize = 32.0; // The default icon size used in the app.
 const double tabSize = 24.0; // The default tab size used in the app.
@@ -67,6 +69,20 @@ Future<void> showSnackbar(BuildContext context, String message, {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(content: Text(message, style: textStyle), duration: duration),
   );
+}
+
+// Send the local notification with the given title and body.
+Future<void> sendLocalNotification(String title, String body, {int? uid, int? badgeNumber, String? payload}) async {
+  final DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(
+    presentBadge: true,
+    badgeNumber: badgeNumber,
+  );
+  final NotificationDetails platformChannelSpecifics = NotificationDetails(
+    iOS: darwinNotificationDetails,
+    macOS: darwinNotificationDetails,
+  );
+
+  await flutterLocalNotificationsPlugin.show(uid ?? 0, title, body, platformChannelSpecifics, payload: payload);
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

@@ -2,6 +2,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -12,6 +13,9 @@ import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 void main() async {
+  // needed if you intend to initialize in the `main` function
+  WidgetsFlutterBinding.ensureInitialized();
+
   await prologue();
 
   final String? sentryDsn = dotenv.env['SENTRY_DSN'];
@@ -46,6 +50,15 @@ Future<void> prologue() async {
     final String stack = details.stack?.toString() ?? "No stack trace available";
     logger.e("Flutter Error: ${details.exceptionAsString()}\n$stack");
   };
+
+  // Initialization settings for both iOS and macOS
+  const DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings();
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    iOS: initializationSettingsDarwin,
+    macOS: initializationSettingsDarwin,
+  );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   await dotenv.load(fileName: ".env");
   await Info.init();

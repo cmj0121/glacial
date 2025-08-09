@@ -99,6 +99,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_preference_engineer_clear_cache => '清除快取';
 
   @override
+  String get btn_preference_engineer_test_notifier => 'Test Notification';
+
+  @override
   String get btn_interaction_reply => '回嘟';
 
   @override
@@ -230,6 +233,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_preference_engineer_clear_cache => '清除快取並重設';
+
+  @override
+  String get desc_preference_engineer_test_notifier =>
+      'Test send the notification in local device';
 
   @override
   String get txt_spoiler => '暴雷';

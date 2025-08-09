@@ -69,5 +69,7 @@
 		<string>This app needs access to your photo library to select and upload images.</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSUserNotificationAlertStyle</key>
+		<string>alert</string>
 	</dict>
 </plist>

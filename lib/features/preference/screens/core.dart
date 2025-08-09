@@ -187,8 +187,36 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             }
           },
         ),
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.btn_preference_engineer_test_notifier ?? "Test Notification"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_engineer_test_notifier ?? "Send a dummy notification to test the notification system.",
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor),
+          ),
+          leading: Icon(Icons.notifications, size: iconSize, color: Theme.of(context).colorScheme.tertiary),
+          onTap: () => sendDummyNotification(),
+        ),
       ],
     );
+  }
+
+  // The dummy notification to send in local device.
+  Future<void> sendDummyNotification() async {
+    showSnackbar(context, "Dummy notification will be sent in 5 seconds ...");
+
+    Future.delayed(const Duration(seconds: 5), () {
+      final state = WidgetsBinding.instance.lifecycleState;
+      switch (state) {
+        case AppLifecycleState.paused:
+        case AppLifecycleState.inactive:
+        case AppLifecycleState.detached:
+          sendLocalNotification("...", "...", badgeNumber: 999);
+          return;
+        default:
+          showSnackbar(context, "It should not send the notification while the app is in foreground.");
+          return;
+      }
+    });
   }
 }
 

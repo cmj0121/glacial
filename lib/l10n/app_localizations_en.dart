@@ -99,6 +99,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_preference_engineer_clear_cache => 'Clear All Cache';
 
   @override
+  String get btn_preference_engineer_test_notifier => 'Test Notification';
+
+  @override
   String get btn_interaction_reply => 'Reply';
 
   @override
@@ -231,6 +234,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get desc_preference_engineer_clear_cache =>
       'Clear all cached data and reset the app';
+
+  @override
+  String get desc_preference_engineer_test_notifier =>
+      'Test send the notification in local device';
 
   @override
   String get txt_spoiler => 'Spoiler';
