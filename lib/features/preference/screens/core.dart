@@ -1,6 +1,7 @@
 // The system preference settings to control the app's behavior and features.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:duration/duration.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -134,6 +135,30 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             final int nextIndex = (index + 1) % VisibilityType.values.length;
             Storage().savePreference(
               schema.copyWith(visibility: VisibilityType.values[nextIndex]),
+              ref: ref,
+            );
+          },
+        ),
+        // Build the refresh interval settings.
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_refresh_interval ?? "Refresh Interval"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_refresh_interval ?? "The interval to refresh the app's data.",
+            style: labelStyle,
+          ),
+          leading: Icon(Icons.refresh, size: iconSize),
+          trailing: Text(
+            schema.refreshInterval.pretty(abbreviated: true, delimiter: " "),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+          ),
+          onTap: () async {
+            final List<int> intervals = const [0, 10, 30, 60, 120];
+
+            final int index = intervals.indexOf(schema.refreshInterval.inSeconds);
+            final int nextIndex = (index + 1) % intervals.length;
+
+            Storage().savePreference(
+              schema.copyWith(refreshInterval: Duration(seconds: intervals[nextIndex])),
               ref: ref,
             );
           },

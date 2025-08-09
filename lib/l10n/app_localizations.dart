@@ -638,6 +638,12 @@ abstract class AppLocalizations {
   /// **'Sensitive Content'**
   String get txt_preference_sensitive;
 
+  /// No description provided for @txt_preference_refresh_interval.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh Interval'**
+  String get txt_preference_refresh_interval;
+
   /// No description provided for @txt_show_less.
   ///
   /// In en, this message translates to:
@@ -703,6 +709,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only the mentioned user'**
   String get desc_visibility_direct;
+
+  /// No description provided for @desc_preference_refresh_interval.
+  ///
+  /// In en, this message translates to:
+  /// **'The interval to refresh the app\'s data'**
+  String get desc_preference_refresh_interval;
 
   /// No description provided for @err_invalid_instance.
   ///

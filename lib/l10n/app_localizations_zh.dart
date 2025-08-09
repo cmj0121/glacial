@@ -289,6 +289,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_preference_sensitive => '敏感內容';
 
   @override
+  String get txt_preference_refresh_interval => '更新頻率';
+
+  @override
   String get txt_show_less => '顯示更少';
 
   @override
@@ -320,6 +323,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_visibility_direct => '僅提到的使用者';
+
+  @override
+  String get desc_preference_refresh_interval => '更新資料的頻率';
 
   @override
   String err_invalid_instance(Object domain) {

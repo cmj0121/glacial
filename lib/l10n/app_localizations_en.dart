@@ -290,6 +290,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_preference_sensitive => 'Sensitive Content';
 
   @override
+  String get txt_preference_refresh_interval => 'Refresh Interval';
+
+  @override
   String get txt_show_less => 'Show Less';
 
   @override
@@ -326,6 +329,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get desc_visibility_direct => 'Only the mentioned user';
+
+  @override
+  String get desc_preference_refresh_interval =>
+      'The interval to refresh the app\'s data';
 
   @override
   String err_invalid_instance(Object domain) {
