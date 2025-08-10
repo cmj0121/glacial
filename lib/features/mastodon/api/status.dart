@@ -42,7 +42,21 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
+// The cached status in-memory per server.
+final Map<String?, Map<String, StatusSchema>> statusCache = {};
+
 extension StatusExtensions on AccessStatusSchema {
+  // Load the status from the in-memory cache by the given status ID.
+  StatusSchema? getStatusFromCache(String statusID) {
+    return statusCache[domain]?[statusID];
+  }
+
+  // Save the status to the in-memory cache.
+  void saveStatusToCache(StatusSchema status) {
+    statusCache.putIfAbsent(domain, () => {});
+    statusCache[domain]![status.id] = status;
+  }
+
   // Create a new status on the Mastodon server with the given content and media.
   Future<StatusSchema> createStatus({required PostStatusSchema schema, required String idempotentKey}) async {
     final String endpoint = '/api/v1/statuses';
@@ -67,15 +81,23 @@ extension StatusExtensions on AccessStatusSchema {
 
   // Get the status data schema from the Mastodon server by status ID, return null
   // if the status does not exist or the request fails.
-  Future<StatusSchema?> getStatus(String? statusID) async {
+  Future<StatusSchema?> getStatus(String? statusID, {bool loadCache=false}) async {
     if (statusID == null || statusID.isEmpty) {
       return null;
+    }
+
+    if (loadCache) {
+      final StatusSchema? cachedStatus = getStatusFromCache(statusID);
+      if (cachedStatus != null) {
+        return cachedStatus;
+      }
     }
 
     final String endpoint = '/api/v1/statuses/$statusID';
     final String body = await getAPI(endpoint) ?? '{}';
     final StatusSchema status = StatusSchema.fromString(body);
 
+    saveStatusToCache(status);
     return status;
   }
 

@@ -108,5 +108,7 @@
   "err_invalid_instance": "invalid Mastodon server domain: {domain}",
   "msg_preference_engineer_clear_cache": "Cache cleared successfully",
   "msg_copied_to_clipboard": "Copy to clipboard",
+  "msg_notification_title": "New Notifications",
+  "msg_notification_body": "You have {count} unread notifications",
   "dots": "..."
 }

@@ -68,12 +68,14 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
     }
   }
 
-  void _startTask() {
+  void _startTask({int? times}) {
     final Duration? refreshInterval = pref?.refreshInterval;
     _stopTask();
 
     if (refreshInterval != null && refreshInterval.inSeconds > 0) {
-      _timer = Timer.periodic(refreshInterval, (Timer timer) {
+      final int interval = refreshInterval.inSeconds;
+
+      _timer = Timer.periodic(Duration(seconds: interval * (times ?? 1)), (Timer timer) async {
         onLoad();
       });
     }
@@ -111,7 +113,17 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
   // Try to load the unread notifications count when the widget is built.
   Future<void> onLoad() async {
     final int count = await status?.getUnreadGroupCount() ?? 0;
+
+    if (count> unreadCount) { await onNotify(count); }
     setState(() => unreadCount = count);
+  }
+
+  // Send the notification to the user when the unread count is updated.
+  Future<void> onNotify(int unreadCount) async {
+    final String title = AppLocalizations.of(context)?.msg_notification_title ?? "New Notifications";
+    final String body = AppLocalizations.of(context)?.msg_notification_body(unreadCount) ?? "You have $unreadCount new notifications.";
+
+    await sendLocalNotification(title, body, badgeNumber: unreadCount);
   }
 }
 
@@ -130,6 +142,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
   late final ScrollController controller = ScrollController();
 
   bool isLoading = false;
+  bool isCompleted = false;
   List<GroupSchema> groups = [];
 
   @override
@@ -171,22 +184,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
     return ListView.builder(
       controller: controller,
       itemCount: groups.length,
-      itemBuilder: (BuildContext context, int index) {
-        final GroupSchema group = groups[index];
-
-        return Container(
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: SingleNotification(
-              key: ValueKey("notification-${group.id}"),
-              schema: group,
-            ),
-          ),
-        );
-      },
+      itemBuilder: (BuildContext context, int index) => SingleNotification(schema: groups[index]),
     );
   }
 
@@ -199,7 +197,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
   }
 
   Future<void> onLoad() async {
-    if (isLoading) { return; }
+    if (isLoading || isCompleted) { return; }
 
     setState(() => isLoading = true);
 
@@ -209,6 +207,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
 
     setState(() {
       isLoading = false;
+      isCompleted = schema?.isEmpty ?? false;
       groups.addAll(schema?.groups ?? []);
     });
 
@@ -237,7 +236,6 @@ class SingleNotification extends ConsumerStatefulWidget {
 class _SingleNotificationState extends ConsumerState<SingleNotification> {
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
-  bool isLoading = true;
   Widget? child;
   List<AccountSchema> accounts = [];
 
@@ -250,13 +248,21 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (child == null) {
       return const ClockProgressIndicator();
     }
 
-    return Align(
-      alignment: Alignment.topLeft,
-      child: buildContent(),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 12),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: buildContent(),
+        ),
+      ),
     );
   }
 
@@ -322,8 +328,9 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
   }
 
   void onLoad() async {
-    late final Widget content;
+    if (child != null) { return; }
 
+    late final Widget content;
     switch (widget.schema.type) {
       case NotificationType.status:
       case NotificationType.reblog:
@@ -331,7 +338,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
       case NotificationType.poll:
       case NotificationType.update:
       case NotificationType.mention:
-        final StatusSchema? schema = await status?.getStatus(widget.schema.statusID);
+        final StatusSchema? schema = await status?.getStatus(widget.schema.statusID, loadCache: true);
 
         content = schema == null ? const SizedBox.shrink() : StatusLite(schema: schema);
         break;
@@ -345,16 +352,12 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
         );
         break;
       case NotificationType.unknown:
-        return;
+        content = NoResult();
+        break;
     }
 
     await onLoadAccounts();
-    if (mounted) {
-      setState(() {
-        child = content;
-        isLoading = false;
-      });
-    }
+    if (mounted) { setState(() => child = content ); }
   }
 
   // Load the accounts involved in the notification.

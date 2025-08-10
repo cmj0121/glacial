@@ -30,6 +30,7 @@
   "btn_preference_theme": "主題",
   "btn_preference_engineer": "工程設定",
   "btn_preference_engineer_clear_cache": "清除快取",
+  "btn_preference_engineer_test_notifier": "通知測試",
   "btn_interaction_reply": "回嘟",
   "btn_interaction_reblog" : "轉發",
   "btn_interaction_favourite" : "最愛",
@@ -71,6 +72,7 @@
   "btn_notification_update": "編輯",
   "btn_notification_unknown": "未知",
   "desc_preference_engineer_clear_cache": "清除快取並重設",
+  "desc_preference_engineer_test_notifier": "測試發送通知到本裝置",
   "txt_spoiler": "暴雷",
   "txt_search_history": "搜尋紀錄",
   "txt_helper_server_explorer": "搜尋 Mastodon 伺服器",
@@ -106,5 +108,7 @@
   "err_invalid_instance": "不合法/不存在的 Mastodon 伺服器: {domain}",
   "msg_preference_engineer_clear_cache": "清除快取成功",
   "msg_copied_to_clipboard": "複製到剪貼簿",
+  "msg_notification_title": "新的通知訊息",
+  "msg_notification_body": "你有 {count} 筆未讀訊息",
   "dots": "..."
 }

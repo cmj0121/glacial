@@ -1,4 +1,6 @@
 PODS:
+  - app_badge_plus (1.2.3):
+    - FlutterMacOS
   - app_links (1.0.0):
     - FlutterMacOS
   - file_picker (0.0.1):
@@ -36,6 +38,7 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
+  - app_badge_plus (from `Flutter/ephemeral/.symlinks/plugins/app_badge_plus/macos`)
   - app_links (from `Flutter/ephemeral/.symlinks/plugins/app_links/macos`)
   - file_picker (from `Flutter/ephemeral/.symlinks/plugins/file_picker/macos`)
   - file_selector_macos (from `Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos`)
@@ -56,6 +59,8 @@ SPEC REPOS:
     - Sentry
 
 EXTERNAL SOURCES:
+  app_badge_plus:
+    :path: Flutter/ephemeral/.symlinks/plugins/app_badge_plus/macos
   app_links:
     :path: Flutter/ephemeral/.symlinks/plugins/app_links/macos
   file_picker:
@@ -86,6 +91,7 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/webview_flutter_wkwebview/darwin
 
 SPEC CHECKSUMS:
+  app_badge_plus: 60ebdbfa6c11558e89f1ac58d3364cd014a41cd2
   app_links: afe860c55c7ef176cea7fb630a2b7d7736de591d
   file_picker: 7584aae6fa07a041af2b36a2655122d42f578c1a
   file_selector_macos: 6280b52b459ae6c590af5d78fc35c7267a3c4b31

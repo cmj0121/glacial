@@ -1,4 +1,5 @@
 // The system preference settings to control the app's behavior and features.
+import 'package:app_badge_plus/app_badge_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:duration/duration.dart';
@@ -213,6 +214,7 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           sendLocalNotification("...", "...", badgeNumber: 999);
           return;
         default:
+          AppBadgePlus.updateBadge(0);
           showSnackbar(context, "It should not send the notification while the app is in foreground.");
           return;
       }

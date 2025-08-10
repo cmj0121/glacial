@@ -354,5 +354,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get msg_copied_to_clipboard => 'Copy to clipboard';
 
   @override
+  String get msg_notification_title => 'New Notifications';
+
+  @override
+  String msg_notification_body(Object count) {
+    return 'You have $count unread notifications';
+  }
+
+  @override
   String get dots => '...';
 }

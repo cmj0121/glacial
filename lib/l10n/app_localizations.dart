@@ -746,6 +746,18 @@ abstract class AppLocalizations {
   /// **'Copy to clipboard'**
   String get msg_copied_to_clipboard;
 
+  /// No description provided for @msg_notification_title.
+  ///
+  /// In en, this message translates to:
+  /// **'New Notifications'**
+  String get msg_notification_title;
+
+  /// No description provided for @msg_notification_body.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} unread notifications'**
+  String msg_notification_body(Object count);
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

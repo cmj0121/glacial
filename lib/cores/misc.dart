@@ -1,6 +1,7 @@
 // The miscellaneous utilities and constants for the Glacial app.
 import 'dart:async';
 
+import 'package:app_badge_plus/app_badge_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
@@ -73,16 +74,14 @@ Future<void> showSnackbar(BuildContext context, String message, {
 
 // Send the local notification with the given title and body.
 Future<void> sendLocalNotification(String title, String body, {int? uid, int? badgeNumber, String? payload}) async {
-  final DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(
-    presentBadge: true,
-    badgeNumber: badgeNumber,
-  );
+  final DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails();
   final NotificationDetails platformChannelSpecifics = NotificationDetails(
     iOS: darwinNotificationDetails,
     macOS: darwinNotificationDetails,
   );
 
   await flutterLocalNotificationsPlugin.show(uid ?? 0, title, body, platformChannelSpecifics, payload: payload);
+  AppBadgePlus.updateBadge(badgeNumber ?? 0);
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

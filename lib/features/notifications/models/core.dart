@@ -140,6 +140,10 @@ class GroupNotificationSchema {
       }).toList(),
     );
   }
+
+  bool get isEmpty {
+    return accounts.isEmpty && statuses.isEmpty && groups.isEmpty;
+  }
 }
 
 // The possible values of timeline markers.

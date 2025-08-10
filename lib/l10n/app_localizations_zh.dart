@@ -99,7 +99,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_preference_engineer_clear_cache => '清除快取';
 
   @override
-  String get btn_preference_engineer_test_notifier => 'Test Notification';
+  String get btn_preference_engineer_test_notifier => '通知測試';
 
   @override
   String get btn_interaction_reply => '回嘟';
@@ -235,8 +235,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get desc_preference_engineer_clear_cache => '清除快取並重設';
 
   @override
-  String get desc_preference_engineer_test_notifier =>
-      'Test send the notification in local device';
+  String get desc_preference_engineer_test_notifier => '測試發送通知到本裝置';
 
   @override
   String get txt_spoiler => '暴雷';
@@ -344,6 +343,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_copied_to_clipboard => '複製到剪貼簿';
+
+  @override
+  String get msg_notification_title => '新的通知訊息';
+
+  @override
+  String msg_notification_body(Object count) {
+    return '你有 $count 筆未讀訊息';
+  }
 
   @override
   String get dots => '...';
