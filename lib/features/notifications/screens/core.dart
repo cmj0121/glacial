@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:app_badge_plus/app_badge_plus.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -141,6 +142,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
   late final AccessStatusSchema? status = ref.watch(accessStatusProvider);
   late final ScrollController controller = ScrollController();
 
+  bool isRefresh = false;
   bool isLoading = false;
   bool isCompleted = false;
   List<GroupSchema> groups = [];
@@ -181,10 +183,16 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
 
   // Build the notification content.
   Widget buildContent() {
-    return ListView.builder(
+    final Widget builder =  ListView.builder(
       controller: controller,
       itemCount: groups.length,
       itemBuilder: (BuildContext context, int index) => SingleNotification(schema: groups[index]),
+    );
+
+    return CustomMaterialIndicator(
+      onRefresh: onRefresh,
+      indicatorBuilder: (_, __) => const ClockProgressIndicator(),
+      child: isRefresh ? const SizedBox.shrink() : builder,
     );
   }
 
@@ -194,6 +202,17 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
     if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
       onLoad();
     }
+  }
+
+  // Clean-up and refresh the timeline when the user pulls down the list.
+  Future<void> onRefresh() async {
+    setState(() {
+      isRefresh = true;
+      isLoading = false;
+      isCompleted = false;
+    });
+
+    await onLoad();
   }
 
   Future<void> onLoad() async {
@@ -206,6 +225,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
     final TimelineMarkerType type = TimelineMarkerType.notifications;
 
     setState(() {
+      isRefresh = false;
       isLoading = false;
       isCompleted = schema?.isEmpty ?? false;
       groups.addAll(schema?.groups ?? []);
