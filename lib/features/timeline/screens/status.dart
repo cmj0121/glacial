@@ -100,6 +100,14 @@ class _StatusState extends ConsumerState<Status> {
         HtmlDone(html: schema.content, emojis: schema.emojis, onLinkTap: onLinkTap),
         Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
+
+        if (schema.tags.isNotEmpty) Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            children: schema.tags.map((tag) => TagLite(schema: tag)).toList(),
+          ),
+        ),
       ],
     );
   }
@@ -279,6 +287,14 @@ class StatusLite extends StatelessWidget {
         HtmlDone(html: schema.content, emojis: schema.emojis),
         Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
+
+        if (schema.tags.isNotEmpty) Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            children: schema.tags.map((tag) => TagLite(schema: tag)).toList(),
+          ),
+        ),
       ],
     );
   }

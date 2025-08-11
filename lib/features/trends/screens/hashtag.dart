@@ -64,6 +64,44 @@ class Hashtag extends StatelessWidget {
   }
 }
 
+// The simple hashtag badge that can be used to show the hashtag in a simple way.
+class TagLite extends StatelessWidget {
+  final TagSchema schema;
+
+  const TagLite({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: InkWellDone(
+          onTap: () => context.push(RoutePath.hashtag.path, extra: schema.name),
+          child: buildContent(context),
+        ),
+      ),
+    );
+  }
+
+  Widget buildContent(BuildContext context) {
+    return Text(
+      '#${schema.name}',
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+        color: Theme.of(context).colorScheme.onSecondaryContainer,
+      ),
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
 // The followed hashtag button that can be used to follow or unfollow the hashtag.
 class FollowedHashtagButton extends ConsumerStatefulWidget {
   final String hashtag;
