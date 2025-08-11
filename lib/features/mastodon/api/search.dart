@@ -13,12 +13,14 @@ extension SearchExtensions on AccessStatusSchema {
   // Perform a search for content in accounts, statuses and hashtags with the given parameters.
   Future<SearchResultSchema> search({
     required String keyword,
+    String? type,
     int limit = 40,
     int offset = 0,
   }) async {
     final String endpoint = '/api/v2/search';
     final Map<String, String> params = {
       'q': keyword,
+      if (type != null) 'type': type,
       'limit': limit.toString(),
       'offset': offset.toString(),
     };
