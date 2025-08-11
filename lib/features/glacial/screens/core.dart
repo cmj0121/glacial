@@ -327,6 +327,8 @@ class LandingPage extends ConsumerStatefulWidget {
 }
 
 class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProviderStateMixin {
+  String? error;
+
   @override
   void initState() {
     super.initState();
@@ -343,7 +345,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
 
     return Scaffold(
       body: SafeArea(
-        child: Center(child: Flipping(child: icon)),
+        child: error == null ? Center(child: Flipping(child: icon)) : NoResult(message: error!),
       ),
     );
   }
@@ -352,8 +354,13 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
   void onLoading() async {
     final Storage storage = Storage();
 
-    await storage.loadPreference(ref: ref);
-    await storage.loadAccessStatus(ref: ref);
+    try {
+      await storage.loadPreference(ref: ref);
+      await storage.loadAccessStatus(ref: ref);
+    } catch (e) {
+      setState(() => error = e.toString());
+      return ;
+    }
 
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final RoutePath route = status?.domain?.isEmpty ?? true ? RoutePath.explorer : RoutePath.timeline;
