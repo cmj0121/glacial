@@ -1,5 +1,6 @@
 // The extensions implementation for the glacial feature.
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,68 +8,95 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
-final keyServerHistory = 'server_history';
-final keyLastServer = 'last_server';
+export 'api/account.dart';
+export 'api/marker.dart';
+export 'api/media.dart';
+export 'api/notifications.dart';
+export 'api/search.dart';
+export 'api/status.dart';
+export 'api/suggestions.dart';
+export 'api/tags.dart';
+export 'api/timeline.dart';
+export 'api/trends.dart';
 
-extension ServerExtensions on Storage {
-  // Get and Set the last used server
-  Future<String?> loadLastServer() async => await getString(keyLastServer);
-  Future<void> saveLastServer(String? server) async {
-    if (server == null || server.isEmpty) {
-      await remove(keyLastServer);
+extension AccessStatusExtension on Storage {
+  // Load the access status from the storage.
+  Future<AccessStatusSchema?> loadAccessStatus({WidgetRef? ref}) async {
+    final String? json = await getString(AccessStatusSchema.key);
+    AccessStatusSchema status = (json == null ? null : AccessStatusSchema.fromString(json)) ?? AccessStatusSchema();
+
+    final String? domain = status.domain?.isNotEmpty == true ? status.domain : null;
+    final String? accessToken = await loadAccessToken(domain);
+    final AccountSchema? account = await status.getAccountByAccessToken(accessToken);
+    final ServerSchema? server = await ServerSchema.fetch(domain);
+
+    status = status.copyWith(accessToken: accessToken, account: account, server: server);
+    ref?.read(accessStatusProvider.notifier).state = status;
+
+    return status;
+  }
+
+  // Save the access status to the storage.
+  Future<void> saveAccessStatus(AccessStatusSchema schema, {WidgetRef? ref}) async {
+    final String json = jsonEncode(schema.toJson());
+    await setString(AccessStatusSchema.key, json);
+
+    ref?.read(accessStatusProvider.notifier).state = schema;
+  }
+
+  // Save the access token per domain to the storage.
+  Future<void> saveAccessToken(String domain, String? accessToken) async {
+    final String? body = await getString(AccessStatusSchema.keyAccessToken, secure: true);
+    final Map<String, dynamic> json = jsonDecode(body ?? '{}');
+
+    if (accessToken == null || accessToken.isEmpty) {
+      // If the access token is null or empty, remove it from the storage.
+      json.remove(domain);
+      logger.i("remove access token for domain: $domain");
+    } else {
+      // add or update the access token for the domain.
+      json[domain] = accessToken;
+      logger.i("save access token for domain: $domain");
+    }
+
+    setString(AccessStatusSchema.keyAccessToken, jsonEncode(json), secure: true);
+  }
+
+  // Load the access token per domain from the storage.
+  Future<String?> loadAccessToken(String? domain) async {
+    if (domain == null || domain.isEmpty) {
+      return null;
+    }
+
+    final String? body = await getString(AccessStatusSchema.keyAccessToken, secure: true);
+    final Map<String, dynamic> json = jsonDecode(body ?? '{}');
+
+    return json[domain] as String?;
+  }
+
+  // Remove the access token for the given domain from the storage.
+  Future<void> removeAccessToken(String? domain) async {
+    if (domain == null || domain.isEmpty) {
       return;
     }
 
-    await setString(keyLastServer, server);
+    final String? body = await getString(AccessStatusSchema.keyAccessToken, secure: true);
+    final Map<String, dynamic> json = jsonDecode(body ?? '{}');
+
+    json.remove(domain);
+    await setString(AccessStatusSchema.keyAccessToken, jsonEncode(json), secure: true);
   }
 
-  // get the history of the used servers
-  List<String> get serverHistory => getStringList(keyServerHistory);
 
-	// set the history of the used servers
-  set serverHistory(List<String> value) => setStringList(keyServerHistory, value);
-}
+  // Logout the current Mastodon server.
+  Future<void> logout(AccessStatusSchema? schema, {WidgetRef? ref}) async {
+    final AccessStatusSchema status = AccessStatusSchema().copyWith(
+      domain: schema?.domain,
+      history: schema?.history ?? [],
+    );
 
-extension ProviderExtensions on Storage {
-  // Clear and reset all the provider states.
-  Future<void> clearProvider(WidgetRef ref) async {
-    final Storage storage = Storage();
-
-    ref.read(serverProvider.notifier).state = null;
-    ref.read(accessTokenProvider.notifier).state = null;
-    ref.read(accountProvider.notifier).state = null;
-
-    storage.purgeCachedEmojis();
-    storage.purgeCachedStatuses();
-
-    saveLastServer(null);
-  }
-
-  // Load the possible last provider state from the storage.
-  Future<void> reloadProvider(WidgetRef ref) async {
-    final String? lastServer = await loadLastServer();
-    final String? accessToken = await loadAccessToken(lastServer);
-
-    if (lastServer != null && lastServer.isNotEmpty) {
-      final ServerSchema server = await ServerSchema.fetch(lastServer);
-      ref.read(serverProvider.notifier).state = server;
-
-      if (accessToken != null && accessToken.isNotEmpty) {
-        ref.read(accessTokenProvider.notifier).state = accessToken;
-        ref.read(accountProvider.notifier).state = await server.getUserByAccessToken(accessToken);
-      }
-    }
-  }
-
-  // Update the provider state based on the current server and access token.
-  Future<void> updateProvider(WidgetRef ref, ServerSchema server, String? accessToken) async {
-    ref.read(serverProvider.notifier).state = server;
-    ref.read(accessTokenProvider.notifier).state = accessToken;
-
-    ref.read(accountProvider.notifier).state = await server.getUserByAccessToken(accessToken);
-
-    await saveLastServer(server.domain);
-    await saveAccessToken(server.domain, accessToken);
+    await removeAccessToken(schema?.domain);
+    ref?.read(accessStatusProvider.notifier).state = status;
   }
 }
 

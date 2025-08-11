@@ -1,6 +1,4 @@
-// The User button to navigate to the sign-in page of the Master server, or show
-// the user profile page if already signed in.
-import 'package:cached_network_image/cached_network_image.dart';
+// The User button to navigate to the sign-in page of the Master server.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -9,82 +7,47 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
-// The Sign In widget is used to sign in to the Mastodon server.
-class UserAvatar extends ConsumerStatefulWidget {
-  final ServerSchema schema;
+// The Sign-In widget to navigate to the sign-in page of the Mastodon server.
+class SignIn extends ConsumerStatefulWidget {
   final double size;
 
-  const UserAvatar({
+  const SignIn({
     super.key,
-    required this.schema,
-    this.size = 28,
+    this.size = 48.0,
   });
 
   @override
-  ConsumerState<UserAvatar> createState() => _UserAvatarState();
+  ConsumerState<SignIn> createState() => _SignInState();
 }
 
-class _UserAvatarState extends ConsumerState<UserAvatar> {
-  final Storage storage = Storage();
-  final Debouncer debouncer = Debouncer();
-
-  late final String state;
-
-  @override
-  void initState() {
-    super.initState();
-
-    state = Uuid().v4();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+class _SignInState extends ConsumerState<SignIn> {
+  late final String state = const Uuid().v4();
 
   @override
   Widget build(BuildContext context) {
-    final String? accessToken = ref.watch(accessTokenProvider);
-
-    return IconButton(
-      icon: buildAvatar(accessToken),
-      highlightColor: Colors.transparent,
+    return IconButton.filledTonal(
+      icon: const Icon(Icons.person_outline),
+      tooltip: AppLocalizations.of(context)?.btn_sidebar_sign_in ?? 'Sign In',
+      color: Theme.of(context).colorScheme.onPrimaryContainer,
       hoverColor: Colors.transparent,
-      onPressed: accessToken == null ? () => debouncer.call(onSignIn) : null,
+      focusColor: Colors.transparent,
+      onPressed: onSignIn,
     );
   }
 
-  // Build the avatar based on the current sign-in state.
-  Widget buildAvatar(String? accessToken) {
-    final AccountSchema? account = ref.read(accountProvider);
+  // Get the register application and navigate to the sign-in page based on the
+  // current selected Mastodon server.
+  void onSignIn() async {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final String? domain = status?.domain;
 
-    if (account == null || accessToken == null) {
-      return Icon(Icons.help_outlined, size: widget.size);
+    if (domain == null || domain.isEmpty) {
+      logger.w("No Mastodon server selected, cannot sign in.");
+      return;
     }
 
-    return InkWellDone(
-      onTap: () => context.push(RoutePath.profile.path, extra: account),
-      child: buildUserAvatar(account),
-    );
-  }
-
-  // Build the user avatar with the size of the widget.
-  Widget buildUserAvatar(AccountSchema account) {
-    return ClipOval(
-      child: CachedNetworkImage(
-        width: widget.size,
-        height: widget.size,
-        imageUrl: account.avatar,
-        placeholder: (context, url) => const SizedBox.shrink(),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-  // The sign-in button is pressed, navigate to the sign-in page of the
-  // Mastodon server.
-  void onSignIn() async {
-    final OAuth2Info info = await storage.getOAuth2Info(widget.schema.domain);
+    final Storage storage = Storage();
+    final OAuth2Info info = await storage.getOAuth2Info(domain);
     final Map<String, dynamic> query = {
       "client_id": info.clientId,
       "response_type": "code",
@@ -94,9 +57,10 @@ class _UserAvatarState extends ConsumerState<UserAvatar> {
     }
         ..removeWhere((key, value) => value == null);
 
-    storage.saveToOAuthState(state, widget.schema);
+    storage.saveStateServer(state, domain);
+
     if (mounted) {
-      final Uri uri = UriEx.handle(widget.schema.domain, "/oauth/authorize", query);
+      final Uri uri = UriEx.handle(domain, "/oauth/authorize", query);
       context.push(RoutePath.webview.path, extra: uri);
     }
   }

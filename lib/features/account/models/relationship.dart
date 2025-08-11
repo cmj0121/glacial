@@ -1,5 +1,10 @@
-// The Account data schema that is the user account info.
+// The relationship data schema for account, including permissions and roles.
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
+
+import 'package:glacial/core.dart';
+import 'package:glacial/features/models.dart';
 
 // To determine the permissions available to a certain role
 enum PermissionBitmap {
@@ -26,6 +31,102 @@ enum PermissionBitmap {
 
   final int bit;
   const PermissionBitmap(this.bit);
+}
+
+// The relationship type between two accounts, used to determine the relationship status.
+enum RelationshipType {
+  // The basic relationship types.
+  following,          // You are following this user.
+  followedBy,         // This user is following you.
+  followEachOther,    // You and this user are following each other.
+  stranger,           // You are not following this user, and they are not following you.
+  blockedBy,          // This user is blocking you.
+  // The more actions relationship types.
+  mute,               // You are muting this user.
+  unmute,             // You are unmuting this user.
+  block,              // You are blocking this user.
+  unblock,            // You are unblocking this user.
+  report;             // You have reported this user.
+
+  // The icon associated with the relationship type.
+  IconData icon() {
+    switch (this) {
+      case following:
+        return Icons.star;
+      case followedBy:
+        return Icons.visibility;
+      case followEachOther:
+        return Icons.handshake_sharp;
+      case stranger:
+        return Icons.person_add;
+      case blockedBy:
+        return Icons.do_not_disturb_on;
+      case mute:
+        return Icons.volume_off;
+      case unmute:
+        return Icons.volume_up;
+      case block:
+        return Icons.block;
+      case unblock:
+        return Icons.block_outlined;
+      case report:
+        return Icons.report;
+    }
+  }
+
+  // The tooltip text for the relationship type, localized if possible.
+  String tooltip(BuildContext context, {AccountSchema? account}) {
+    final String acct = account == null ? "" : " @${account.acct}";
+    switch (this) {
+      case following:
+        return AppLocalizations.of(context)?.btn_relationship_following ?? "Following";
+      case followedBy:
+        return AppLocalizations.of(context)?.btn_relationship_followed_by ?? "Followed by";
+      case followEachOther:
+        return AppLocalizations.of(context)?.btn_relationship_follow_each_other ?? "Follow each other";
+      case stranger:
+        return AppLocalizations.of(context)?.btn_relationship_stranger ?? "Stranger";
+      case blockedBy:
+        return AppLocalizations.of(context)?.btn_relationship_blocked_by ?? "Blocked By";
+      case mute:
+        return AppLocalizations.of(context)?.btn_relationship_mute(acct) ?? "Muted";
+      case unmute:
+        return AppLocalizations.of(context)?.btn_relationship_unmute(acct) ?? "Unmuted";
+      case block:
+        return AppLocalizations.of(context)?.btn_relationship_block(acct) ?? "Blocked";
+      case unblock:
+        return AppLocalizations.of(context)?.btn_relationship_unblock(acct) ?? "Unblocked";
+      case report:
+        return AppLocalizations.of(context)?.btn_relationship_report(acct) ?? "Reported";
+    }
+  }
+
+  // Check if the relationship type is belonging to the more actions category.
+  bool get isMoreActions {
+    switch (this) {
+      case following:
+      case followedBy:
+      case followEachOther:
+      case stranger:
+      case blockedBy:
+      case unblock:
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  // Check the actions is dangerous, such as block or report.
+  bool get isDangerous {
+    switch (this) {
+      case mute:
+      case block:
+      case report:
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 
 // Represents a custom user role that grants permissions.
@@ -116,6 +217,23 @@ class RelationshipSchema {
         ?.map((e) => e as String)
         .toList() ?? const [],
     );
+  }
+
+  // Convert the relationship schema to RelationshipType
+  RelationshipType get type {
+    if (blockedBy) {
+      return RelationshipType.blockedBy;
+    } else if (blocking) {
+      return RelationshipType.unblock;
+    } else if (following && followedBy) {
+      return RelationshipType.followEachOther;
+    } else if (following) {
+      return RelationshipType.following;
+    } else if (followedBy) {
+      return RelationshipType.followedBy;
+    } else {
+      return RelationshipType.stranger;
+    }
   }
 }
 

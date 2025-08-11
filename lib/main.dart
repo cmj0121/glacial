@@ -2,33 +2,29 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:glacial/app.dart';
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
 
 void main() async {
-  FlutterError.onError = (FlutterErrorDetails details) {
-    // Handle Flutter errors globally
-    final String stack = details.stack?.toString() ?? "No stack trace available";
-    logger.e("Flutter Error: ${details.exceptionAsString()}\n$stack");
-  };
+  // needed if you intend to initialize in the `main` function
+  WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load(fileName: ".env");
-  await Info.init();
-  await Storage.init(purge: false);
-
-  logger.d("completely preloaded system-wise settings ...");
+  await prologue();
 
   final String? sentryDsn = dotenv.env['SENTRY_DSN'];
-  final String environment = kReleaseMode ? 'production' : 'development';
 
   switch (sentryDsn) {
     case null:
     case '':
       logger.i("Sentry DSN is not set, Sentry will not be initialized.");
-      _runApp();
+      start();
       break;
     default:
       logger.i("Sentry DSN is set, initializing Sentry...");
@@ -36,18 +32,49 @@ void main() async {
         (options) {
           options.dsn = sentryDsn;
           options.tracesSampleRate = 0.1;
-          options.environment = environment;
+          options.environment = kReleaseMode ? 'production' : 'development';
         },
-        appRunner: _runApp,
+        appRunner: start,
       );
       break;
   }
 }
 
-void _runApp() {
+// The function that runs before the app starts.
+Future<void> prologue() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // Handle Flutter errors globally
+    final String stack = details.stack?.toString() ?? "No stack trace available";
+    logger.e("Flutter Error: ${details.exceptionAsString()}\n$stack");
+  };
+
+  // Initialization settings for both iOS and macOS
+  const DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings();
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    iOS: initializationSettingsDarwin,
+    macOS: initializationSettingsDarwin,
+  );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  await dotenv.load(fileName: ".env");
+  await Info.init();
+  await Storage.init();
+
+  logger.d("completely preloaded system-wise settings ...");
+}
+
+// The entry point of the app that starts the Flutter application.
+void start() async {
+  FlutterNativeSplash.remove();
+  final SystemPreferenceSchema? schema = await Storage().loadPreference();
+
   runApp(
     // Adding ProviderScope enables Riverpod for the entire project
-    const ProviderScope(child: GlacialApp()),
+    ProviderScope(child: CoreApp(schema: schema)),
   );
 }
 

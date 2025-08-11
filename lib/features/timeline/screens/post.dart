@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -15,62 +14,39 @@ import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
 // The form of the new status that user can fill in to create a new status.
-class StatusForm extends ConsumerStatefulWidget {
+class PostStatusForm extends ConsumerStatefulWidget {
   final StatusSchema? replyTo;
   final StatusSchema? editFrom;
+  final ValueChanged<StatusSchema>? onPost;
 
-  const StatusForm({
+  const PostStatusForm({
     super.key,
     this.replyTo,
     this.editFrom,
+    this.onPost,
   });
 
   @override
-  ConsumerState<StatusForm> createState() => _StatusFormState();
+  ConsumerState<PostStatusForm> createState() => _StatusFormState();
 }
 
-class _StatusFormState extends ConsumerState<StatusForm> {
+class _StatusFormState extends ConsumerState<PostStatusForm> {
   final FocusNode focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
   final double medisWidth = 100;
-  final String ikey = Uuid().v4();
+  final String idempotentKey = const Uuid().v4();
 
-  late final TextEditingController controller;
-  late VisibilityType vtype = widget.replyTo?.visibility ?? VisibilityType.public;
+  late final TextEditingController controller = TextEditingController(text: widget.editFrom?.plainText ?? "");
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+  late final SystemPreferenceSchema? pref = ref.read(preferenceProvider);
 
-  List<AttachmentSchema> medias = [];
+  bool isScheduled = false;
   NewPollSchema? poll;
-  String? spoiler;
-  DateTime? scheduledAt;
-
-  @override
-  void initState() {
-    super.initState();
-
-    switch (widget.editFrom) {
-      case null:
-        late final AccountSchema? account = ref.read(accountProvider);
-
-        List<String> accts = [
-          ...(widget.replyTo?.mentions ?? []).map((mention) => mention.acct),
-          widget.replyTo?.account.acct ?? "",
-        ];
-
-        // remove self mentions and empty mentions
-        accts.removeWhere((acct) => acct == account?.acct || acct.isEmpty);
-
-        final String mentioned = accts.toSet().toList().map((acct) => "@$acct").join(" ");
-        controller = TextEditingController(text: mentioned.isEmpty ? "" : "$mentioned ");
-      default:
-        final String spoilerText = widget.editFrom?.spoiler ?? "";
-
-        controller = TextEditingController(text: widget.editFrom?.plainText ?? "");
-        vtype = widget.editFrom?.visibility ?? VisibilityType.public;
-        medias = widget.editFrom?.attachments ?? [];
-        spoiler = spoilerText.isEmpty ? null : spoilerText;
-        scheduledAt = widget.editFrom?.scheduledAt;
-    }
-  }
+  late bool isSensitive = widget.editFrom?.sensitive ?? false;
+  late String? spoiler = widget.editFrom?.spoiler.isNotEmpty == true ? widget.editFrom?.spoiler : null;
+  late List<AttachmentSchema> medias = widget.editFrom?.attachments ?? [];
+  late VisibilityType vtype = widget.editFrom?.visibility ?? pref?.visibility ?? VisibilityType.public;
+  late DateTime? scheduledAt = widget.editFrom?.scheduledAt;
 
   @override
   void dispose() {
@@ -80,79 +56,63 @@ class _StatusFormState extends ConsumerState<StatusForm> {
 
   @override
   Widget build(BuildContext context) {
-    final String? replyText = widget.replyTo?.content;
-    final Widget replyWidget = replyText == null ?
-      const SizedBox.shrink() :
-      ColorFiltered(
-        colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
-        child: HtmlDone(
-          html: replyText,
-          emojis: widget.replyTo?.emojis ?? [],
-        ),
-      );
-
     return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          replyWidget,
-
-          ClipRRect(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: buildContent(),
-            ),
-          ),
-        ],
+      child: Dismissible(
+        key: UniqueKey(),
+        direction: DismissDirection.startToEnd,
+        onDismissed: (_) => context.pop(),
+        child: buildLayout(),
       ),
     );
   }
 
-  // Build the content of the status form.
-  Widget buildContent() {
-    final ServerSchema? server = ref.read(serverProvider);
-
-    if (server == null) {
-      return const SizedBox.shrink();
-    }
-
+  Widget buildLayout() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        ClipRRect(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: buildContent(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Build the content of the status form.
+  Widget buildContent() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildReplyTo(),
         buildSpoilerField(),
         buildTextField(),
+
         const SizedBox(height: 16),
-        PollForm(server: server, schema: poll, onChanged: (poll) => setState(() => this.poll = poll)),
+        PollForm(schema: poll, onChanged: (poll) => setState(() => this.poll = poll)),
         buildMedias(),
         Flexible(child: buildActions()),
       ],
     );
   }
 
-  // Build the text form for the status content.
-  Widget buildTextField() {
-    final int maxLines = 6;
-    final ServerSchema? schema = ref.read(serverProvider);
+  // Build the optional reply-to widget with the greyed out reply-to status.
+  Widget buildReplyTo() {
+    if (widget.replyTo == null) {
+      return const SizedBox.shrink();
+    }
 
-    return AutoCompleteForm(
-      maxSuggestions: 7,
-      controller: controller,
-      builder: (context, textEditingController, focusNode, onFieldSubmitted) {
-        return TextFormField(
-          controller: textEditingController,
-          focusNode: focusNode,
-          maxLines: maxLines,
-          minLines: maxLines,
-          maxLength: schema?.config.statuses.maxCharacters ?? 500,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-          ),
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: ColorFiltered(
+        colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
+        child: StatusLite(schema: widget.replyTo!),
+      ),
     );
   }
 
@@ -165,13 +125,42 @@ class _StatusFormState extends ConsumerState<StatusForm> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: TextFormField(
+        style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.warning, color: Theme.of(context).colorScheme.tertiary),
-          suffixIcon: Icon(Icons.warning, color: Theme.of(context).colorScheme.tertiary),
+          hintText: AppLocalizations.of(context)?.txt_spoiler ?? "Spoiler",
+          hintStyle: TextStyle(
+            color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.6),
+          ),
           border: const OutlineInputBorder(),
+          filled: true,
+          fillColor: Theme.of(context).colorScheme.surfaceContainer,
         ),
         onChanged: (value) => setState(() => spoiler = value),
       ),
+    );
+  }
+
+  // Build the text form for the status content.
+  Widget buildTextField() {
+    final int maxLines = 6;
+
+    return AutoCompleteForm(
+      maxSuggestions: 7,
+      controller: controller,
+      builder: (context, textEditingController, focusNode, onFieldSubmitted) {
+        return TextFormField(
+          controller: textEditingController,
+          focusNode: focusNode,
+          maxLines: maxLines,
+          minLines: maxLines,
+          maxLength: status?.server?.config.statuses.maxCharacters ?? 500,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surface,
+          ),
+        );
+      },
     );
   }
 
@@ -191,146 +180,185 @@ class _StatusFormState extends ConsumerState<StatusForm> {
   // the media files from the list.
   Widget buildMedia(AttachmentSchema media) {
     final String url = media.previewUrl ?? media.url;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Stack(
-        children: [
-          CachedNetworkImage(
-            imageUrl: url,
-            width: medisWidth,
-            height: medisWidth,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => const ClockProgressIndicator(),
-            errorWidget: (context, url, error) => Icon(Icons.error, color: Colors.red),
-          ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: IconButton(
-              icon: Icon(Icons.remove_circle, color: Theme.of(context).colorScheme.tertiary),
-              hoverColor: Colors.transparent,
-              focusColor: Colors.transparent,
-              onPressed: () => setState(() => medias.remove(media)),
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Stack(
+          children: [
+            CachedNetworkImage(
+              imageUrl: url,
+              width: medisWidth,
+              height: medisWidth,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => const ClockProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error, color: Colors.red),
             ),
-          ),
-        ],
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                icon: Icon(Icons.remove_circle, color: Theme.of(context).colorScheme.tertiary),
+                hoverColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                onPressed: () => setState(() => medias.remove(media)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   // Build the possible actions for the post status form.
   Widget buildActions() {
-    final ServerSchema? server = ref.read(serverProvider);
-    final int maxMedias = server?.config.statuses.maxAttachments ?? 0;
-    final Widget visibility = widget.editFrom == null ?
-      VisibilitySelector(type: vtype, onChanged: (type) => setState(() => vtype = type)) :
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: StatusVisibility(type: vtype),
-      );
+    final int maxMedias = status?.server?.config.statuses.maxAttachments ?? 4;
+    final List<Widget> actions = [
+        VisibilitySelector(
+          type: vtype,
+          size: tabSize,
+          onChanged: widget.editFrom == null ? (type) => setState(() => vtype = type ?? vtype) : null,
+        ),
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        visibility,
+        // The media icon button to open the image picker and upload media files.
         IconButton(
-          icon: Icon(Icons.perm_media_rounded, color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary),
+          icon: Icon(
+            Icons.perm_media_rounded,
+            size: tabSize,
+            color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary,
+          ),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: (poll == null && maxMedias > medias.length) ? onImagePicker : null,
+          onPressed: (poll == null && maxMedias > medias.length && isSignedIn) ? onImagePicker : null,
         ),
+        // The poll icon button to toggle the poll form.
         IconButton(
-          icon: Icon(Icons.poll_outlined,),
+          icon: Icon(Icons.poll_outlined, size: tabSize, ),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: medias.isNotEmpty ? null : () {
-            setState(() => poll = poll == null ? NewPollSchema(options: ["", ""]) : null);
-          },
+          onPressed: medias.isNotEmpty ? null : () => setState(() => poll = poll == null ? NewPollSchema() : null),
         ),
+        // The spoiler icon button to toggle the spoiler text field.
         IconButton(
-          icon: Icon(Icons.warning, color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary),
+          icon: Icon(
+            Icons.warning,
+            size: tabSize,
+            color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary
+          ),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
           onPressed: () => setState(() => spoiler = spoiler == null ? "" : null),
         ),
-        const Spacer(),
-        TextButton.icon(
-          icon: Icon(Icons.chat),
-          label: Text(AppLocalizations.of(context)?.btn_post ?? "Post"),
-          style: TextButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.primary,
+        // The sensitive icon button to toggle the sensitive content of the status.
+        IconButton(
+          icon: Icon(
+            isSensitive ? Icons.visibility_off_outlined : Icons.visibility,
+            size: tabSize,
+            color: isSensitive ? Theme.of(context).colorScheme.tertiary : null
           ),
-          onPressed: onPost,
-          onLongPress: onSchedulePost,
+          hoverColor: Colors.transparent,
+          focusColor: Colors.transparent,
+          onPressed: () => setState(() => isSensitive = !isSensitive),
         ),
-      ],
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double width = constraints.maxWidth;
+
+        if (width < 400) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: actions,
+              ),
+              const SizedBox(height: 8),
+              buildSubmitButton(fullWidth: true),
+            ],
+          );
+        } else {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              ...actions,
+              const Spacer(),
+              buildSubmitButton(fullWidth: false),
+            ],
+          );
+        }
+      },
     );
+  }
+
+  // Build the submit button that can post the status or schedule the post.
+  Widget buildSubmitButton({bool fullWidth = false}) {
+    final IconData icon = widget.editFrom == null ? (isScheduled ? Icons.schedule : Icons.chat) : Icons.edit;
+    final String text = widget.editFrom == null ?
+        (isScheduled ?
+          AppLocalizations.of(context)?.btn_status_scheduled ?? "Scheduled Toot" :
+          AppLocalizations.of(context)?.btn_status_toot ?? "Toot") :
+        AppLocalizations.of(context)?.btn_status_edit ?? "Edit Toot";
+
+    switch (fullWidth) {
+      case true:
+        return SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            icon: Icon(icon, size: tabSize),
+            label: Text(text),
+            onPressed: widget.editFrom == null ? (isScheduled ? onSchedulePost : onPost) : onPost,
+            onLongPress: widget.editFrom == null ? () => setState(() => isScheduled = !isScheduled) : null,
+          ),
+        );
+      case false:
+        return FilledButton.icon(
+          icon: Icon(icon, size: tabSize),
+          label: Text(text),
+          onPressed: widget.editFrom == null ? (isScheduled ? onSchedulePost : onPost) : onPost,
+          onLongPress: widget.editFrom == null ? () => setState(() => isScheduled = !isScheduled) : null,
+        );
+    }
   }
 
   // The atction to image picker and upload media files.
   void onImagePicker() async {
-    final ServerSchema? server = ref.read(serverProvider);
-    final String? accessToken = ref.read(accessTokenProvider);
-
     final ImagePicker picker = ImagePicker();
     final XFile? media = await picker.pickMedia();
 
-    if (media == null) {
+    if (media == null || status == null) {
       logger.d("No image selected, cannot upload media files.");
       return;
     }
 
-    if (server == null || accessToken == null) {
-      logger.w("No server selected or access token, cannot upload media files.");
-      return;
-    }
-
     final String filepath = media.path;
-    final AttachmentSchema attachment = await server.uploadMedia(filepath: filepath, accessToken: accessToken);
+    final AttachmentSchema attachment = await status!.uploadMedia(filepath);
     setState(() => medias.add(attachment));
   }
 
   // The callback when the user clicks the post button.
-  void onPost() async {
-    if (controller.text.isEmpty) {
-      // empty content, do nothing
-      return;
-    }
+  void onPost({bool? edit}) async {
+    if (!isReadyToPost) { return; }
 
-    final NewStatusSchema schema = NewStatusSchema(
+    final PostStatusSchema schema = PostStatusSchema(
       status: controller.text,
       mediaIDs: medias.map((media) => media.id).toList(),
       poll: poll,
       spoiler: spoiler,
       visibility: vtype,
+      sensitive: isSensitive,
       inReplyToID: widget.replyTo?.id,
       scheduledAt: scheduledAt,
     );
 
-    final ServerSchema? server = ref.watch(serverProvider);
-    final String? accessToken = ref.watch(accessTokenProvider);
-
-    if (server == null || accessToken == null) {
-      final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? "No server selected";
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(text),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-      return;
-    }
-
-    switch (widget.editFrom) {
-      case null:
-        await server.createStatus(status: schema, accessToken: accessToken, ikey: ikey);
-        break;
-      case StatusSchema s:
-        await server.editStatus(id: s.id, status: schema, accessToken: accessToken);
-        break;
-    }
+    final StatusSchema? post = widget.editFrom == null ?
+        await status?.createStatus(schema: schema, idempotentKey: idempotentKey) :
+        await status?.editStatus(id: widget.editFrom!.id, schema: schema, idempotentKey: idempotentKey);
     if (mounted) {
+      if (post != null) widget.onPost?.call(post);
       context.pop();
     }
   }
@@ -338,19 +366,19 @@ class _StatusFormState extends ConsumerState<StatusForm> {
   // The callback when the user long presses the post button to schedule the post.
   void onSchedulePost() async {
     final DateTime now = DateTime.now();
-    final DateTime? datetime = await picker.DatePicker.showDateTimePicker(
-      context,
-      currentTime: now,
-    );
+    final DateTime? datetime = await picker.DatePicker.showDateTimePicker(context, currentTime: now);
+
     if (datetime == null) {
       logger.d("No date selected for scheduling the post.");
       return;
     }
 
-    logger.d("scheduling post at ${datetime.toUtc().toIso8601String()}");
     setState(() => scheduledAt = datetime.toUtc());
     onPost();
   }
+
+  bool get isSignedIn => status?.domain?.isNotEmpty == true && status?.accessToken?.isNotEmpty == true;
+  bool get isReadyToPost => controller.text.isNotEmpty || medias.isNotEmpty || (poll?.isValid ?? false);
 }
 
 // The autocomplete form for the status input field, which can suggest accounts or hashtags.
@@ -396,8 +424,7 @@ class _AutoCompleteFormState extends ConsumerState<AutoCompleteForm> {
 
   @override
   Widget build(BuildContext context) {
-    final ServerSchema? server = ref.read(serverProvider);
-    final String? accessToken = ref.read(accessTokenProvider);
+    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
 
     return RawAutocomplete<String>(
       textEditingController: controller,
@@ -418,8 +445,9 @@ class _AutoCompleteFormState extends ConsumerState<AutoCompleteForm> {
         final String prefix = text.substring(max(atIndex, hashIndex) + 1);
         type = atIndex > hashIndex ? "accounts" : "hashtags";
 
-        final List<String>? token = await server?.findSuggestions(prefix: prefix, type: type, accessToken: accessToken);
-        final List<String> suggestions = token?.take(widget.maxSuggestions).toList() ?? [];
+        final SearchResultSchema? results = await status?.search(keyword: prefix, type: type);
+        final List<String> token = (results?.hashtags ?? []).map((r) => r.name).toList();
+        final List<String> suggestions = token.take(widget.maxSuggestions).toList();
 
         logger.d("autocomplete suggestions for '$prefix': $suggestions");
         return suggestions;
@@ -460,176 +488,6 @@ class _AutoCompleteFormState extends ConsumerState<AutoCompleteForm> {
     final int index = text.lastIndexOf(type == 'accounts' ? '@' : '#');
 
     return "${text.substring(0, index)}$value ";
-  }
-}
-
-// The poll form for the status, which allows the user to create a poll with options.
-class PollForm extends StatefulWidget {
-  final ServerSchema server;
-  final NewPollSchema? schema;
-  final ValueChanged<NewPollSchema>? onChanged;
-
-  const PollForm({
-    super.key,
-    required this.server,
-    this.schema,
-    this.onChanged,
-  });
-
-  @override
-  State<PollForm> createState() => _PollFormState();
-}
-
-class _PollFormState extends State<PollForm> {
-  final List<Duration> durations = [
-    const Duration(minutes: 5),
-    const Duration(minutes: 30),
-    const Duration(hours: 1),
-    const Duration(hours: 6),
-    const Duration(hours: 12),
-    const Duration(days: 1),
-    const Duration(days: 7),
-  ];
-
-  late final List<TextEditingController> controllers;
-  late final List<FocusNode> focusNodes;
-
-  @override
-  void initState() {
-    final int count = widget.server.config.polls.maxOptions;
-
-    super.initState();
-
-    controllers = List.generate(count, (index) => TextEditingController());
-    focusNodes = List.generate(count, (index) => FocusNode()..addListener(() => onEditCompleted()));
-  }
-
-  @override
-  void dispose() {
-    controllers.map((controller) => controller.dispose());
-    focusNodes.map((focusNode) => focusNode.dispose());
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.schema == null) {
-      return const SizedBox.shrink();
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: buildContent(widget.schema!),
-    );
-  }
-
-  // Build the content of the poll form.
-  Widget buildContent(NewPollSchema schema) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ...buildOptions(schema),
-        const SizedBox(height: 8),
-        buildActions(schema),
-      ],
-    );
-  }
-
-  // Build the list of the options for the poll.
-  List<Widget> buildOptions(NewPollSchema schema) {
-    return List.generate(schema.options.length, (index) {
-      final String option = schema.options[index];
-      final IconData icon = option.isEmpty ? Icons.check_box_outline_blank : Icons.check_box;
-
-      final TextEditingController controller = controllers[index];
-      controller.text = option;
-
-      return TextField(
-        controller: controller,
-        focusNode: focusNodes[index],
-        maxLength: widget.server.config.polls.maxCharacters,
-        decoration: InputDecoration(
-          icon: Icon(icon),
-          helperText: "Option ${index + 1}",
-          border: const OutlineInputBorder(),
-        ),
-        onSubmitted: (_) => onEditCompleted(),
-        onTapOutside: (_) => onEditCompleted(),
-      );
-    });
-  }
-
-  // Build the actions for the poll form, such as toggling totals visibility and multiple choice.
-  Widget buildActions(NewPollSchema schema) {
-    final bool hideTotals = schema.hideTotals ?? false;
-    final bool multiple = schema.multiple ?? false;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        buildExpiresDropdown(schema),
-        const SizedBox(width: 8),
-        IconButton(
-          icon: Icon(hideTotals ? Icons.visibility : Icons.visibility_off),
-          onPressed: () {
-            // Toggle the visibility of the poll totals.
-            final NewPollSchema poll = schema.copyWith(hideTotals: !hideTotals);
-            widget.onChanged?.call(poll);
-          },
-        ),
-        const SizedBox(width: 8),
-        IconButton(
-          icon: Icon(multiple ? Icons.checklist_outlined : Icons.check_outlined),
-          onPressed: () {
-            // Toggle the visibility of the poll totals.
-            final NewPollSchema poll = schema.copyWith(multiple: !multiple);
-            widget.onChanged?.call(poll);
-          },
-        ),
-      ],
-    );
-  }
-
-  // The expired dropdown to select the expiration time for the poll.
-  Widget buildExpiresDropdown(NewPollSchema schema) {
-    final Duration expiresIn = Duration(seconds: schema.expiresIn);
-    final DateTime now = DateTime.now().toUtc();
-
-    return DropdownButton(
-      value: expiresIn,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      borderRadius: BorderRadius.circular(8),
-      icon: Icon(Icons.timer),
-      items: durations.map((duration) {
-        final DateTime expiration = now.subtract(duration);
-        final String text = timeago.format(expiration, locale: 'en_short').replaceFirst("~", "");
-
-        return DropdownMenuItem<Duration>(value: duration, child: Text(text));
-      }).toList(),
-      onChanged: (Duration? newValue) {
-        if (newValue == null) return;
-
-        final NewPollSchema poll = schema.copyWith(expiresIn: newValue.inSeconds);
-        widget.onChanged?.call(poll);
-      },
-    );
-  }
-
-  void onEditCompleted() {
-    final List<String> options = controllers.map((controller) => controller.text).where((text) => text.isNotEmpty).toList();
-    final int maxOptionsCount = max(2, options.length + 1);
-
-    final NewPollSchema newPoll = widget.schema!.copyWith(
-      options: [
-        ...options,
-        ...List.generate(
-          min(maxOptionsCount, widget.server.config.polls.maxOptions) - options.length,
-          (_) => "",
-        ),
-      ],
-    );
-
-    widget.onChanged?.call(newPoll);
   }
 }
 

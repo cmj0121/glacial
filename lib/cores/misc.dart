@@ -1,12 +1,24 @@
 // The miscellaneous utilities and constants for the Glacial app.
 import 'dart:async';
-import 'package:flutter/material.dart';
 
+import 'package:app_badge_plus/app_badge_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+const double iconSize = 32.0; // The default icon size used in the app.
+const double tabSize = 24.0; // The default tab size used in the app.
+
 // The logger instance.
-final Logger logger = Logger(printer: PrettyPrinter());
+final Logger logger = Logger(
+  printer: PrettyPrinter(
+    colors: false, // Disable color for better compatibility with some terminals
+    printEmojis: false, // Disable emojis for better readability
+  ),
+);
 
 // The system-wide package info.
 class Info {
@@ -28,11 +40,14 @@ class Debouncer {
 
   Debouncer({this.duration = const Duration(milliseconds: 250)});
 
+  // Only call the action once after the time duration has passed.
   void call(Function() action) {
     _timer?.cancel();
     _timer = Timer(duration, action);
   }
 
+  // Only call the action once when it called, and lock the action
+  // until the duration has passed.
   void callOnce(Function() action) {
     if (_locked) return;
 
@@ -47,22 +62,26 @@ class Debouncer {
   }
 }
 
-// Extracts the max_id from the next link if it exists.
-String? getMaxIDFromNextLink(String? nextLink) {
-  final links = nextLink?.split(',') ?? [];
-  for (final link in links) {
-    final match = RegExp(r'<([^>]+)>;\s*rel="([^"]+)"').firstMatch(link.trim());
-    if (match != null && match.group(2) == 'next') {
-      return Uri.parse(match.group(1) ?? '').queryParameters['max_id'];
-    }
-  }
-
-  return null;
+// Show a snackbar with the given message and duration.
+Future<void> showSnackbar(BuildContext context, String message, {
+  Duration duration = const Duration(seconds: 2),
+  TextStyle? textStyle,
+}) async {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message, style: textStyle), duration: duration),
+  );
 }
 
-class GlobalController {
-  // The global scroll-to-top controller callback
-  static ScrollController? scrollToTop;
+// Send the local notification with the given title and body.
+Future<void> sendLocalNotification(String title, String body, {int? uid, int? badgeNumber, String? payload}) async {
+  final DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails();
+  final NotificationDetails platformChannelSpecifics = NotificationDetails(
+    iOS: darwinNotificationDetails,
+    macOS: darwinNotificationDetails,
+  );
+
+  await flutterLocalNotificationsPlugin.show(uid ?? 0, title, body, platformChannelSpecifics, payload: payload);
+  AppBadgePlus.updateBadge(badgeNumber ?? 0);
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

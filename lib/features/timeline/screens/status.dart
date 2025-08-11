@@ -1,7 +1,10 @@
 // The Status widget to show the toots from user.
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
@@ -11,18 +14,16 @@ import 'package:glacial/features/screens.dart';
 
 // The single Status widget that contains the status information.
 class Status extends ConsumerStatefulWidget {
-  final StatusSchema schema;
   final int indent;
-  final AccountSchema? reblogFrom;
-  final String? replyToAccountID;
+  final StatusSchema schema;
+  final ValueChanged<StatusSchema>? onReload;
   final VoidCallback? onDeleted;
 
   const Status({
     super.key,
-    required this.schema,
     this.indent = 0,
-    this.reblogFrom,
-    this.replyToAccountID,
+    required this.schema,
+    this.onReload,
     this.onDeleted,
   });
 
@@ -31,31 +32,29 @@ class Status extends ConsumerStatefulWidget {
 }
 
 class _StatusState extends ConsumerState<Status> {
-  final double metadataHeight = 22;
-  final Storage storage = Storage();
+  final double headerHeight = 48.0;
+  final double metadataHeight = 22.0;
+  final double iconSize = 16.0;
 
-  late StatusSchema schema;
-
-  @override
-  void initState() {
-    super.initState();
-    schema = widget.schema;
-  }
+  late SystemPreferenceSchema? pref = ref.read(preferenceProvider);
+  late StatusSchema schema = widget.schema.reblog ?? widget.schema;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.only(top: 16, bottom: 8),
       child: InkWellDone(
         onTap: () {
           final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
 
-          if (path == RoutePath.status) {
-            // already in the status context, replace it
-            context.replace(RoutePath.status.path, extra: schema);
-            return;
+          switch (path) {
+            case RoutePath.status:
+              context.replace(RoutePath.status.path, extra: schema);
+              break;
+            default:
+              context.push(RoutePath.status.path, extra: schema);
+              break;
           }
-          context.push(RoutePath.status.path, extra: schema);
         },
         child: buildContent(),
       ),
@@ -63,22 +62,52 @@ class _StatusState extends ConsumerState<Status> {
   }
 
   // Build the main content of the status, including the author, the content
-  // and the possible actions
+  // and the possible actions.
   Widget buildContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildMetadata(),
         buildHeader(),
-        const SizedBox(height: 8),
         Indent(
           indent: widget.indent,
-          child: buildSensitiveView(),
+          child: SpoilerView(
+            spoiler: schema.spoiler,
+            child: SensitiveView(
+              isSensitive: (pref?.sensitive ?? true) && widget.schema.sensitive && schema.spoiler.isEmpty == true,
+              child: buildCoreContent(),
+            ),
+          ),
         ),
 
         Application(schema: schema.application),
         const SizedBox(height: 8),
-        InteractionBar(schema: schema, onReload: onReload, onDeleted: widget.onDeleted),
+        InteractionBar(
+          schema: schema,
+          onReload: onReload,
+          onDeleted: widget.onDeleted,
+        ),
+      ],
+    );
+  }
+
+  // Build the core content of the status which may be hidden or shown by the
+  // status visibility.
+  Widget buildCoreContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        HtmlDone(html: schema.content, emojis: schema.emojis, onLinkTap: onLinkTap),
+        Poll(schema: schema.poll),
+        Attachments(schemas: schema.attachments),
+
+        if (schema.tags.isNotEmpty) Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            children: schema.tags.map((tag) => TagLite(schema: tag)).toList(),
+          ),
+        ),
       ],
     );
   }
@@ -86,18 +115,30 @@ class _StatusState extends ConsumerState<Status> {
   // The optional metadata of the status, including the status reply or reblog
   // from the user.
   Widget buildMetadata() {
-    if (widget.reblogFrom == null && widget.replyToAccountID == null) {
+    if (widget.schema.reblog == null && widget.schema.inReplyToAccountID == null) {
+      // The status is a normal status, so no need to show the metadata.
       return SizedBox.shrink();
     }
 
-    final ServerSchema? schema = ref.read(serverProvider);
-    final AccountSchema? account = storage.loadAccountFromCache(schema!, widget.reblogFrom?.id ?? widget.replyToAccountID);
-    final IconData icon = widget.reblogFrom != null ?
-        StatusInteraction.reblog.icon(active: true) :
-        StatusInteraction.reply.icon(active: true);
+    final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
+    late final AccountSchema account;
+    late final StatusInteraction action;
 
-    if (account == null) {
-      return SizedBox.shrink();
+    if (widget.schema.inReplyToAccountID != null) {
+      // The status is a reply to another status, so show the reply account.
+      final AccountSchema? inReplyToAccount = status.lookupAccount(widget.schema.inReplyToAccountID!);
+
+      if (inReplyToAccount == null) {
+        // If the account is not found, we cannot show the reply metadata.
+        logger.w("cannot get the account from cache: ${widget.schema.inReplyToAccountID}");
+        return SizedBox.shrink();
+      }
+
+      account = inReplyToAccount;
+      action = StatusInteraction.reply;
+    } else {
+      account = widget.schema.account;
+      action = StatusInteraction.reblog;
     }
 
     return Padding(
@@ -106,127 +147,412 @@ class _StatusState extends ConsumerState<Status> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Icon(icon, color: Colors.grey, size: metadataHeight),
+          Icon(action.icon(active: true), color: Colors.grey, size: metadataHeight),
           const SizedBox(width: 4),
-          Account(schema: account, maxHeight: metadataHeight),
+          AccountAvatar(schema: account, size: metadataHeight),
         ],
       ),
     );
   }
 
-  // The header of the status, which includes the account information, the status
-  // posted time, and the visibility status.
+  // Build the header of the status, including the author and the date and
+  // visibility information.
   Widget buildHeader() {
-    final String duration = timeago.format(schema.createdAt, locale: 'en_short');
-    final bool showInfo = (schema.reblogsCount + schema.favouritesCount) > 0;
-
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Expanded(
-          flex: 10,
-          child: Account(schema: schema.account),
-        ),
+        Account(schema: schema.account, size: headerHeight),
 
         const Spacer(),
 
-        buildUpdated(),
-        IconButton(
-          icon: const Icon(Icons.info_outline, size: 20),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
-          onPressed: showInfo ? () => context.push(RoutePath.statusInfo.path, extra: schema) : null,
-        ),
+        buildTimeInfo(),
+        buildEditLog(),
+        StatusVisibility(type: schema.visibility, size: iconSize),
+        buildLikes(),
         const SizedBox(width: 4),
-
-        schema.scheduledAt == null ?
-          Tooltip(
-            message: schema.createdAt.toLocal().toString(),
-            child: Text(duration, style: const TextStyle(color: Colors.grey)),
-          ) :
-          Text(
-            schema.scheduledAt!.toLocal().toString().substring(0, 16),
-            style: const TextStyle(color: Colors.grey),
-          ),
-
-        const SizedBox(width: 4),
-        StatusVisibility(type: schema.visibility, size: 16, isCompact: true),
       ],
     );
   }
 
-  // Build the possible sensitive content of the status, including the
-  // spoiler text and the media attachments.
-  Widget buildSensitiveView() {
-    final Widget content = Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        HtmlDone(
-          html: schema.content,
-          emojis: schema.emojis,
-          onLinkTap: onLinkTap,
-        ),
-
-        Poll(schema: schema.poll, onChanged: (_) async {
-          final StatusSchema? updatedStatus = await ref.read(serverProvider)?.getStatus(schema.id, accessToken: ref.read(accessTokenProvider));
-          if (updatedStatus != null) onReload(updatedStatus);
-        }),
-        Attachments(schemas: schema.attachments),
-      ],
-    );
-
-    if (!schema.sensitive) {
-      return content;
-    }
-
-    return SensitiveView(
-      spoiler: schema.spoiler,
-      child: content,
-    );
-  }
-
-  // Build the update icon for the latest updated timeline status.
-  Widget buildUpdated() {
-    if (schema.editedAt == null) {
-      return const SizedBox.shrink();
-    }
+  // Build the post time information, showing the time since the post was created.
+  Widget buildTimeInfo() {
+    final String duration = timeago.format(schema.createdAt, locale: 'en_short');
 
     return Tooltip(
-      message: schema.editedAt!.toLocal().toString(),
-      child: Icon(Icons.edit_outlined, size: 16),
+      message: schema.createdAt.toLocal().toString(),
+      child: Text(duration, style: const TextStyle(color: Colors.grey)),
     );
   }
 
-  // reload the status when the user interacts with it.
-  void onReload(StatusSchema schema) async {
-    // fetch the status again from the server, and update the status
-    setState(() => this.schema = schema);
+  // Build the post's reblog or favorite details.
+  Widget buildLikes() {
+    final int count = schema.reblogsCount + schema.favouritesCount;
+
+    return IconButton(
+      icon: Icon(Icons.info_outline, size: iconSize),
+      padding: EdgeInsets.zero,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onPressed: count == 0 ? null : () => context.push(RoutePath.statusInfo.path, extra: schema),
+    );
+  }
+
+  // Build the post's edit log, which shows the edit history of the post.
+  Widget buildEditLog() {
+    return IconButton(
+      icon: Icon(Icons.edit_outlined, size: iconSize),
+      padding: EdgeInsets.zero,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onPressed: widget.schema.editedAt == null ? null : () => context.push(RoutePath.statusHistory.path, extra: schema),
+    );
+  }
+
+  // Reload the status when the status is reblogged or updated.
+  void onReload(StatusSchema status) {
+    if (mounted) {
+      setState(() => schema = status.reblog ?? status);
+      widget.onReload?.call(status);
+    }
   }
 
   // Handle the link tap event, and open the link in the in-app webview.
   void onLinkTap(String? url, Map<String, String> attributes, _) async {
-    final Uri baseUri = Uri.parse(schema.uri);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final Uri? uri = url == null ? null : Uri.parse(url);
+
     if (uri == null) {
       return;
     }
 
-    // check if the url is the tag from the Mastodon server
-    if (schema.tags.any((tag) => uri == baseUri.replace(path: '/tags/${tag.name}'))) {
-      // navigate to the tag timeline
-      final ServerSchema? server = ref.read(serverProvider);
-      final String path = Uri.decodeFull(uri.path);
-      final String tag = path.substring(path.lastIndexOf('/') + 1);
-      final HashtagSchema hashtag = await server!.getHashtag(tag);
+    // Link belong to the same domain, so we can open it in the app.
+    final String path = uri.path;
 
-      if (mounted) {
-        context.push(RoutePath.hashtag.path, extra: hashtag);
+    if (path.startsWith('/@')) {
+      // The link is an account link, so we can open the profile.
+      final String acct = uri.pathSegments.isNotEmpty ? uri.pathSegments.first.substring(1) : '';
+      final List<AccountSchema> accounts = await status?.searchAccounts(acct) ?? [];
+      final AccountSchema? account = accounts.where((a) => a.acct == acct).firstOrNull;
+
+      if (mounted && account != null) {
+        // only push the profile route if the account is found
+        context.push(RoutePath.profile.path, extra: account);
+        return;
       }
-      return;
+    } else if (path.startsWith('/tags/')) {
+      // The link is a tag link, so we can open the tag search.
+      final String tag = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : '';
+
+      if (mounted && tag.isNotEmpty) {
+        // only push the hashtag route if the tag is not empty
+        context.push(RoutePath.hashtag.path, extra: tag);
+        return;
+      }
     }
 
-    context.push(RoutePath.webview.path, extra: uri);
+    if (mounted) {
+      // Open the link in the in-app webview.
+      context.push(RoutePath.webview.path, extra: uri);
+    }
+  }
+}
+
+// The lightweight widget that can be used to show the status without the interaction
+// bar and the sensitive view.
+class StatusLite extends StatelessWidget {
+  final StatusSchema schema;
+
+  final double headerHeight = 48.0;
+  final double iconSize = 16.0;
+
+  const StatusLite({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWellDone(
+      onTap: () => context.push(RoutePath.status.path, extra: schema),
+      child: buildContent(context),
+    );
+  }
+
+  Widget buildContent(BuildContext content) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildHeader(),
+
+        HtmlDone(html: schema.content, emojis: schema.emojis),
+        Poll(schema: schema.poll),
+        Attachments(schemas: schema.attachments),
+
+        if (schema.tags.isNotEmpty) Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            children: schema.tags.map((tag) => TagLite(schema: tag)).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Build the header of the status, including the author and the date and
+  // visibility information.
+  Widget buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Account(schema: schema.account, size: headerHeight),
+        const Spacer(),
+        buildTimeInfo(),
+        StatusVisibility(type: schema.visibility, size: iconSize),
+        const SizedBox(width: 4),
+      ],
+    );
+  }
+
+  // Build the post time information, showing the time since the post was created.
+  Widget buildTimeInfo() {
+    final String duration = timeago.format(schema.createdAt, locale: 'en_short');
+    final Widget editedAt = Tooltip(
+      message: schema.editedAt?.toLocal().toString() ?? '-',
+      child: Icon(Icons.edit_outlined, size: iconSize, color: Colors.grey),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Row(
+        children: [
+          schema.editedAt == null ? const SizedBox.shrink() : editedAt,
+          const SizedBox(width: 8),
+          Tooltip(
+            message: schema.createdAt.toLocal().toString(),
+            child: Text(duration, style: const TextStyle(color: Colors.grey)),
+          ),
+        ]
+      ),
+    );
+  }
+}
+
+// The optional sensitive view that can hide the sensitive content by blurring it
+// and showing an icon to indicate that the content is sensitive.
+class SensitiveView extends StatefulWidget {
+  final Widget child;
+  final bool isSensitive;
+
+  const SensitiveView({
+    super.key,
+    required this.child,
+    this.isSensitive = false,
+  });
+
+  @override
+  State<SensitiveView> createState() => _SensitiveViewState();
+}
+
+class _SensitiveViewState extends State<SensitiveView> {
+  late bool isSensitiveVisible = widget.isSensitive;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWellDone(
+      onTap: isSensitiveVisible ? () => setState(() => isSensitiveVisible = !isSensitiveVisible) : null,
+      child: isSensitiveVisible ? buildContent() : widget.child,
+    );
+  }
+
+  Widget buildContent() {
+    return Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          widget.child,
+          Positioned.fill(child: buildCover()),
+        ],
+    );
+  }
+
+  // Build the cover for the sensitive content, which will be shown when the
+  // sensitive content is not visible.
+  Widget buildCover() {
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Container(
+          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.95),
+          alignment: Alignment.center,
+          child: Icon(Icons.visibility_off_outlined, size: iconSize, color: Theme.of(context).disabledColor),
+        ),
+      ),
+    );
+  }
+}
+
+// The optional spoiler view that can hide the spoiler content by showing a button
+// to toggle the visibility of the spoiler content.
+class SpoilerView extends StatefulWidget {
+  final String? spoiler;
+  final Widget child;
+
+  const SpoilerView({
+    super.key,
+    this.spoiler,
+    required this.child,
+  });
+
+  @override
+  State<SpoilerView> createState() => _SpoilerViewState();
+}
+
+class _SpoilerViewState extends State<SpoilerView> {
+  bool isVisible = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.spoiler?.isNotEmpty == true ? buildContent() : widget.child;
+  }
+
+  Widget buildContent() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        children: [
+          InkWellDone(
+            onDoubleTap: () => setState(() => isVisible = !isVisible),
+            child: buildSpoiler(),
+          ),
+          Visibility(
+            visible: isVisible,
+            child: widget.child,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildSpoiler() {
+    final String text = isVisible
+        ? AppLocalizations.of(context)?.txt_show_less ?? "Show less"
+        : AppLocalizations.of(context)?.txt_show_more ?? "Show more";
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        border: Border.all(width: 2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.spoiler ?? ""),
+            const SizedBox(height: 8),
+            Text(text, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// The List of statuses that shows the context of the status, including the
+// previous statuses and the next statuses.
+class StatusContext extends ConsumerStatefulWidget {
+  final StatusSchema schema;
+
+  const StatusContext({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  ConsumerState<StatusContext> createState() => _StatusContextState();
+}
+
+class _StatusContextState extends ConsumerState<StatusContext> {
+  final ItemScrollController itemScrollController = ItemScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+    if (status == null) {
+      return const SizedBox.shrink();
+    }
+
+    return FutureBuilder(
+      future: status.getStatusContext(schema: widget.schema),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Align(
+            alignment: Alignment.topCenter,
+            child: ClockProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return const SizedBox.shrink();
+        }
+
+        final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // scroll to the current status when the widget is built
+          itemScrollController.scrollTo(
+            index: ctx.ancestors.length,
+            duration: const Duration(milliseconds: 300),
+          );
+        });
+
+        return Dismissible(
+          key: ValueKey(widget.schema.id),
+          direction: DismissDirection.startToEnd,
+          onDismissed: (_) => context.pop(),
+          child: buildContent(ctx),
+        );
+      }
+    );
+  }
+
+  // Build the list of the context statuses, including the ancestors and descendants
+  Widget buildContent(StatusContextSchema ctx) {
+    Map<String, int> indents = {widget.schema.id: 1};
+
+    final List<Widget> children = [
+      ...ctx.ancestors.map((StatusSchema status) {
+        final int indent = indents[status.inReplyToID] ?? 1;
+
+        indents[status.id] = indent + 1;
+        return Status(schema: status, indent: indent);
+      }),
+
+      Status(schema: widget.schema),
+
+      ...ctx.descendants.map((StatusSchema status) {
+        final int indent = indents[status.inReplyToID] ?? 1;
+
+        indents[status.id] = indent + 1;
+        return Status(schema: status, indent: indent);
+      }),
+    ];
+
+    return ScrollablePositionedList.builder(
+      itemScrollController: itemScrollController,
+      itemCount: children.length,
+      itemBuilder: (context, index) {
+        final Widget child = children[index];
+
+        return Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+          ),
+          child: child,
+        );
+      },
+    );
   }
 }
 
@@ -261,6 +587,8 @@ class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
     return Align(
       alignment: Alignment.topCenter,
       child: SwipeTabView(
@@ -276,16 +604,15 @@ class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProvid
 
           return Tooltip(
             message: action.tooltip(context),
-            child: Icon(action.icon(active: isSelected), color: color, size: 32),
+            child: Icon(action.icon(active: isSelected), color: color, size: tabSize),
             );
         },
         itemBuilder: (context, index) {
           final StatusInteraction action = actions[index];
           final bool isReblog = action == StatusInteraction.reblog;
-          final ServerSchema? server = ref.read(serverProvider);
 
           return FutureBuilder(
-            future: isReblog ? server?.rebloggedBy(schema: widget.schema) : server?.favouritedBy(schema: widget.schema),
+            future: isReblog ? status?.fetchRebloggedBy(schema: widget.schema) : status?.fetchFavouritedBy(schema: widget.schema),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: ClockProgressIndicator());
@@ -301,7 +628,7 @@ class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProvid
                   final AccountSchema account = accounts[index];
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Account(schema: account, isTappable: true),
+                    child: Account(schema: account),
                   );
                 },
               );
@@ -325,182 +652,130 @@ class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProvid
   }
 }
 
-// The lightweight Status widget
-class StatusLight extends StatelessWidget {
+class StatusHistory extends ConsumerStatefulWidget {
   final StatusSchema schema;
-  final bool isTappable;
 
-  const StatusLight({
+  const StatusHistory({
     super.key,
     required this.schema,
-    this.isTappable = true,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: InkWellDone(
-        onTap: isTappable ? () {
-          final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
+  ConsumerState<StatusHistory> createState() => _StatusHistoryState();
+}
 
-          if (path == RoutePath.status) {
-            // already in the status context, replace it
-            context.replace(RoutePath.status.path, extra: schema);
-            return;
-          }
-          context.push(RoutePath.status.path, extra: schema);
-        } : null,
+class _StatusHistoryState extends ConsumerState<StatusHistory> {
+  bool isDisposed = false;
+  int selectedIndex = 0;
+  List<StatusEditSchema> history = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: isDisposed ? const SizedBox() : Dismissible(
+        key: ValueKey(widget.schema.id),
+        direction: DismissDirection.startToEnd,
+        onDismissed: (_) => onDismiss(),
         child: buildContent(),
       ),
     );
   }
 
-  // Build the main content of the status, including the author, the content
-  // and the possible actions
+  // Build the content of the status history, showing the edit history of the status and the
+  // slider of timestamp.
   Widget buildContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        buildHeader(),
-        const SizedBox(height: 8),
-        HtmlDone(
-          html: schema.content,
-          emojis: schema.emojis,
-        ),
-
-        Poll(schema: schema.poll),
-        Attachments(schemas: schema.attachments),
-      ],
-    );
-  }
-
-  // The header of the status, which includes the account information, the status
-  // posted time, and the visibility status.
-  Widget buildHeader() {
-    final String duration = timeago.format(schema.createdAt, locale: 'en_short');
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 10,
-          child: Account(schema: schema.account, isTappable: isTappable),
-        ),
-
-        const Spacer(),
-
-        buildUpdated(),
-        Tooltip(
-          message: schema.createdAt.toLocal().toString(),
-          child: Text(duration, style: const TextStyle(color: Colors.grey)),
-        ),
-        const SizedBox(width: 4),
-        StatusVisibility(type: schema.visibility, size: 16, isCompact: true),
-      ],
-    );
-  }
-
-  // Build the update icon for the latest updated timeline status.
-  Widget buildUpdated() {
-    if (schema.editedAt == null) {
+    if (history.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    return Tooltip(
-      message: schema.editedAt!.toLocal().toString(),
-      child: Icon(Icons.edit_outlined, size: 16),
+    return Row(
+      children: [
+        Expanded(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return SlideTransition(
+                position: Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(animation),
+                child: FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            },
+            child: buildHistory(),
+          ),
+        ),
+        buildSlider(),
+      ],
     );
+  }
+
+  // Build the slider of the status history, showing the timestamp of the status edit history.
+  Widget buildSlider() {
+    return SfSlider.vertical(
+      min: 0,
+      max: history.length - 1,
+      value: selectedIndex.toDouble(),
+      interval: 1,
+      showTicks: true,
+      onChanged: (dynamic value) => setState(() => selectedIndex = value.toInt()),
+    );
+  }
+
+  // Build the history of the status, showing the edit history of the status.
+  Widget buildHistory() {
+    final StatusEditSchema schema = history[selectedIndex];
+    return Align(
+      key: ValueKey(selectedIndex),
+      alignment: Alignment.topLeft,
+      child: StatusEdit(schema: schema),
+    );
+  }
+
+  void onLoad() async {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final List<StatusEditSchema> history = await status?.fetchHistory(schema: widget.schema) ?? [];
+
+    setState(() {
+      this.history = history;
+      selectedIndex = history.isEmpty ? 0 : history.length - 1;
+    });
+  }
+
+  void onDismiss() {
+    setState(() => isDisposed = true);
+    context.pop();
   }
 }
 
-// The single Status widget that contains the status information.
-class StatusContext extends ConsumerStatefulWidget {
-  final StatusSchema schema;
+class StatusEdit extends StatelessWidget {
+  final StatusEditSchema schema;
 
-  const StatusContext({
+  const StatusEdit({
     super.key,
     required this.schema,
   });
 
   @override
-  ConsumerState<StatusContext> createState() => _StatusContextState();
-}
-
-class _StatusContextState extends ConsumerState<StatusContext> {
-  final ItemScrollController itemScrollController = ItemScrollController();
-
-  @override
   Widget build(BuildContext context) {
-    final ServerSchema? server = ref.watch(serverProvider);
-    final String? accessToken = ref.watch(accessTokenProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        HtmlDone(html: schema.content, emojis: schema.emojis),
+        Poll(schema: schema.poll),
+        Attachments(schemas: schema.attachments),
 
-    if (server == null) {
-      return const SizedBox.shrink();
-    }
+        const Spacer(),
 
-    return FutureBuilder(
-      future: server.getStatusContext(schema: widget.schema, accessToken: accessToken),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Align(
-            alignment: Alignment.topCenter,
-            child: ClockProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: ${server.domain}';
-          return Text(text, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red));
-        }
-
-        final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          // scroll to the current status when the widget is built
-          itemScrollController.scrollTo(
-            index: ctx.ancestors.length,
-            duration: const Duration(milliseconds: 300),
-          );
-        });
-        return buildContent(ctx);
-      }
-    );
-  }
-
-  // The main content of the status context, including the current status
-  // the previous statuses and the next statuses.
-  Widget buildContent(StatusContextSchema ctx) {
-    Map<String, int> indents = {widget.schema.id: 1};
-    final List<Widget> children = [
-      ...ctx.ancestors.map((StatusSchema status) {
-        final int indent = indents[status.inReplyToID] ?? 1;
-
-        indents[status.id] = indent + 1;
-        return Status(schema: status, indent: indent);
-      }),
-
-      Status(schema: widget.schema),
-
-      ...ctx.descendants.map((StatusSchema status) {
-        final int indent = indents[status.inReplyToID] ?? 1;
-
-        indents[status.id] = indent + 1;
-        return Status(schema: status, indent: indent);
-      }),
-    ];
-
-    return ScrollablePositionedList.builder(
-      itemScrollController: itemScrollController,
-      itemCount: children.length,
-      itemBuilder: (context, index) {
-        final Widget child = children[index];
-
-        return Container(
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
-          ),
-          child: child,
-        );
-      },
+        Text(schema.createdAt.toLocal().toString(), style: const TextStyle(color: Colors.grey)),
+      ],
     );
   }
 }

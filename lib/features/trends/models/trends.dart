@@ -15,9 +15,9 @@ enum TrendsType {
       case TrendsType.links:
         return AppLocalizations.of(context)?.btn_trends_links ?? 'Links';
       case TrendsType.statuses:
-        return AppLocalizations.of(context)?.btn_trends_statuses ?? 'Statuses';
+        return AppLocalizations.of(context)?.btn_trends_toots ?? 'Toots';
       case TrendsType.users:
-        return AppLocalizations.of(context)?.btn_user ?? 'Users';
+        return AppLocalizations.of(context)?.btn_trends_users ?? 'Users';
       case TrendsType.tags:
         return AppLocalizations.of(context)?.btn_trends_tags ?? 'Tags';
     }

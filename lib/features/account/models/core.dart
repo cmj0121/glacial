@@ -1,4 +1,4 @@
-// The user related data schema.
+// The account related data schema is defined here.
 
 export 'account.dart';
 export 'relationship.dart';

@@ -1,9 +1,11 @@
 // The Notification widget in the current selected Mastodon server.
 import 'dart:async';
+import 'dart:math';
 
+import 'package:app_badge_plus/app_badge_plus.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -14,11 +16,13 @@ import 'package:glacial/features/screens.dart';
 class NotificationBadge extends ConsumerStatefulWidget {
   final double size;
   final bool isSelected;
+  final VoidCallback? onPressed;
 
   const NotificationBadge({
     super.key,
-    this.size = 24,
+    this.size = iconSize,
     this.isSelected = false,
+    this.onPressed,
   });
 
   @override
@@ -26,17 +30,18 @@ class NotificationBadge extends ConsumerStatefulWidget {
 }
 
 class _NotificationBadgeState extends ConsumerState<NotificationBadge> with WidgetsBindingObserver {
-  late final ServerSchema? server = ref.read(serverProvider);
-  late final String? accessToken = ref.read(accessTokenProvider);
+  late final SystemPreferenceSchema? pref = ref.watch(preferenceProvider);
+  late final AccessStatusSchema? status = ref.watch(accessStatusProvider);
 
   Timer? _timer;
+  int unreadCount = 0;
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addObserver(this);
-    _startTaskIfForeground();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startTaskIfForeground());
   }
 
   @override
@@ -56,21 +61,26 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
 
     switch (currentState) {
       case AppLifecycleState.resumed:
-        onLoad();
+        logger.d("App is in foreground, starting task: $currentState.");
         _startTask();
         break;
       default:
-        // logger.d("App is not in foreground, skipping task start: $currentState.");
-        _stopTask();
+        logger.d("App is not in foreground");
         break;
     }
   }
 
-  void _startTask() {
+  void _startTask({int? times}) {
+    final Duration? refreshInterval = pref?.refreshInterval;
     _stopTask();
-    _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
-      onLoad();
-    });
+
+    if (refreshInterval != null && refreshInterval.inSeconds > 0) {
+      final int interval = refreshInterval.inSeconds;
+
+      _timer = Timer.periodic(Duration(seconds: interval * (times ?? 1)), (Timer timer) async {
+        onLoad();
+      });
+    }
   }
 
   void _stopTask() async {
@@ -80,9 +90,15 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
 
   @override
   Widget build(BuildContext context) {
-    final int unreadCount = ref.watch(unreadNotifyCountProvider);
     final SidebarButtonType action = SidebarButtonType.notifications;
-    final Widget icon = Icon(action.icon(active: widget.isSelected), size: widget.size);
+    final Widget icon = IconButton(
+      icon: Icon(action.icon(active: widget.isSelected), size: widget.size),
+      tooltip: action.tooltip(context),
+      color: widget.isSelected ? Theme.of(context).colorScheme.primary : null,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onPressed: widget.onPressed,
+    );
 
     if (unreadCount == 0 || widget.isSelected) {
       // No need to show the unread count if it's zero or the widget is selected.
@@ -98,12 +114,22 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
 
   // Try to load the unread notifications count when the widget is built.
   Future<void> onLoad() async {
-    final int count = await server?.unreadNotificationsCount(accessToken: accessToken) ?? 0;
-    ref.read(unreadNotifyCountProvider.notifier).state = count;
-    logger.i("update the unread notifications count: $count");
+    final int count = await status?.getUnreadGroupCount() ?? 0;
+
+    if (count> unreadCount) { await onNotify(count); }
+    setState(() => unreadCount = count);
+  }
+
+  // Send the notification to the user when the unread count is updated.
+  Future<void> onNotify(int unreadCount) async {
+    final String title = AppLocalizations.of(context)?.msg_notification_title ?? "New Notifications";
+    final String body = AppLocalizations.of(context)?.msg_notification_body(unreadCount) ?? "You have $unreadCount new notifications.";
+
+    await sendLocalNotification(title, body, badgeNumber: unreadCount);
   }
 }
 
+// The group notification widget that shows the notifications from the current signed-in user.
 class GroupNotification extends ConsumerStatefulWidget {
   const GroupNotification({super.key});
 
@@ -114,19 +140,21 @@ class GroupNotification extends ConsumerStatefulWidget {
 class _GroupNotificationState extends ConsumerState<GroupNotification> {
   final double loadingThreshold = 180;
 
+  late final AccessStatusSchema? status = ref.watch(accessStatusProvider);
   late final ScrollController controller = ScrollController();
-  late final ServerSchema? server = ref.read(serverProvider);
-  late final String? accessToken = ref.read(accessTokenProvider);
 
+  bool isRefresh = false;
   bool isLoading = false;
+  bool isCompleted = false;
   List<GroupSchema> groups = [];
 
   @override
   void initState() {
     super.initState();
+
     controller.addListener(onScroll);
-    GlobalController.scrollToTop = controller;
-    onLoad();
+    GlacialHome.scrollToTop = controller;
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
   }
 
   @override
@@ -137,7 +165,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
 
   @override
   Widget build(BuildContext context) {
-    if (server == null) {
+    if (status?.isSignedIn != true) {
       logger.w("No server selected, but it's required to show the notifications.");
       return const SizedBox.shrink();
     }
@@ -156,22 +184,16 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
 
   // Build the notification content.
   Widget buildContent() {
-    return ListView.builder(
+    final Widget builder =  ListView.builder(
       controller: controller,
       itemCount: groups.length,
-      itemBuilder: (BuildContext context, int index) {
-        final GroupSchema group = groups[index];
+      itemBuilder: (BuildContext context, int index) => SingleNotification(schema: groups[index]),
+    );
 
-        return Container(
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
-          ),
-          child: Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: SingleNotification(schema: group),
-          ),
-        );
-      },
+    return CustomMaterialIndicator(
+      onRefresh: onRefresh,
+      indicatorBuilder: (_, __) => const ClockProgressIndicator(),
+      child: isRefresh ? const SizedBox.shrink() : builder,
     );
   }
 
@@ -183,203 +205,202 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
     }
   }
 
-  Future<void> onLoad() async {
-    final String? maxId = groups.isNotEmpty ? groups.last.pageMaxID : null;
+  // Clean-up and refresh the timeline when the user pulls down the list.
+  Future<void> onRefresh() async {
+    setState(() {
+      isRefresh = true;
+      isLoading = false;
+      isCompleted = false;
+    });
 
-    if (isLoading) {
-      return;
-    }
-    setState(() => isLoading = true);
-
-    final GroupNotificationSchema? schema = await server?.listNotifications(accessToken: accessToken, maxId: maxId);
-
-    onResetUnreadCount(schema?.groups.first.id);
-    setState(() => groups.addAll(schema?.groups ?? []));
-    setState(() => isLoading = false);
+    await onLoad();
   }
 
-  Future<void> onResetUnreadCount(int? lastReadId) async {
+  Future<void> onLoad() async {
+    if (isLoading || isCompleted) { return; }
+
+    setState(() => isLoading = true);
+
+    final String? maxId = groups.isNotEmpty ? groups.last.pageMaxID : null;
+    final GroupNotificationSchema? schema = await status?.fetchNotifications(maxId: maxId);
     final TimelineMarkerType type = TimelineMarkerType.notifications;
-    final int unreadCount = ref.read(unreadNotifyCountProvider);
 
-    if (unreadCount == 0) {
-      return; // No unread notifications to reset.
+    setState(() {
+      isRefresh = false;
+      isLoading = false;
+      isCompleted = schema?.isEmpty ?? false;
+      groups.addAll(schema?.groups ?? []);
+    });
+
+    final int? id = schema?.groups.firstOrNull?.id;
+    if (id != null) {
+      final MarkersSchema? markers = await status?.getMarker(type: type);
+      final MarkerSchema? marker = markers?.markers[type];
+      final int lastReadId = max(int.parse(marker?.lastReadID ?? '0'), id);
+
+      await status?.setMarker(id: lastReadId.toString(), type: type);
+      AppBadgePlus.updateBadge(0);
     }
-
-    await server?.updateTimelinePosition(accessToken: accessToken, id: lastReadId.toString(), type: type);
-    ref.read(unreadNotifyCountProvider.notifier).state = 0;
   }
 }
 
-class SingleNotification extends ConsumerWidget {
+class SingleNotification extends ConsumerStatefulWidget {
   final GroupSchema schema;
+  final double iconSize;
 
   const SingleNotification({
     super.key,
     required this.schema,
+    this.iconSize = 18,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ServerSchema? server = ref.watch(serverProvider);
-    final String? accessToken = ref.watch(accessTokenProvider);
+  ConsumerState<SingleNotification> createState() => _SingleNotificationState();
+}
 
-    if (server == null) {
-      return const SizedBox.shrink();
+class _SingleNotificationState extends ConsumerState<SingleNotification> {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+  Widget? child;
+  List<AccountSchema> accounts = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (child == null) {
+      return const ClockProgressIndicator();
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: buildContent(context, server: server, accessToken: accessToken),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 12),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: buildContent(),
+        ),
+      ),
     );
   }
 
-  // Build the notification based on the type of the schema.
-  Widget buildContent(BuildContext context, {required ServerSchema server, String? accessToken}) {
-    late final Widget content;
-
-    switch (schema.type) {
-      case NotificationType.favourite:
-      case NotificationType.reblog:
-      case NotificationType.update:
-        content = FutureBuilder(
-          future: server.getStatus(schema.statusID!, accessToken: accessToken),
-          builder: (BuildContext context, AsyncSnapshot<StatusSchema?> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const ClockProgressIndicator();
-            } else if (snapshot.hasError || !snapshot.hasData) {
-              return const SizedBox.shrink();
-            }
-
-            final StatusSchema status = snapshot.data!;
-            return ColorFiltered(
-              colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
-              child: StatusLight(schema: status),
-            );
-          },
-        );
-
+  Widget buildContent() {
+    switch (widget.schema.type) {
+      case NotificationType.mention:
         return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildHeader(context, server: server),
+            buildHeader(),
             const SizedBox(height: 8),
-            Transform.scale(
-              scale: 0.9,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).dividerColor),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: content,
-                ),
-              ),
+            child ?? const SizedBox.shrink(),
+          ],
+        );
+      case NotificationType.status:
+      case NotificationType.reblog:
+      case NotificationType.favourite:
+      case NotificationType.poll:
+      case NotificationType.update:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildHeader(),
+            const SizedBox(height: 8),
+            ColorFiltered(
+              colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
+              child: child ?? const SizedBox.shrink(),
             ),
           ],
         );
-      case NotificationType.mention:
-      case NotificationType.poll:
-        return FutureBuilder(
-          future: server.getStatus(schema.statusID!, accessToken: accessToken),
-          builder: (BuildContext context, AsyncSnapshot<StatusSchema?> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const ClockProgressIndicator();
-            } else if (snapshot.hasError || !snapshot.hasData) {
-              return const SizedBox.shrink();
-            }
-
-            final StatusSchema status = snapshot.data!;
-            return StatusLight(schema: status);
-          },
-        );
       case NotificationType.follow:
-        return FutureBuilder(
-          future: server.getAccounts(schema.accounts, accessToken: accessToken),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const ClockProgressIndicator();
-            } else if (snapshot.hasError || !snapshot.hasData) {
-              logger.w("failed to load accounts for notification: ${snapshot.error}");
-              return const SizedBox.shrink();
-            }
-
-            final List<AccountSchema> accounts = snapshot.data!;
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.person_add, color: Theme.of(context).colorScheme.tertiary, size: 24),
-                const SizedBox(height: 8),
-                Column(
-                  children: accounts.map((a) => ColorFiltered(
-                    colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
-                    child: Account(schema: a))
-                  ).toList(),
-                ),
-              ],
-            );
-          },
+      case NotificationType.followRequest:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildHeader(),
+            const SizedBox(height: 8),
+            child ?? const SizedBox.shrink(),
+          ],
         );
-      default:
-        return Text("not implemented yet: ${schema.type}", style: TextStyle(color: Colors.red));
+      case NotificationType.unknown:
+        return buildHeader();
     }
   }
 
-  // Build the related accounts based on the schema.
-  Widget buildHeader(BuildContext context, {required ServerSchema server}) {
-    final double iconSize = 24;
-    final Storage storage = Storage();
-    final List<AccountSchema?> accounts = schema.accounts.map((a) => storage.loadAccountFromCache(server, a)).toList();
-
-    late final IconData? icon;
-    switch (schema.type) {
-      case NotificationType.favourite:
-        icon = StatusInteraction.favourite.icon(active: true);
-        break;
-      case NotificationType.reblog:
-        icon = StatusInteraction.reblog.icon(active: true);
-        break;
-      case NotificationType.update:
-        icon = Icons.edit_note;
-        break;
-      default:
-        icon = null;
-    }
+  // Build the optional header for the notification, which shows the accounts involved in the notification.
+  Widget buildHeader() {
+    final Widget icon = TextButton.icon(
+      icon: Icon(widget.schema.type.icon, size: widget.iconSize),
+      label: Text(widget.schema.type.tooltip(context)),
+      onPressed: null,
+    );
 
     return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        icon == null ? const SizedBox.shrink() : Icon(icon, size: iconSize, color: Theme.of(context).colorScheme.tertiary),
-        const SizedBox(width: 8),
-        ...accounts.map((account) {
-          if (account == null) {
-            return const SizedBox.shrink();
-          }
-
-          final Widget avatar = CachedNetworkImage(
-            imageUrl: account.avatar,
-            placeholder: (context, url) => const ClockProgressIndicator(),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-            width: iconSize,
-            height: iconSize,
-            fit: BoxFit.cover,
-          );
-          return Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: ClipOval(
-              child: InkWellDone(
-                onTap: () => context.push(RoutePath.profile.path, extra: account),
-                child: avatar,
-              ),
-            ),
-          );
-        }),
+        ...accounts.map((a) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: AccountAvatar(schema: a, size: widget.iconSize),
+        )),
+        icon,
       ],
     );
+  }
+
+  void onLoad() async {
+    if (child != null) { return; }
+
+    late final Widget content;
+    switch (widget.schema.type) {
+      case NotificationType.status:
+      case NotificationType.reblog:
+      case NotificationType.favourite:
+      case NotificationType.poll:
+      case NotificationType.update:
+      case NotificationType.mention:
+        final StatusSchema? schema = await status?.getStatus(widget.schema.statusID, loadCache: true);
+
+        content = schema == null ? const SizedBox.shrink() : StatusLite(schema: schema);
+        break;
+      case NotificationType.follow:
+      case NotificationType.followRequest:
+        final List<AccountSchema> accounts = await status?.getAccounts(widget.schema.accounts) ?? [];
+        content = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: accounts.map((a) => Account(schema: a)).toList(),
+        );
+        break;
+      case NotificationType.unknown:
+        content = NoResult();
+        break;
+    }
+
+    await onLoadAccounts();
+    if (mounted) { setState(() => child = content ); }
+  }
+
+  // Load the accounts involved in the notification.
+  Future<void> onLoadAccounts() async {
+    switch (widget.schema.type) {
+      case NotificationType.status:
+      case NotificationType.reblog:
+      case NotificationType.favourite:
+      case NotificationType.poll:
+      case NotificationType.update:
+        final List<AccountSchema> accounts = await status?.getAccounts(widget.schema.accounts) ?? [];
+        if (mounted) { setState(() => this.accounts = accounts); }
+        return;
+      case NotificationType.mention:
+      case NotificationType.follow:
+      case NotificationType.followRequest:
+      case NotificationType.unknown:
+    }
   }
 }
 

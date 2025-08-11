@@ -1,6 +1,8 @@
 // The possible interactions with the status
 import 'package:flutter/material.dart';
 
+import 'package:glacial/core.dart';
+
 // The actions that can be performed on a status.
 enum StatusInteraction {
   reply,
@@ -8,15 +10,12 @@ enum StatusInteraction {
   favourite,
   bookmark,
   share,
-  edit,
   mute,
   block,
+  edit,
   delete;
 
-  String tooltip(BuildContext context) {
-    return name;
-  }
-
+  // The icon associated with the interaction, based on the action type.
   IconData icon({bool active = false}) {
     switch (this) {
       case reply:
@@ -33,40 +32,49 @@ enum StatusInteraction {
         return active ? Icons.volume_off : Icons.volume_mute_outlined;
       case block:
         return active ? Icons.block : Icons.block_outlined;
-      case delete:
-        return active ? Icons.delete : Icons.delete_outline_outlined;
       case edit:
         return active ? Icons.edit : Icons.edit_outlined;
+      case delete:
+        return active ? Icons.delete : Icons.delete_outline_outlined;
     }
   }
 
-  bool get supportAnonymous {
+  // The tooltip text for the interaction, localized if possible.
+  String tooltip(BuildContext context) {
     switch (this) {
+      case reply:
+        return AppLocalizations.of(context)?.btn_interaction_reply ?? "Reply";
+      case reblog:
+        return AppLocalizations.of(context)?.btn_interaction_reblog ?? "Reblog";
+      case favourite:
+        return AppLocalizations.of(context)?.btn_interaction_favourite ?? "Favourite";
+      case bookmark:
+        return AppLocalizations.of(context)?.btn_interaction_bookmark ?? "Bookmark";
       case share:
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  bool get isDangerous {
-    switch (this) {
+        return AppLocalizations.of(context)?.btn_interaction_share ?? "Share";
       case mute:
+        return AppLocalizations.of(context)?.btn_interaction_mute ?? "Mute";
       case block:
+        return AppLocalizations.of(context)?.btn_interaction_block ?? "Block";
+      case edit:
+        return AppLocalizations.of(context)?.btn_interaction_edit ?? "Edit";
       case delete:
-        return true;
-      default:
-        return false;
+        return AppLocalizations.of(context)?.btn_interaction_delete ?? "Delete";
     }
   }
 
-  bool get isSelfAction {
+  // The built-in action for the interaction, which is displayed in the UI by
+  // default. It may be overridden by smaller layouts or custom widgets.
+  bool get isBuiltIn {
     switch (this) {
-      case edit:
-      case delete:
-        return true;
+      case reply:
+      case reblog:
+      case favourite:
+      case bookmark:
+      case share:
+        return true; // Built-in actions.
       default:
-        return false;
+        return false; // Not built-in, requires custom handling.
     }
   }
 }

@@ -1,4 +1,4 @@
-// The search widget to search specified resource.
+// The Mastodon server explorer and find a server to connect to.
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -27,7 +27,7 @@ class MastodonServer extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const ClockProgressIndicator();
         } else if (snapshot.hasError) {
-          final String text = AppLocalizations.of(context)?.txt_invalid_instance ?? 'Invalid instance: $domain';
+          final String text = AppLocalizations.of(context)?.err_invalid_instance(domain) ?? 'Invalid instance: $domain';
           return NoResult(message: text);
         }
 
@@ -50,25 +50,23 @@ class MastodonServer extends StatelessWidget {
   // The main content of the server widget, which includes the thumbnail, title,
   // description, extra content, and metadata.
   Widget buildContent(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(child: buildThumbnail()),
-            const SizedBox(height: 16),
-            Text(schema.title, style: Theme.of(context).textTheme.headlineMedium, overflow: TextOverflow.ellipsis),
-            const SizedBox(height: 16),
-            Text(schema.desc, style: Theme.of(context).textTheme.bodyLarge),
-            const SizedBox(height: 6),
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(child: buildThumbnail()),
+          const SizedBox(height: 16),
+          Text(schema.title, style: Theme.of(context).textTheme.headlineMedium, overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 16),
+          Text(schema.desc, style: Theme.of(context).textTheme.bodyLarge),
+          const SizedBox(height: 6),
 
-            buildExtraContent(context),
+          buildExtraContent(context),
 
-            const Spacer(),
-            buildMetadata(),
-          ],
-        ),
+          const Spacer(),
+          buildMetadata(),
+        ],
       ),
     );
   }
@@ -108,18 +106,18 @@ class MastodonServer extends StatelessWidget {
           ),
         ),
 
-        ListTile(
-          iconColor: Theme.of(context).colorScheme.primary,
-          leading: const Icon(Icons.rule_outlined),
-          title: InkWellDone(
-            onTap: showRules ? () => showDialog(
-              context: context,
-              builder: (context) => Dialog(
-                child: ServerRules(rules: schema.rules),
-              ),
-            ) : null,
-            child: Text(
-              AppLocalizations.of(context)?.txt_server_rules ?? 'Server Rules',
+        InkWellDone(
+          onTap: showRules ? () => showDialog(
+            context: context,
+            builder: (context) => Dialog(
+              child: ServerRules(rules: schema.rules),
+            ),
+          ) : null,
+          child: ListTile(
+            iconColor: Theme.of(context).colorScheme.primary,
+            leading: const Icon(Icons.rule_outlined),
+            title: Text(
+              'Server Rules',
               style: style?.copyWith(
                 color: showRules ? Theme.of(context).colorScheme.primary : null,
               ),
@@ -175,6 +173,40 @@ class MastodonServer extends StatelessWidget {
         "registration",
         style: TextStyle(fontSize: badgeFontSize, color: Colors.black),
       ),
+    );
+  }
+}
+
+// The brief information of the server, which shows the server's title, and the thumbnail.
+class MastodonServerInfo extends StatelessWidget {
+  final ServerInfoSchema schema;
+  final double size;
+
+  const MastodonServerInfo({
+    super.key,
+    required this.schema,
+    this.size = 32,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: CachedNetworkImage(
+            imageUrl: schema.thumbnail,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => const ClockProgressIndicator(),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Text(schema.domain, style: Theme.of(context).textTheme.bodyLarge),
+      ],
     );
   }
 }

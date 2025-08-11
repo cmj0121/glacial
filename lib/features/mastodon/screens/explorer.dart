@@ -1,4 +1,4 @@
-// The Mastodon server explorer.
+// The Mastodon server explorer and find a server to connect to.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,8 +7,7 @@ import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
-// The main search page that shows the search bar and the possible
-// mastodon servers.
+// The main search page that shows the search bar and the possible mastodon servers.
 class ServerExplorer extends ConsumerStatefulWidget {
   const ServerExplorer({super.key});
 
@@ -21,19 +20,6 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
   final Storage storage = Storage();
 
   Widget? child;
-  late List<String> history;
-
-  @override
-  void initState() {
-    super.initState();
-    history = storage.serverHistory;
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +35,15 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
           ),
         ),
       ),
-      drawer: Drawer(child: buildSidebar()),
+      drawer: HistoryDrawer(onTap: (String server) {
+        controller.text = server;
+        onSearch();
+        context.pop();
+      }),
     );
   }
 
-  // The main content of the explorer page, shows the search bar and the
-  // mastodon server list.
+  // The main content of the explorer page, shows the search bar and the mastodon server list.
   Widget buildContent() {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -66,41 +55,10 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
     );
   }
 
-  // The sidebar of the explorer page, shows the search history
-  Widget buildSidebar() {
-    final bool isEmpty = history.isEmpty;
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 32, left: 16, right: 16, bottom: 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text(
-            AppLocalizations.of(context)?.txt_search_history ?? "Search History",
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const Divider(),
-          Expanded(child: buildServerHistory()),
-          TextButton.icon(
-            icon: const Icon(Icons.cleaning_services),
-            label: Text(AppLocalizations.of(context)?.btn_clean_all ?? "Clear All"),
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.secondary,
-            ),
-            onPressed: isEmpty ? null : () {
-              storage.serverHistory = [];
-              setState(() => history = []);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  // The header of the explorer page, shows the search bar and the history
-  // button to show the search history.
+  // The header of the explorer page, shows the search bar and the history button to show the search history.
   Widget buildHeader() {
     final double iconSize = 36;
+    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -113,8 +71,8 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
           builder: (context) {
             return IconButton(
               icon: Icon(Icons.history, size: iconSize),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-              tooltip: "Search History",
+              tooltip: AppLocalizations.of(context)?.btn_history ?? "History",
+              onPressed: status?.history.isEmpty ?? true ? null : () => Scaffold.of(context).openDrawer(),
             );
           },
         ),
@@ -135,10 +93,10 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
           onPressed: () => onSearch(),
         ),
         suffixIcon: buildCleanButton(),
+        helperText: AppLocalizations.of(context)?.txt_helper_server_explorer ?? "Search for a Mastodon server",
 
-        hintText: AppLocalizations.of(context)?.txt_search_mastodon ?? "mastodon.social",
-        hintStyle: TextStyle(color: Theme.of(context).colorScheme.surfaceBright),
-        helperText: AppLocalizations.of(context)?.txt_search_helper ?? 'Search for something interesting',
+        hintText: AppLocalizations.of(context)?.txt_hint_server_explorer ?? "mastodon.social or keyword",
+        hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondaryContainer),
 
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -162,89 +120,44 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
       icon: Icon(Icons.clear),
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
-      onPressed: () {
-        controller.clear();
-        setState(() => child = null);
-      },
-    );
-  }
-
-  // The history of the search, shows the list of mastodon servers that the user
-  // can select it again.
-  Widget buildServerHistory() {
-    return ReorderableListView.builder(
-      itemCount: history.length,
-      itemBuilder: (context, index) {
-        final String domain = history[index];
-        final Widget item = ListTile(
-          title: Text(domain, overflow: TextOverflow.ellipsis),
-          selectedTileColor: Theme.of(context).colorScheme.primary,
-          onTap: () {
-            controller.text = domain;
-            onSearch();
-            Navigator.of(context).pop();
-          },
-        );
-
-        return Dismissible(
-          key: ValueKey(domain),
-          background: Container(
-            alignment: Alignment.centerLeft,
-            color: Colors.red,
-            child: const Icon(Icons.delete_forever_rounded, color: Colors.white),
-          ),
-          direction: DismissDirection.startToEnd,
-          onDismissed: (direction) {
-            history.removeAt(index);
-            storage.serverHistory = history;
-            setState(() {});
-          },
-          child: item,
-        );
-      },
-      onReorder: onReorder,
+      onPressed: onClearSearch,
     );
   }
 
   // The search function that is called when the user presses the search
   void onSearch() async {
-    final String keyword = controller.text.trim();
+    final String query = controller.text.trim();
 
-    if (keyword.isEmpty) {
+    if (query.isEmpty) {
       return;
     }
 
-    setState( () => child = MastodonServer.builder(domain: keyword, onTap: onSelect) );
+    setState( () => child = MastodonServer.builder(domain: query, onTap: onSelect) );
   }
 
   // The callback when user clicks the mastodon server.
   void onSelect(ServerSchema schema) async {
+    final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
+    List<ServerInfoSchema> history = status.history.toList();
+
+    // If the server not already in the history, add it.
+    if (!history.any((ServerInfoSchema info) => info.domain == schema.domain)) {
+      history.add(schema.toInfo());
+    }
+
     logger.i("onTap: ${schema.domain}");
-
-    setState(() {
-      if (!history.contains(schema.domain)) {
-        history.add(schema.domain);
-        storage.serverHistory = history;
-      }
-    });
-
-    await storage.saveLastServer(schema.domain);
-    await storage.reloadProvider(ref);
+    storage.saveAccessStatus(status.copyWith(domain: schema.domain, history: history));
+    await storage.loadAccessStatus(ref: ref);
 
     if (mounted) {
-      context.go(RoutePath.timeline.path, extra: schema);
+      context.go(RoutePath.timeline.path);
     }
   }
 
-  // Reorder the history list when the user drags the item.
-  void onReorder(int oldIndex, int newIndex) {
-    if (oldIndex < newIndex) {
-      newIndex--;
-    }
-
-    final String domain = history.removeAt(oldIndex);
-    history.insert(newIndex, domain);
-    storage.serverHistory = history;
+  // Clear the search text field and reset the search results.
+  void onClearSearch() {
+    controller.clear();
+    setState(() => child = null);
   }
 }
 

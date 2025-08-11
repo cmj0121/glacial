@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/models.dart';
 
 // The Mastodon server data schema that show the necessary info to show
 // the widget in the app.
@@ -63,9 +64,12 @@ class ServerSchema {
   }
 
   // fetch the server information from the specified domain.
-  static Future<ServerSchema> fetch(String domain) async {
-    logger.i('search the mastodon server: $domain');
+  static Future<ServerSchema?> fetch(String? domain) async {
+    if (domain == null || domain.isNotEmpty != true) {
+      return null;
+    }
 
+    logger.i('search the mastodon server: $domain');
     final Uri url = UriEx.handle(domain, '/api/v2/instance');
     final response = await get(url);
 
@@ -83,138 +87,46 @@ class ServerSchema {
 
     throw Exception('Failed to load the server: $domain');
   }
-}
 
-// The Server rule to show the server info in the app.
-class RuleSchema {
-  final String id;
-  final String text;
-  final String hint;
-
-  const RuleSchema({
-    required this.id,
-    required this.text,
-    required this.hint,
-  });
-
-  factory RuleSchema.fromJson(Map<String, dynamic> json) {
-    return RuleSchema(
-      id: json['id'] as String,
-      text: json['text'] as String,
-      hint: json['hint'] as String,
+  // Create the brief server information schema from the current server schema.
+  ServerInfoSchema toInfo() {
+    return ServerInfoSchema(
+      domain: domain,
+      thumbnail: thumbnail,
     );
   }
 }
 
-// The server usage
-class ServerUsageSchema {
-  final int userActiveMonthly;
+// The brief server information schema that only contains the necessary info
+class ServerInfoSchema {
+  final String domain;
+  final String thumbnail;
 
-  const ServerUsageSchema({
-    required this.userActiveMonthly,
+  const ServerInfoSchema({
+    required this.domain,
+    required this.thumbnail,
   });
 
-  factory ServerUsageSchema.fromJson(Map<String, dynamic> json) {
-    final Map<String, dynamic>? users = json['users'] as Map<String, dynamic>?;
-    return ServerUsageSchema(
-      userActiveMonthly: users?['active_month'] as int? ?? 0,
+  // Convert the JSON string to a ServerInfoSchema object.
+  factory ServerInfoSchema.fromString(String str) {
+    final Map<String, dynamic> json = jsonDecode(str);
+    return ServerInfoSchema.fromJson(json);
+  }
+
+  // Convert the JSON map to a ServerInfoSchema object.
+  factory ServerInfoSchema.fromJson(Map<String, dynamic> json) {
+    return ServerInfoSchema(
+      domain: json['domain'] as String,
+      thumbnail: json['thumbnail'] as String,
     );
   }
-}
 
-// The server status configuration
-class StatusConfigSchema {
-  final int charReserved;
-  final int maxCharacters;
-  final int maxAttachments;
-
-  const StatusConfigSchema({
-    required this.charReserved,
-    required this.maxCharacters,
-    required this.maxAttachments,
-  });
-
-  factory StatusConfigSchema.fromJson(Map<String, dynamic> json) {
-    return StatusConfigSchema(
-      charReserved: json['characters_reserved_per_url'] as int? ?? 0,
-      maxCharacters: json['max_characters'] as int? ?? 0,
-      maxAttachments: json['max_media_attachments'] as int? ?? 0,
-    );
-  }
-}
-
-// The server configuration
-class ServerConfigSchema {
-  final StatusConfigSchema statuses;
-  final PollConfigSchema polls;
-
-  const ServerConfigSchema({
-    required this.statuses,
-    required this.polls,
-  });
-
-  factory ServerConfigSchema.fromJson(Map<String, dynamic> json) {
-    return ServerConfigSchema(
-      statuses: StatusConfigSchema.fromJson(json['statuses'] as Map<String, dynamic>),
-      polls: PollConfigSchema.fromJson(json['polls'] as Map<String, dynamic>),
-    );
-  }
-}
-
-// The poll configuration for the server.
-class PollConfigSchema {
-  final int maxOptions;
-  final int maxCharacters;
-  final int minExpiresIn;
-  final int maxExpiresIn;
-
-  const PollConfigSchema({
-    required this.maxOptions,
-    required this.maxCharacters,
-    required this.minExpiresIn,
-    required this.maxExpiresIn,
-  });
-
-  factory PollConfigSchema.fromJson(Map<String, dynamic> json) {
-    return PollConfigSchema(
-      maxOptions: json['max_options'] as int? ?? 0,
-      maxCharacters: json['max_characters_per_option'] as int? ?? 0,
-      minExpiresIn: json['min_expiration'] as int? ?? 0,
-      maxExpiresIn: json['max_expiration'] as int? ?? 0,
-    );
-  }
-}
-
-// The information about registering for this website.
-class RegisterConfigSchema {
-  final bool enabled;
-  final bool approvalRequired;
-
-  const RegisterConfigSchema({
-    required this.enabled,
-    required this.approvalRequired,
-  });
-
-  factory RegisterConfigSchema.fromJson(Map<String, dynamic> json) {
-    return RegisterConfigSchema(
-      enabled: json['enabled'] as bool? ?? false,
-      approvalRequired: json['approval_required'] as bool? ?? false,
-    );
-  }
-}
-
-// The hints related to contacting a representative of the website.
-class ContactSchema {
-  final String email;
-
-  const ContactSchema({
-    required this.email,
-  });
-
-  factory ContactSchema.fromJson(Map<String, dynamic> json) {
-    return ContactSchema(
-      email: json['email'] as String,
-    );
+  // Converts the server info to JSON format.
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'domain': domain,
+      'thumbnail': thumbnail,
+    };
   }
 }
 

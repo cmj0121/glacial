@@ -4,21 +4,22 @@ import 'package:go_router/go_router.dart';
 
 enum RoutePath {
   landing,           // The landing page of the app when user opens it.
-  engineer,          // The engineer page of the app.
   explorer,          // The server explorer page of the app to explore the Mastodon server.
   webview,           // The in-app webview page of the app.
   media,             // The media viewer page of the app to view the media content.
+  preference,        // The preference settings page of the app.
   // The home page of the Glacial, showing the timeline, trends, notifications, and other features.
   timeline,          // The timeline page of the app.
+  list,              // The list page of the app to show the pinned lists.
   trends,            // The trends page of the app.
   notifications,     // The notifications page of the app.
-  settings,          // The settings page of the app.
   admin,             // The admin page of the app.
   search,            // The search page of the app.
   hashtag,           // The hashtag page of the app.
   profile,           // The user's profile page of the app.
   status,            // The list of statuses in the context of the app.
   statusInfo,        // The status info page of the app to show the status details.
+  statusHistory,     // The status history page of the app to show the status history.
   post,              // The post page of the app to create a new post.
   edit,              // The edit page of the app to edit an existing post.
   wip;               // The work-in-progress page of the app.
@@ -28,22 +29,22 @@ enum RoutePath {
     switch (this) {
       case RoutePath.landing:
         return '/';
-      case RoutePath.engineer:
-        return '/engineer';
       case RoutePath.explorer:
         return '/explorer';
       case RoutePath.webview:
         return '/webview';
+      case RoutePath.preference:
+        return '/preference';
       case RoutePath.media:
         return '/media';
       case RoutePath.timeline:
         return '/home/timeline';
+      case RoutePath.list:
+        return '/home/list';
       case RoutePath.trends:
         return '/home/trends';
       case RoutePath.notifications:
         return '/home/notifications';
-      case RoutePath.settings:
-        return '/home/settings';
       case RoutePath.admin:
         return '/home/admin';
       case RoutePath.search:
@@ -56,6 +57,8 @@ enum RoutePath {
         return '/home/status';
       case RoutePath.statusInfo:
         return '/home/status/info';
+      case RoutePath.statusHistory:
+        return '/home/status/history';
       case RoutePath.post:
         return '/home/post';
       case RoutePath.edit:

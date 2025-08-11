@@ -1,6 +1,9 @@
 // The Notification related data schema.
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
+import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
 enum NotificationType {
@@ -19,10 +22,55 @@ enum NotificationType {
       case 'follow_request':
         return NotificationType.followRequest;
       default:
-        return NotificationType.values.firstWhere(
-          (e) => e.name == type,
-          orElse: () => NotificationType.unknown,
-        );
+        return NotificationType.values.firstWhere((e) => e.name == type, orElse: () => NotificationType.unknown);
+    }
+  }
+
+  // The icon associated with the notification type.
+  IconData get icon {
+    switch (this) {
+      case NotificationType.mention:
+        return Icons.alternate_email;
+      case NotificationType.status:
+        return Icons.chat_bubble;
+      case NotificationType.reblog:
+        return Icons.repeat;
+      case NotificationType.follow:
+        return Icons.person_add;
+      case NotificationType.followRequest:
+        return Icons.person_add_alt;
+      case NotificationType.favourite:
+        return Icons.star;
+      case NotificationType.poll:
+        return Icons.poll;
+      case NotificationType.update:
+        return Icons.edit;
+      case NotificationType.unknown:
+        return Icons.sentiment_dissatisfied_outlined;
+    }
+  }
+
+  // The localized name of the notification type.
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case NotificationType.mention:
+        return AppLocalizations.of(context)?.btn_notification_mention ?? "Mentioned";
+      case NotificationType.status:
+        return AppLocalizations.of(context)?.btn_notification_status ?? "Status";
+      case NotificationType.reblog:
+        return AppLocalizations.of(context)?.btn_notification_reblog ?? "Reblog";
+      case NotificationType.follow:
+        return AppLocalizations.of(context)?.btn_notification_follow ?? "Follow";
+      case NotificationType.followRequest:
+        return AppLocalizations.of(context)?.btn_notification_follow_request ?? "Follow Request";
+      case NotificationType.favourite:
+        return AppLocalizations.of(context)?.btn_notification_favourite ?? "Favourite";
+      case NotificationType.poll:
+        return AppLocalizations.of(context)?.btn_notification_poll ?? "Poll";
+      case NotificationType.update:
+        return AppLocalizations.of(context)?.btn_notification_update ?? "Update";
+      case NotificationType.unknown:
+        return AppLocalizations.of(context)?.btn_notification_unknown ?? "Unknown";
     }
   }
 }
@@ -91,6 +139,10 @@ class GroupNotificationSchema {
         return GroupSchema.fromJson(e as Map<String, dynamic>);
       }).toList(),
     );
+  }
+
+  bool get isEmpty {
+    return accounts.isEmpty && statuses.isEmpty && groups.isEmpty;
   }
 }
 

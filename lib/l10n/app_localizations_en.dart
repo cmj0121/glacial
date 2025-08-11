@@ -9,143 +9,354 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get txt_app_name => 'Glacial';
+  String get btn_search => 'Search';
 
   @override
-  String get txt_invalid_instance => 'Invalid Mastodon server';
+  String get btn_close => 'Close';
 
   @override
-  String get txt_server_contact => 'Contact';
+  String get btn_clear => 'Clear';
 
   @override
-  String get txt_search_helper => 'Search for something interesting';
+  String get btn_exit => 'Exit';
 
   @override
-  String get txt_search_history => 'Search history';
+  String get btn_reload => 'Reload';
 
   @override
-  String get txt_search_mastodon => 'mastodon.social';
+  String get btn_history => 'History';
 
   @override
-  String get txt_server_rules => 'Server rules';
+  String get btn_sidebar_timelines => 'Timelines';
 
   @override
-  String get txt_show_less => 'Show less';
+  String get btn_sidebar_lists => 'Lists';
 
   @override
-  String get txt_show_more => 'Show more';
+  String get btn_sidebar_trendings => 'Trendings';
 
   @override
-  String txt_trends_uses(Object uses) {
-    return '$uses used in the past days';
+  String get btn_sidebar_notifications => 'Notifications';
+
+  @override
+  String get btn_sidebar_management => 'Managements';
+
+  @override
+  String get btn_sidebar_post => 'Toot';
+
+  @override
+  String get btn_sidebar_sign_in => 'Sign In';
+
+  @override
+  String get btn_drawer_switch_server => 'Switch Server';
+
+  @override
+  String get btn_drawer_preference => 'Preference';
+
+  @override
+  String get btn_drawer_logout => 'Logout';
+
+  @override
+  String get btn_trends_links => 'Links';
+
+  @override
+  String get btn_trends_toots => 'Toots';
+
+  @override
+  String get btn_trends_users => 'Users';
+
+  @override
+  String get btn_trends_tags => 'Tags';
+
+  @override
+  String get btn_timeline_home => 'Home';
+
+  @override
+  String get btn_timeline_local => 'Local';
+
+  @override
+  String get btn_timeline_federal => 'Federal';
+
+  @override
+  String get btn_timeline_public => 'Public';
+
+  @override
+  String get btn_timeline_favourites => 'Favourites';
+
+  @override
+  String get btn_timeline_bookmarks => 'Bookmarks';
+
+  @override
+  String get btn_preference_theme => 'Theme';
+
+  @override
+  String get btn_preference_engineer => 'Engineer Settings';
+
+  @override
+  String get btn_preference_engineer_clear_cache => 'Clear All Cache';
+
+  @override
+  String get btn_preference_engineer_test_notifier => 'Test Notification';
+
+  @override
+  String get btn_interaction_reply => 'Reply';
+
+  @override
+  String get btn_interaction_reblog => 'Reblog';
+
+  @override
+  String get btn_interaction_favourite => 'Favourite';
+
+  @override
+  String get btn_interaction_bookmark => 'Bookmark';
+
+  @override
+  String get btn_interaction_share => 'Share';
+
+  @override
+  String get btn_interaction_mute => 'Mute';
+
+  @override
+  String get btn_interaction_block => 'Block';
+
+  @override
+  String get btn_interaction_edit => 'Edit';
+
+  @override
+  String get btn_interaction_delete => 'Delete';
+
+  @override
+  String get btn_profile_core => 'Profile';
+
+  @override
+  String get btn_profile_post => 'Toots';
+
+  @override
+  String get btn_profile_pin => 'Pinned';
+
+  @override
+  String get btn_profile_followers => 'Followers';
+
+  @override
+  String get btn_profile_following => 'Following';
+
+  @override
+  String get btn_profile_scheduled => 'Scheduled Toots';
+
+  @override
+  String get btn_profile_hashtag => 'Following Hashtags';
+
+  @override
+  String get btn_profile_mute => 'Muted Users';
+
+  @override
+  String get btn_profile_block => 'Blocked Users';
+
+  @override
+  String get btn_status_toot => 'Toot';
+
+  @override
+  String get btn_status_edit => 'Edit';
+
+  @override
+  String get btn_status_scheduled => 'Scheduled Toot';
+
+  @override
+  String get btn_relationship_following => 'Following';
+
+  @override
+  String get btn_relationship_followed_by => 'Followed by';
+
+  @override
+  String get btn_relationship_follow_each_other => 'Be friend';
+
+  @override
+  String get btn_relationship_stranger => 'Stranger';
+
+  @override
+  String get btn_relationship_blocked_by => 'Blocked By';
+
+  @override
+  String btn_relationship_mute(Object acct) {
+    return 'Mute $acct';
   }
 
   @override
-  String txt_no_results_found(Object keyword) {
-    return 'No results found for $keyword';
+  String btn_relationship_unmute(Object acct) {
+    return 'Unmute $acct';
   }
 
   @override
-  String get txt_copied_to_clipboard => 'Copy to Clipboard';
+  String btn_relationship_block(Object acct) {
+    return 'Block $acct';
+  }
 
   @override
-  String get txt_public => 'Public';
+  String btn_relationship_unblock(Object acct) {
+    return 'Unblock $acct';
+  }
 
   @override
-  String get txt_unlisted => 'Unlisted';
+  String btn_relationship_report(Object acct) {
+    return 'Report $acct';
+  }
 
   @override
-  String get txt_private => 'Private';
+  String get btn_notification_mention => 'Mentioned';
 
   @override
-  String get txt_direct => 'Direct';
+  String get btn_notification_status => 'Notification';
 
   @override
-  String get btn_clean_all => 'Clean All';
+  String get btn_notification_reblog => 'Reblog';
 
   @override
-  String get btn_timeline => 'Timelines';
+  String get btn_notification_follow => 'Followed';
 
   @override
-  String get btn_trending => 'Trending now';
+  String get btn_notification_follow_request => 'Follow Request';
 
   @override
-  String get btn_notifications => 'Notifications';
+  String get btn_notification_favourite => 'Favourite';
 
   @override
-  String get btn_settings => 'Settings';
+  String get btn_notification_poll => 'Poll';
 
   @override
-  String get btn_management => 'Administration';
+  String get btn_notification_update => 'Update';
 
   @override
-  String get btn_trends_links => 'News';
+  String get btn_notification_unknown => 'Unknown';
 
   @override
-  String get btn_trends_statuses => 'Posts';
+  String get desc_preference_engineer_clear_cache =>
+      'Clear all cached data and reset the app';
 
   @override
-  String get btn_trends_tags => 'Hashtags';
+  String get desc_preference_engineer_test_notifier =>
+      'Test send the notification in local device';
 
   @override
-  String get btn_home => 'Home';
+  String get txt_spoiler => 'Spoiler';
 
   @override
-  String get btn_user => 'User';
+  String get txt_search_history => 'Search History';
 
   @override
-  String get btn_profile => 'Profile';
+  String get txt_helper_server_explorer => 'Search for a Mastodon server';
 
   @override
-  String get btn_pin => 'Pin';
+  String get txt_hint_server_explorer => 'mastodon.social or keyword';
 
   @override
-  String get btn_schedule => 'Scheduled';
+  String get txt_desc_preference_system_theme => 'The system theme';
 
   @override
-  String get btn_local => 'This server';
+  String get txt_visibility_public => 'Public';
 
   @override
-  String get btn_federal => 'Other servers';
+  String get txt_visibility_unlisted => 'Unlisted';
 
   @override
-  String get btn_public => 'All';
+  String get txt_visibility_private => 'Private';
 
   @override
-  String get btn_bookmarks => 'Bookmarks';
+  String get txt_visibility_direct => 'Direct';
 
   @override
-  String get btn_favourites => 'Favorites';
+  String get txt_suggestion_staff => 'Staff Recommendation';
 
   @override
-  String get btn_post => 'New post';
+  String get txt_suggestion_past_interactions => 'Interacted previously';
 
   @override
-  String get btn_follow_mutual => 'Mutual';
+  String get txt_suggestion_global => 'Global Popularity';
 
   @override
-  String get btn_following => 'Following';
+  String get txt_poll_show_total => 'Show Total';
 
   @override
-  String get btn_followed_by => 'Followed By';
+  String get txt_poll_hide_total => 'Hide Total';
 
   @override
-  String get btn_follow => 'Follow';
+  String get txt_poll_single => 'Single Choice';
 
   @override
-  String get btn_block => 'Block';
+  String get txt_poll_multiple => 'Multiple Choices';
 
   @override
-  String get btn_unblock => 'Unblock';
+  String get txt_preference_status => 'Status Settings';
 
   @override
-  String get btn_mute => 'Mute';
+  String get txt_preference_visibiliby => 'Visibility';
 
   @override
-  String get btn_unmute => 'Unmute';
+  String get txt_preference_sensitive => 'Sensitive Content';
 
   @override
-  String get btn_report => 'Report';
+  String get txt_preference_refresh_interval => 'Refresh Interval';
+
+  @override
+  String get txt_show_less => 'Show Less';
+
+  @override
+  String get txt_show_more => 'Show More';
+
+  @override
+  String get txt_no_result => 'No results found';
+
+  @override
+  String get desc_preference_status =>
+      'Setup and control your default status behavior';
+
+  @override
+  String get desc_poll_show_hide_total =>
+      'Show/Hide vote counts until the poll ends';
+
+  @override
+  String get desc_preference_visibility =>
+      'Control who can see and list the status';
+
+  @override
+  String get desc_preference_sensitive =>
+      'Show/Hide the sensitive content as default action';
+
+  @override
+  String get desc_visibility_public => 'Everyone can list and view this toot';
+
+  @override
+  String get desc_visibility_unlisted =>
+      'Public but not been listed in the timeline';
+
+  @override
+  String get desc_visibility_private => 'The follower and the mentioned user';
+
+  @override
+  String get desc_visibility_direct => 'Only the mentioned user';
+
+  @override
+  String get desc_preference_refresh_interval =>
+      'The interval to refresh the app\'s data';
+
+  @override
+  String err_invalid_instance(Object domain) {
+    return 'invalid Mastodon server domain: $domain';
+  }
+
+  @override
+  String get msg_preference_engineer_clear_cache =>
+      'Cache cleared successfully';
+
+  @override
+  String get msg_copied_to_clipboard => 'Copy to clipboard';
+
+  @override
+  String get msg_notification_title => 'New Notifications';
+
+  @override
+  String msg_notification_body(Object count) {
+    return 'You have $count unread notifications';
+  }
 
   @override
   String get dots => '...';

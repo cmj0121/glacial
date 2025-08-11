@@ -1,10 +1,10 @@
-// The Timeline widget and related widgets.
+// The Timeline widget in the current selected Mastodon server.
 
 export 'application.dart';
 export 'attachment.dart';
 export 'interaction.dart';
-export 'post.dart';
 export 'poll.dart';
+export 'post.dart';
 export 'status.dart';
 export 'timeline.dart';
 export 'visibility.dart';

@@ -5,4 +5,4 @@ export 'hashtag.dart';
 export 'link.dart';
 export 'trends.dart';
 
-// vim: set ts=2 sw=2 sts=2 et::w
+// vim: set ts=2 sw=2 sts=2 et:

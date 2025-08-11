@@ -14,49 +14,55 @@ import 'package:glacial/features/models.dart';
 // than the available space.
 class InteractionBar extends ConsumerWidget {
   final StatusSchema schema;
-  final double itemWidth;
   final ValueChanged<StatusSchema>? onReload;
   final VoidCallback? onDeleted;
 
   const InteractionBar({
     super.key,
     required this.schema,
-    this.itemWidth = 68,
     this.onReload,
     this.onDeleted,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AccountSchema? account = ref.read(accountProvider);
-    final List<StatusInteraction> actions = StatusInteraction.values.where((v) {
-      return !v.isSelfAction || (schema.account.id == account?.id);
+    final double itemWidth = 68.0;
+    final AccessStatusSchema status = ref.watch(accessStatusProvider) ?? AccessStatusSchema();
+    final bool isSelfStatus = schema.account.id == status.account?.id;
+    final List<StatusInteraction> actions = StatusInteraction.values.where((a) {
+      switch (a) {
+        case StatusInteraction.edit:
+        case StatusInteraction.delete:
+          return isSelfStatus;
+        case StatusInteraction.mute:
+        case StatusInteraction.block:
+          return !isSelfStatus;
+        default:
+          return true; // All other actions are available
+      }
     }).toList();
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final int maxItems = min((constraints.maxWidth / itemWidth).floor(), actions.length);
-        final bool needsMoreSpace = maxItems < actions.length;
-        final List<StatusInteraction> visibleActions = actions.sublist(0, needsMoreSpace ? maxItems - 1 : maxItems)
-            .where((action) => !action.isDangerous)
-            .toList();
-        final List<StatusInteraction> moreActions = actions.sublist(visibleActions.length);
+        final int builtinActionsCount = actions.where((action) => action.isBuiltIn).length;
+        final int maxItems = min((constraints.maxWidth / itemWidth).floor(), builtinActionsCount);
+        final List<StatusInteraction> visibleActions = actions.take(maxItems).toList();
+        final List<StatusInteraction> remainingActions = actions.skip(maxItems).toList();
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ... visibleActions.map((action) {
-            return Interaction(
+            ... visibleActions.map((action) => Interaction(
                 schema: schema,
+                status: status,
                 action: action,
-                isCompact: true,
                 onReload: onReload,
                 onDeleted: onDeleted,
-              );
-            }),
+            )),
             InteractionMore(
               schema: schema,
-              actions: moreActions,
+              status: status,
+              actions: remainingActions,
               onReload: onReload,
               onDeleted: onDeleted,
             ),
@@ -70,6 +76,7 @@ class InteractionBar extends ConsumerWidget {
 // The interaction more button that shows the remains possible actions
 class InteractionMore extends StatelessWidget {
   final StatusSchema schema;
+  final AccessStatusSchema status;
   final List<StatusInteraction> actions;
   final ValueChanged<StatusSchema>? onReload;
   final VoidCallback? onDeleted;
@@ -77,6 +84,7 @@ class InteractionMore extends StatelessWidget {
   const InteractionMore({
     super.key,
     required this.schema,
+    required this.status,
     required this.actions,
     this.onReload,
     this.onDeleted,
@@ -97,9 +105,11 @@ class InteractionMore extends StatelessWidget {
             value: action,
             child: Interaction(
               schema: schema,
+              status: status,
               action: action,
               isCompact: false,
               onPressed: () => Navigator.pop(context),
+              onReload: onReload,
               onDeleted: onDeleted,
             ),
           );
@@ -111,10 +121,10 @@ class InteractionMore extends StatelessWidget {
 
 // The interaction button that interacts with the current status, which
 // may disable the button if the action is not supported for now.
-class Interaction extends ConsumerStatefulWidget {
+class Interaction extends StatefulWidget {
   final StatusSchema schema;
+  final AccessStatusSchema status;
   final StatusInteraction action;
-  final double iconSize;
   final bool isCompact;
   final VoidCallback? onPressed;
   final ValueChanged<StatusSchema>? onReload;
@@ -123,95 +133,94 @@ class Interaction extends ConsumerStatefulWidget {
   const Interaction({
     super.key,
     required this.schema,
+    required this.status,
     required this.action,
-    this.iconSize = 24,
-    this.isCompact = false,
+    this.isCompact = true,
     this.onPressed,
     this.onReload,
     this.onDeleted,
   });
 
   @override
-  ConsumerState<Interaction> createState() => _InteractionState();
+  State<Interaction> createState() => _InteractionState();
 }
 
-class _InteractionState extends ConsumerState<Interaction> {
+class _InteractionState extends State<Interaction> {
   @override
   Widget build(BuildContext context) {
-    final String? accessToken = ref.read(accessTokenProvider);
-    final bool isEnabled = accessToken != null || widget.action.supportAnonymous;
-
-    return widget.isCompact ? buildCompactIcon(isEnabled) : buildNormalIcon(isEnabled);
+    return widget.isCompact ? buildCompactIcon() : buildFullButton(context);
   }
 
   // Build the compact icon for the interaction that only show the icon and the
   // count of the interaction.
-  Widget buildCompactIcon(bool isEnabled) {
-    final Widget counter = count == null ? const SizedBox.shrink() : Text("$count");
-
+  Widget buildCompactIcon() {
     return TextButton.icon(
-      label: counter,
-      icon: Icon(icon, size: widget.iconSize),
-      style: TextButton.styleFrom(
-        foregroundColor: isEnabled ? iconColor : null,
-      ),
-      onPressed: isEnabled ? onPressed : null,
+      label: count == null ? const SizedBox.shrink() : Text(count.toString()),
+      icon: Icon(icon, size: tabSize, color: color),
+      style: TextButton.styleFrom(foregroundColor: color),
+      onPressed: isAvailable ? onPressed : null,
     );
   }
 
   // Build the normal icon for the interaction that shows the icon and the
   // action text.
-  Widget buildNormalIcon(bool isEnabled) {
+  Widget buildFullButton(BuildContext context) {
     return ListTile(
-      leading: Icon(icon, size: widget.iconSize),
+      leading: Icon(icon, size: tabSize),
       title: Text(widget.action.tooltip(context)),
-      textColor: iconColor,
-      iconColor: iconColor,
-      onTap: isEnabled ? onPressed : null,
+      textColor: color,
+      iconColor: color,
+      onTap: isAvailable ? onPressed : null,
     );
   }
 
-  // Get the icon baed on the action.
+  // The action is available if the user is signed in or the action is supported anonymously
+  bool get isAvailable {
+    switch (widget.action) {
+      case StatusInteraction.reply:
+      case StatusInteraction.reblog:
+      case StatusInteraction.favourite:
+      case StatusInteraction.bookmark:
+        return isSignedIn;
+      case StatusInteraction.share:
+        return true;
+      case StatusInteraction.edit:
+      case StatusInteraction.delete:
+        return isSignedIn && isSelfPost;
+      case StatusInteraction.mute:
+      case StatusInteraction.block:
+        return isSignedIn && !isSelfPost;
+    }
+  }
+
+  // The action now is available or activated.
+  bool get isActive {
+    switch (widget.action) {
+      case StatusInteraction.share:
+        return true;
+      case StatusInteraction.reply:
+        return false;
+      case StatusInteraction.reblog:
+        return widget.schema.reblogged ?? false;
+      case StatusInteraction.favourite:
+        return widget.schema.favourited ?? false;
+      case StatusInteraction.bookmark:
+        return widget.schema.bookmarked ?? false;
+      case StatusInteraction.delete:
+      case StatusInteraction.edit:
+        return isSelfPost;
+      default:
+        return isSignedIn;
+    }
+  }
+
+  // Get the icon for the interaction, which may be active or not based on the
+  // current status of the interaction.
   IconData get icon {
-    switch (widget.action) {
-      case StatusInteraction.reblog:
-        return widget.action.icon(active: widget.schema.reblogged ?? false);
-      case StatusInteraction.favourite:
-        return widget.action.icon(active: widget.schema.favourited ?? false);
-      case StatusInteraction.bookmark:
-        return widget.action.icon(active: widget.schema.bookmarked ?? false);
-      default:
-        return widget.action.icon();
-    }
+    return widget.action.icon(active: isActive); // Replace with actual logic to determine active state
   }
 
-  // Get the color of the icon based on the action and the status
-  // interaction state.
-  Color get iconColor {
-    Color? color;
-
-    if (widget.action.isDangerous) {
-      return Theme.of(context).colorScheme.error;
-    }
-
-    switch (widget.action) {
-      case StatusInteraction.reblog:
-        color = (widget.schema.reblogged ?? false) ? Theme.of(context).colorScheme.tertiary : null;
-        break;
-      case StatusInteraction.favourite:
-        color = (widget.schema.favourited ?? false) ? Theme.of(context).colorScheme.tertiary : null;
-        break;
-      case StatusInteraction.bookmark:
-        color = (widget.schema.bookmarked ?? false) ? Theme.of(context).colorScheme.tertiary : null;
-        break;
-      default:
-        break;
-    }
-
-    return color ?? Theme.of(context).colorScheme.onSurface;
-  }
-
-  // Get the count of interaction based on the action.
+  // The total count of the interaction of the status, if applicable.
   int? get count {
     switch (widget.action) {
       case StatusInteraction.reply:
@@ -221,65 +230,78 @@ class _InteractionState extends ConsumerState<Interaction> {
       case StatusInteraction.favourite:
         return widget.schema.favouritesCount;
       default:
-        return null;
+        return null; // No count for other actions
     }
   }
 
-  // Interactive with the current status
-  void onPressed() async {
-    final ServerSchema? server = ref.read(serverProvider);
-    final String? accessToken = ref.read(accessTokenProvider);
-
-    if (server == null) {
-      logger.w("No server selected or access token is null, cannot perform interaction.");
-      return;
+  // Get the icon color based on the type of the interaction.
+  Color get color {
+    if (!isAvailable) {
+      // Use disabled color if not available
+      return Theme.of(context).disabledColor;
     }
 
-    Future<StatusSchema> Function({required StatusSchema schema, required String accessToken})? fn;
+    final Color defaultColor = Theme.of(context).colorScheme.onSurface;
 
     switch (widget.action) {
+      case StatusInteraction.mute:
+      case StatusInteraction.block:
+      case StatusInteraction.edit:
+      case StatusInteraction.delete:
+        return Theme.of(context).colorScheme.error;
+      case StatusInteraction.reblog:
+        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
+      case StatusInteraction.favourite:
+        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
+      case StatusInteraction.bookmark:
+        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
+      default:
+        return defaultColor;
+    }
+  }
+
+  void onPressed() async {
+    switch (widget.action) {
       case StatusInteraction.reply:
-        // Navigate to the post page with the current status schema
         context.push(RoutePath.post.path, extra: widget.schema);
         return;
       case StatusInteraction.reblog:
-        fn = (widget.schema.reblogged ?? false) ? server.unreblogIt : server.reblogIt;
-        break;
       case StatusInteraction.favourite:
-        fn = (widget.schema.favourited ?? false) ? server.unfavouriteIt : server.favouriteIt;
-        break;
       case StatusInteraction.bookmark:
-        fn = (widget.schema.bookmarked ?? false) ? server.unbookmarkIt : server.bookmarkIt;
-        break;
-      case StatusInteraction.share:
-        final String text = AppLocalizations.of(context)?.txt_copied_to_clipboard ?? "Copy to clipboard";
-
-        Clipboard.setData(ClipboardData(text: widget.schema.uri));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(text),
-          ),
+        final StatusSchema updatedStatus = await widget.status.interactWithStatus(
+          widget.schema,
+          widget.action,
+          negative: isActive,
         );
-        break;
-      case StatusInteraction.delete:
-        await server.deleteIt(schema: widget.schema, accessToken: accessToken ?? '');
-        widget.onDeleted?.call();
-        widget.onPressed?.call();
+
+        widget.onReload?.call(updatedStatus);
         return;
       case StatusInteraction.edit:
         context.push(RoutePath.edit.path, extra: widget.schema);
-      default:
+        break;
+      case StatusInteraction.delete:
+        await widget.status.deleteStatus(widget.schema);
+        widget.onDeleted?.call();
+        break;
+      case StatusInteraction.share:
+        final String text = AppLocalizations.of(context)?.msg_copied_to_clipboard ?? "Copy to clipboard";
+
+        Clipboard.setData(ClipboardData(text: widget.schema.uri));
+        showSnackbar(context, text);
+        return;
+      case StatusInteraction.mute:
+        await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.mute);
+        break;
+      case StatusInteraction.block:
+        await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.block);
         break;
     }
 
-    final StatusSchema? schema = await fn?.call(schema: widget.schema, accessToken: accessToken ?? '');
-    if (schema != null) {
-      logger.i("Interaction ${widget.action.name} performed on status ${widget.schema.id} and reloaded.");
-      widget.onReload?.call(schema);
-    }
-
-    widget.onPressed?.call();
+    if (mounted) { context.pop(); }
   }
+
+  bool get isSignedIn => widget.status.accessToken?.isNotEmpty == true;
+  bool get isSelfPost => widget.schema.account.id == widget.status.account?.id;
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

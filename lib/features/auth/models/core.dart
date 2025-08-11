@@ -5,9 +5,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:glacial/core.dart';
 
-// The OAuth2 Application info that registered in the Mastodon server and
-// shown as the application in the Status.
+// The OAuth2 Application info that registered in the Mastodon server and shown as the application in the Status.
 class OAuth2Info {
+  // The static key to access the OAuth2 info.
+  static String prefsOAuthInfoKey = "oauth_info";
+
   final String id;
   final String name;
   final String? website;
@@ -29,11 +31,13 @@ class OAuth2Info {
     required this.redirectUris,
   });
 
+  // Convert the OAuth2Info to a string representation.
   factory OAuth2Info.fromString(String str) {
     final Map<String, dynamic> json = jsonDecode(str);
     return OAuth2Info.fromJson(json);
   }
 
+  // Convert the JSON map to an OAuth2Info object.
   factory OAuth2Info.fromJson(Map<String, dynamic> json) {
     return OAuth2Info(
       id: json['id'] as String,
@@ -47,6 +51,7 @@ class OAuth2Info {
     );
   }
 
+  // Convert the OAuth2Info to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -60,6 +65,7 @@ class OAuth2Info {
     };
   }
 
+  // Register the OAuth2 application on the specified domain and return the OAuth2Info.
   static Future<OAuth2Info> register(String domain) async {
     final Map<String, dynamic> body = {
       "client_name": dotenv.env['OAUTH_CLIENT_NAME'] ?? "glacial",
@@ -74,7 +80,7 @@ class OAuth2Info {
 
     if (response.statusCode != 200) {
       logger.w("failed to register application on $domain: ${response.body}");
-      throw RequestError(response);
+      throw Exception("failed to register application on $domain: ${response.statusCode} ${response.body}");
     }
 
     logger.i("success register application on $domain");

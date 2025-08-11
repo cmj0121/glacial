@@ -32,22 +32,22 @@ class Attachments extends StatelessWidget {
   }
 
   Widget buildContent(BuildContext context) {
-    switch (schemas.length) {
-      case 0:
-        return const SizedBox.shrink();
-      default:
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: schemas.map((schema) {
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(1),
-                  child: Attachment(schema: schema),
-                ),
-              );
-            }).toList(),
-        );
+    if (schemas.isEmpty) {
+      // No attachments to show
+      return const SizedBox.shrink();
     }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: schemas.map((schema) {
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(1),
+              child: Attachment(schema: schema),
+            ),
+          );
+        }).toList(),
+    );
   }
 }
 

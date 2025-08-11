@@ -1,36 +1,37 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="iceberg-shadow-color" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#E5F9F7" />
-      <stop offset="30%" stop-color="#E5F9F7" />
-      <stop offset="100%" stop-color="#003B6F" />
-    </linearGradient>
-    <g id="iceberg" stroke="#232324">
-      <circle cx="256" cy="256" r="200" stroke-width="10" fill="url(#iceberg-shadow-color)" />
-      <path d="
-         M 56 252
-         L 125 252
-         L 215 146
-         L 295 211
-         L 256 176
-         L 295 116
-         L 415 252
-         L 125 252
-         L 456 252
-         Z
-       " stroke="#232324" stroke-width="24" fill="none" />
+    <g id="elephant" stroke="#FFFFFF">
+      <path
+        d="
+          M 364 170
+          a 64 64 0 0 1 64 64
+          l 0 152
+          a 16 16 0 0 1 -16 16
+          l -64 0
+          a 96 96 0 0 0 -148 0
+          l -64 0
+          l 0 -168
+          a 64 64 0 0 1 64 -64
+          Z
 
-       <g id="iceberg-shadow" stroke-width="6">
-         <line x1="120" y1="300" x2="392" y2="300" />
-         <line x1="140" y1="330" x2="370" y2="330" />
-         <line x1="160" y1="360" x2="347" y2="360" />
-         <line x1="180" y1="390" x2="326" y2="390" />
-         <line x1="200" y1="420" x2="302" y2="420" />
-       </g>
-       <use href="#iceberg-shadow" x="0" y="0"/>
+          M 270 208
+          a 88 88 0 0 1 -96 96
+        "
+        stroke-width="36" fill="none" />
+      <path
+        d="
+          M 134 268
+          l -32 0
+          a 32 32 0 0 1 -32 -32
+          a 128 128 0 0 1 96 -128
+        "
+        stroke-width="28" fill="none" />
+      <circle cx="226" cy="96" r="24" fill="#FFFFFF" />
+      <circle cx="288" cy="92" r="18" fill="#FFFFFF" />
+      <circle cx="348" cy="90" r="14" fill="#FFFFFF" />
     </g>
   </defs>
 
-  <rect x="48" y="48" width="416" height="416" rx="102" ry="102" fill="#C8D8DF" />
-  <use href="#iceberg" transform="translate(256, 256) scale(0.85) translate(-256, -256)" />
+  <rect x="48" y="48" width="416" height="416" rx="102" ry="102" fill="#2196F3" />
+  <use href="#elephant" fill="#FFFFFF" transform="translate(256, 256) scale(0.85) translate(-256, -256)" />
 </svg>

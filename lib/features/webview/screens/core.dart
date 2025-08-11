@@ -35,13 +35,11 @@ class _WebViewPageState extends ConsumerState<WebViewPage> {
 
             switch (uri.scheme) {
               case 'glacial':
-                final String? accessToken = await Storage().gainAccessToken(uri);
-                final ServerSchema? schema = ref.read(serverProvider);
+                final Storage storage = Storage();
+                final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
 
-                if (schema != null && accessToken != null) {
-                  Storage().updateProvider(ref, schema, accessToken);
-                  logger.i("gain access token from ${schema.domain}");
-                }
+                await storage.gainAccessToken(uri: uri, expectedServer: status.domain);
+                await storage.loadAccessStatus(ref: ref);
 
                 if (mounted) {
                   // always back to the previous screen

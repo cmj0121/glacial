@@ -4,84 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
-// The type list for the account profile, based on the Mastodon API.
-enum AccountProfileType {
-  profile,       // The profile of the specified user.
-  user,          // The statuses posted from the given user.
-  pin,           // The pinned statuses for the logged in user.
-  schedule,      // The scheduled statuses for the logged in user.
-  hashtag,       // The hashtag timeline for the current server.
-  mute,          // The muted accounts for the logged in user.
-  block;         // The blocked accounts for the logged in user.
-
-  String tooltip(BuildContext context) {
-    switch (this) {
-      case profile:
-        return AppLocalizations.of(context)?.btn_profile ?? 'Profile';
-      case user:
-        return AppLocalizations.of(context)?.btn_user ?? 'User';
-      case pin:
-        return AppLocalizations.of(context)?.btn_pin ?? 'Pinned';
-      case schedule:
-        return AppLocalizations.of(context)?.btn_schedule ?? 'Schedule';
-      case hashtag:
-        return AppLocalizations.of(context)?.btn_trends_tags ?? 'Hashtag';
-      case mute:
-        return AppLocalizations.of(context)?.btn_mute ?? 'Muted Accounts';
-      case block:
-        return AppLocalizations.of(context)?.btn_block ?? 'Blocked Accounts';
-    }
-  }
-
-  IconData icon({bool active = false}) {
-    switch (this) {
-      case profile:
-        return active ? Icons.contact_page : Icons.contact_page_outlined;
-      case user:
-        return active ? Icons.article : Icons.article_outlined;
-      case pin:
-        return active ? Icons.push_pin : Icons.push_pin_outlined;
-      case schedule:
-        return active ? Icons.schedule : Icons.schedule_outlined;
-      case hashtag:
-        return active ? Icons.tag : Icons.tag_outlined;
-      case mute:
-        return active ? Icons.volume_off : Icons.volume_off_outlined;
-      case block:
-        return active ? Icons.block : Icons.block_outlined;
-    }
-  }
-
-  bool get supportAnonymous {
-    switch (this) {
-      case AccountProfileType.profile:
-      case AccountProfileType.user:
-      case AccountProfileType.pin:
-        return true;
-      case AccountProfileType.schedule:
-      case AccountProfileType.hashtag:
-      case AccountProfileType.mute:
-      case AccountProfileType.block:
-        return false;
-    }
-  }
-
-  TimelineType get toTimelineType {
-    switch (this) {
-      case AccountProfileType.user:
-        return TimelineType.user;
-      case AccountProfileType.pin:
-        return TimelineType.pin;
-      case AccountProfileType.schedule:
-        return TimelineType.schedule;
-      case AccountProfileType.hashtag:
-        return TimelineType.hashtag;
-      default:
-        throw ArgumentError('invalid AccountProfileType to TimelineType: $this');
-    }
-  }
-}
-
 // The Account data schema that is the user account info.
 class AccountSchema {
   final String id;                  // The account id.
@@ -104,7 +26,6 @@ class AccountSchema {
   final int statusesCount;          // How many statuses are attached to this account.
   final int followersCount;         // The reported followers of this profile.
   final int followingCount;         // The reported follows of this profile.
-  final RoleSchema? role;           // The role of the account, if any.
 
   const AccountSchema({
     required this.id,
@@ -127,7 +48,6 @@ class AccountSchema {
     required this.statusesCount,
     required this.followersCount,
     required this.followingCount,
-    this.role,
   });
 
   factory AccountSchema.fromJson(Map<String, dynamic> json) {
@@ -143,7 +63,9 @@ class AccountSchema {
       avatarStatic: json['avatar_static'] as String,
       header: json['header'] as String,
       locked: json['locked'] as bool,
-      emojis: (json['emojis'] as List<dynamic>).map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>)).toList(),
+      emojis: (json['emojis'] as List<dynamic>?)
+          ?.map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>))
+          .toList() ?? [],
       bot: json['bot'] as bool,
       discoverable: json['discoverable'] as bool?,
       noindex: json['noindex'] as bool?,
@@ -152,8 +74,98 @@ class AccountSchema {
       statusesCount: json['statuses_count'] as int,
       followersCount: json['followers_count'] as int,
       followingCount: json['following_count'] as int,
-      role: json['role'] == null ? null : RoleSchema.fromJson(json['role'] as Map<String, dynamic>),
     );
+  }
+}
+
+// The type list for the account profile, based on the Mastodon API.
+enum AccountProfileType {
+  profile,       // The profile of the specified user.
+  post,          // The statuses posted from the given user.
+  pin,           // The pinned statuses for the logged in user.
+  followers,     // The followers of the logged in user.
+  following,     // The accounts followed by the logged in user.
+  schedule,      // The scheduled statuses for the logged in user.
+  hashtag,       // The hashtag timeline for the current server.
+  mute,          // The muted accounts for the logged in user.
+  block;         // The blocked accounts for the logged in user.
+
+  // The tooltip text for the profile type, localized if possible.
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case profile:
+        return AppLocalizations.of(context)?.btn_profile_core ?? "Profile";
+      case post:
+        return AppLocalizations.of(context)?.btn_profile_post ?? "Posts";
+      case pin:
+        return AppLocalizations.of(context)?.btn_profile_pin ?? "Pinned Posts";
+      case followers:
+        return AppLocalizations.of(context)?.btn_profile_followers ?? "Followers";
+      case following:
+        return AppLocalizations.of(context)?.btn_profile_following ?? "Following";
+      case schedule:
+        return AppLocalizations.of(context)?.btn_profile_scheduled ?? "Scheduled Posts";
+      case hashtag:
+        return AppLocalizations.of(context)?.btn_profile_hashtag ?? "Hashtags";
+      case mute:
+        return AppLocalizations.of(context)?.btn_profile_mute ?? "Muted Accounts";
+      case block:
+        return AppLocalizations.of(context)?.btn_profile_block ?? "Blocked Accounts";
+    }
+  }
+
+  // The icon associated with the profile type, based on the action type.
+  IconData icon({bool active = false}) {
+    switch (this) {
+      case profile:
+        return active ? Icons.contact_page : Icons.contact_page_outlined;
+      case post:
+        return active ? Icons.article : Icons.article_outlined;
+      case pin:
+        return active ? Icons.push_pin : Icons.push_pin_outlined;
+      case followers:
+        return active ? Icons.visibility : Icons.visibility_outlined;
+      case following:
+        return active ? Icons.star : Icons.star_outline_outlined;
+      case schedule:
+        return active ? Icons.schedule : Icons.schedule_outlined;
+      case hashtag:
+        return active ? Icons.tag : Icons.tag_outlined;
+      case mute:
+        return active ? Icons.volume_off : Icons.volume_off_outlined;
+      case block:
+        return active ? Icons.block : Icons.block_outlined;
+    }
+  }
+
+  // The type of the profile button, used to determine the profile type related on self-profile.
+  bool get selfProfile {
+    switch (this) {
+      case AccountProfileType.profile:
+      case AccountProfileType.post:
+      case AccountProfileType.pin:
+      case AccountProfileType.followers:
+      case AccountProfileType.following:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  // Get the related timeline type for the profile type.
+  TimelineType get timelineType {
+    switch (this) {
+      case AccountProfileType.post:
+        return TimelineType.user;
+      case AccountProfileType.schedule:
+        return TimelineType.schedule;
+      case AccountProfileType.pin:
+        return TimelineType.pin;
+      case AccountProfileType.hashtag:
+        return TimelineType.hashtag;
+      default:
+        throw ArgumentError("Invalid profile type for timeline: $this");
+    }
   }
 }
 

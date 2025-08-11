@@ -9,41 +9,34 @@ import 'package:glacial/features/screens.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-// The placeholder for the app's Work-In-Progress screen
-class WIP extends StatelessWidget {
-  const WIP({
+// The main application widget that contains the router and the theme.
+class CoreApp extends ConsumerStatefulWidget {
+  final SystemPreferenceSchema? schema;
+
+  const CoreApp({
     super.key,
+    this.schema,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Text(
-            "Work in Progress",
-            style: Theme.of(context).textTheme.headlineLarge,
-          ),
-        ),
-      ),
-    );
-  }
+  ConsumerState<CoreApp> createState() => _CoreAppState();
 }
 
-// The main application widget that contains the router and the theme.
-class GlacialApp extends ConsumerWidget {
-  const GlacialApp({super.key});
+class _CoreAppState extends ConsumerState<CoreApp> {
+  late SystemPreferenceSchema? schema = widget.schema;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final info = Info().info;
+    final bool _ = ref.watch(reloadProvider);
+    final SystemPreferenceSchema? schema = ref.read(preferenceProvider) ?? this.schema;
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: info == null ? "Glacial" : '${info.appName} (v${info.version})',
 
       // The theme mode
-      themeMode: ThemeMode.dark,
+      themeMode: schema?.theme ?? ThemeMode.dark,
       theme: ThemeData(useMaterial3: true, brightness: Brightness.light),
       darkTheme: ThemeData(useMaterial3: true, brightness: Brightness.dark),
 
@@ -57,50 +50,63 @@ class GlacialApp extends ConsumerWidget {
       supportedLocales: AppLocalizations.supportedLocales,
 
       // The router implementation
-      routerConfig: router(ref),
+      routerConfig: router(),
     );
   }
 
   // define the router for the app and how to handle the routes
   // with the optional animation
-  GoRouter router(WidgetRef ref) {
+  GoRouter router() {
     return GoRouter(
       initialLocation: RoutePath.landing.path,
       navigatorKey: navigatorKey,
       routes: <RouteBase>[
-        // The landing page, show the icon and preload the necessary resources
+        // The core home page and show the possible operations
+        homeRoutes(),
+
+        // The landing page of the app, shows the welcome message and navigation to the
+        // next pages.
         GoRoute(
           path: RoutePath.landing.path,
-          builder: (_, _) => const LandingPage(),
+          builder: (BuildContext context, GoRouterState state) {
+            return const LandingPage();
+          },
         ),
-        // The engineering mode to show the app's internal information and settings
-        GoRoute(
-          path: RoutePath.engineer.path,
-          builder: (_, _) => const EngineeringMode(),
-        ),
-        // The server explorer page to search and show the available servers
+        // The mastodon server explorer page
         GoRoute(
           path: RoutePath.explorer.path,
-          builder: (_, __) => const ServerExplorer(),
+          builder: (BuildContext context, GoRouterState state) {
+            return const ServerExplorer();
+          },
         ),
-        // The webview page to show the in-app webview with specified URL
+        // The user profile page to view the user details
+        GoRoute(
+          path: RoutePath.profile.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return BackableView(
+              title: RoutePath.profile.name,
+              child: const WIP(),
+            );
+          },
+        ),
+        // The system preference page to view or edit the app settings
+        GoRoute(
+          path: RoutePath.preference.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return BackableView(
+              title: RoutePath.preference.name,
+              child: SystemPreference(),
+            );
+          },
+        ),
+        // The webview page to view the external links
         GoRoute(
           path: RoutePath.webview.path,
           builder: (BuildContext context, GoRouterState state) {
-            final Uri? url = state.extra as Uri?;
-
-            if (url == null) {
-              logger.w("the url is null, cannot open the webview");
-              context.pop();
-              return const SizedBox.shrink();
-            }
-
-            return WebViewPage(url: url);
+            final Uri uri = state.extra as Uri;
+            return WebViewPage(url: uri);
           },
         ),
-
-        // The core home page and show the possible operations
-        homeRoutes(ref),
       ],
       // The fallback page, show the WIP screen if the route is not found
       errorBuilder: (BuildContext context, GoRouterState state) {
@@ -110,34 +116,110 @@ class GlacialApp extends ConsumerWidget {
     );
   }
 
-  // Build the home page with the sidebar and the main content
-  RouteBase homeRoutes(WidgetRef ref) {
+  // Build the home page with the sidebar and the main content.
+  RouteBase homeRoutes() {
     return ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        late final ServerSchema? server = ref.watch(serverProvider);
+        final RoutePath path = RoutePath.values.where((p) => p.path == state.uri.path).first;
 
-        if (server == null) {
-          logger.w("No server selected, cannot build the home page.");
-          return const WIP();
+        Widget? title;
+        bool backable = false;
+        List<Widget> actions = [];
+
+        switch (path) {
+          case RoutePath.post:
+          case RoutePath.edit:
+          case RoutePath.status:
+            backable = true;
+            break;
+          case RoutePath.search:
+            final String keyword = state.extra as String;
+
+            title = Text(keyword);
+            backable = true;
+            break;
+          case RoutePath.profile:
+            final AccountSchema account = state.extra as AccountSchema;
+
+            title = EmojiSchema.replaceEmojiToWidget(account.displayName, emojis: account.emojis);
+            backable = true;
+            break;
+          case RoutePath.hashtag:
+            final String hashtag = state.extra as String;
+
+            title = Text('#$hashtag');
+            backable = true;
+            actions.add(FollowedHashtagButton(hashtag: hashtag));
+            break;
+          case RoutePath.statusInfo:
+            backable = true;
+            break;
+          case RoutePath.statusHistory:
+            backable = true;
+            break;
+          default:
+            break;
         }
 
-        return GlacialHome(server: server, child: child);
+        return GlacialHome(
+          key: UniqueKey(),
+          backable: backable,
+          title: title,
+          actions: actions,
+          child: child,
+        );
       },
       routes: [
-        // The glacial timeline page to show the server timeline in the selected
-        // Mastodon server
         GoRoute(
           path: RoutePath.timeline.path,
-          builder: (BuildContext context, GoRouterState state) =>const TimelineTab(),
+          builder: (_, _) {
+            final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+
+            return TimelineTab(
+              initialType: status?.isSignedIn == true ? TimelineType.home : TimelineType.local,
+              key: ValueKey('timeline_tab_${status?.domain}'),
+            );
+          },
         ),
-        // The glacial trends page to show the server trends in the selected
-        // Mastodon server
+        GoRoute(
+          path: RoutePath.list.path,
+          builder: (_, _) => const WIP(),
+        ),
         GoRoute(
           path: RoutePath.trends.path,
-          builder: (BuildContext context, GoRouterState state) =>const TrendsTab(),
+          builder: (_, _) => const TrendsTab(),
         ),
-        // The explorer page to search and show the target accounts, links, and
-        // hashtags in the selected Mastodon server
+        GoRoute(
+          path: RoutePath.notifications.path,
+          builder: (_, _) => const GroupNotification(),
+        ),
+        GoRoute(
+          path: RoutePath.admin.path,
+          builder: (_, _) => const WIP(),
+        ),
+
+        // The backable sub-routes that can be used to navigate to the and pop-back.
+        GoRoute(
+          path: RoutePath.post.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema? schema = state.extra as StatusSchema?;
+            return PostStatusForm(replyTo: schema);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.edit.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema schema = state.extra as StatusSchema;
+            return PostStatusForm(editFrom: schema);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.status.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema status = state.extra as StatusSchema;
+            return StatusContext(schema: status);
+          },
+        ),
         GoRoute(
           path: RoutePath.search.path,
           builder: (BuildContext context, GoRouterState state) {
@@ -145,108 +227,43 @@ class GlacialApp extends ConsumerWidget {
             return ExplorerTab(keyword: keyword);
           },
         ),
-        // The glacial notifications page to show the server notifications in the
-        // selected Mastodon server
-        GoRoute(
-          path: RoutePath.notifications.path,
-          builder: (BuildContext context, GoRouterState state) => const GroupNotification(),
-        ),
-        // The glacial settings page to show the server settings in the selected
-        // Mastodon server
-        GoRoute(
-          path: RoutePath.settings.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
-        ),
-        // The admin page to show the server management page in the selected
-        // Mastodon server
-        GoRoute(
-          path: RoutePath.admin.path,
-          builder: (BuildContext context, GoRouterState state) => const WIP(),
-        ),
-        // Show the timeline based on the specified hashtag
-        GoRoute(
-          path: RoutePath.hashtag.path,
-          builder: (BuildContext context, GoRouterState state) {
-            final ServerSchema? server = ref.read(serverProvider);
-            final HashtagSchema hashtag = state.extra as HashtagSchema;
-
-            if (server == null) {
-              logger.w("No server selected, cannot show the hashtag timeline.");
-              return const SizedBox.shrink();
-            }
-
-            final Widget timeline = Timeline(
-              schema: server,
-              type: TimelineType.hashtag,
-              keyword: hashtag.name,
-            );
-
-            return BackableView(
-              title: '#${hashtag.name}',
-              actions: [
-                FollowedHashtagButton(schema: hashtag)
-              ],
-              child: timeline,
-            );
-          },
-        ),
-        // The user's profile page to show the user account details and the
-        // user timeline in the selected Mastodon server
         GoRoute(
           path: RoutePath.profile.path,
           builder: (BuildContext context, GoRouterState state) {
-            final AccountSchema account = state.extra as AccountSchema;
-            final Widget content = AccountProfile(schema: account);
-
-            return BackableView(
-              title: account.displayName,
-              child: content,
-            );
+            final AccountSchema acocunt = state.extra as AccountSchema;
+            return AccountProfile(schema: acocunt);
           },
         ),
-        // The sub-route to show the context of the status, including the previous
-        // and next statuses related to the current status
         GoRoute(
-          path: RoutePath.status.path,
+          path: RoutePath.hashtag.path,
           builder: (BuildContext context, GoRouterState state) {
-            final StatusSchema status = state.extra as StatusSchema;
+            final AccessStatusSchema? status = ref.read(accessStatusProvider);
+            final String hashtag = state.extra as String;
 
-            return BackableView(
-              title: AppLocalizations.of(context)?.btn_trends_statuses ?? "Post",
-              child: StatusContext(schema: status),
+            if (status == null) {
+              logger.w("No server selected, but it's required to show the hashtag timeline.");
+              return const SizedBox.shrink();
+            }
+
+            return Timeline(
+              type: TimelineType.hashtag,
+              status: status,
+              hashtag: hashtag,
             );
           },
         ),
-        // The status info page to show the status details and the related
-        // information in the selected Mastodon server
         GoRoute(
           path: RoutePath.statusInfo.path,
           builder: (BuildContext context, GoRouterState state) {
             final StatusSchema status = state.extra as StatusSchema;
-
-            return BackableView(
-              child: StatusInfo(schema: status),
-            );
+            return StatusInfo(schema: status);
           },
         ),
-        // The post page to create a new post in the selected Mastodon server
         GoRoute(
-          path: RoutePath.post.path,
+          path: RoutePath.statusHistory.path,
           builder: (BuildContext context, GoRouterState state) {
-            final StatusSchema? schema = state.extra as StatusSchema?;
-            return BackableView(
-              child: StatusForm(replyTo: schema),
-            );
-          },
-        ),
-        // The post page to edit an existing post in the selected Mastodon server
-        GoRoute(
-          path: RoutePath.edit.path,
-          builder: (BuildContext context, GoRouterState state) {
-            final StatusSchema? schema = state.extra as StatusSchema?;
-            return BackableView(
-              child: StatusForm(editFrom: schema),
-            );
+            final StatusSchema status = state.extra as StatusSchema;
+            return StatusHistory(schema: status);
           },
         ),
       ],

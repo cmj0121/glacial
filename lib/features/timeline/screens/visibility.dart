@@ -1,7 +1,7 @@
 // The Status widget to show the toots from user.
 import 'package:flutter/material.dart';
 
-import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/models.dart';
 
 // The icon of the status' visibility type.
 class StatusVisibility extends StatelessWidget {
@@ -13,7 +13,7 @@ class StatusVisibility extends StatelessWidget {
     super.key,
     required this.type,
     this.size = 16,
-    this.isCompact = false,
+    this.isCompact = true,
   });
 
   @override
@@ -27,32 +27,33 @@ class StatusVisibility extends StatelessWidget {
       );
     }
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(type.icon(), size: size, color: color),
-        const SizedBox(width: 8),
-        Text(type.tooltip(context), style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: color,
-          fontSize: size,
-          fontWeight: FontWeight.bold,
-        )),
-      ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxWidth: 120,
+        maxHeight: 48,
+      ),
+      child: Tooltip(
+        message: type.description(context),
+        child: ListTile(
+          dense: true,
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(type.icon(), size: size, color: color),
+          title: Text(type.tooltip(context)),
+        ),
+      ),
     );
   }
 }
 
 // The dropdown button to select the status' visibility type.
 class VisibilitySelector extends StatefulWidget {
-  final double height;
-  final double width;
+  final double size;
   final VisibilityType? type;
-  final ValueChanged<VisibilityType>? onChanged;
+  final ValueChanged<VisibilityType?>? onChanged;
 
   const VisibilitySelector({
     super.key,
-    this.height = 32,
-    this.width = 120,
+    this.size = 32,
     this.type,
     this.onChanged,
   });
@@ -72,11 +73,8 @@ class _VisibilitySelectorState extends State<VisibilitySelector> {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: widget.height,
-        maxWidth: widget.width,
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: buildContent(),
     );
   }
@@ -92,16 +90,12 @@ class _VisibilitySelectorState extends State<VisibilitySelector> {
         items: VisibilityType.values.map((VisibilityType value) {
           return DropdownMenuItem<VisibilityType>(
             value: value,
-            child: StatusVisibility(type: value),
+            child: StatusVisibility(type: value, size: widget.size, isCompact: false),
           );
         }).toList(),
-        onChanged: (VisibilityType? newValue) {
-          if (newValue != null) {
-            setState(() {
-              type = newValue;
-            });
-            widget.onChanged?.call(newValue);
-          }
+        onChanged: (v) {
+          setState(() => type = v ?? type);
+          widget.onChanged?.call(v);
         },
       ),
     );
