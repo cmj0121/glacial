@@ -40,7 +40,7 @@ enum SidebarButtonType {
       case SidebarButtonType.trending:
         return AppLocalizations.of(context)?.btn_sidebar_trendings ?? "Trendings";
       case SidebarButtonType.notifications:
-        return AppLocalizations.of(context)?.btn_sidebar_notificatios ?? "Notifications";
+        return AppLocalizations.of(context)?.btn_sidebar_notifications ?? "Notifications";
       case SidebarButtonType.admin:
         return AppLocalizations.of(context)?.btn_sidebar_management ?? "Management";
       case SidebarButtonType.post:

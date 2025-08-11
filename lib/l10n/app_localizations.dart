@@ -152,11 +152,11 @@ abstract class AppLocalizations {
   /// **'Trendings'**
   String get btn_sidebar_trendings;
 
-  /// No description provided for @btn_sidebar_notificatios.
+  /// No description provided for @btn_sidebar_notifications.
   ///
   /// In en, this message translates to:
   /// **'Notifications'**
-  String get btn_sidebar_notificatios;
+  String get btn_sidebar_notifications;
 
   /// No description provided for @btn_sidebar_management.
   ///
@@ -491,7 +491,7 @@ abstract class AppLocalizations {
   /// No description provided for @btn_notification_follow_request.
   ///
   /// In en, this message translates to:
-  /// **'Follow Reqeust'**
+  /// **'Follow Request'**
   String get btn_notification_follow_request;
 
   /// No description provided for @btn_notification_favourite.

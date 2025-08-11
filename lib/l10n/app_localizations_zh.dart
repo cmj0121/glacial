@@ -36,7 +36,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_sidebar_trendings => '趨勢';
 
   @override
-  String get btn_sidebar_notificatios => '通知';
+  String get btn_sidebar_notifications => '通知';
 
   @override
   String get btn_sidebar_management => '管理';

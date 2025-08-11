@@ -36,7 +36,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_sidebar_trendings => 'Trendings';
 
   @override
-  String get btn_sidebar_notificatios => 'Notifications';
+  String get btn_sidebar_notifications => 'Notifications';
 
   @override
   String get btn_sidebar_management => 'Managements';
@@ -214,7 +214,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_notification_follow => 'Followed';
 
   @override
-  String get btn_notification_follow_request => 'Follow Reqeust';
+  String get btn_notification_follow_request => 'Follow Request';
 
   @override
   String get btn_notification_favourite => 'Favourite';
