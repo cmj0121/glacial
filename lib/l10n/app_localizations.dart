@@ -182,12 +182,6 @@ abstract class AppLocalizations {
   /// **'Switch Server'**
   String get btn_drawer_switch_server;
 
-  /// No description provided for @btn_drawer_profile.
-  ///
-  /// In en, this message translates to:
-  /// **'Profile'**
-  String get btn_drawer_profile;
-
   /// No description provided for @btn_drawer_preference.
   ///
   /// In en, this message translates to:
