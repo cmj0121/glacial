@@ -1,5 +1,6 @@
 // The Notification widget in the current selected Mastodon server.
 import 'dart:async';
+import 'dart:math';
 
 import 'package:app_badge_plus/app_badge_plus.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
@@ -233,8 +234,12 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
 
     final int? id = schema?.groups.firstOrNull?.id;
     if (id != null) {
+      final MarkersSchema? markers = await status?.getMarker(type: type);
+      final MarkerSchema? marker = markers?.markers[type];
+      final int lastReadId = max(int.parse(marker?.lastReadID ?? '0'), id);
+
+      await status?.setMarker(id: lastReadId.toString(), type: type);
       AppBadgePlus.updateBadge(0);
-      await status?.setMarker(id: id.toString(), type: type);
     }
   }
 }
