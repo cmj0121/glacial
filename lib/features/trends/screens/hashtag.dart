@@ -136,6 +136,7 @@ class _FollowedHashtagButtonState extends ConsumerState<FollowedHashtagButton> {
     return IconButton(
       icon: Icon(
         isFollowing ? Icons.bookmark : Icons.bookmark_border,
+        size: iconSize,
         color: isFollowing ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
       ),
       hoverColor: Colors.transparent,

@@ -40,7 +40,7 @@ class _ExplorerState extends State<SearchExplorer> with SingleTickerProviderStat
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: widget.maxWidth),
       child: Padding(
-        padding: const EdgeInsets.only(top: 4.0, right: 8.0),
+        padding: const EdgeInsets.only(right: 8.0),
         child: buildContent(),
       ),
     );
