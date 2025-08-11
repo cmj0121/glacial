@@ -464,7 +464,7 @@ class _StatusContextState extends ConsumerState<StatusContext> {
 
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
     if (status == null) {
       return const SizedBox.shrink();
@@ -490,7 +490,13 @@ class _StatusContextState extends ConsumerState<StatusContext> {
             duration: const Duration(milliseconds: 300),
           );
         });
-        return buildContent(ctx);
+
+        return Dismissible(
+          key: ValueKey(widget.schema.id),
+          direction: DismissDirection.startToEnd,
+          onDismissed: (_) => context.pop(),
+          child: buildContent(ctx),
+        );
       }
     );
   }
@@ -565,7 +571,7 @@ class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
     return Align(
       alignment: Alignment.topCenter,
@@ -643,6 +649,7 @@ class StatusHistory extends ConsumerStatefulWidget {
 }
 
 class _StatusHistoryState extends ConsumerState<StatusHistory> {
+  bool isDisposed = false;
   int selectedIndex = 0;
   List<StatusEditSchema> history = [];
 
@@ -656,7 +663,12 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
-      child: buildContent(),
+      child: isDisposed ? const SizedBox() : Dismissible(
+        key: ValueKey(widget.schema.id),
+        direction: DismissDirection.startToEnd,
+        onDismissed: (_) => onDismiss(),
+        child: buildContent(),
+      ),
     );
   }
 
@@ -719,6 +731,11 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> {
       this.history = history;
       selectedIndex = history.isEmpty ? 0 : history.length - 1;
     });
+  }
+
+  void onDismiss() {
+    setState(() => isDisposed = true);
+    context.pop();
   }
 }
 

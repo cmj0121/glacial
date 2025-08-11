@@ -288,7 +288,7 @@ class _MediaViewerState extends State<MediaViewer> with SingleTickerProviderStat
         child: FittedBox(
           fit: BoxFit.contain,
           child: isZoomed ? widget.child : ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(18.0),
             child: widget.child,
           ),
         ),

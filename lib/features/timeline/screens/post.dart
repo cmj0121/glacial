@@ -55,19 +55,28 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: buildContent(),
-            ),
-          ),
-        ],
+      child: Dismissible(
+        key: UniqueKey(),
+        direction: DismissDirection.startToEnd,
+        onDismissed: (_) => context.pop(),
+        child: buildLayout(),
       ),
+    );
+  }
+
+  Widget buildLayout() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: buildContent(),
+          ),
+        ),
+      ],
     );
   }
 

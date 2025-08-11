@@ -103,18 +103,39 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
   Widget buildContent() {
     final int visibleCount = visibleIndexes.length;
 
-    return PageView(
-      controller: pageController,
-      children: List.generate(visibleCount, (index) {
-        final int realIndex = visibleIndexes[index];
-        return widget.itemBuilder(context, realIndex);
-      }),
-      onPageChanged: (index) => setState(() {
-        final int realIndex = visibleIndexes[index];
-        tabController.animateTo(realIndex);
-      }),
+    return NotificationListener(
+      onNotification: (notification) {
+        final double threshold = 150.0;
+
+        if (notification is ScrollUpdateNotification && notification.dragDetails != null) {
+          if (tabController.index == leftmostIndex && notification.metrics.pixels <= pageController.position.minScrollExtent - threshold) {
+            // The leftmost page is reached, so we may trigger the context.pop()
+            // to go back to the previous page.
+            if (context.canPop()) {
+              context.pop();
+              return true;
+            }
+          }
+        }
+
+        return false;
+      },
+      child: PageView(
+        controller: pageController,
+        children: List.generate(visibleCount, (index) {
+          final int realIndex = visibleIndexes[index];
+          return widget.itemBuilder(context, realIndex);
+        }),
+        onPageChanged: (index) => setState(() {
+          final int realIndex = visibleIndexes[index];
+          tabController.animateTo(realIndex);
+        }),
+      ),
     );
   }
+
+  // Get the leftmost index of the visible indexes.
+  int get leftmostIndex => visibleIndexes.isNotEmpty ? visibleIndexes.first : 0;
 }
 
 // The customized tab view that can be used to show the active and inactive
