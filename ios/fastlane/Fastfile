@@ -55,12 +55,17 @@ platform :ios do
         sh "xcrun simctl shutdown all"
         sh "xcrun simctl boot '#{device}'"
         sh "open -a Simulator"
+        sh "mkdir -p 'screenshots/#{device}'"
+        record_pid = spawn("xcrun simctl io booted recordVideo --force 'screenshots/#{device}/app_switch_server.mov'")
 
         begin
           sh "flutter test integration_test/app_switch_server.dart --device-id='#{device}'"
         ensure
+          Process.kill("INT", record_pid)
+          Process.wait(record_pid)
           sh "xcrun simctl shutdown '#{device}'"
           sh "xcrun simctl erase '#{device}'"
+
           exit_status = $?.exitstatus
           if exit_status != 0
             puts "E2E tests failed with exit status: #{exit_status}"

@@ -6,12 +6,17 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/app.dart';
+import 'package:glacial/features/models.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const GlacialApp());
+  testWidgets('Launch the main app', (WidgetTester tester) async {
+    final SystemPreferenceSchema schema = SystemPreferenceSchema();
+    await tester.pumpWidget(ProviderScope(child: CoreApp(schema: schema)));
+    await tester.pumpAndSettle();
   });
 }
+
+// vim: set ts=2 sw=2 sts=2 et:

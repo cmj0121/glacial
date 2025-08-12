@@ -1,6 +1,6 @@
 SUBDIR :=
 
-.PHONY: all clean test run build release upgrade help $(SUBDIR)
+.PHONY: all clean test e2e run build release upgrade help $(SUBDIR)
 
 all: $(SUBDIR) 		# default action
 	@[ -f .git/hooks/pre-commit ] || pre-commit install --install-hooks
@@ -12,6 +12,10 @@ clean: $(SUBDIR)	# clean-up environment
 
 test:				# run test
 	flutter test --coverage
+
+e2e:				# run end-to-end tests
+	cd ios && fastlane e2e
+	cd macos && fastlane e2e
 
 run:				# run in the local environment
 	flutter run

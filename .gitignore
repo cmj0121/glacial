@@ -1,5 +1,6 @@
 .env
 *.sw[po]
+screenshots/
 
 # packages file containing multi-root paths
 .packages.generated
