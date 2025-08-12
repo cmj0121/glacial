@@ -45,7 +45,7 @@ class InteractionBar extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final int builtinActionsCount = actions.where((action) => action.isBuiltIn).length;
-        final int maxItems = min((constraints.maxWidth / itemWidth).floor(), builtinActionsCount);
+        final int maxItems = min((constraints.maxWidth / itemWidth).floor() - 1, builtinActionsCount);
         final List<StatusInteraction> visibleActions = actions.take(maxItems).toList();
         final List<StatusInteraction> remainingActions = actions.skip(maxItems).toList();
 

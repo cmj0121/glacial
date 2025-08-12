@@ -158,13 +158,23 @@ class _StatusState extends ConsumerState<Status> {
   // Build the header of the status, including the author and the date and
   // visibility information.
   Widget buildHeader() {
+    return ClipRect(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          ClipRect(child: Account(schema: schema.account, size: headerHeight)),
+          const Spacer(),
+          ClipRRect(child: buildHeaderMeta()),
+        ],
+      ),
+    );
+  }
+
+  Widget buildHeaderMeta() {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Account(schema: schema.account, size: headerHeight),
-
-        const Spacer(),
-
         buildTimeInfo(),
         buildEditLog(),
         StatusVisibility(type: schema.visibility, size: iconSize),

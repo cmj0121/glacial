@@ -230,7 +230,7 @@ class GlacialDrawer extends ConsumerStatefulWidget {
 class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final int logoutIndex = DrawerButtonType.values.indexWhere((action) => action == DrawerButtonType.logout);
     final List<Widget> children = DrawerButtonType.values.map((action) {
       return ListTile(
@@ -255,24 +255,26 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
                   children: [
                     Text(status?.domain ?? 'Glacial Server'),
                     const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        imageUrl: status?.server?.thumbnail ?? '-',
-                        placeholder: (context, url) => SizedBox(
-                          width: width,
-                          height: height,
-                          child: ClockProgressIndicator(size: min(width, height) / 2),
-                        ),
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
-                        imageBuilder: (context, imageProvider) => Image(
-                          image: imageProvider,
-                          width: width,
-                          height: height,
-                          fit: BoxFit.cover,
+                    status?.server?.thumbnail == null ?
+                      const SizedBox.shrink() :
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: CachedNetworkImage(
+                          imageUrl: status?.server?.thumbnail ?? '-',
+                          placeholder: (context, url) => SizedBox(
+                            width: width,
+                            height: height,
+                            child: ClockProgressIndicator(size: min(width, height) / 2),
+                          ),
+                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                          imageBuilder: (context, imageProvider) => Image(
+                            image: imageProvider,
+                            width: width,
+                            height: height,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),

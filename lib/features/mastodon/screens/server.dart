@@ -43,31 +43,51 @@ class MastodonServer extends StatelessWidget {
     final Debouncer debouncer = Debouncer(duration: const Duration(milliseconds: 700));
     return InkWellDone(
       onTap: () => debouncer.callOnce(() => onTap?.call(schema)),
-      child: buildContent(context),
+      child: ClipRRect(child: buildContent(context)),
     );
   }
 
   // The main content of the server widget, which includes the thumbnail, title,
   // description, extra content, and metadata.
   Widget buildContent(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Flexible(child: buildThumbnail()),
-          const SizedBox(height: 16),
-          Text(schema.title, style: Theme.of(context).textTheme.headlineMedium, overflow: TextOverflow.ellipsis),
-          const SizedBox(height: 16),
-          Text(schema.desc, style: Theme.of(context).textTheme.bodyLarge),
-          const SizedBox(height: 6),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxHeight < 400) {
+          // The height is too small to show the server info, so we return a
+          // simple widget with the server title and thumbnail.
 
-          buildExtraContent(context),
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(child: buildThumbnail()),
+              const SizedBox(height: 16),
+              Text(schema.title, style: Theme.of(context).textTheme.headlineMedium, overflow: TextOverflow.ellipsis),
+              const SizedBox(height: 16),
+              Text(schema.desc, style: Theme.of(context).textTheme.bodyLarge),
+            ],
+          );
+        }
 
-          const Spacer(),
-          buildMetadata(),
-        ],
-      ),
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(child: buildThumbnail()),
+              const SizedBox(height: 16),
+              Text(schema.title, style: Theme.of(context).textTheme.headlineMedium, overflow: TextOverflow.ellipsis),
+              const SizedBox(height: 16),
+              Text(schema.desc, style: Theme.of(context).textTheme.bodyLarge),
+              const SizedBox(height: 6),
+
+              ClipRRect(child: buildExtraContent(context)),
+
+              const Spacer(),
+              buildMetadata(),
+            ],
+          ),
+        );
+      },
     );
   }
 
