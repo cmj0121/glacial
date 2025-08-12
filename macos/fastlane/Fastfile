@@ -50,6 +50,13 @@ platform :macos do
     build
     testflight(skip_waiting_for_build_processing: true)
   end
+
+  desc "Run the end-to-end (E2E) tests"
+  lane :e2e do
+    Dir.chdir "../.." do
+      sh "flutter test integration_test/app_switch_server.dart --device-id=macos"
+    end
+  end
 end
 
 # vim: ts=2 sw=2 ft=ruby et :

@@ -44,6 +44,32 @@ platform :ios do
     build
     testflight(skip_waiting_for_build_processing: true)
   end
+
+  desc "Run the end-to-end (E2E) tests"
+  lane :e2e do
+    # find the device by the command `xcrun simctl list devices`
+    devices = ["iPad mini (6th generation)", "iPhone 16 Plus"]
+
+    Dir.chdir "../.." do
+      for device in devices
+        sh "xcrun simctl shutdown all"
+        sh "xcrun simctl boot '#{device}'"
+        sh "open -a Simulator"
+
+        begin
+          sh "flutter test integration_test/app_switch_server.dart --device-id='#{device}'"
+        ensure
+          sh "xcrun simctl shutdown '#{device}'"
+          sh "xcrun simctl erase '#{device}'"
+          exit_status = $?.exitstatus
+          if exit_status != 0
+            puts "E2E tests failed with exit status: #{exit_status}"
+            raise "E2E tests failed"
+          end
+        end
+      end
+    end
+  end
 end
 
 # vim: ts=2 sw=2 ft=ruby et :
