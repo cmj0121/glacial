@@ -4,6 +4,7 @@
 
 [![License: CC BY-NC-ND 4.0][0]][1]
 [English](README.md) | [繁體中文](README_zh.md)
+![Testing](https://github.com/cmj0121/glacial/actions/workflows/test.yml/badge.svg?branch=main)
 
 這是一個簡單易用的跨平台 Mastodon 客戶端，幫助您隨時隨地在任何設備上訪問和管理您的 Mastodon 帳戶。
 

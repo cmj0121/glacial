@@ -4,6 +4,7 @@
 
 [![License: CC BY-NC-ND 4.0][0]][1]
 [English](README.md) | [繁體中文](README_zh.md)
+![Testing](https://github.com/cmj0121/glacial/actions/workflows/test.yml/badge.svg?branch=main)
 
 It is the simple and cross-platform Mastodon client that helps you to access and manage
 your Mastodon account, on any device, anywhere, anytime.
