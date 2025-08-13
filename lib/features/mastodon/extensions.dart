@@ -23,7 +23,6 @@ extension AccessStatusExtension on Storage {
   // Load the access status from the storage.
   Future<AccessStatusSchema?> loadAccessStatus({WidgetRef? ref}) async {
     final String? json = await getString(AccessStatusSchema.key);
-    logger.i("load access status: $json");
     AccessStatusSchema status = (json == null ? null : AccessStatusSchema.fromString(json)) ?? AccessStatusSchema();
 
     final String? domain = status.domain?.isNotEmpty == true ? status.domain : null;
@@ -42,7 +41,6 @@ extension AccessStatusExtension on Storage {
     final String json = jsonEncode(schema.toJson());
     await setString(AccessStatusSchema.key, json);
 
-    logger.i("save access status: $json");
     ref?.read(accessStatusProvider.notifier).state = schema;
   }
 
