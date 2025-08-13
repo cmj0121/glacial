@@ -36,77 +36,34 @@ class _StatusState extends ConsumerState<Status> {
   final double metadataHeight = 22.0;
   final double iconSize = 16.0;
 
-  late SystemPreferenceSchema? pref = ref.read(preferenceProvider);
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+  late final SystemPreferenceSchema? pref = ref.read(preferenceProvider);
   late StatusSchema schema = widget.schema.reblog ?? widget.schema;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16, bottom: 8),
-      child: InkWellDone(
-        onTap: () {
-          final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
+    final bool sensitive = (pref?.sensitive ?? true) && schema.sensitive && schema.spoiler.isEmpty == true;
 
-          switch (path) {
-            case RoutePath.status:
-              context.replace(RoutePath.status.path, extra: schema);
-              break;
-            default:
-              context.push(RoutePath.status.path, extra: schema);
-              break;
-          }
-        },
-        child: buildContent(),
-      ),
-    );
-  }
-
-  // Build the main content of the status, including the author, the content
-  // and the possible actions.
-  Widget buildContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildMetadata(),
-        buildHeader(),
-        Indent(
+        StatusLite(
+          schema: schema,
           indent: widget.indent,
-          child: SpoilerView(
-            spoiler: schema.spoiler,
-            child: SensitiveView(
-              isSensitive: (pref?.sensitive ?? true) && widget.schema.sensitive && schema.spoiler.isEmpty == true,
-              child: buildCoreContent(),
-            ),
-          ),
+          spoiler: schema.spoiler.isEmpty ? null : schema.spoiler,
+          sensitive: sensitive,
+          iconSize: iconSize,
+          headerHeight: headerHeight,
+          onLinkTap: onLinkTap,
         ),
 
-        Application(schema: schema.application),
         const SizedBox(height: 8),
+
         InteractionBar(
           schema: schema,
           onReload: onReload,
           onDeleted: widget.onDeleted,
-        ),
-      ],
-    );
-  }
-
-  // Build the core content of the status which may be hidden or shown by the
-  // status visibility.
-  Widget buildCoreContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        HtmlDone(html: schema.content, emojis: schema.emojis, onLinkTap: onLinkTap),
-        Poll(schema: schema.poll),
-        Attachments(schemas: schema.attachments),
-
-        if (schema.tags.isNotEmpty) Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            children: schema.tags.map((tag) => TagLite(schema: tag)).toList(),
-          ),
         ),
       ],
     );
@@ -155,69 +112,6 @@ class _StatusState extends ConsumerState<Status> {
     );
   }
 
-  // Build the header of the status, including the author and the date and
-  // visibility information.
-  Widget buildHeader() {
-    return ClipRect(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          ClipRect(child: Account(schema: schema.account, size: headerHeight)),
-          const Spacer(),
-          ClipRRect(child: buildHeaderMeta()),
-        ],
-      ),
-    );
-  }
-
-  Widget buildHeaderMeta() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        buildTimeInfo(),
-        buildEditLog(),
-        StatusVisibility(type: schema.visibility, size: iconSize),
-        buildLikes(),
-        const SizedBox(width: 4),
-      ],
-    );
-  }
-
-  // Build the post time information, showing the time since the post was created.
-  Widget buildTimeInfo() {
-    final String duration = timeago.format(schema.createdAt, locale: 'en_short');
-
-    return Tooltip(
-      message: schema.createdAt.toLocal().toString(),
-      child: Text(duration, style: const TextStyle(color: Colors.grey)),
-    );
-  }
-
-  // Build the post's reblog or favorite details.
-  Widget buildLikes() {
-    final int count = schema.reblogsCount + schema.favouritesCount;
-
-    return IconButton(
-      icon: Icon(Icons.info_outline, size: iconSize),
-      padding: EdgeInsets.zero,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      onPressed: count == 0 ? null : () => context.push(RoutePath.statusInfo.path, extra: schema),
-    );
-  }
-
-  // Build the post's edit log, which shows the edit history of the post.
-  Widget buildEditLog() {
-    return IconButton(
-      icon: Icon(Icons.edit_outlined, size: iconSize),
-      padding: EdgeInsets.zero,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      onPressed: widget.schema.editedAt == null ? null : () => context.push(RoutePath.statusHistory.path, extra: schema),
-    );
-  }
-
   // Reload the status when the status is reblogged or updated.
   void onReload(StatusSchema status) {
     if (mounted) {
@@ -227,8 +121,7 @@ class _StatusState extends ConsumerState<Status> {
   }
 
   // Handle the link tap event, and open the link in the in-app webview.
-  void onLinkTap(String? url, Map<String, String> attributes, _) async {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+  void onLinkTap(String? url) async {
     final Uri? uri = url == null ? null : Uri.parse(url);
 
     if (uri == null) {
@@ -271,54 +164,115 @@ class _StatusState extends ConsumerState<Status> {
 // bar and the sensitive view.
 class StatusLite extends StatelessWidget {
   final StatusSchema schema;
-
-  final double headerHeight = 48.0;
-  final double iconSize = 16.0;
+  final int indent;
+  final String? spoiler;
+  final bool sensitive;
+  final double headerHeight;
+  final double iconSize;
+  final ValueChanged<String?>? onLinkTap;
 
   const StatusLite({
     super.key,
     required this.schema,
+    this.indent = 0,
+    this.spoiler,
+    this.sensitive = false,
+    this.iconSize = 16.0,
+    this.headerHeight = 48.0,
+    this.onLinkTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWellDone(
-      onTap: () => context.push(RoutePath.status.path, extra: schema),
+      onTap: () {
+        final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
+
+        switch (path) {
+          case RoutePath.status:
+            context.replace(RoutePath.status.path, extra: schema);
+            break;
+          default:
+            context.push(RoutePath.status.path, extra: schema);
+            break;
+        }
+      },
       child: buildContent(context),
     );
   }
 
-  Widget buildContent(BuildContext content) {
+  Widget buildContent(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildHeader(),
+        buildHeader(context),
 
-        HtmlDone(html: schema.content, emojis: schema.emojis),
-        Poll(schema: schema.poll),
-        Attachments(schemas: schema.attachments),
-
-        if (schema.tags.isNotEmpty) Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            children: schema.tags.map((tag) => TagLite(schema: tag)).toList(),
+        Indent(
+          indent: indent,
+          child: SpoilerView(
+            spoiler: spoiler,
+            child: SensitiveView(
+              isSensitive: sensitive,
+              child: buildCoreContent(),
+            ),
           ),
         ),
+
+        Application(schema: schema.application),
+      ],
+    );
+  }
+
+  // Build the core content of the status which may be hidden or shown by the
+  // status visibility.
+  Widget buildCoreContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        HtmlDone(html: schema.content, emojis: schema.emojis, onLinkTap: (url, attributes, _) => onLinkTap?.call(url)),
+        Poll(schema: schema.poll),
+        Attachments(schemas: schema.attachments),
+        buildTags(),
       ],
     );
   }
 
   // Build the header of the status, including the author and the date and
   // visibility information.
-  Widget buildHeader() {
+  Widget buildHeader(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 380) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Account(schema: schema.account, size: headerHeight),
+              buildMeta(context),
+            ]
+          );
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
+            const Spacer(),
+            buildMeta(context),
+          ],
+        );
+      },
+    );
+  }
+
+  // The metadata of the status, which may include the reply or reblog information.
+  Widget buildMeta(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Account(schema: schema.account, size: headerHeight),
-        const Spacer(),
         buildTimeInfo(),
+        buildEditLog(context),
         StatusVisibility(type: schema.visibility, size: iconSize),
+        buildLikes(context),
         const SizedBox(width: 4),
       ],
     );
@@ -327,22 +281,48 @@ class StatusLite extends StatelessWidget {
   // Build the post time information, showing the time since the post was created.
   Widget buildTimeInfo() {
     final String duration = timeago.format(schema.createdAt, locale: 'en_short');
-    final Widget editedAt = Tooltip(
-      message: schema.editedAt?.toLocal().toString() ?? '-',
-      child: Icon(Icons.edit_outlined, size: iconSize, color: Colors.grey),
+
+    return Tooltip(
+      message: schema.createdAt.toLocal().toString(),
+      child: Text(duration, style: const TextStyle(color: Colors.grey)),
     );
+  }
+
+  // Build the post's reblog or favorite details.
+  Widget buildLikes(BuildContext context) {
+    final int count = schema.reblogsCount + schema.favouritesCount;
+
+    return IconButton(
+      icon: Icon(Icons.info_outline, size: iconSize),
+      padding: EdgeInsets.zero,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onPressed: count == 0 ? null : () => context.push(RoutePath.statusInfo.path, extra: schema),
+    );
+  }
+
+  // Build the post's edit log, which shows the edit history of the post.
+  Widget buildEditLog(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.edit_outlined, size: iconSize),
+      padding: EdgeInsets.zero,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onPressed: schema.editedAt == null ? null : () => context.push(RoutePath.statusHistory.path, extra: schema),
+    );
+  }
+
+  // Build the list of tags in the status, which can be used to navigate to the tag search.
+  Widget buildTags() {
+    if (schema.tags.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        children: [
-          schema.editedAt == null ? const SizedBox.shrink() : editedAt,
-          const SizedBox(width: 8),
-          Tooltip(
-            message: schema.createdAt.toLocal().toString(),
-            child: Text(duration, style: const TextStyle(color: Colors.grey)),
-          ),
-        ]
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        children: schema.tags.map((tag) => TagLite(schema: tag)).toList(),
       ),
     );
   }

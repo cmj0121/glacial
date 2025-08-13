@@ -31,7 +31,7 @@ class Account extends StatelessWidget {
       children: [
         buildAvatar(),
         const SizedBox(width: 16),
-        buildName(),
+        Flexible(child: buildName()),
       ],
     );
 
