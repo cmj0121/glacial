@@ -55,6 +55,7 @@ platform :macos do
   lane :e2e do
     Dir.chdir "../.." do
       sh "flutter test integration_test/app_switch_server.dart --device-id=macos"
+      sh "flutter test integration_test/app_trends.dart --device-id=macos"
     end
   end
 end

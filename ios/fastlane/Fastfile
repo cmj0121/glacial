@@ -50,28 +50,38 @@ platform :ios do
     # find the device by the command `xcrun simctl list devices`
     devices = ["iPad mini (6th generation)", "iPhone 16 Plus"]
 
+    # define the function to run the test script with take the screenshots
+    def run_test(device, script)
+      begin
+        record_pid = spawn("xcrun simctl io booted recordVideo --force 'screenshots/#{device}/#{script}.mov'")
+        sh "flutter test 'integration_test/#{script}.dart' --device-id='#{device}'"
+      ensure
+        Process.kill("INT", record_pid)
+        Process.wait(record_pid)
+        exit_status = $?.exitstatus
+        if exit_status != 0
+          puts "E2E tests failed with exit status: #{exit_status}"
+          raise "E2E tests failed"
+        end
+      end
+    end
+
+
     Dir.chdir "../.." do
       for device in devices
         sh "xcrun simctl shutdown all"
         sh "xcrun simctl boot '#{device}'"
         sh "open -a Simulator"
         sh "mkdir -p 'screenshots/#{device}'"
-        record_pid = spawn("xcrun simctl io booted recordVideo --force 'screenshots/#{device}/app_switch_server.mov'")
 
         begin
-          sh "flutter test integration_test/app_switch_server.dart --device-id='#{device}'"
+          run_test(device, "app_switch_server")
+          run_test(device, "app_trends")
         ensure
-          Process.kill("INT", record_pid)
-          Process.wait(record_pid)
-          sh "xcrun simctl shutdown '#{device}'"
-          sh "xcrun simctl erase '#{device}'"
-
-          exit_status = $?.exitstatus
-          if exit_status != 0
-            puts "E2E tests failed with exit status: #{exit_status}"
-            raise "E2E tests failed"
-          end
+         sh "xcrun simctl shutdown '#{device}'"
+         sh "xcrun simctl erase '#{device}'"
         end
+
       end
     end
   end
