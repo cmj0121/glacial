@@ -35,10 +35,7 @@ class Account extends StatelessWidget {
       ],
     );
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: content,
-    );
+    return ClipRect(child: content);
   }
 
   // Build the Avatar of the user.
@@ -76,7 +73,7 @@ class Account extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        name,
+        ClipRect(child: name),
         Text('@${schema.acct}', style: const TextStyle(color: Colors.grey), overflow: TextOverflow.ellipsis),
       ],
     );

@@ -13,7 +13,7 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
-default_platform(:macos)
+default_platform(:mac)
 
 # Load environment variables from .env file, or raise an error if not found
 def required_env(key)
@@ -22,7 +22,7 @@ def required_env(key)
   puts "#{key}: #{value}"
 end
 
-platform :macos do
+platform :mac do
   desc "Push a new beta build to TestFlight"
   lane :build do
     match(

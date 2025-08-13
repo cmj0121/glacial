@@ -77,14 +77,14 @@ class EmojiSchema {
       return const SizedBox.shrink();
     }
 
-    return Row(
+    final Widget child = Row(
       mainAxisSize: MainAxisSize.min,
       children: parts.map((String part) {
         final String shortcode = (part.startsWith(':') && part.endsWith(':')) ? part.substring(1, part.length - 1) : part;
         final EmojiSchema? emoji = emojis?.cast<EmojiSchema?>().firstWhere((e) => e?.shortcode == shortcode, orElse: () => null);
 
         if (emoji == null) {
-          return Text(part, overflow: TextOverflow.ellipsis);
+          return Flexible(child: Text(part, overflow: TextOverflow.ellipsis));
         }
 
         return Image.network(
@@ -95,6 +95,8 @@ class EmojiSchema {
         );
       }).toList(),
     );
+
+    return ClipRect(child: Container(child: child));
   }
 }
 

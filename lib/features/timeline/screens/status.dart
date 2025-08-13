@@ -240,27 +240,13 @@ class StatusLite extends StatelessWidget {
   // Build the header of the status, including the author and the date and
   // visibility information.
   Widget buildHeader(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth < 380) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Account(schema: schema.account, size: headerHeight),
-              buildMeta(context),
-            ]
-          );
-        }
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
-            const Spacer(),
-            buildMeta(context),
-          ],
-        );
-      },
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
+        const Spacer(),
+        buildMeta(context),
+      ],
     );
   }
 
