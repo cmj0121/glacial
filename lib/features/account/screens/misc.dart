@@ -47,7 +47,7 @@ class _FollowedHashtagsState extends ConsumerState<FollowedHashtags> {
     }
 
     if (hashtags.isEmpty && isLoading) {
-      return const Center(child: ClockProgressIndicator());
+      return const ClockProgressIndicator();
     } else if (hashtags.isEmpty && isCompleted) {
       return const NoResult(icon: Icons.coffee);
     }
@@ -141,7 +141,7 @@ class _AccountListState extends ConsumerState<AccountList> {
     }
 
     if (accounts.isEmpty && isLoading) {
-      return const Center(child: ClockProgressIndicator());
+      return const ClockProgressIndicator();
     } else if (accounts.isEmpty && isCompleted) {
       final String message = AppLocalizations.of(context)?.txt_no_result ?? "No results found";
       return NoResult(message: message, icon: Icons.coffee);
