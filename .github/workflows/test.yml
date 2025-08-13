@@ -1,0 +1,37 @@
+name: Testing
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  Testing:
+    name: Test build and run UT and E2E
+
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.32.8
+
+      - name: Install dependencies
+        run: |
+          flutter pub get
+      - name: Setup the dummy .env
+        run: |
+          {
+            echo OAUTH_CLIENT_NAME=glacial
+            echo OAUTH_REDIRECT_URI=glacial://auth
+            echo OAUTH_SCOPES=profile read write push
+            echo OAUTH_WEBSITE_URL=https://github.com/cmj0121/glacial
+          } > .env
+      - name: Run tests
+        run: |
+          flutter test --coverage
+      - name: Build the dummy app
+        run: |
+          flutter build ipa --no-codesign
