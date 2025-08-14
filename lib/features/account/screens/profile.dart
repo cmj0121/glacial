@@ -251,7 +251,7 @@ class ProfilePage extends ConsumerWidget {
         schema.bot ? botIcon : const SizedBox.shrink(),
 
         const Spacer(),
-        schema.id == status.account?.id ? const SizedBox.shrink() : Relationship(schema: schema),
+        schema.id == status.account?.id ? EditProfilePage.icon(schema: schema) : Relationship(schema: schema),
       ],
     );
   }
@@ -342,10 +342,110 @@ class UserStatistics extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 12),
       child: Tooltip(
-        message: AppLocalizations.of(context)?.desc_profile_indexable ?? "Account can be indexed by search engines",
+        message: AppLocalizations.of(context)?.desc_profile_post_indexable ?? "Allow search engines to index your posts",
         child: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary, size: tabSize),
       ),
     );
+  }
+}
+
+// The edit page for the account profile, allowing users to edit their profile information.
+class EditProfilePage extends ConsumerStatefulWidget {
+  final AccountSchema account;
+
+  const EditProfilePage({
+    super.key,
+    required this.account,
+  });
+
+  @override
+  ConsumerState<EditProfilePage> createState() => _EditProfilePageState();
+
+  static Widget icon({required AccountSchema schema}) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return IconButton(
+          icon: const Icon(Icons.manage_accounts_outlined),
+          style: IconButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.onSurface,
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          onPressed: () => context.push(RoutePath.editProfile.path, extra: schema),
+        );
+      },
+    );
+  }
+}
+
+class _EditProfilePageState extends ConsumerState<EditProfilePage> {
+  late AccountCredentialSchema schema = widget.account.toCredentialSchema();
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor);
+
+    return ListView(
+      children: [
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_profile_bot ?? "This account is a bot"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_profile_bot ?? "This account is a bot",
+            style: labelStyle,
+          ),
+          value: schema.bot,
+          secondary: Icon(schema.bot ? Icons.smart_toy_outlined : Icons.person, size: iconSize),
+          onChanged: (bool value) => onChanged(schema: schema.copyWith(bot: value)),
+        ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_profile_locked ?? "Locked Account"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_profile_locked ?? "Manually approved followers",
+            style: labelStyle,
+          ),
+          value: schema.locked,
+          secondary: Icon(schema.locked ? Icons.lock_person : Icons.lock_open, size: iconSize),
+          onChanged: (bool value) => onChanged(schema: schema.copyWith(locked: value)),
+        ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_profile_discoverable ?? "Discoverable in Public"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_profile_discoverable ?? "Account can be discoverable in public",
+            style: labelStyle,
+          ),
+          value: schema.discoverable,
+          secondary: Icon(schema.discoverable ? Icons.travel_explore : Icons.disabled_by_default_rounded, size: iconSize),
+          onChanged: (bool value) => onChanged(schema: schema.copyWith(discoverable: value)),
+        ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_profile_post_indexable ?? "Indexable by Search Engines"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_profile_post_indexable ?? "Allow search engines to index your posts",
+            style: labelStyle,
+          ),
+          value: schema.indexable,
+          secondary: Icon(schema.indexable ? Icons.search : Icons.disabled_by_default_rounded, size: iconSize),
+          onChanged: (bool value) => onChanged(schema: schema.copyWith(indexable: value)),
+        ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_profile_hide_collections ?? "Hide Collections"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_profile_hide_collections ?? "Hide collections from the profile",
+            style: labelStyle,
+          ),
+          value: !schema.hideCollections,
+          secondary: Icon(schema.hideCollections ? Icons.visibility_off : Icons.private_connectivity, size: iconSize),
+          onChanged: (bool value) => onChanged(schema: schema.copyWith(hideCollections: !value)),
+        ),
+      ],
+    );
+  }
+
+  void onChanged({required AccountCredentialSchema schema}) async {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+    await status?.updateAccount(schema);
+    setState(() => this.schema = schema);
   }
 }
 

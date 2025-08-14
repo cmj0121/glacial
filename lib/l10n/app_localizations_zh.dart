@@ -304,6 +304,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_no_result => '未找到結果';
 
   @override
+  String get txt_profile_bot => '機器人帳號';
+
+  @override
+  String get txt_profile_locked => '帳號鎖定';
+
+  @override
+  String get txt_profile_discoverable => '可被探索';
+
+  @override
+  String get txt_profile_post_indexable => '公開嘟文的隱私';
+
+  @override
+  String get txt_profile_hide_collections => '在個人頁面中顯示跟隨中與跟隨者';
+
+  @override
   String get desc_preference_status => '控制你嘟文的預設行為';
 
   @override
@@ -331,16 +346,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get desc_preference_refresh_interval => '更新資料的頻率';
 
   @override
-  String get desc_profile_bot => '該帳號可能會自動化操作';
+  String get desc_profile_bot => '該帳號可能會自動化操作且未受人為監控';
 
   @override
   String get desc_profile_locked => '手動批准好友請求';
 
   @override
-  String get desc_profile_discoverable => '帳號是否可以被探索';
+  String get desc_profile_discoverable => '帳號可以公開瀏覽中被搜尋';
 
   @override
-  String get desc_profile_indexable => '帳號可以出現在搜尋引擎';
+  String get desc_profile_post_indexable => '公開嘟文可以被任何人搜尋';
+
+  @override
+  String get desc_profile_hide_collections => '瀏覽你的追隨中與追隨者的帳號';
 
   @override
   String err_invalid_instance(Object domain) {

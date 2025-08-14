@@ -160,6 +160,33 @@ class AccessStatusSchema {
     return response.body;
   }
 
+  // Call the API endpoint with the PATCH method and return the response body as a string.
+  Future<String?> patchAPI(String endpoint, {
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  }) async {
+    if (domain?.isNotEmpty != true) {
+      logger.w("No server selected, but it's required to fetch the API.");
+      return null;
+    }
+
+    final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
+    final String? payload = body != null ? jsonEncode(body) : null;
+    final response = await patch(
+      uri,
+      headers: {
+        ...?headers,
+        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+      },
+      body: payload,
+    );
+
+    return response.body;
+  }
+
+
+
   // Call the API endpoint with the DELETE method and return the response body as a string.
   Future<String?> deleteAPI(String endpoint, {Map<String, String>? queryParameters, Map<String, String>? headers}) async {
     if (domain?.isNotEmpty != true) {

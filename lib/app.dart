@@ -79,16 +79,6 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             return const ServerExplorer();
           },
         ),
-        // The user profile page to view the user details
-        GoRoute(
-          path: RoutePath.profile.path,
-          builder: (BuildContext context, GoRouterState state) {
-            return BackableView(
-              title: RoutePath.profile.name,
-              child: const WIP(),
-            );
-          },
-        ),
         // The system preference page to view or edit the app settings
         GoRoute(
           path: RoutePath.preference.path,
@@ -142,6 +132,9 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             final AccountSchema account = state.extra as AccountSchema;
 
             title = EmojiSchema.replaceEmojiToWidget(account.displayName, emojis: account.emojis);
+            backable = true;
+            break;
+          case RoutePath.editProfile:
             backable = true;
             break;
           case RoutePath.hashtag:
@@ -233,6 +226,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             final AccountSchema acocunt = state.extra as AccountSchema;
             return AccountProfile(schema: acocunt);
           },
+        ),
+        GoRoute(
+          path: RoutePath.editProfile.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final AccountSchema acocunt = state.extra as AccountSchema;
+            return EditProfilePage(account: acocunt);
+          }
         ),
         GoRoute(
           path: RoutePath.hashtag.path,

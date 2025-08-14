@@ -668,6 +668,36 @@ abstract class AppLocalizations {
   /// **'No results found'**
   String get txt_no_result;
 
+  /// No description provided for @txt_profile_bot.
+  ///
+  /// In en, this message translates to:
+  /// **'Bot Account'**
+  String get txt_profile_bot;
+
+  /// No description provided for @txt_profile_locked.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Locked'**
+  String get txt_profile_locked;
+
+  /// No description provided for @txt_profile_discoverable.
+  ///
+  /// In en, this message translates to:
+  /// **'Account can be discoverable in public'**
+  String get txt_profile_discoverable;
+
+  /// No description provided for @txt_profile_post_indexable.
+  ///
+  /// In en, this message translates to:
+  /// **'The privacy of the public post'**
+  String get txt_profile_post_indexable;
+
+  /// No description provided for @txt_profile_hide_collections.
+  ///
+  /// In en, this message translates to:
+  /// **'Display the follower and following in your profile page'**
+  String get txt_profile_hide_collections;
+
   /// No description provided for @desc_preference_status.
   ///
   /// In en, this message translates to:
@@ -725,7 +755,7 @@ abstract class AppLocalizations {
   /// No description provided for @desc_profile_bot.
   ///
   /// In en, this message translates to:
-  /// **'The account may perform automated actions'**
+  /// **'The account may perform automated actions and not monitored by humans'**
   String get desc_profile_bot;
 
   /// No description provided for @desc_profile_locked.
@@ -737,14 +767,20 @@ abstract class AppLocalizations {
   /// No description provided for @desc_profile_discoverable.
   ///
   /// In en, this message translates to:
-  /// **'Account can be discoverable in public'**
+  /// **'Account can be discoverable in the profile directory'**
   String get desc_profile_discoverable;
 
-  /// No description provided for @desc_profile_indexable.
+  /// No description provided for @desc_profile_post_indexable.
   ///
   /// In en, this message translates to:
-  /// **'Account can be indexed by search engines'**
-  String get desc_profile_indexable;
+  /// **'The public post cant be seachable'**
+  String get desc_profile_post_indexable;
+
+  /// No description provided for @desc_profile_hide_collections.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone can follow-up your following and follower in your profile page'**
+  String get desc_profile_hide_collections;
 
   /// No description provided for @err_invalid_instance.
   ///

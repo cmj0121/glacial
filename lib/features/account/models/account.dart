@@ -22,6 +22,7 @@ class AccountSchema {
   final bool? discoverable;         // Whether the account has opted into discovery features such as the profile directory.
   final bool indexable;             // Whether the account allows indexing by search engines.
   final bool? noindex;              // Whether the local user has opted out of being indexed by search engines.
+  final bool? hideCollections;      // Whether the account has opted out of showing collections in the profile.
   final DateTime createdAt;         // When the account was created.
   final DateTime? lastStatusAt;     // When the most recent status was posted.
   final int statusesCount;          // How many statuses are attached to this account.
@@ -45,6 +46,7 @@ class AccountSchema {
     this.discoverable,
     required this.indexable,
     this.noindex,
+    this.hideCollections,
     required this.createdAt,
     this.lastStatusAt,
     required this.statusesCount,
@@ -72,11 +74,30 @@ class AccountSchema {
       discoverable: json['discoverable'] as bool?,
       indexable: json['indexable'] as bool,
       noindex: json['noindex'] as bool?,
+      hideCollections: json['hide_collections'] as bool?,
       createdAt: DateTime.parse(json['created_at'] as String),
       lastStatusAt: json['last_status_at'] == null ? null : DateTime.parse(json['last_status_at'] as String),
       statusesCount: json['statuses_count'] as int,
       followersCount: json['followers_count'] as int,
       followingCount: json['following_count'] as int,
+    );
+  }
+
+  AccountCredentialSchema toCredentialSchema() {
+    final String bio = note
+        .replaceAll(RegExp(r'<br>', caseSensitive: false), '\n') // Replace <br> with new line
+        .replaceAll(RegExp(r'</p>'), '\n')                       // Replace </p> with new line
+        .replaceAll(RegExp(r'<[^>]*>'), '')                      // Remove HTML tags
+        .replaceAll(RegExp(r'&[a-z]+;'), '');                    // Remove HTML entities
+
+    return AccountCredentialSchema(
+      displayName: displayName,
+      note: bio,
+      locked: locked,
+      bot: bot,
+      discoverable: discoverable ?? true,
+      hideCollections: hideCollections ?? false,
+      indexable: indexable,
     );
   }
 }
@@ -169,6 +190,67 @@ enum AccountProfileType {
       default:
         throw ArgumentError("Invalid profile type for timeline: $this");
     }
+  }
+}
+
+// The updated account credential schema that includes the account info and used for
+// changes in the account profile.
+class AccountCredentialSchema {
+  final String displayName;   // The display name to use for the profile.
+  final String note;          // The account bio.
+  final bool locked;          // Whether manual approval of follow requests is required.
+  final bool bot;             // Whether the account has a bot flag.
+  final bool discoverable;    // Whether the account should be shown in the profile directory.
+  final bool hideCollections; // Whether to hide followers and followed accounts.
+  final bool indexable;       // Whether public posts should be searchable to anyone.
+
+  const AccountCredentialSchema({
+    required this.displayName,
+    required this.note,
+    required this.locked,
+    required this.bot,
+    required this.discoverable,
+    required this.hideCollections,
+    required this.indexable,
+  });
+
+  Map<String, String> toJson() {
+    final Map<String, dynamic> json = {
+      'display_name': displayName,
+      'note': note,
+      'locked': locked,
+      'bot': bot,
+      'discoverable': discoverable,
+      'hide_collections': hideCollections,
+      'indexable': indexable,
+    };
+
+    return Map.fromEntries(
+      json
+      .entries
+      .where((entry) => entry.value != null && entry.value.toString().isNotEmpty)
+      .map((entry) => MapEntry(entry.key, entry.value.toString())),
+    ).cast<String, String>();
+  }
+
+  AccountCredentialSchema copyWith({
+    String? displayName,
+    String? note,
+    bool? locked,
+    bool? bot,
+    bool? discoverable,
+    bool? hideCollections,
+    bool? indexable,
+  }) {
+    return AccountCredentialSchema(
+      displayName: displayName ?? this.displayName,
+      note: note ?? this.note,
+      locked: locked ?? this.locked,
+      bot: bot ?? this.bot,
+      discoverable: discoverable ?? this.discoverable,
+      hideCollections: hideCollections ?? this.hideCollections,
+      indexable: indexable ?? this.indexable,
+    );
   }
 }
 
