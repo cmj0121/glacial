@@ -363,8 +363,8 @@ class EditProfilePage extends ConsumerStatefulWidget {
         return IconButton(
           icon: const Icon(Icons.manage_accounts_outlined),
           style: IconButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.onSurface,
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+            backgroundColor: Theme.of(context).colorScheme.primary,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
           onPressed: () => context.push(RoutePath.editProfile.path),
