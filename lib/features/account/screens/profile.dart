@@ -130,7 +130,7 @@ class ProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
     if (status == null || status.domain == null) {
       logger.w("No server selected, but it's required to show the profile page.");
@@ -145,14 +145,15 @@ class ProfilePage extends ConsumerWidget {
         children: [
           buildBanner(context),
           const SizedBox(height: 16),
-          buildAccountInfo(context, status),
-          const Divider(thickness: 4),
+          buildAccountName(context, status),
           UserStatistics(
             schema: schema,
             onStatusesTap: onStatusesTap,
             onFollowersTap: onFollowersTap,
             onFollowingTap: onFollowingTap,
           ),
+          const Divider(thickness: 4),
+          buildAccountInfo(context, status),
         ],
       ),
     );
@@ -221,8 +222,6 @@ class ProfilePage extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildAccountName(context, status),
-        const SizedBox(height: 4),
         HtmlDone(html: schema.note),
       ],
     );
@@ -231,6 +230,10 @@ class ProfilePage extends ConsumerWidget {
   // Build the account name and relationship buttons.
   Widget buildAccountName(BuildContext context, AccessStatusSchema status) {
     final String acct = schema.acct.contains('@') ? schema.acct : '${schema.acct}@${status.domain}';
+    final Widget botIcon = Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: Icon(Icons.smart_toy_outlined, color: Theme.of(context).colorScheme.secondary),
+    );
 
     return Row(
       children: [
@@ -242,6 +245,7 @@ class ProfilePage extends ConsumerWidget {
           ),
           child: Text(acct, style: Theme.of(context).textTheme.labelSmall),
         ),
+        schema.bot ? botIcon : const SizedBox.shrink(),
 
         const Spacer(),
         schema.id == status.account?.id ? const SizedBox.shrink() : Relationship(schema: schema),
