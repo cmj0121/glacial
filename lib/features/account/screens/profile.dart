@@ -251,7 +251,8 @@ class ProfilePage extends ConsumerWidget {
         schema.bot ? botIcon : const SizedBox.shrink(),
 
         const Spacer(),
-        schema.id == status.account?.id ? EditProfilePage.icon(schema: schema) : Relationship(schema: schema),
+
+        schema.id == status.account?.id ? EditProfilePage.icon() : Relationship(schema: schema),
       ],
     );
   }
@@ -351,17 +352,12 @@ class UserStatistics extends StatelessWidget {
 
 // The edit page for the account profile, allowing users to edit their profile information.
 class EditProfilePage extends ConsumerStatefulWidget {
-  final AccountSchema account;
-
-  const EditProfilePage({
-    super.key,
-    required this.account,
-  });
+  const EditProfilePage({super.key});
 
   @override
   ConsumerState<EditProfilePage> createState() => _EditProfilePageState();
 
-  static Widget icon({required AccountSchema schema}) {
+  static Widget icon() {
     return LayoutBuilder(
       builder: (context, constraints) {
         return IconButton(
@@ -371,7 +367,7 @@ class EditProfilePage extends ConsumerStatefulWidget {
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
-          onPressed: () => context.push(RoutePath.editProfile.path, extra: schema),
+          onPressed: () => context.push(RoutePath.editProfile.path),
         );
       },
     );
@@ -379,10 +375,20 @@ class EditProfilePage extends ConsumerStatefulWidget {
 }
 
 class _EditProfilePageState extends ConsumerState<EditProfilePage> {
-  late AccountCredentialSchema schema = widget.account.toCredentialSchema();
+  late AccessStatusSchema? status = ref.read(accessStatusProvider);
+  late AccountSchema? account = status?.account;
+  late AccountCredentialSchema? schema = account?.toCredentialSchema();
 
   @override
   Widget build(BuildContext context) {
+    if (schema == null) {
+      return const SizedBox.shrink();
+    }
+
+    return buildContent(schema: schema!);
+  }
+
+  Widget buildContent({required AccountCredentialSchema schema}) {
     final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor);
 
     return ListView(
@@ -443,9 +449,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   void onChanged({required AccountCredentialSchema schema}) async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final AccountSchema? account = await status?.updateAccount(schema);
 
-    await status?.updateAccount(schema);
-    setState(() => this.schema = schema);
+    ref.read(accessStatusProvider.notifier).state = status?.copyWith(account: account);
+    setState(() => this.schema = account?.toCredentialSchema() ?? schema);
   }
 }
 

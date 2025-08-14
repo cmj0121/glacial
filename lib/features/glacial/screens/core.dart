@@ -147,7 +147,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
   List<Widget> buildActions() {
     final String path = GoRouter.of(context).state.uri.toString();
     final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
-    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
     final List<Widget> children = actions.map((action) {
       final int index = actions.indexOf(action);
@@ -230,7 +230,7 @@ class GlacialDrawer extends ConsumerStatefulWidget {
 class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
     final int logoutIndex = DrawerButtonType.values.indexWhere((action) => action == DrawerButtonType.logout);
     final List<Widget> children = DrawerButtonType.values.map((action) {
       return ListTile(

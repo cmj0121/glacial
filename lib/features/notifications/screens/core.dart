@@ -31,7 +31,7 @@ class NotificationBadge extends ConsumerStatefulWidget {
 
 class _NotificationBadgeState extends ConsumerState<NotificationBadge> with WidgetsBindingObserver {
   late final SystemPreferenceSchema? pref = ref.watch(preferenceProvider);
-  late final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
   Timer? _timer;
   int unreadCount = 0;
@@ -140,7 +140,7 @@ class GroupNotification extends ConsumerStatefulWidget {
 class _GroupNotificationState extends ConsumerState<GroupNotification> {
   final double loadingThreshold = 180;
 
-  late final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   late final ScrollController controller = ScrollController();
 
   bool isRefresh = false;

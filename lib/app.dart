@@ -166,7 +166,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         GoRoute(
           path: RoutePath.timeline.path,
           builder: (_, _) {
-            final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+            final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
             return TimelineTab(
               initialType: status?.isSignedIn == true ? TimelineType.home : TimelineType.local,
@@ -229,10 +229,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         ),
         GoRoute(
           path: RoutePath.editProfile.path,
-          builder: (BuildContext context, GoRouterState state) {
-            final AccountSchema acocunt = state.extra as AccountSchema;
-            return EditProfilePage(account: acocunt);
-          }
+          builder: (BuildContext context, GoRouterState state) => const EditProfilePage(),
         ),
         GoRoute(
           path: RoutePath.hashtag.path,

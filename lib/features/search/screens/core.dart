@@ -144,7 +144,7 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
     if (status == null || status.domain == null) {
       logger.w("No server selected, but it's required to show the search results.");
