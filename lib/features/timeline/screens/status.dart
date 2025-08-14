@@ -525,7 +525,10 @@ class _StatusContextState extends ConsumerState<StatusContext> {
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
           ),
-          child: child,
+          child: Padding(
+            padding: EdgeInsets.only(top: 16, bottom: 8),
+            child: child,
+          ),
         );
       },
     );

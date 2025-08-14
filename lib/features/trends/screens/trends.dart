@@ -177,7 +177,7 @@ class _TrendsState extends State<Trends> {
                 border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
               ),
               child: Padding(
-                padding: EdgeInsets.only(right: 16),
+                padding: EdgeInsets.only(top: 16, bottom: 8),
                 child: child,
               ),
             );
