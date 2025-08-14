@@ -80,15 +80,20 @@ class AccessStatusSchema {
     }
 
     final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
-    final response = await get(
-      uri,
-      headers: {
-        ...?headers,
-        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
-      },
-    );
+    try {
+      final response = await get(
+        uri,
+        headers: {
+          ...?headers,
+          ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+        },
+      );
 
-    return response.body;
+      return response.body;
+    } catch (e) {
+      logger.e("failed to fetch API at [GET] $uri: $e");
+      return null;
+    }
   }
 
   // Similar to getAPI, but returns the response body and optional next link.
@@ -99,18 +104,23 @@ class AccessStatusSchema {
     }
 
     final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
-    final response = await get(
-      uri,
-      headers: {
-        ...?headers,
-        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
-      },
-    );
+    try {
+      final response = await get(
+        uri,
+        headers: {
+          ...?headers,
+          ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+        },
+      );
 
-    final String body = response.body;
-    final String? nextLink = response.headers['link'];
+      final String body = response.body;
+      final String? nextLink = response.headers['link'];
 
-    return (body, getMaxIDFromNextLink(nextLink));
+      return (body, getMaxIDFromNextLink(nextLink));
+    } catch (e) {
+      logger.e("failed to fetch API at [GET] $uri: $e");
+      throw Exception('Failed to fetch API at [GET] $uri: $e');
+    }
   }
 
   // Call the API endpoint with the POST method and return the response body as a string.
