@@ -123,7 +123,10 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           case RoutePath.editProfile:
           case RoutePath.statusInfo:
           case RoutePath.statusHistory:
+            backable = true;
+            break;
           case RoutePath.directory:
+            title = Text(AppLocalizations.of(context)?.btn_drawer_directory ?? "Directory");
             backable = true;
             break;
           case RoutePath.search:
