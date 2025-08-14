@@ -232,7 +232,10 @@ class ProfilePage extends ConsumerWidget {
     final String acct = schema.acct.contains('@') ? schema.acct : '${schema.acct}@${status.domain}';
     final Widget botIcon = Padding(
       padding: const EdgeInsets.only(left: 8),
-      child: Icon(Icons.smart_toy_outlined, color: Theme.of(context).colorScheme.secondary),
+      child: Tooltip(
+        message: AppLocalizations.of(context)?.desc_profile_bot ?? "This account is a bot",
+        child: Icon(Icons.smart_toy_outlined, color: Theme.of(context).colorScheme.secondary),
+      ),
     );
 
     return Row(
@@ -295,7 +298,53 @@ class UserStatistics extends StatelessWidget {
           icon: const Icon(Icons.star),
           onPressed: onFollowingTap,
         ),
+
+        buildFollowerLock(context),
+        buildDiscoverable(context),
+        buildIndexable(context),
       ],
+    );
+  }
+
+  Widget buildFollowerLock(BuildContext context) {
+    if (!schema.locked) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 12),
+      child: Tooltip(
+        message: AppLocalizations.of(context)?.desc_profile_locked ?? "Manually approved followers",
+        child: Icon(Icons.lock_person, color: Theme.of(context).colorScheme.secondary, size: tabSize),
+      ),
+    );
+  }
+
+  Widget buildDiscoverable(BuildContext context) {
+    if (schema.discoverable ?? false) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 12),
+      child: Tooltip(
+        message: AppLocalizations.of(context)?.desc_profile_discoverable ?? "Account can be discoverable in public",
+        child: Icon(Icons.travel_explore, color: Theme.of(context).colorScheme.secondary, size: tabSize),
+      ),
+    );
+  }
+
+  Widget buildIndexable(BuildContext context) {
+    if ((schema.noindex ?? false) && !schema.indexable) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 12),
+      child: Tooltip(
+        message: AppLocalizations.of(context)?.desc_profile_indexable ?? "Account can be indexed by search engines",
+        child: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary, size: tabSize),
+      ),
     );
   }
 }

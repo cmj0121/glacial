@@ -331,6 +331,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get desc_preference_refresh_interval => '更新資料的頻率';
 
   @override
+  String get desc_profile_bot => '該帳號可能會自動化操作';
+
+  @override
+  String get desc_profile_locked => '手動批准好友請求';
+
+  @override
+  String get desc_profile_discoverable => '帳號是否可以被探索';
+
+  @override
+  String get desc_profile_indexable => '帳號可以出現在搜尋引擎';
+
+  @override
   String err_invalid_instance(Object domain) {
     return '不合法/不存在的 Mastodon 伺服器: $domain';
   }

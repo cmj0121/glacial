@@ -722,6 +722,30 @@ abstract class AppLocalizations {
   /// **'The interval to refresh the app\'s data'**
   String get desc_preference_refresh_interval;
 
+  /// No description provided for @desc_profile_bot.
+  ///
+  /// In en, this message translates to:
+  /// **'The account may perform automated actions'**
+  String get desc_profile_bot;
+
+  /// No description provided for @desc_profile_locked.
+  ///
+  /// In en, this message translates to:
+  /// **'Manually approves follow requests'**
+  String get desc_profile_locked;
+
+  /// No description provided for @desc_profile_discoverable.
+  ///
+  /// In en, this message translates to:
+  /// **'Account can be discoverable in public'**
+  String get desc_profile_discoverable;
+
+  /// No description provided for @desc_profile_indexable.
+  ///
+  /// In en, this message translates to:
+  /// **'Account can be indexed by search engines'**
+  String get desc_profile_indexable;
+
   /// No description provided for @err_invalid_instance.
   ///
   /// In en, this message translates to:

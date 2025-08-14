@@ -339,6 +339,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'The interval to refresh the app\'s data';
 
   @override
+  String get desc_profile_bot => 'The account may perform automated actions';
+
+  @override
+  String get desc_profile_locked => 'Manually approves follow requests';
+
+  @override
+  String get desc_profile_discoverable =>
+      'Account can be discoverable in public';
+
+  @override
+  String get desc_profile_indexable =>
+      'Account can be indexed by search engines';
+
+  @override
   String err_invalid_instance(Object domain) {
     return 'invalid Mastodon server domain: $domain';
   }

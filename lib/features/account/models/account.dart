@@ -20,6 +20,7 @@ class AccountSchema {
   final List<EmojiSchema> emojis;   // Custom emoji entities to be used when rendering the profile.
   final bool bot;                   // Indicates that the account may perform automated actions.
   final bool? discoverable;         // Whether the account has opted into discovery features such as the profile directory.
+  final bool indexable;             // Whether the account allows indexing by search engines.
   final bool? noindex;              // Whether the local user has opted out of being indexed by search engines.
   final DateTime createdAt;         // When the account was created.
   final DateTime? lastStatusAt;     // When the most recent status was posted.
@@ -42,6 +43,7 @@ class AccountSchema {
     this.emojis = const [],
     required this.bot,
     this.discoverable,
+    required this.indexable,
     this.noindex,
     required this.createdAt,
     this.lastStatusAt,
@@ -68,6 +70,7 @@ class AccountSchema {
           .toList() ?? [],
       bot: json['bot'] as bool,
       discoverable: json['discoverable'] as bool?,
+      indexable: json['indexable'] as bool,
       noindex: json['noindex'] as bool?,
       createdAt: DateTime.parse(json['created_at'] as String),
       lastStatusAt: json['last_status_at'] == null ? null : DateTime.parse(json['last_status_at'] as String),
