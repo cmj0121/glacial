@@ -120,6 +120,10 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           case RoutePath.post:
           case RoutePath.edit:
           case RoutePath.status:
+          case RoutePath.editProfile:
+          case RoutePath.statusInfo:
+          case RoutePath.statusHistory:
+          case RoutePath.directory:
             backable = true;
             break;
           case RoutePath.search:
@@ -134,21 +138,12 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             title = EmojiSchema.replaceEmojiToWidget(account.displayName, emojis: account.emojis);
             backable = true;
             break;
-          case RoutePath.editProfile:
-            backable = true;
-            break;
           case RoutePath.hashtag:
             final String hashtag = state.extra as String;
 
             title = Text('#$hashtag');
             backable = true;
             actions.add(FollowedHashtagButton(hashtag: hashtag));
-            break;
-          case RoutePath.statusInfo:
-            backable = true;
-            break;
-          case RoutePath.statusHistory:
-            backable = true;
             break;
           default:
             break;
@@ -262,6 +257,10 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             final StatusSchema status = state.extra as StatusSchema;
             return StatusHistory(schema: status);
           },
+        ),
+        GoRoute(
+          path: RoutePath.directory.path,
+          builder: (BuildContext context, GoRouterState state) => const DirectoryAccount(),
         ),
       ],
     );

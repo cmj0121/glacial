@@ -1,5 +1,6 @@
 // The Mastodon server explorer and find a server to connect to.
 
+export 'directory.dart';
 export "explorer.dart";
 export "history.dart";
 export "server.dart";

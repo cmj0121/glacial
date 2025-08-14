@@ -51,6 +51,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_drawer_switch_server => '切換伺服器';
 
   @override
+  String get btn_drawer_directory => '可見帳戶';
+
+  @override
   String get btn_drawer_preference => '偏好設定';
 
   @override

@@ -51,6 +51,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_drawer_switch_server => 'Switch Server';
 
   @override
+  String get btn_drawer_directory => 'Visible Account';
+
+  @override
   String get btn_drawer_preference => 'Preference';
 
   @override

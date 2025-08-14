@@ -182,6 +182,12 @@ abstract class AppLocalizations {
   /// **'Switch Server'**
   String get btn_drawer_switch_server;
 
+  /// No description provided for @btn_drawer_directory.
+  ///
+  /// In en, this message translates to:
+  /// **'Visible Account'**
+  String get btn_drawer_directory;
+
   /// No description provided for @btn_drawer_preference.
   ///
   /// In en, this message translates to:
