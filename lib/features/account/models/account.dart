@@ -1,4 +1,5 @@
 // The Account data schema that is the user account info.
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
@@ -17,6 +18,7 @@ class AccountSchema {
   final String avatarStatic;        // A static version of the avatar. Equal to avatar if its value is a static image.
   final String header;              // An image banner that is shown above the profile and in profile cards.
   final bool locked;                // Whether the account manually approves follow requests.
+  final List<FieldSchema> fields;   // Additional metadata attached to a profile as name-value pairs.
   final List<EmojiSchema> emojis;   // Custom emoji entities to be used when rendering the profile.
   final bool bot;                   // Indicates that the account may perform automated actions.
   final bool? discoverable;         // Whether the account has opted into discovery features such as the profile directory.
@@ -41,6 +43,7 @@ class AccountSchema {
     required this.avatarStatic,
     required this.header,
     required this.locked,
+    this.fields = const [],
     this.emojis = const [],
     required this.bot,
     this.discoverable,
@@ -67,6 +70,9 @@ class AccountSchema {
       avatarStatic: json['avatar_static'] as String,
       header: json['header'] as String,
       locked: json['locked'] as bool,
+      fields: (json['fields'] as List<dynamic>?)
+          ?.map((e) => FieldSchema.fromJson(e as Map<String, dynamic>))
+          .toList() ?? [],
       emojis: (json['emojis'] as List<dynamic>?)
           ?.map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>))
           .toList() ?? [],
@@ -98,6 +104,7 @@ class AccountSchema {
       discoverable: discoverable ?? true,
       hideCollections: hideCollections ?? false,
       indexable: indexable,
+      fields: fields,
     );
   }
 }
@@ -193,16 +200,45 @@ enum AccountProfileType {
   }
 }
 
+// Additional metadata attached to a profile as name-value pairs.
+class FieldSchema {
+  final String name;                // The name of the field.
+  final String value;               // The value of the field.
+  final String? verifiedAt;         // The date when the field was verified, if applicable
+
+  const FieldSchema({
+    required this.name,
+    required this.value,
+    this.verifiedAt,
+  });
+
+  factory FieldSchema.fromJson(Map<String, dynamic> json) {
+    return FieldSchema(
+      name: json['name'] as String,
+      value: json['value'] as String,
+      verifiedAt: json['verified_at'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'value': value,
+    };
+  }
+}
+
 // The updated account credential schema that includes the account info and used for
 // changes in the account profile.
 class AccountCredentialSchema {
-  final String displayName;   // The display name to use for the profile.
-  final String note;          // The account bio.
-  final bool locked;          // Whether manual approval of follow requests is required.
-  final bool bot;             // Whether the account has a bot flag.
-  final bool discoverable;    // Whether the account should be shown in the profile directory.
-  final bool hideCollections; // Whether to hide followers and followed accounts.
-  final bool indexable;       // Whether public posts should be searchable to anyone.
+  final String displayName;              // The display name to use for the profile.
+  final String note;                     // The account bio.
+  final bool locked;                     // Whether manual approval of follow requests is required.
+  final bool bot;                        // Whether the account has a bot flag.
+  final bool discoverable;               // Whether the account should be shown in the profile directory.
+  final bool hideCollections;            // Whether to hide followers and followed accounts.
+  final bool indexable;                  // Whether public posts should be searchable to anyone.
+  final List<FieldSchema> fields;        // Additional metadata attached to the profile.
 
   const AccountCredentialSchema({
     required this.displayName,
@@ -212,9 +248,10 @@ class AccountCredentialSchema {
     required this.discoverable,
     required this.hideCollections,
     required this.indexable,
+    this.fields = const [],
   });
 
-  Map<String, String> toJson() {
+  Map<String, dynamic> toJson() {
     final Map<String, dynamic> json = {
       'display_name': displayName,
       'note': note,
@@ -223,14 +260,20 @@ class AccountCredentialSchema {
       'discoverable': discoverable,
       'hide_collections': hideCollections,
       'indexable': indexable,
+      'fields_attributes': fields.asMap().map((index, field) {
+        return MapEntry(index.toString(), {
+          'name': field.name,
+          'value': field.value,
+        });
+      }),
     };
 
     return Map.fromEntries(
       json
       .entries
       .where((entry) => entry.value != null && entry.value.toString().isNotEmpty)
-      .map((entry) => MapEntry(entry.key, entry.value.toString())),
-    ).cast<String, String>();
+      .map((entry) => MapEntry(entry.key, entry.value))
+    ).cast<String, dynamic>();
   }
 
   AccountCredentialSchema copyWith({
@@ -241,6 +284,7 @@ class AccountCredentialSchema {
     bool? discoverable,
     bool? hideCollections,
     bool? indexable,
+    List<FieldSchema>? fields,
   }) {
     return AccountCredentialSchema(
       displayName: displayName ?? this.displayName,
@@ -250,7 +294,34 @@ class AccountCredentialSchema {
       discoverable: discoverable ?? this.discoverable,
       hideCollections: hideCollections ?? this.hideCollections,
       indexable: indexable ?? this.indexable,
+      fields: fields ?? this.fields,
     );
+  }
+}
+
+// The list of the edit profile categories that can be used to edit the profile.
+enum EditProfileCategory {
+  general,    // The basic information of the account, including display name, bio and other info.
+  privacy;    // The privacy setup of the current account.
+
+  // The tooltip text for the edit profile category, localized if possible.
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case EditProfileCategory.general:
+        return "Profile Info";
+      case EditProfileCategory.privacy:
+        return "Private";
+    }
+  }
+
+  // The icon associated with the edit profile category, based on the action type.
+  IconData icon({bool active = false}) {
+    switch (this) {
+      case EditProfileCategory.general:
+        return active ? CupertinoIcons.doc_person_fill : CupertinoIcons.doc_person;
+      case EditProfileCategory.privacy:
+        return active ? Icons.privacy_tip : Icons.privacy_tip_outlined;
+    }
   }
 }
 

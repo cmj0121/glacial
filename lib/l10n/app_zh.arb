@@ -101,6 +101,8 @@
   "txt_profile_discoverable": "可被探索",
   "txt_profile_post_indexable": "公開嘟文的隱私",
   "txt_profile_hide_collections": "顯示跟隨中與跟隨者",
+  "txt_profile_general_name": "顯示名稱",
+  "txt_profile_general_bio": "個人簡歷",
   "desc_preference_status": "控制你嘟文的預設行為",
   "desc_poll_show_hide_total": "投票前顯示/隱藏投票結果",
   "desc_preference_visibility": "控制嘟文可以被哪些人看到",

@@ -326,6 +326,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Display the follower and following';
 
   @override
+  String get txt_profile_general_name => 'Display Name';
+
+  @override
+  String get txt_profile_general_bio => 'Bio';
+
+  @override
   String get desc_preference_status =>
       'Setup and control your default status behavior';
 

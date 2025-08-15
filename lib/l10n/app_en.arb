@@ -101,6 +101,8 @@
   "txt_profile_discoverable": "Account can be discoverable in public",
   "txt_profile_post_indexable": "The privacy of the public post",
   "txt_profile_hide_collections": "Display the follower and following",
+  "txt_profile_general_name": "Display Name",
+  "txt_profile_general_bio": "Bio",
   "desc_preference_status": "Setup and control your default status behavior",
   "desc_poll_show_hide_total": "Show/Hide vote counts until the poll ends",
   "desc_preference_visibility": "Control who can see and list the status",

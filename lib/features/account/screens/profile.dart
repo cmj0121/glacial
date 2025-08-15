@@ -1,4 +1,5 @@
 // The Account profile widget to show the details of the user.import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -223,7 +224,15 @@ class ProfilePage extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         HtmlDone(html: schema.note),
+        ...schema.fields.map((field) => buildField(context, field)),
       ],
+    );
+  }
+
+  Widget buildField(BuildContext context, FieldSchema field) {
+    return ListTile(
+      title: HtmlDone(html: field.value),
+      subtitle: Text(field.name, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).disabledColor)),
     );
   }
 
@@ -374,10 +383,52 @@ class EditProfilePage extends ConsumerStatefulWidget {
   }
 }
 
-class _EditProfilePageState extends ConsumerState<EditProfilePage> {
+class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTickerProviderStateMixin {
+  final int maxFieldsCount = 4;
+  final List<EditProfileCategory> categories = EditProfileCategory.values;
+
+  late final TabController controller;
+  late final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor);
+
   late AccessStatusSchema? status = ref.read(accessStatusProvider);
   late AccountSchema? account = status?.account;
   late AccountCredentialSchema? schema = account?.toCredentialSchema();
+
+  late final FocusNode nameFocusNode = FocusNode();
+  late final FocusNode noteFocusNode = FocusNode();
+  late final TextEditingController nameController = TextEditingController(text: schema?.displayName);
+  late final TextEditingController noteController = TextEditingController(text: schema?.note);
+  late final List<(TextEditingController, TextEditingController)> fieldControllers;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = TabController(length: categories.length, vsync: this);
+
+    nameFocusNode.addListener(() { if (!nameFocusNode.hasFocus) { onEditCompleted(); }});
+    noteFocusNode.addListener(() { if (!noteFocusNode.hasFocus) { onEditCompleted(); }});
+    fieldControllers = List.generate(maxFieldsCount, (_) => (
+      TextEditingController(),
+      TextEditingController(),
+    ));
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+
+    nameFocusNode.dispose();
+    noteFocusNode.dispose();
+    nameController.dispose();
+    noteController.dispose();
+    fieldControllers.map(((c) {
+      c.$1.dispose();
+      c.$2.dispose();
+    }));
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -389,10 +440,61 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   Widget buildContent({required AccountCredentialSchema schema}) {
-    final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor);
+    return SwipeTabView(
+      tabController: controller,
+      itemCount: categories.length,
+      tabBuilder: (context, index) {
+        final EditProfileCategory category = categories[index];
+        final bool isSelected = controller.index == index;
+        final Color color = isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface;
 
+        return Tooltip(
+          message: category.tooltip(context),
+          child: Icon(category.icon(active: isSelected), color: color, size: tabSize),
+        );
+      },
+      itemBuilder: (context, index) {
+        final EditProfileCategory category = categories[index];
+
+        switch (category) {
+          case EditProfileCategory.general:
+            return buildGeneral(schema: schema);
+          case EditProfileCategory.privacy:
+            return buildPrivacy(schema: schema);
+        }
+      },
+    );
+  }
+
+  // The general settings for the account profile.
+  Widget buildGeneral({required AccountCredentialSchema schema}) {
     return ListView(
       children: [
+        ListTile(
+          leading: Tooltip(
+            message: AppLocalizations.of(context)?.txt_profile_general_name ?? "Display Name",
+            child: Icon(CupertinoIcons.question_square, size: iconSize),
+          ),
+          title: TextField(
+            focusNode: nameFocusNode,
+            controller: nameController,
+            decoration: InputDecoration(border: InputBorder.none),
+            onSubmitted: (_) => onEditCompleted(),
+          ),
+        ),
+        ListTile(
+          leading: Tooltip(
+            message: AppLocalizations.of(context)?.txt_profile_general_bio ?? "Bio",
+            child: Icon(Icons.description, size: iconSize),
+          ),
+          title: TextField(
+            focusNode: noteFocusNode,
+            controller: noteController,
+            decoration: InputDecoration(border: InputBorder.none),
+            onSubmitted: (_) => onEditCompleted(),
+          ),
+        ),
+
         SwitchListTile(
           title: Text(AppLocalizations.of(context)?.txt_profile_bot ?? "This account is a bot"),
           subtitle: Text(
@@ -403,6 +505,17 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           secondary: Icon(schema.bot ? Icons.smart_toy_outlined : Icons.person, size: iconSize),
           onChanged: (bool value) => onChanged(schema: schema.copyWith(bot: value)),
         ),
+
+        ...List.generate(schema.fields.length, (index) => buildFieldItem(index)),
+        if (schema.fields.length < 4) buildFieldItem(schema.fields.length),
+      ],
+    );
+  }
+
+  // The privacy related settings for the account profile.
+  Widget buildPrivacy({required AccountCredentialSchema schema}) {
+    return ListView(
+      children: [
         SwitchListTile(
           title: Text(AppLocalizations.of(context)?.txt_profile_locked ?? "Locked Account"),
           subtitle: Text(
@@ -445,6 +558,106 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         ),
       ],
     );
+  }
+
+  // Build the attribute field item for the account profile. It allows users to add custom fields
+  // to their profile, such as custom attributes or additional information.
+  Widget buildFieldItem(int index) {
+    final FieldSchema? field = index >= (schema?.fields.length ?? -1) ? null : schema?.fields[index];
+    final (TextEditingController nameController, TextEditingController valueController) = fieldControllers[index];
+
+    nameController.text = field?.name ?? '';
+    valueController.text = field?.value ?? '';
+
+    final List<IconData> icons = [
+      Icons.looks_one_rounded,
+      Icons.looks_two_rounded,
+      Icons.looks_3_rounded,
+      Icons.looks_4_rounded,
+      Icons.looks_5_rounded,
+      Icons.looks_6_rounded,
+    ];
+
+    return Focus(
+      onFocusChange: (focused) {
+        if (focused) { return; }
+        onFieldEditCompleted(index);
+      },
+      child: ListTile(
+        leading: Icon(icons[index % icons.length], size: iconSize),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Flexible(
+              child: TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                ),
+                onSubmitted: (_) => onFieldEditCompleted(index),
+              ),
+            ),
+            Flexible(
+              child: TextField(
+                controller: valueController,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                ),
+                onSubmitted: (_) => onFieldEditCompleted(index),
+              ),
+            ),
+          ],
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
+          onPressed: () {
+            if (index >= (schema?.fields.length ?? 0)) {
+              return;
+            }
+
+            final List<FieldSchema> fields = List.from(schema!.fields);
+            fields.removeAt(index);
+            onChanged(schema: schema!.copyWith(fields: fields));
+          },
+        ),
+      ),
+    );
+  }
+
+  // The callback to check the attribute field input and update the schema.
+  void onFieldEditCompleted(int index) async {
+    final (TextEditingController nameController, TextEditingController valueController) = fieldControllers[index];
+
+    final String name = nameController.text.trim();
+    final String value = valueController.text.trim();
+    final List<FieldSchema> fields = List.from(schema!.fields);
+
+    if (name.isEmpty || value.isEmpty) {
+      if (index < (schema?.fields.length ?? 0)) {
+        fields.removeAt(index);
+        onChanged(schema: schema!.copyWith(fields: fields));
+      }
+      return;
+    }
+
+    final FieldSchema field = FieldSchema(name: name, value: value);
+    index < (schema?.fields.length ?? 0) ? fields[index] = field : fields.add(field);
+    onChanged(schema: schema!.copyWith(fields: fields));
+  }
+
+  // The callback to check the text field input and update the schema.
+  void onEditCompleted() async {
+    final String name = nameController.text.trim();
+    final String note = noteController.text.trim();
+
+    final AccountCredentialSchema? updatedSchema = schema?.copyWith(
+      displayName: name.isNotEmpty ? name : null,
+      note: note,
+    );
+
+    if (updatedSchema != null) { onChanged(schema: updatedSchema); }
   }
 
   void onChanged({required AccountCredentialSchema schema}) async {

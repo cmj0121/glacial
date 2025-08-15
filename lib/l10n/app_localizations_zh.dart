@@ -322,6 +322,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_profile_hide_collections => '顯示跟隨中與跟隨者';
 
   @override
+  String get txt_profile_general_name => '顯示名稱';
+
+  @override
+  String get txt_profile_general_bio => '個人簡歷';
+
+  @override
   String get desc_preference_status => '控制你嘟文的預設行為';
 
   @override

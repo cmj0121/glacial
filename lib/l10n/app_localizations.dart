@@ -704,6 +704,18 @@ abstract class AppLocalizations {
   /// **'Display the follower and following'**
   String get txt_profile_hide_collections;
 
+  /// No description provided for @txt_profile_general_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Display Name'**
+  String get txt_profile_general_name;
+
+  /// No description provided for @txt_profile_general_bio.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get txt_profile_general_bio;
+
   /// No description provided for @desc_preference_status.
   ///
   /// In en, this message translates to:
