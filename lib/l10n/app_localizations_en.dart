@@ -51,7 +51,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_drawer_switch_server => 'Switch Server';
 
   @override
-  String get btn_drawer_directory => 'Visible Account';
+  String get btn_drawer_directory => 'Explore Account';
 
   @override
   String get btn_drawer_preference => 'Preference';
@@ -323,7 +323,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_profile_hide_collections =>
-      'Display the follower and following in your profile page';
+      'Display the follower and following';
 
   @override
   String get desc_preference_status =>

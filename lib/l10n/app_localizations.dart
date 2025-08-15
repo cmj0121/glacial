@@ -185,7 +185,7 @@ abstract class AppLocalizations {
   /// No description provided for @btn_drawer_directory.
   ///
   /// In en, this message translates to:
-  /// **'Visible Account'**
+  /// **'Explore Account'**
   String get btn_drawer_directory;
 
   /// No description provided for @btn_drawer_preference.
@@ -701,7 +701,7 @@ abstract class AppLocalizations {
   /// No description provided for @txt_profile_hide_collections.
   ///
   /// In en, this message translates to:
-  /// **'Display the follower and following in your profile page'**
+  /// **'Display the follower and following'**
   String get txt_profile_hide_collections;
 
   /// No description provided for @desc_preference_status.

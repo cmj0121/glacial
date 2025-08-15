@@ -51,7 +51,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_drawer_switch_server => '切換伺服器';
 
   @override
-  String get btn_drawer_directory => '可見帳戶';
+  String get btn_drawer_directory => '探索帳戶';
 
   @override
   String get btn_drawer_preference => '偏好設定';
@@ -319,7 +319,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_profile_post_indexable => '公開嘟文的隱私';
 
   @override
-  String get txt_profile_hide_collections => '在個人頁面中顯示跟隨中與跟隨者';
+  String get txt_profile_hide_collections => '顯示跟隨中與跟隨者';
 
   @override
   String get desc_preference_status => '控制你嘟文的預設行為';
