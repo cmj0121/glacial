@@ -230,9 +230,13 @@ class ProfilePage extends ConsumerWidget {
   }
 
   Widget buildField(BuildContext context, FieldSchema field) {
+    final int index = schema.fields.indexOf(field);
+    final TextStyle? labelStyle = Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).disabledColor);
+
     return ListTile(
+      leading: Icon(FieldSchema.icons[index % FieldSchema.icons.length], size: iconSize),
       title: HtmlDone(html: field.value),
-      subtitle: Text(field.name, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).disabledColor)),
+      subtitle: Text(field.name, style: labelStyle),
     );
   }
 
@@ -361,7 +365,12 @@ class UserStatistics extends StatelessWidget {
 
 // The edit page for the account profile, allowing users to edit their profile information.
 class EditProfilePage extends ConsumerStatefulWidget {
-  const EditProfilePage({super.key});
+  final AccountSchema account;
+
+  const EditProfilePage({
+    super.key,
+    required this.account,
+  });
 
   @override
   ConsumerState<EditProfilePage> createState() => _EditProfilePageState();
@@ -391,13 +400,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
   late final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor);
 
   late AccessStatusSchema? status = ref.read(accessStatusProvider);
-  late AccountSchema? account = status?.account;
-  late AccountCredentialSchema? schema = account?.toCredentialSchema();
+  late AccountCredentialSchema schema = widget.account.toCredentialSchema();
 
-  late final FocusNode nameFocusNode = FocusNode();
-  late final FocusNode noteFocusNode = FocusNode();
-  late final TextEditingController nameController = TextEditingController(text: schema?.displayName);
-  late final TextEditingController noteController = TextEditingController(text: schema?.note);
+  late final TextEditingController nameController = TextEditingController(text: schema.displayName);
+  late final TextEditingController noteController = TextEditingController(text: schema.note.trim());
   late final List<(TextEditingController, TextEditingController)> fieldControllers;
 
   @override
@@ -406,20 +412,20 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
 
     controller = TabController(length: categories.length, vsync: this);
 
-    nameFocusNode.addListener(() { if (!nameFocusNode.hasFocus) { onEditCompleted(); }});
-    noteFocusNode.addListener(() { if (!noteFocusNode.hasFocus) { onEditCompleted(); }});
-    fieldControllers = List.generate(maxFieldsCount, (_) => (
-      TextEditingController(),
-      TextEditingController(),
-    ));
+    fieldControllers = List.generate(maxFieldsCount, (index) {
+      if (index < schema.fields.length) {
+        final FieldSchema field = schema.fields[index];
+        return (TextEditingController(text: field.name), TextEditingController(text: field.value));
+      } else {
+        return (TextEditingController(), TextEditingController());
+      }
+    });
   }
 
   @override
   void dispose() {
     controller.dispose();
 
-    nameFocusNode.dispose();
-    noteFocusNode.dispose();
     nameController.dispose();
     noteController.dispose();
     fieldControllers.map(((c) {
@@ -432,14 +438,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
 
   @override
   Widget build(BuildContext context) {
-    if (schema == null) {
-      return const SizedBox.shrink();
-    }
-
-    return buildContent(schema: schema!);
+    return Focus(
+      autofocus: true,
+      onFocusChange: (_) => onSave(),
+      child: buildContent(),
+    );
   }
 
-  Widget buildContent({required AccountCredentialSchema schema}) {
+  Widget buildContent() {
     return SwipeTabView(
       tabController: controller,
       itemCount: categories.length,
@@ -458,16 +464,16 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
 
         switch (category) {
           case EditProfileCategory.general:
-            return buildGeneral(schema: schema);
+            return buildGeneral();
           case EditProfileCategory.privacy:
-            return buildPrivacy(schema: schema);
+            return buildPrivacy();
         }
       },
     );
   }
 
   // The general settings for the account profile.
-  Widget buildGeneral({required AccountCredentialSchema schema}) {
+  Widget buildGeneral() {
     return ListView(
       children: [
         ListTile(
@@ -475,11 +481,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
             message: AppLocalizations.of(context)?.txt_profile_general_name ?? "Display Name",
             child: Icon(CupertinoIcons.question_square, size: iconSize),
           ),
-          title: TextField(
-            focusNode: nameFocusNode,
+          title: PopUpTextField(
             controller: nameController,
+            style: Theme.of(context).textTheme.titleMedium,
             decoration: InputDecoration(border: InputBorder.none),
-            onSubmitted: (_) => onEditCompleted(),
+            onSubmitted: (String value) => onChanged(schema: schema.copyWith(displayName: value.trim())),
           ),
         ),
         ListTile(
@@ -487,11 +493,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
             message: AppLocalizations.of(context)?.txt_profile_general_bio ?? "Bio",
             child: Icon(Icons.description, size: iconSize),
           ),
-          title: TextField(
-            focusNode: noteFocusNode,
+          title: PopUpTextField(
             controller: noteController,
+            style: Theme.of(context).textTheme.titleMedium,
             decoration: InputDecoration(border: InputBorder.none),
-            onSubmitted: (_) => onEditCompleted(),
+            onSubmitted: (String value) => onChanged(schema: schema.copyWith(note: value.trim())),
           ),
         ),
 
@@ -513,7 +519,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
   }
 
   // The privacy related settings for the account profile.
-  Widget buildPrivacy({required AccountCredentialSchema schema}) {
+  Widget buildPrivacy() {
     return ListView(
       children: [
         SwitchListTile(
@@ -563,109 +569,62 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
   // Build the attribute field item for the account profile. It allows users to add custom fields
   // to their profile, such as custom attributes or additional information.
   Widget buildFieldItem(int index) {
-    final FieldSchema? field = index >= (schema?.fields.length ?? -1) ? null : schema?.fields[index];
     final (TextEditingController nameController, TextEditingController valueController) = fieldControllers[index];
 
-    nameController.text = field?.name ?? '';
-    valueController.text = field?.value ?? '';
-
-    final List<IconData> icons = [
-      Icons.looks_one_rounded,
-      Icons.looks_two_rounded,
-      Icons.looks_3_rounded,
-      Icons.looks_4_rounded,
-      Icons.looks_5_rounded,
-      Icons.looks_6_rounded,
-    ];
-
-    return Focus(
-      onFocusChange: (focused) {
-        if (focused) { return; }
-        onFieldEditCompleted(index);
+    return Dismissible(
+      key: UniqueKey(),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (_) {
+        final List<FieldSchema> fields = List.from(schema.fields);
+        fields.removeAt(index);
+        onChanged(schema: schema.copyWith(fields: fields));
       },
+      background: Container(
+        alignment: Alignment.centerLeft,
+        color: Colors.red,
+        child: const Icon(Icons.delete_forever_rounded, color: Colors.white),
+      ),
       child: ListTile(
-        leading: Icon(icons[index % icons.length], size: iconSize),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              child: TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                ),
-                onSubmitted: (_) => onFieldEditCompleted(index),
-              ),
-            ),
-            Flexible(
-              child: TextField(
-                controller: valueController,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                ),
-                onSubmitted: (_) => onFieldEditCompleted(index),
-              ),
-            ),
-          ],
+        leading: Icon(FieldSchema.icons[index % FieldSchema.icons.length], size: iconSize),
+        title: PopUpTextField(
+          controller: valueController,
+          decoration: InputDecoration(border: InputBorder.none),
+          onSubmitted: (String value) => onChangeItem(
+            index: index,
+            field: FieldSchema(name: nameController.text.trim(), value: value.trim()),
+          ),
         ),
-        trailing: IconButton(
-          icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
-          onPressed: () {
-            if (index >= (schema?.fields.length ?? 0)) {
-              return;
-            }
-
-            final List<FieldSchema> fields = List.from(schema!.fields);
-            fields.removeAt(index);
-            onChanged(schema: schema!.copyWith(fields: fields));
-          },
+        subtitle: PopUpTextField(
+          controller: nameController,
+          style: labelStyle,
+          decoration: InputDecoration(border: InputBorder.none),
+          onSubmitted: (String value) => onChangeItem(
+            index: index,
+            field: FieldSchema(name: value.trim(), value: valueController.text.trim()),
+          ),
         ),
       ),
     );
   }
 
-  // The callback to check the attribute field input and update the schema.
-  void onFieldEditCompleted(int index) async {
-    final (TextEditingController nameController, TextEditingController valueController) = fieldControllers[index];
+  void onChangeItem({required int index, required FieldSchema field}) {
+    List<FieldSchema> fields = List.from(schema.fields);
 
-    final String name = nameController.text.trim();
-    final String value = valueController.text.trim();
-    final List<FieldSchema> fields = List.from(schema!.fields);
-
-    if (name.isEmpty || value.isEmpty) {
-      if (index < (schema?.fields.length ?? 0)) {
-        fields.removeAt(index);
-        onChanged(schema: schema!.copyWith(fields: fields));
-      }
-      return;
-    }
-
-    final FieldSchema field = FieldSchema(name: name, value: value);
-    index < (schema?.fields.length ?? 0) ? fields[index] = field : fields.add(field);
-    onChanged(schema: schema!.copyWith(fields: fields));
-  }
-
-  // The callback to check the text field input and update the schema.
-  void onEditCompleted() async {
-    final String name = nameController.text.trim();
-    final String note = noteController.text.trim();
-
-    final AccountCredentialSchema? updatedSchema = schema?.copyWith(
-      displayName: name.isNotEmpty ? name : null,
-      note: note,
-    );
-
-    if (updatedSchema != null) { onChanged(schema: updatedSchema); }
+    index < fields.length ? fields[index] = field : fields.add(field);
+    onChanged(schema: schema.copyWith(fields: fields));
   }
 
   void onChanged({required AccountCredentialSchema schema}) async {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
-    final AccountSchema? account = await status?.updateAccount(schema);
+    final AccountCredentialSchema updatedSchema = schema.copyWith(
+      displayName: nameController.text.trim(),
+      note: noteController.text.trim(),
+    );
+    setState(() => this.schema = updatedSchema);
+  }
 
+  void onSave() async {
+    final AccountSchema? account = await status?.updateAccount(schema);
     ref.read(accessStatusProvider.notifier).state = status?.copyWith(account: account);
-    setState(() => this.schema = account?.toCredentialSchema() ?? schema);
   }
 }
 

@@ -90,21 +90,19 @@ class AccountSchema {
   }
 
   AccountCredentialSchema toCredentialSchema() {
-    final String bio = note
-        .replaceAll(RegExp(r'<br>', caseSensitive: false), '\n') // Replace <br> with new line
-        .replaceAll(RegExp(r'</p>'), '\n')                       // Replace </p> with new line
-        .replaceAll(RegExp(r'<[^>]*>'), '')                      // Remove HTML tags
-        .replaceAll(RegExp(r'&[a-z]+;'), '');                    // Remove HTML entities
-
     return AccountCredentialSchema(
       displayName: displayName,
-      note: bio,
+      note: canonicalizeHtml(note),
       locked: locked,
       bot: bot,
       discoverable: discoverable ?? true,
       hideCollections: hideCollections ?? false,
       indexable: indexable,
-      fields: fields,
+      fields: fields.map((field) => FieldSchema(
+        name: field.name,
+        value: canonicalizeHtml(field.value),
+        verifiedAt: field.verifiedAt,
+      )).toList(),
     );
   }
 }
@@ -205,6 +203,15 @@ class FieldSchema {
   final String name;                // The name of the field.
   final String value;               // The value of the field.
   final String? verifiedAt;         // The date when the field was verified, if applicable
+
+  static List<IconData> icons = [
+      Icons.looks_one_rounded,
+      Icons.looks_two_rounded,
+      Icons.looks_3_rounded,
+      Icons.looks_4_rounded,
+      Icons.looks_5_rounded,
+      Icons.looks_6_rounded,
+    ];
 
   const FieldSchema({
     required this.name,

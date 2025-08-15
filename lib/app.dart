@@ -227,7 +227,12 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         ),
         GoRoute(
           path: RoutePath.editProfile.path,
-          builder: (BuildContext context, GoRouterState state) => const EditProfilePage(),
+          builder: (BuildContext context, GoRouterState state) {
+            final AccessStatusSchema? status = ref.read(accessStatusProvider);
+            final AccountSchema? account = status?.account;
+
+            return account == null ? const SizedBox.shrink() : EditProfilePage(account: account);
+          }
         ),
         GoRoute(
           path: RoutePath.hashtag.path,
