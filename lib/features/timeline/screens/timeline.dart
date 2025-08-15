@@ -201,10 +201,7 @@ class _TimelineState extends State<Timeline> {
               decoration: BoxDecoration(
                 border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
               ),
-              child: Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 8),
-                child: child,
-              ),
+              child: child,
             );
           },
         ),

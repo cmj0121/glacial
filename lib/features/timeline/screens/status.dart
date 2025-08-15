@@ -44,28 +44,31 @@ class _StatusState extends ConsumerState<Status> {
   Widget build(BuildContext context) {
     final bool sensitive = (pref?.sensitive ?? true) && schema.sensitive && schema.spoiler.isEmpty == true;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        buildMetadata(),
-        StatusLite(
-          schema: schema,
-          indent: widget.indent,
-          spoiler: schema.spoiler.isEmpty ? null : schema.spoiler,
-          sensitive: sensitive,
-          iconSize: iconSize,
-          headerHeight: headerHeight,
-          onLinkTap: onLinkTap,
-        ),
+    return Padding(
+      padding: EdgeInsets.only(top: 16, bottom: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          buildMetadata(),
+          StatusLite(
+            schema: schema,
+            indent: widget.indent,
+            spoiler: schema.spoiler.isEmpty ? null : schema.spoiler,
+            sensitive: sensitive,
+            iconSize: iconSize,
+            headerHeight: headerHeight,
+            onLinkTap: onLinkTap,
+          ),
 
-        const SizedBox(height: 8),
+          const SizedBox(height: 8),
 
-        InteractionBar(
-          schema: schema,
-          onReload: onReload,
-          onDeleted: widget.onDeleted,
-        ),
-      ],
+          InteractionBar(
+            schema: schema,
+            onReload: onReload,
+            onDeleted: widget.onDeleted,
+          ),
+        ],
+      ),
     );
   }
 
@@ -525,10 +528,7 @@ class _StatusContextState extends ConsumerState<StatusContext> {
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
           ),
-          child: Padding(
-            padding: EdgeInsets.only(top: 16, bottom: 8),
-            child: child,
-          ),
+          child: child,
         );
       },
     );
