@@ -37,6 +37,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   final String idempotentKey = const Uuid().v4();
 
   late final TextEditingController controller = TextEditingController(text: widget.editFrom?.plainText ?? "");
+  late final TextEditingController spoilerController = TextEditingController(text: widget.editFrom?.spoiler ?? "");
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   late final SystemPreferenceSchema? pref = ref.read(preferenceProvider);
 
@@ -48,9 +49,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   late VisibilityType vtype = widget.editFrom?.visibility ?? pref?.visibility ?? VisibilityType.public;
   late DateTime? scheduledAt = widget.editFrom?.scheduledAt;
 
+
   @override
   void dispose() {
     controller.dispose();
+    spoilerController.dispose();
     super.dispose();
   }
 
@@ -122,20 +125,27 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       return const SizedBox.shrink();
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: TextFormField(
-        style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
-        decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)?.txt_spoiler ?? "Spoiler",
-          hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.6),
+    return Focus(
+      onFocusChange: (hasFocus) {
+        if (!hasFocus) {
+          setState(() => spoiler = spoilerController.text.isNotEmpty ? spoilerController.text : null);
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: TextFormField(
+          controller: spoilerController,
+          style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context)?.txt_spoiler ?? "Spoiler",
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.6),
+            ),
+            border: const OutlineInputBorder(),
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surfaceContainer,
           ),
-          border: const OutlineInputBorder(),
-          filled: true,
-          fillColor: Theme.of(context).colorScheme.surfaceContainer,
         ),
-        onChanged: (value) => setState(() => spoiler = value),
       ),
     );
   }
