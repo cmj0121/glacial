@@ -79,16 +79,6 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             return const ServerExplorer();
           },
         ),
-        // The user profile page to view the user details
-        GoRoute(
-          path: RoutePath.profile.path,
-          builder: (BuildContext context, GoRouterState state) {
-            return BackableView(
-              title: RoutePath.profile.name,
-              child: const WIP(),
-            );
-          },
-        ),
         // The system preference page to view or edit the app settings
         GoRoute(
           path: RoutePath.preference.path,
@@ -130,6 +120,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           case RoutePath.post:
           case RoutePath.edit:
           case RoutePath.status:
+          case RoutePath.editProfile:
+          case RoutePath.statusInfo:
+          case RoutePath.statusHistory:
+            backable = true;
+            break;
+          case RoutePath.directory:
+            title = Text(AppLocalizations.of(context)?.btn_drawer_directory ?? "Directory");
             backable = true;
             break;
           case RoutePath.search:
@@ -151,12 +148,6 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             backable = true;
             actions.add(FollowedHashtagButton(hashtag: hashtag));
             break;
-          case RoutePath.statusInfo:
-            backable = true;
-            break;
-          case RoutePath.statusHistory:
-            backable = true;
-            break;
           default:
             break;
         }
@@ -173,7 +164,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         GoRoute(
           path: RoutePath.timeline.path,
           builder: (_, _) {
-            final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+            final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
             return TimelineTab(
               initialType: status?.isSignedIn == true ? TimelineType.home : TimelineType.local,
@@ -235,6 +226,15 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           },
         ),
         GoRoute(
+          path: RoutePath.editProfile.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final AccessStatusSchema? status = ref.read(accessStatusProvider);
+            final AccountSchema? account = status?.account;
+
+            return account == null ? const SizedBox.shrink() : EditProfilePage(account: account);
+          }
+        ),
+        GoRoute(
           path: RoutePath.hashtag.path,
           builder: (BuildContext context, GoRouterState state) {
             final AccessStatusSchema? status = ref.read(accessStatusProvider);
@@ -265,6 +265,10 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             final StatusSchema status = state.extra as StatusSchema;
             return StatusHistory(schema: status);
           },
+        ),
+        GoRoute(
+          path: RoutePath.directory.path,
+          builder: (BuildContext context, GoRouterState state) => const DirectoryAccount(),
         ),
       ],
     );

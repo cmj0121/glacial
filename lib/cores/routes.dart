@@ -17,11 +17,13 @@ enum RoutePath {
   search,            // The search page of the app.
   hashtag,           // The hashtag page of the app.
   profile,           // The user's profile page of the app.
+  editProfile,       // The page to edit the user's profile.
   status,            // The list of statuses in the context of the app.
   statusInfo,        // The status info page of the app to show the status details.
   statusHistory,     // The status history page of the app to show the status history.
   post,              // The post page of the app to create a new post.
   edit,              // The edit page of the app to edit an existing post.
+  directory,         // The directory page of the app to expore the accounts in the Mastodon server.
   wip;               // The work-in-progress page of the app.
 
   // Get the string path for the route.
@@ -53,6 +55,8 @@ enum RoutePath {
         return '/home/hashtag';
       case RoutePath.profile:
         return '/home/profile';
+      case RoutePath.editProfile:
+        return '/home/profile/edit';
       case RoutePath.status:
         return '/home/status';
       case RoutePath.statusInfo:
@@ -63,6 +67,8 @@ enum RoutePath {
         return '/home/post';
       case RoutePath.edit:
         return '/home/edit';
+      case RoutePath.directory:
+        return '/home/directory';
       case RoutePath.wip:
         return '/wip';
     }

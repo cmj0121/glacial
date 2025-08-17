@@ -51,6 +51,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_drawer_switch_server => 'Switch Server';
 
   @override
+  String get btn_drawer_directory => 'Explore Account';
+
+  @override
   String get btn_drawer_preference => 'Preference';
 
   @override
@@ -151,6 +154,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btn_profile_block => 'Blocked Users';
+
+  @override
+  String get btn_profile_general_info => 'General Info';
+
+  @override
+  String get btn_profile_privacy => 'Privacy Settings';
 
   @override
   String get btn_status_toot => 'Toot';
@@ -306,6 +315,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_no_result => 'No results found';
 
   @override
+  String get txt_profile_bot => 'Bot Account';
+
+  @override
+  String get txt_profile_locked => 'Account Locked';
+
+  @override
+  String get txt_profile_discoverable =>
+      'Account can be discoverable in public';
+
+  @override
+  String get txt_profile_post_indexable => 'The privacy of the public post';
+
+  @override
+  String get txt_profile_hide_collections =>
+      'Display the follower and following';
+
+  @override
+  String get txt_profile_general_name => 'Display Name';
+
+  @override
+  String get txt_profile_general_bio => 'Bio';
+
+  @override
   String get desc_preference_status =>
       'Setup and control your default status behavior';
 
@@ -337,6 +369,24 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get desc_preference_refresh_interval =>
       'The interval to refresh the app\'s data';
+
+  @override
+  String get desc_profile_bot =>
+      'The account may perform automated actions and not monitored by humans';
+
+  @override
+  String get desc_profile_locked => 'Manually approves follow requests';
+
+  @override
+  String get desc_profile_discoverable =>
+      'Account can be discoverable in the profile directory';
+
+  @override
+  String get desc_profile_post_indexable => 'The public post cant be seachable';
+
+  @override
+  String get desc_profile_hide_collections =>
+      'Everyone can follow-up your following and follower in your profile page';
 
   @override
   String err_invalid_instance(Object domain) {

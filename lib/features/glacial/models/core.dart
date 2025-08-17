@@ -69,6 +69,7 @@ enum SidebarButtonType {
 // The possible actions in the drawer and used to interact with the current server.
 enum DrawerButtonType {
   switchServer,
+  directory,
   preference,
   logout;
 
@@ -77,6 +78,8 @@ enum DrawerButtonType {
     switch (this) {
       case switchServer:
         return Icons.swap_horiz;
+      case directory:
+        return Icons.groups;
       case preference:
         return Icons.settings;
       case logout:
@@ -89,6 +92,8 @@ enum DrawerButtonType {
     switch (this) {
       case switchServer:
         return AppLocalizations.of(context)?.btn_drawer_switch_server ?? "Switch Server";
+      case directory:
+        return AppLocalizations.of(context)?.btn_drawer_directory ?? "Directory";
       case preference:
         return AppLocalizations.of(context)?.btn_drawer_preference ?? "Preference";
       case logout:
@@ -100,6 +105,8 @@ enum DrawerButtonType {
     switch (this) {
       case switchServer:
         return RoutePath.explorer;
+      case directory:
+        return RoutePath.directory;
       case preference:
         return RoutePath.preference;
       case logout:

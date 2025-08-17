@@ -84,4 +84,12 @@ Future<void> sendLocalNotification(String title, String body, {int? uid, int? ba
   AppBadgePlus.updateBadge(badgeNumber ?? 0);
 }
 
+// Canonicalize the HTML content into the plain text content.
+String canonicalizeHtml(String html) {
+  // Remove HTML tags and decode HTML entities.
+  final RegExp htmlTagRegExp = RegExp(r'<[^>]*>', multiLine: true);
+  final String plainText = html.replaceAll(htmlTagRegExp, '').replaceAll('&nbsp;', ' ');
+  return plainText.trim();
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

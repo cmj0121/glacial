@@ -138,31 +138,35 @@ class NoResult extends StatelessWidget {
 // The hero media that show the media and show to full-screen when tap on it.
 class MediaHero extends StatelessWidget {
   final Widget child;
+  final VoidCallback? onTap;
 
   const MediaHero({
     super.key,
     required this.child,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWellDone(
-      onTap: () {
-        // Pop-up the media as full-screen and blur the background.
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (BuildContext context) {
-              return Center(
-                child: Hero(
-                  tag: 'media-hero',
-                  child: MediaViewer(child: child),
-                ),
-              );
-            },
-          ),
-        );
-      },
+      onTap: onTap ?? () => onHero(context),
       child: child,
+    );
+  }
+
+  void onHero(BuildContext context) {
+    // Pop-up the media as full-screen and blur the background.
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return Center(
+            child: Hero(
+              tag: 'media-hero',
+              child: MediaViewer(child: child),
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -303,6 +307,84 @@ class _MediaViewerState extends State<MediaViewer> with SingleTickerProviderStat
   }
 
   bool get isZoomed => controller.value != Matrix4.identity();
+}
+
+// The pop-up TextField for the RWD and show the dialog with the TextField if screen is small.
+class PopUpTextField extends StatefulWidget {
+  final bool isHTML;
+  final FocusNode? focusNode;
+  final TextEditingController? controller;
+  final TextStyle? style;
+  final InputDecoration decoration;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+
+  const PopUpTextField({
+    super.key,
+    this.isHTML = false,
+    this.focusNode,
+    this.controller,
+    this.style,
+    this.decoration = const InputDecoration(),
+    this.onChanged,
+    this.onSubmitted,
+  });
+
+  @override
+  State<PopUpTextField> createState() => _PopUpTextFieldState();
+}
+
+class _PopUpTextFieldState extends State<PopUpTextField> {
+  late String text = widget.controller?.text ?? "";
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWellDone(
+      onTap: () => onPopUp(),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: widget.isHTML ?
+          HtmlDone(html: text) :
+          Text(
+            text,
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface).merge(widget.style),
+          ),
+      ),
+    );
+  }
+
+  Widget buildPopUpTextField() {
+    return Focus(
+      autofocus: true,
+      onFocusChange: (hasFocus) {
+        if (!hasFocus) {
+          setState(() => text = widget.controller?.text ?? "");
+          widget.onSubmitted?.call(widget.controller?.text ?? "");
+        }
+      },
+      child: TextField(
+        minLines: 10,
+        maxLines: 20,
+        focusNode: widget.focusNode,
+        controller: widget.controller,
+        decoration: const InputDecoration(border: OutlineInputBorder()),
+        onChanged: widget.onChanged,
+        onSubmitted: widget.onSubmitted,
+      ),
+    );
+  }
+
+  void onPopUp() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: buildPopUpTextField(),
+        ),
+      ),
+    );
+  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

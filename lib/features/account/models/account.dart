@@ -1,4 +1,7 @@
 // The Account data schema that is the user account info.
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
@@ -17,10 +20,13 @@ class AccountSchema {
   final String avatarStatic;        // A static version of the avatar. Equal to avatar if its value is a static image.
   final String header;              // An image banner that is shown above the profile and in profile cards.
   final bool locked;                // Whether the account manually approves follow requests.
+  final List<FieldSchema> fields;   // Additional metadata attached to a profile as name-value pairs.
   final List<EmojiSchema> emojis;   // Custom emoji entities to be used when rendering the profile.
   final bool bot;                   // Indicates that the account may perform automated actions.
   final bool? discoverable;         // Whether the account has opted into discovery features such as the profile directory.
+  final bool indexable;             // Whether the account allows indexing by search engines.
   final bool? noindex;              // Whether the local user has opted out of being indexed by search engines.
+  final bool? hideCollections;      // Whether the account has opted out of showing collections in the profile.
   final DateTime createdAt;         // When the account was created.
   final DateTime? lastStatusAt;     // When the most recent status was posted.
   final int statusesCount;          // How many statuses are attached to this account.
@@ -39,10 +45,13 @@ class AccountSchema {
     required this.avatarStatic,
     required this.header,
     required this.locked,
+    this.fields = const [],
     this.emojis = const [],
     required this.bot,
     this.discoverable,
+    required this.indexable,
     this.noindex,
+    this.hideCollections,
     required this.createdAt,
     this.lastStatusAt,
     required this.statusesCount,
@@ -63,17 +72,39 @@ class AccountSchema {
       avatarStatic: json['avatar_static'] as String,
       header: json['header'] as String,
       locked: json['locked'] as bool,
+      fields: (json['fields'] as List<dynamic>?)
+          ?.map((e) => FieldSchema.fromJson(e as Map<String, dynamic>))
+          .toList() ?? [],
       emojis: (json['emojis'] as List<dynamic>?)
           ?.map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>))
           .toList() ?? [],
       bot: json['bot'] as bool,
       discoverable: json['discoverable'] as bool?,
+      indexable: json['indexable'] as bool,
       noindex: json['noindex'] as bool?,
+      hideCollections: json['hide_collections'] as bool?,
       createdAt: DateTime.parse(json['created_at'] as String),
       lastStatusAt: json['last_status_at'] == null ? null : DateTime.parse(json['last_status_at'] as String),
       statusesCount: json['statuses_count'] as int,
       followersCount: json['followers_count'] as int,
       followingCount: json['following_count'] as int,
+    );
+  }
+
+  AccountCredentialSchema toCredentialSchema() {
+    return AccountCredentialSchema(
+      displayName: displayName,
+      note: canonicalizeHtml(note),
+      locked: locked,
+      bot: bot,
+      discoverable: discoverable ?? true,
+      hideCollections: hideCollections ?? false,
+      indexable: indexable,
+      fields: fields.map((field) => FieldSchema(
+        name: field.name,
+        value: canonicalizeHtml(field.value),
+        verifiedAt: field.verifiedAt,
+      )).toList(),
     );
   }
 }
@@ -165,6 +196,155 @@ enum AccountProfileType {
         return TimelineType.hashtag;
       default:
         throw ArgumentError("Invalid profile type for timeline: $this");
+    }
+  }
+}
+
+// Additional metadata attached to a profile as name-value pairs.
+class FieldSchema {
+  final String name;                // The name of the field.
+  final String value;               // The value of the field.
+  final String? verifiedAt;         // The date when the field was verified, if applicable
+
+  static List<IconData> icons = [
+      Icons.looks_one_rounded,
+      Icons.looks_two_rounded,
+      Icons.looks_3_rounded,
+      Icons.looks_4_rounded,
+      Icons.looks_5_rounded,
+      Icons.looks_6_rounded,
+    ];
+
+  const FieldSchema({
+    required this.name,
+    required this.value,
+    this.verifiedAt,
+  });
+
+  factory FieldSchema.fromJson(Map<String, dynamic> json) {
+    return FieldSchema(
+      name: json['name'] as String,
+      value: json['value'] as String,
+      verifiedAt: json['verified_at'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'value': value,
+    };
+  }
+}
+
+// The updated account credential schema that includes the account info and used for
+// changes in the account profile.
+class AccountCredentialSchema {
+  final String displayName;              // The display name to use for the profile.
+  final String note;                     // The account bio.
+  final bool locked;                     // Whether manual approval of follow requests is required.
+  final bool bot;                        // Whether the account has a bot flag.
+  final bool discoverable;               // Whether the account should be shown in the profile directory.
+  final bool hideCollections;            // Whether to hide followers and followed accounts.
+  final bool indexable;                  // Whether public posts should be searchable to anyone.
+  final List<FieldSchema> fields;        // Additional metadata attached to the profile.
+  final File? avatar;                    // Avatar image encoded using multipart/form-data.
+  final File? header;                    // Header image encoded using multipart/form-data.
+
+  const AccountCredentialSchema({
+    required this.displayName,
+    required this.note,
+    required this.locked,
+    required this.bot,
+    required this.discoverable,
+    required this.hideCollections,
+    required this.indexable,
+    this.fields = const [],
+    this.avatar,
+    this.header,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> json = {
+      'display_name': displayName,
+      'note': note,
+      'locked': locked,
+      'bot': bot,
+      'discoverable': discoverable,
+      'hide_collections': hideCollections,
+      'indexable': indexable,
+      'fields_attributes': fields.asMap().map((index, field) {
+        return MapEntry(index.toString(), {
+          'name': field.name,
+          'value': field.value,
+        });
+      }),
+    };
+
+    return Map.fromEntries(
+      json
+      .entries
+      .where((entry) => entry.value != null && entry.value.toString().isNotEmpty)
+      .map((entry) => MapEntry(entry.key, entry.value))
+    ).cast<String, dynamic>();
+  }
+
+  Map<String, File> toFiles() {
+    return {
+      if (avatar != null) 'avatar': avatar!,
+      if (header != null) 'header': header!,
+    };
+  }
+
+  AccountCredentialSchema copyWith({
+    String? displayName,
+    String? note,
+    bool? locked,
+    bool? bot,
+    bool? discoverable,
+    bool? hideCollections,
+    bool? indexable,
+    List<FieldSchema>? fields,
+    File? avatar,
+    File? header,
+  }) {
+    return AccountCredentialSchema(
+      displayName: displayName ?? this.displayName,
+      note: note ?? this.note,
+      locked: locked ?? this.locked,
+      bot: bot ?? this.bot,
+      discoverable: discoverable ?? this.discoverable,
+      hideCollections: hideCollections ?? this.hideCollections,
+      indexable: indexable ?? this.indexable,
+      fields: fields ?? this.fields,
+      avatar: avatar ?? this.avatar,
+      header: header ?? this.header,
+    );
+  }
+}
+
+// The list of the edit profile categories that can be used to edit the profile.
+enum EditProfileCategory {
+  general,    // The basic information of the account, including display name, bio and other info.
+  privacy;    // The privacy setup of the current account.
+
+  // The tooltip text for the edit profile category, localized if possible.
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case EditProfileCategory.general:
+        return AppLocalizations.of(context)?.btn_profile_general_info ?? "General Info";
+      case EditProfileCategory.privacy:
+        return AppLocalizations.of(context)?.btn_profile_privacy ?? "Privacy Settings";
+    }
+  }
+
+  // The icon associated with the edit profile category, based on the action type.
+  IconData icon({bool active = false}) {
+    switch (this) {
+      case EditProfileCategory.general:
+        return active ? CupertinoIcons.doc_person_fill : CupertinoIcons.doc_person;
+      case EditProfileCategory.privacy:
+        return active ? Icons.privacy_tip : Icons.privacy_tip_outlined;
     }
   }
 }

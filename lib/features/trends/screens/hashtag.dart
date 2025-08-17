@@ -130,7 +130,7 @@ class _FollowedHashtagButtonState extends ConsumerState<FollowedHashtagButton> {
       return const SizedBox.shrink();
     }
 
-    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final bool isFollowing = schema?.following == true;
 
     return IconButton(

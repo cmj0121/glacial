@@ -51,6 +51,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_drawer_switch_server => '切換伺服器';
 
   @override
+  String get btn_drawer_directory => '探索帳戶';
+
+  @override
   String get btn_drawer_preference => '偏好設定';
 
   @override
@@ -151,6 +154,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get btn_profile_block => '封鎖用戶';
+
+  @override
+  String get btn_profile_general_info => '基本資料';
+
+  @override
+  String get btn_profile_privacy => '隱私設定';
 
   @override
   String get btn_status_toot => '嘟文';
@@ -304,6 +313,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_no_result => '未找到結果';
 
   @override
+  String get txt_profile_bot => '機器人帳號';
+
+  @override
+  String get txt_profile_locked => '帳號鎖定';
+
+  @override
+  String get txt_profile_discoverable => '可被探索';
+
+  @override
+  String get txt_profile_post_indexable => '公開嘟文的隱私';
+
+  @override
+  String get txt_profile_hide_collections => '顯示跟隨中與跟隨者';
+
+  @override
+  String get txt_profile_general_name => '顯示名稱';
+
+  @override
+  String get txt_profile_general_bio => '個人簡歷';
+
+  @override
   String get desc_preference_status => '控制你嘟文的預設行為';
 
   @override
@@ -329,6 +359,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_preference_refresh_interval => '更新資料的頻率';
+
+  @override
+  String get desc_profile_bot => '該帳號可能會自動化操作且未受人為監控';
+
+  @override
+  String get desc_profile_locked => '手動批准好友請求';
+
+  @override
+  String get desc_profile_discoverable => '帳號可以公開瀏覽中被搜尋';
+
+  @override
+  String get desc_profile_post_indexable => '公開嘟文可以被任何人搜尋';
+
+  @override
+  String get desc_profile_hide_collections => '瀏覽你的追隨中與追隨者的帳號';
 
   @override
   String err_invalid_instance(Object domain) {

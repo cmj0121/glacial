@@ -58,7 +58,7 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
   // The header of the explorer page, shows the search bar and the history button to show the search history.
   Widget buildHeader() {
     final double iconSize = 36;
-    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -147,6 +147,7 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
 
     logger.i("onTap: ${schema.domain}");
     await storage.saveAccessStatus(status.copyWith(domain: schema.domain, history: history), ref: ref);
+    await storage.loadAccessStatus(ref: ref);
 
     if (mounted) {
       context.go(RoutePath.timeline.path);

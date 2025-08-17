@@ -27,7 +27,7 @@ class InteractionBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final double itemWidth = 68.0;
-    final AccessStatusSchema status = ref.watch(accessStatusProvider) ?? AccessStatusSchema();
+    final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
     final bool isSelfStatus = schema.account.id == status.account?.id;
     final List<StatusInteraction> actions = StatusInteraction.values.where((a) {
       switch (a) {

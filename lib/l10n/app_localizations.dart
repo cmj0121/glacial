@@ -182,6 +182,12 @@ abstract class AppLocalizations {
   /// **'Switch Server'**
   String get btn_drawer_switch_server;
 
+  /// No description provided for @btn_drawer_directory.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore Account'**
+  String get btn_drawer_directory;
+
   /// No description provided for @btn_drawer_preference.
   ///
   /// In en, this message translates to:
@@ -385,6 +391,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Blocked Users'**
   String get btn_profile_block;
+
+  /// No description provided for @btn_profile_general_info.
+  ///
+  /// In en, this message translates to:
+  /// **'General Info'**
+  String get btn_profile_general_info;
+
+  /// No description provided for @btn_profile_privacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Settings'**
+  String get btn_profile_privacy;
 
   /// No description provided for @btn_status_toot.
   ///
@@ -668,6 +686,48 @@ abstract class AppLocalizations {
   /// **'No results found'**
   String get txt_no_result;
 
+  /// No description provided for @txt_profile_bot.
+  ///
+  /// In en, this message translates to:
+  /// **'Bot Account'**
+  String get txt_profile_bot;
+
+  /// No description provided for @txt_profile_locked.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Locked'**
+  String get txt_profile_locked;
+
+  /// No description provided for @txt_profile_discoverable.
+  ///
+  /// In en, this message translates to:
+  /// **'Account can be discoverable in public'**
+  String get txt_profile_discoverable;
+
+  /// No description provided for @txt_profile_post_indexable.
+  ///
+  /// In en, this message translates to:
+  /// **'The privacy of the public post'**
+  String get txt_profile_post_indexable;
+
+  /// No description provided for @txt_profile_hide_collections.
+  ///
+  /// In en, this message translates to:
+  /// **'Display the follower and following'**
+  String get txt_profile_hide_collections;
+
+  /// No description provided for @txt_profile_general_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Display Name'**
+  String get txt_profile_general_name;
+
+  /// No description provided for @txt_profile_general_bio.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get txt_profile_general_bio;
+
   /// No description provided for @desc_preference_status.
   ///
   /// In en, this message translates to:
@@ -721,6 +781,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The interval to refresh the app\'s data'**
   String get desc_preference_refresh_interval;
+
+  /// No description provided for @desc_profile_bot.
+  ///
+  /// In en, this message translates to:
+  /// **'The account may perform automated actions and not monitored by humans'**
+  String get desc_profile_bot;
+
+  /// No description provided for @desc_profile_locked.
+  ///
+  /// In en, this message translates to:
+  /// **'Manually approves follow requests'**
+  String get desc_profile_locked;
+
+  /// No description provided for @desc_profile_discoverable.
+  ///
+  /// In en, this message translates to:
+  /// **'Account can be discoverable in the profile directory'**
+  String get desc_profile_discoverable;
+
+  /// No description provided for @desc_profile_post_indexable.
+  ///
+  /// In en, this message translates to:
+  /// **'The public post cant be seachable'**
+  String get desc_profile_post_indexable;
+
+  /// No description provided for @desc_profile_hide_collections.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone can follow-up your following and follower in your profile page'**
+  String get desc_profile_hide_collections;
 
   /// No description provided for @err_invalid_instance.
   ///

@@ -424,7 +424,7 @@ class _AutoCompleteFormState extends ConsumerState<AutoCompleteForm> {
 
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
     return RawAutocomplete<String>(
       textEditingController: controller,

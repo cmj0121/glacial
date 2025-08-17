@@ -54,7 +54,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.watch(accessStatusProvider);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
     if (status == null || status.domain == null) {
       logger.w("No server selected, but it's required to show the timeline.");
@@ -201,10 +201,7 @@ class _TimelineState extends State<Timeline> {
               decoration: BoxDecoration(
                 border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
               ),
-              child: Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 8),
-                child: child,
-              ),
+              child: child,
             );
           },
         ),

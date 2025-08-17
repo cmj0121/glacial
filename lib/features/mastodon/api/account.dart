@@ -4,7 +4,7 @@
 //
 //   - [ ] POST  /api/v1/accounts
 //   - [+] GET   /api/v1/accounts/verify_credentials
-//   - [ ] PATCH /api/v1/accounts/update_credentials
+//   - [+] PATCH /api/v1/accounts/update_credentials
 //   - [+] GET   /api/v1/accounts/:id
 //   - [+] GET   /api/v1/accounts
 //   - [+] GET   /api/v1/accounts/:id/statuses
@@ -53,6 +53,15 @@ import 'package:glacial/features/models.dart';
 final Map<String?, Map<String, AccountSchema>> _accountCache = {};
 
 extension AccountsExtensions on AccessStatusSchema {
+  // Update the account data schema in the Mastodon server by account ID.
+  Future<AccountSchema> updateAccount(AccountCredentialSchema schema) async {
+    final String endpoint = '/api/v1/accounts/update_credentials';
+    final String body = await multipartsAPI(endpoint, method: "PATCH", body: schema.toJson(), files: schema.toFiles()) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+
+    return AccountSchema.fromJson(json);
+  }
+
   // Get the account data schema from the Mastodon server by account ID, return null
   // if the account does not exist or the request fails.
   Future<AccountSchema?> getAccount(String? accountID) async {

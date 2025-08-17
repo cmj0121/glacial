@@ -130,4 +130,11 @@ class ServerInfoSchema {
   }
 }
 
+// The type of the directory order.
+enum DirectoryOrderType {
+  active,  // sort by most recently posted statuses.
+  latest;  // sort by most recently created profiles.
+}
+
+
 // vim: set ts=2 sw=2 sts=2 et:
