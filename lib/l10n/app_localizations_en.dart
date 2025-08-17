@@ -382,7 +382,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'Account can be discoverable in the profile directory';
 
   @override
-  String get desc_profile_post_indexable => 'The public post cant be seachable';
+  String get desc_profile_post_indexable =>
+      'The public post cannot be seachable';
 
   @override
   String get desc_profile_hide_collections =>
