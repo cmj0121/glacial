@@ -306,6 +306,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_preference_refresh_interval => 'Refresh Interval';
 
   @override
+  String get txt_preference_reply_all => 'Everyone mentioned';
+
+  @override
+  String get txt_preference_reply_only => 'Only the poster';
+
+  @override
+  String get txt_preference_reply_none => 'Tag no one';
+
+  @override
   String get txt_show_less => 'Show Less';
 
   @override
@@ -388,6 +397,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get desc_profile_hide_collections =>
       'Everyone can follow-up your following and follower in your profile page';
+
+  @override
+  String get desc_preference_reply_all => 'Tag everyone mentioned in post';
+
+  @override
+  String get desc_preference_reply_only => 'Only tag the poster';
+
+  @override
+  String get desc_preference_reply_none => 'Tag no one';
 
   @override
   String err_invalid_instance(Object domain) {

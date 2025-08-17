@@ -32,6 +32,49 @@ enum SystemPreferenceType {
   }
 }
 
+// The reply auto-tag behavior type.
+enum ReplyTagType {
+  all,    // tag all the mentions in the reply.
+  poster, // tag only the poster of the post.
+  none;   // tag no one in the reply.
+
+  // The icon associated with the reply tag type.
+  IconData icon() {
+    switch (this) {
+      case all:
+        return Icons.group;
+      case poster:
+        return Icons.person;
+      case none:
+        return Icons.cancel;
+    }
+  }
+
+  // The tooltip text for the reply tag type, localized if possible.
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case all:
+        return AppLocalizations.of(context)?.txt_preference_reply_all ?? "Tag All";
+      case poster:
+        return AppLocalizations.of(context)?.txt_preference_reply_only ?? "Tag Poster";
+      case none:
+        return AppLocalizations.of(context)?.txt_preference_reply_none ?? "Tag None";
+    }
+  }
+
+  // The description text for the reply tag type, localized if possible.
+  String description(BuildContext context) {
+    switch (this) {
+      case all:
+        return AppLocalizations.of(context)?.desc_preference_reply_all ?? "Tag all the mentions in the reply.";
+      case poster:
+        return AppLocalizations.of(context)?.desc_preference_reply_only ?? "Tag only the poster of the post.";
+      case none:
+        return AppLocalizations.of(context)?.desc_preference_reply_none ?? "Tag no one in the reply.";
+    }
+  }
+}
+
 // The global data schema of the system preference settings.
 class SystemPreferenceSchema {
   // The static key to access the system preference settings.
@@ -42,6 +85,7 @@ class SystemPreferenceSchema {
   final VisibilityType visibility;
   final bool sensitive;
   final Duration refreshInterval;
+  final ReplyTagType replyTag;
 
   const SystemPreferenceSchema({
     this.server,
@@ -49,6 +93,7 @@ class SystemPreferenceSchema {
     this.visibility = VisibilityType.public,
     this.sensitive = true,
     this.refreshInterval = const Duration(seconds: 30),
+    this.replyTag = ReplyTagType.all,
   });
 
   // Convert the JSON string to a SystemPreferenceSchema object.
@@ -70,6 +115,10 @@ class SystemPreferenceSchema {
       refreshInterval: Duration(
         seconds: json["refresh_interval"] as int? ?? 30,
       ),
+      replyTag: ReplyTagType.values.firstWhere(
+        (r) => r.name == json["reply_tag"],
+        orElse: () => ReplyTagType.all,
+      ),
     );
   }
 
@@ -81,6 +130,7 @@ class SystemPreferenceSchema {
       "visibility": visibility.name,
       "sensitive": sensitive,
       "refresh_interval": refreshInterval.inSeconds,
+      "reply_tag": replyTag.name,
     };
   }
 
@@ -91,6 +141,7 @@ class SystemPreferenceSchema {
     VisibilityType? visibility,
     bool? sensitive,
     Duration? refreshInterval,
+    ReplyTagType? replyTag,
   }) {
     return SystemPreferenceSchema(
       server: server ?? this.server,
@@ -98,6 +149,7 @@ class SystemPreferenceSchema {
       visibility: visibility ?? this.visibility,
       sensitive: sensitive ?? this.sensitive,
       refreshInterval: refreshInterval ?? this.refreshInterval,
+      replyTag: replyTag ?? this.replyTag,
     );
   }
 }

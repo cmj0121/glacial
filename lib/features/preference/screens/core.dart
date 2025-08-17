@@ -140,6 +140,18 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             );
           },
         ),
+        // Build the reply tag settings.
+        ListTile(
+          title: Text(schema.replyTag.tooltip(context)),
+          subtitle: Text(schema.replyTag.description(context), style: labelStyle),
+          leading: Icon(schema.replyTag.icon(), size: iconSize),
+          onTap: () async {
+            final int index = ReplyTagType.values.indexOf(schema.replyTag);
+            final int nextIndex = (index + 1) % ReplyTagType.values.length;
+
+            Storage().savePreference(schema.copyWith(replyTag: ReplyTagType.values[nextIndex]), ref: ref);
+          },
+        ),
         // Build the refresh interval settings.
         ListTile(
           title: Text(AppLocalizations.of(context)?.txt_preference_refresh_interval ?? "Refresh Interval"),
