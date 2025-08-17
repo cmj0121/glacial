@@ -67,7 +67,7 @@ Future<http.Response> put(Uri url, {Map<String, String>? headers, Object? body, 
 Future<http.Response> patch(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
   final PackageInfo? info = Info().info;
 
-  if (info != null ){
+  if (info != null){
     headers = headers ?? <String, String>{};
     headers['User-Agent'] = userAgent;
     headers['Content-Type'] = 'application/json; charset=UTF-8';
@@ -91,7 +91,7 @@ Future<http.Response> delete(Uri url, {Map<String, String>? headers, Object? bod
   return http.delete(url, headers: headers, body: body, encoding: encoding);
 }
 
-// The wrapper for the multipart request, which is used to upload files with cutomized method.
+// The wrapper for the multipart request, which is used to upload files with customized method.
 Future<http.Response> multiparts(Uri url, {
   required String method,
   required Map<String, File> files,

@@ -205,7 +205,7 @@ class AccessStatusSchema {
     return response.body;
   }
 
-  // Call the API endpoint with the multipart API with cutomized method.
+  // Call the API endpoint with the multipart API with customized method.
   Future<String?> multipartsAPI(String endpoint, {
     required String method,
     required Map<String, File> files,

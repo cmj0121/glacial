@@ -133,7 +133,7 @@ class ServerInfoSchema {
 // The type of the directory order.
 enum DirectoryOrderType {
   active,  // sort by most recently posted statuses.
-  latest;  // ort by most recently created profiles.
+  latest;  // sort by most recently created profiles.
 }
 
 

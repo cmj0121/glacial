@@ -352,7 +352,8 @@ class UserStatistics extends StatelessWidget {
   }
 
   Widget buildIndexable(BuildContext context) {
-    if ((schema.noindex ?? false) && !schema.indexable) {
+    final bool showIndexable = (schema.noindex ?? false) || schema.indexable;
+    if (!showIndexable) {
       return const SizedBox.shrink();
     }
 
