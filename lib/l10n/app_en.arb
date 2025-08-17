@@ -49,6 +49,8 @@
   "btn_profile_hashtag": "Following Hashtags",
   "btn_profile_mute": "Muted Users",
   "btn_profile_block": "Blocked Users",
+  "btn_profile_general_info": "General Info",
+  "btn_profile_privacy": "Privacy Settings",
   "btn_status_toot": "Toot",
   "btn_status_edit": "Edit",
   "btn_status_scheduled": "Scheduled Toot",

@@ -138,31 +138,35 @@ class NoResult extends StatelessWidget {
 // The hero media that show the media and show to full-screen when tap on it.
 class MediaHero extends StatelessWidget {
   final Widget child;
+  final VoidCallback? onTap;
 
   const MediaHero({
     super.key,
     required this.child,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWellDone(
-      onTap: () {
-        // Pop-up the media as full-screen and blur the background.
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (BuildContext context) {
-              return Center(
-                child: Hero(
-                  tag: 'media-hero',
-                  child: MediaViewer(child: child),
-                ),
-              );
-            },
-          ),
-        );
-      },
+      onTap: onTap ?? () => onHero(context),
       child: child,
+    );
+  }
+
+  void onHero(BuildContext context) {
+    // Pop-up the media as full-screen and blur the background.
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return Center(
+            child: Hero(
+              tag: 'media-hero',
+              child: MediaViewer(child: child),
+            ),
+          );
+        },
+      ),
     );
   }
 }

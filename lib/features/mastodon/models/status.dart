@@ -1,5 +1,6 @@
 // The access status of the Mastodon server.
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
@@ -185,8 +186,6 @@ class AccessStatusSchema {
     return response.body;
   }
 
-
-
   // Call the API endpoint with the DELETE method and return the response body as a string.
   Future<String?> deleteAPI(String endpoint, {Map<String, String>? queryParameters, Map<String, String>? headers}) async {
     if (domain?.isNotEmpty != true) {
@@ -201,6 +200,34 @@ class AccessStatusSchema {
         ...?headers,
         ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
       },
+    );
+
+    return response.body;
+  }
+
+  // Call the API endpoint with the multipart API with cutomized method.
+  Future<String?> multipartsAPI(String endpoint, {
+    required String method,
+    required Map<String, File> files,
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  }) async {
+    if (domain?.isNotEmpty != true) {
+      logger.w("No server selected, but it's required to fetch the API.");
+      return null;
+    }
+
+    final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
+    final response = await multiparts(
+      uri,
+      method: method,
+      headers: {
+        ...?headers,
+        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+      },
+      json: body,
+      files: files,
     );
 
     return response.body;

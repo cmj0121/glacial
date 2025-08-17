@@ -1,6 +1,9 @@
-// The Account profile widget to show the details of the user.import 'package:flutter/material.dart';
+// The Account profile widget to show the details of the user.
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -476,6 +479,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
   Widget buildGeneral() {
     return ListView(
       children: [
+        buildImageFields(size: 200),
+
+        const Divider(),
+
         ListTile(
           leading: Tooltip(
             message: AppLocalizations.of(context)?.txt_profile_general_name ?? "Display Name",
@@ -607,11 +614,103 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
     );
   }
 
+  // Build the fixed banner of the account profile and the avatar. It will be fixed in the top
+  // of the screen.
+  Widget buildImageFields({required double size}) {
+    final double avatarSize = 80;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: SizedBox(
+        height: size,
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            buildBanner(),
+
+            Positioned(
+              left: 0,
+              bottom: 0,
+              width: avatarSize,
+              height: avatarSize,
+              child: buildAvatar(avatarSize),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Build the banner image for the account profile.
+  Widget buildBanner() {
+    final Widget banner = schema.header == null ?
+        CachedNetworkImage(
+          imageUrl: widget.account.header,
+          placeholder: (context, url) => const ClockProgressIndicator(),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        ) :
+        Image.file(schema.header!, fit: BoxFit.cover);
+
+    return InkWellDone(
+      onTap: onChangeBanner,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: OverflowBox(
+          alignment: Alignment.center,
+          maxWidth: double.infinity,
+          maxHeight: double.infinity,
+          child: MediaHero(onTap: onChangeAvatar, child: banner),
+        ),
+      ),
+    );
+  }
+
+  // Build the avatar image for the account profile.
+  Widget buildAvatar(double size) {
+    final Widget avatar = schema.avatar == null ?
+        CachedNetworkImage(
+          imageUrl: widget.account.avatar,
+          placeholder: (context, url) => const ClockProgressIndicator(),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+          fit: BoxFit.cover,
+        ) :
+        Image.file(schema.avatar!, fit: BoxFit.cover);
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white, width: 2),
+        color: Theme.of(context).colorScheme.surface,
+        shape: BoxShape.circle,
+      ),
+      child: ClipOval(
+        child: MediaHero(onTap: onChangeAvatar, child: avatar),
+      ),
+    );
+  }
+
   void onChangeItem({required int index, required FieldSchema field}) {
     List<FieldSchema> fields = List.from(schema.fields);
 
     index < fields.length ? fields[index] = field : fields.add(field);
     onChanged(schema: schema.copyWith(fields: fields));
+  }
+
+  void onChangeAvatar() async {
+    final XFile? file = await onImagePicker();
+    setState(() => schema = schema.copyWith(avatar: file == null ? null : File(file.path)));
+  }
+
+  void onChangeBanner() async {
+    final XFile? file = await onImagePicker();
+    setState(() => schema = schema.copyWith(header: file == null ? null : File(file.path)));
+  }
+
+  // Pop-up the image picker and return the picked image path.
+  Future<XFile?> onImagePicker() async {
+    final ImagePicker picker = ImagePicker();
+    return await picker.pickMedia();
   }
 
   void onChanged({required AccountCredentialSchema schema}) async {

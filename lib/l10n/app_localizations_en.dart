@@ -156,6 +156,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_profile_block => 'Blocked Users';
 
   @override
+  String get btn_profile_general_info => 'General Info';
+
+  @override
+  String get btn_profile_privacy => 'Privacy Settings';
+
+  @override
   String get btn_status_toot => 'Toot';
 
   @override

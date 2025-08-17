@@ -156,6 +156,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_profile_block => '封鎖用戶';
 
   @override
+  String get btn_profile_general_info => '基本資料';
+
+  @override
+  String get btn_profile_privacy => '隱私設定';
+
+  @override
   String get btn_status_toot => '嘟文';
 
   @override

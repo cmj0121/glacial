@@ -1,4 +1,6 @@
 // The Account data schema that is the user account info.
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -246,6 +248,8 @@ class AccountCredentialSchema {
   final bool hideCollections;            // Whether to hide followers and followed accounts.
   final bool indexable;                  // Whether public posts should be searchable to anyone.
   final List<FieldSchema> fields;        // Additional metadata attached to the profile.
+  final File? avatar;                    // Avatar image encoded using multipart/form-data.
+  final File? header;                    // Header image encoded using multipart/form-data.
 
   const AccountCredentialSchema({
     required this.displayName,
@@ -256,6 +260,8 @@ class AccountCredentialSchema {
     required this.hideCollections,
     required this.indexable,
     this.fields = const [],
+    this.avatar,
+    this.header,
   });
 
   Map<String, dynamic> toJson() {
@@ -283,6 +289,13 @@ class AccountCredentialSchema {
     ).cast<String, dynamic>();
   }
 
+  Map<String, File> toFiles() {
+    return {
+      if (avatar != null) 'avatar': avatar!,
+      if (header != null) 'header': header!,
+    };
+  }
+
   AccountCredentialSchema copyWith({
     String? displayName,
     String? note,
@@ -292,6 +305,8 @@ class AccountCredentialSchema {
     bool? hideCollections,
     bool? indexable,
     List<FieldSchema>? fields,
+    File? avatar,
+    File? header,
   }) {
     return AccountCredentialSchema(
       displayName: displayName ?? this.displayName,
@@ -302,6 +317,8 @@ class AccountCredentialSchema {
       hideCollections: hideCollections ?? this.hideCollections,
       indexable: indexable ?? this.indexable,
       fields: fields ?? this.fields,
+      avatar: avatar ?? this.avatar,
+      header: header ?? this.header,
     );
   }
 }
@@ -315,9 +332,9 @@ enum EditProfileCategory {
   String tooltip(BuildContext context) {
     switch (this) {
       case EditProfileCategory.general:
-        return "Profile Info";
+        return AppLocalizations.of(context)?.btn_profile_general_info ?? "General Info";
       case EditProfileCategory.privacy:
-        return "Private";
+        return AppLocalizations.of(context)?.btn_profile_privacy ?? "Privacy Settings";
     }
   }
 

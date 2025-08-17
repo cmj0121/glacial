@@ -392,6 +392,18 @@ abstract class AppLocalizations {
   /// **'Blocked Users'**
   String get btn_profile_block;
 
+  /// No description provided for @btn_profile_general_info.
+  ///
+  /// In en, this message translates to:
+  /// **'General Info'**
+  String get btn_profile_general_info;
+
+  /// No description provided for @btn_profile_privacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Settings'**
+  String get btn_profile_privacy;
+
   /// No description provided for @btn_status_toot.
   ///
   /// In en, this message translates to:

@@ -56,7 +56,7 @@ extension AccountsExtensions on AccessStatusSchema {
   // Update the account data schema in the Mastodon server by account ID.
   Future<AccountSchema> updateAccount(AccountCredentialSchema schema) async {
     final String endpoint = '/api/v1/accounts/update_credentials';
-    final String body = await patchAPI(endpoint, body: schema.toJson()) ?? '{}';
+    final String body = await multipartsAPI(endpoint, method: "PATCH", body: schema.toJson(), files: schema.toFiles()) ?? '{}';
     final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
 
     return AccountSchema.fromJson(json);
