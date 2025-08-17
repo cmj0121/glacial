@@ -49,6 +49,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   late VisibilityType vtype = widget.editFrom?.visibility ?? pref?.visibility ?? VisibilityType.public;
   late DateTime? scheduledAt = widget.editFrom?.scheduledAt;
 
+  @override
+  void initState() {
+    super.initState();
+    onInitMentioned();
+  }
 
   @override
   void dispose() {
@@ -385,6 +390,33 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
 
     setState(() => scheduledAt = datetime.toUtc());
     onPost();
+  }
+
+  // auto detect the mentioned accounts in the status input field when reply the status.
+  void onInitMentioned() {
+    if (widget.replyTo == null) return;
+
+    final ReplyTagType replyTag = pref?.replyTag ?? ReplyTagType.all;
+    switch (replyTag) {
+      case ReplyTagType.all:
+        final List<String> accts = (widget.replyTo?.mentions ?? [])
+            .where((mention) => mention.acct.isNotEmpty && mention.acct != status?.account?.acct)
+            .map((mention) => '@${mention.acct}')
+            .toList();
+
+        final String mentions = {...accts, '@${widget.replyTo!.account.acct}'}
+            .toList()
+            .join(" ");
+        logger.d("Auto-mentioning accounts: $mentions from ${widget.replyTo!.mentions.length} mentions.");
+        controller.text = "$mentions ${controller.text}";
+        break;
+      case ReplyTagType.poster:
+        controller.text = "@${widget.replyTo!.account.acct} ${controller.text}";
+        break;
+      case ReplyTagType.none:
+        // Do nothing, no mention will be added.
+        break;
+    }
   }
 
   bool get isSignedIn => status?.domain?.isNotEmpty == true && status?.accessToken?.isNotEmpty == true;
