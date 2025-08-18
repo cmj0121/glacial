@@ -270,7 +270,7 @@ class StatusLite extends StatelessWidget {
   // Build the post time information, showing the time since the post was created.
   Widget buildTimeInfo() {
     if (schema.scheduledAt != null) {
-      // Show the scheduled icom with the scheduled time.
+      // Show the scheduled icon with the scheduled time.
       return Tooltip(
         message: schema.scheduledAt!.toLocal().toString(),
         child: Icon(Icons.schedule_outlined, size: iconSize, color: Colors.grey),
