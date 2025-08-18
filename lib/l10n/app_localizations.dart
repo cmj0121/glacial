@@ -821,7 +821,7 @@ abstract class AppLocalizations {
   /// No description provided for @desc_profile_post_indexable.
   ///
   /// In en, this message translates to:
-  /// **'The public post cannot be seachable'**
+  /// **'The public post cannot be searchable'**
   String get desc_profile_post_indexable;
 
   /// No description provided for @desc_profile_hide_collections.

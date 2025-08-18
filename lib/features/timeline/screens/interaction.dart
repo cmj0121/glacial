@@ -277,8 +277,9 @@ class _InteractionState extends State<Interaction> {
         widget.onReload?.call(updatedStatus);
         return;
       case StatusInteraction.edit:
+        context.pop();
         context.push(RoutePath.edit.path, extra: widget.schema);
-        break;
+        return;
       case StatusInteraction.delete:
         await widget.status.deleteStatus(widget.schema);
         widget.onDeleted?.call();

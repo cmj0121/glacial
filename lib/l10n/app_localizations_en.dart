@@ -392,7 +392,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get desc_profile_post_indexable =>
-      'The public post cannot be seachable';
+      'The public post cannot be searchable';
 
   @override
   String get desc_profile_hide_collections =>
