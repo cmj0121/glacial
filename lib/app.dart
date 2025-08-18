@@ -84,7 +84,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           path: RoutePath.preference.path,
           builder: (BuildContext context, GoRouterState state) {
             return BackableView(
-              title: RoutePath.preference.name,
+              title: AppLocalizations.of(context)?.btn_drawer_preference ?? "Preference",
               child: SystemPreference(),
             );
           },

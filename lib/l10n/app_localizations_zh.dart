@@ -304,6 +304,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_preference_refresh_interval => '更新頻率';
 
   @override
+  String get txt_preference_reply_all => '所有提及的';
+
+  @override
+  String get txt_preference_reply_only => '發嘟文的人';
+
+  @override
+  String get txt_preference_reply_none => '不標記任何人';
+
+  @override
   String get txt_show_less => '顯示更少';
 
   @override
@@ -374,6 +383,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_profile_hide_collections => '瀏覽你的追隨中與追隨者的帳號';
+
+  @override
+  String get desc_preference_reply_all => '標記所有在嘟文中提及的人';
+
+  @override
+  String get desc_preference_reply_only => '只標記發嘟文的人';
+
+  @override
+  String get desc_preference_reply_none => '不標記任何人';
 
   @override
   String err_invalid_instance(Object domain) {

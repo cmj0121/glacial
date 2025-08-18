@@ -668,6 +668,24 @@ abstract class AppLocalizations {
   /// **'Refresh Interval'**
   String get txt_preference_refresh_interval;
 
+  /// No description provided for @txt_preference_reply_all.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone mentioned'**
+  String get txt_preference_reply_all;
+
+  /// No description provided for @txt_preference_reply_only.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the poster'**
+  String get txt_preference_reply_only;
+
+  /// No description provided for @txt_preference_reply_none.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag no one'**
+  String get txt_preference_reply_none;
+
   /// No description provided for @txt_show_less.
   ///
   /// In en, this message translates to:
@@ -803,7 +821,7 @@ abstract class AppLocalizations {
   /// No description provided for @desc_profile_post_indexable.
   ///
   /// In en, this message translates to:
-  /// **'The public post cant be seachable'**
+  /// **'The public post cannot be seachable'**
   String get desc_profile_post_indexable;
 
   /// No description provided for @desc_profile_hide_collections.
@@ -811,6 +829,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Everyone can follow-up your following and follower in your profile page'**
   String get desc_profile_hide_collections;
+
+  /// No description provided for @desc_preference_reply_all.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag everyone mentioned in post'**
+  String get desc_preference_reply_all;
+
+  /// No description provided for @desc_preference_reply_only.
+  ///
+  /// In en, this message translates to:
+  /// **'Only tag the poster'**
+  String get desc_preference_reply_only;
+
+  /// No description provided for @desc_preference_reply_none.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag no one'**
+  String get desc_preference_reply_none;
 
   /// No description provided for @err_invalid_instance.
   ///

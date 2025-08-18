@@ -112,6 +112,49 @@ class StatusSchema {
     );
   }
 
+   factory StatusSchema.fromScheduleJson(Map<String, dynamic> json, AccountSchema account) {
+    final Map<String, dynamic> params = json['params'] as Map<String, dynamic>;
+
+    return StatusSchema(
+      id: json['id'] as String,
+      content: params['text'] as String,
+      visibility: VisibilityType.values.where((e) => e.name == params["visibility"]).first,
+      sensitive: params['sensitive'] as bool,
+      spoiler: params['spoiler_text'] as String? ?? '',
+      account: account,
+      uri: params['uri'] as String? ?? '',
+      url: params['url'] as String?,
+      attachments: (json['media_attachments'] as List<dynamic>)
+        .map((e) => AttachmentSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      mentions: (params['mentions'] as List<dynamic>? ?? [])
+        .map((e) => MentionSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      tags: (params['tags'] as List<dynamic>? ?? [])
+        .map((e) => TagSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      emojis: (params['emojis'] as List<dynamic>? ?? [])
+        .map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>))
+        .toList(),
+      inReplyToID: (params['in_reply_to_id'] as int?)?.toString(),
+      inReplyToAccountID: params['in_reply_to_account_id'] as String?,
+      reblog: params['reblog'] == null ? null : StatusSchema.fromJson(params['reblog'] as Map<String, dynamic>),
+      poll: params['poll'] == null ? null : PollSchema.fromJson(params['poll'] as Map<String, dynamic>),
+      reblogsCount: params['reblogs_count'] as int? ?? 0,
+      favouritesCount: params['favourites_count'] as int? ?? 0,
+      repliesCount: params['replies_count'] as int? ?? 0,
+      favourited: params['favourited'] as bool?,
+      reblogged: params['reblogged'] as bool?,
+      muted: params['muted'] as bool?,
+      bookmarked: params['bookmarked'] as bool?,
+      pinned: params['pinned'] as bool?,
+      application: params['application'] == null ? null : ApplicationSchema.fromJson(params['application'] as Map<String, dynamic>),
+      createdAt: DateTime.parse(json['scheduled_at'] as String),
+      scheduledAt: DateTime.parse(json['scheduled_at'] as String),
+      editedAt: null,
+    );
+  }
+
   // Return the plain text content of the status.
   String get plainText {
     if (text != null && text!.isNotEmpty) {

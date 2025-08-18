@@ -58,25 +58,36 @@ extension StatusExtensions on AccessStatusSchema {
   }
 
   // Create a new status on the Mastodon server with the given content and media.
-  Future<StatusSchema> createStatus({required PostStatusSchema schema, required String idempotentKey}) async {
+  Future<StatusSchema> createStatus({
+    required PostStatusSchema schema,
+    required String idempotentKey,
+    required AccountSchema account,
+  }) async {
     final String endpoint = '/api/v1/statuses';
     final Map<String, String> headers = {
       'Idempotency-Key': idempotentKey,
     };
 
     final String body = await postAPI(endpoint, body: schema.toJson(), headers: headers) ?? '{}';
-    return StatusSchema.fromString(body);
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+    return schema.scheduledAt == null ? StatusSchema.fromJson(json) : StatusSchema.fromScheduleJson(json, account);
   }
 
   // Edit the exists status on the Mastodon server with the given content and media.
-  Future<StatusSchema> editStatus({required String id, required PostStatusSchema schema, required String idempotentKey}) async {
-    final String endpoint = '/api/v1/statuses/$id';
+  Future<StatusSchema> editStatus({
+    required String id,
+    required PostStatusSchema schema,
+    required String idempotentKey,
+    required AccountSchema account,
+  }) async {
+    final String endpoint = schema.scheduledAt == null ? '/api/v1/statuses/$id' : '/api/v1/scheduled_statuses/$id';
     final Map<String, String> headers = {
       'Idempotency-Key': idempotentKey,
     };
 
     final String body = await putAPI(endpoint, body: schema.toJson(), headers: headers) ?? '{}';
-    return StatusSchema.fromString(body);
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+    return schema.scheduledAt == null ? StatusSchema.fromJson(json) : StatusSchema.fromScheduleJson(json, account);
   }
 
   // Get the status data schema from the Mastodon server by status ID, return null
@@ -104,9 +115,16 @@ extension StatusExtensions on AccessStatusSchema {
   // Delete the status by the given status ID, return the deleted status
   // schema if the deletion was successful, or null if the status does not exist.
   Future<StatusSchema?> deleteStatus(StatusSchema schema) async {
-    final String endpoint = '/api/v1/statuses/${schema.id}';
-    final String? body = await deleteAPI(endpoint);
-    return body == null ? null : StatusSchema.fromString(body);
+    switch (schema.scheduledAt) {
+      case null:
+        final String endpoint = '/api/v1/statuses/${schema.id}';
+        final String? body = await deleteAPI(endpoint);
+        return body == null ? null : StatusSchema.fromString(body);
+      default:
+        final String endpoint = '/api/v1/scheduled_statuses/${schema.id}';
+        await deleteAPI(endpoint);
+        return null;
+    }
   }
 
   // The raw action to interact with the status, such as reblog, favourite, or delete.
@@ -142,7 +160,7 @@ extension StatusExtensions on AccessStatusSchema {
   }
 
   // List the scheduled statuses on the Mastodon server.
-  Future<List<StatusSchema>> fetchScheduledStatuses({String? maxId}) async {
+  Future<List<StatusSchema>> fetchScheduledStatuses({required AccountSchema account, String? maxId}) async {
     if (isSignedIn == false) {
       throw Exception("You must be signed in to fetch scheduled statuses.");
     }
@@ -151,7 +169,7 @@ extension StatusExtensions on AccessStatusSchema {
     final String endpoint = '/api/v1/scheduled_statuses';
     final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
-    final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
+    final List<StatusSchema> status = json.map((e) => StatusSchema.fromScheduleJson(e, account)).toList();
 
     // save the related info to the in-memory cache.
     status.map((s) => cacheAccount(s.account)).toList();

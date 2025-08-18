@@ -61,7 +61,11 @@ extension TimelineExtensions on AccessStatusSchema {
       case TimelineType.pin:
         return fetchAccountTimeline(account: account, maxId: maxId, pinned: type == TimelineType.pin);
       case TimelineType.schedule:
-        return fetchScheduledStatuses(maxId: maxId);
+        if (account == null) {
+          throw Exception("Account must be provided for scheduled statuses.");
+        }
+
+        return fetchScheduledStatuses(account: account, maxId: maxId);
       case TimelineType.hashtag:
         if (tag?.isNotEmpty != true) {
           throw Exception("Tag must be provided for hashtag timeline.");

@@ -93,10 +93,12 @@ class _VisibilitySelectorState extends State<VisibilitySelector> {
             child: StatusVisibility(type: value, size: widget.size, isCompact: false),
           );
         }).toList(),
-        onChanged: (v) {
-          setState(() => type = v ?? type);
-          widget.onChanged?.call(v);
-        },
+        onChanged: widget.onChanged == null ?
+          null :
+          (v) {
+            setState(() => type = v ?? type);
+            widget.onChanged?.call(v);
+          },
       ),
     );
   }
