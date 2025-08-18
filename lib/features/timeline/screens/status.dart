@@ -752,16 +752,18 @@ class StatusEdit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double headerHeight = 48.0;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
+        Text(schema.createdAt.toLocal().toString(), style: const TextStyle(color: Colors.grey)),
+        const Divider(),
         HtmlDone(html: schema.content, emojis: schema.emojis),
         Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
 
-        const Spacer(),
-
-        Text(schema.createdAt.toLocal().toString(), style: const TextStyle(color: Colors.grey)),
       ],
     );
   }
