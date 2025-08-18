@@ -120,7 +120,7 @@
   "desc_profile_bot": "The account may perform automated actions and not monitored by humans",
   "desc_profile_locked": "Manually approves follow requests",
   "desc_profile_discoverable": "Account can be discoverable in the profile directory",
-  "desc_profile_post_indexable": "The public post cannot be seachable",
+  "desc_profile_post_indexable": "The public post cannot be searchable",
   "desc_profile_hide_collections": "Everyone can follow-up your following and follower in your profile page",
   "desc_preference_reply_all": "Tag everyone mentioned in post",
   "desc_preference_reply_only": "Only tag the poster",
