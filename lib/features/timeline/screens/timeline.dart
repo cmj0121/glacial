@@ -88,6 +88,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
          type: types[index],
          status: status,
          controller: scrollControllers[index],
+         onDeleted: () => context.pop(),
       ),
       onTabTappable: (index) => isSignIn || types[index].supportAnonymous,
       onDoubleTap: onDoubleTap,
@@ -111,6 +112,7 @@ class Timeline extends StatefulWidget {
   final AccountSchema? account;
   final String? hashtag;
   final ScrollController? controller;
+  final VoidCallback? onDeleted;
 
   const Timeline({
     super.key,
@@ -119,6 +121,7 @@ class Timeline extends StatefulWidget {
     this.account,
     this.hashtag,
     this.controller,
+    this.onDeleted,
   });
 
   @override
@@ -193,7 +196,7 @@ class _TimelineState extends State<Timeline> {
               schema: status,
               onDeleted: () {
                 setState(() => statuses.removeAt(index));
-                context.pop();
+                widget.onDeleted?.call();
               }
             );
 
@@ -239,7 +242,7 @@ class _TimelineState extends State<Timeline> {
     final String? maxId = statuses.isNotEmpty ? statuses.last.id : null;
     final List<StatusSchema> schemas = await widget.status.fetchTimeline(
       widget.type,
-      account: widget.account,
+      account: widget.type == TimelineType.schedule ? widget.status.account : widget.account,
       tag: widget.hashtag,
       maxId: maxId,
     );

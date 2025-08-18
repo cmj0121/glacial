@@ -166,6 +166,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
         return TextFormField(
           controller: textEditingController,
           focusNode: focusNode,
+          enabled: !isEditSchedule,
           maxLines: maxLines,
           minLines: maxLines,
           maxLength: status?.server?.config.statuses.maxCharacters ?? 500,
@@ -232,7 +233,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
         VisibilitySelector(
           type: vtype,
           size: tabSize,
-          onChanged: widget.editFrom == null ? (type) => setState(() => vtype = type ?? vtype) : null,
+          onChanged: (widget.editFrom == null && !isEditSchedule) ? (type) => setState(() => vtype = type ?? vtype) : null,
         ),
 
         // The media icon button to open the image picker and upload media files.
@@ -244,14 +245,16 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           ),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: (poll == null && maxMedias > medias.length && isSignedIn) ? onImagePicker : null,
+          onPressed: (poll == null && maxMedias > medias.length && isSignedIn && !isEditSchedule) ? onImagePicker : null,
         ),
         // The poll icon button to toggle the poll form.
         IconButton(
           icon: Icon(Icons.poll_outlined, size: tabSize, ),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: medias.isNotEmpty ? null : () => setState(() => poll = poll == null ? NewPollSchema() : null),
+          onPressed: (medias.isEmpty && !isEditSchedule) ?
+            () => setState(() => poll = poll == null ? NewPollSchema() : null) :
+            null,
         ),
         // The spoiler icon button to toggle the spoiler text field.
         IconButton(
@@ -262,7 +265,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           ),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: () => setState(() => spoiler = spoiler == null ? "" : null),
+          onPressed: !isEditSchedule ? () => setState(() => spoiler = spoiler == null ? "" : null) : null,
         ),
         // The sensitive icon button to toggle the sensitive content of the status.
         IconButton(
@@ -273,7 +276,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           ),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: () => setState(() => isSensitive = !isSensitive),
+          onPressed: !isEditSchedule ? () => setState(() => isSensitive = !isSensitive) : null,
         ),
     ];
 
@@ -311,7 +314,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
 
   // Build the submit button that can post the status or schedule the post.
   Widget buildSubmitButton({bool fullWidth = false}) {
-    final IconData icon = widget.editFrom == null ? (isScheduled ? Icons.schedule : Icons.chat) : Icons.edit;
+    final IconData icon = (isScheduled || isEditSchedule) ? Icons.schedule : Icons.chat;
     final String text = widget.editFrom == null ?
         (isScheduled ?
           AppLocalizations.of(context)?.btn_status_scheduled ?? "Scheduled Toot" :
@@ -325,7 +328,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           child: FilledButton.icon(
             icon: Icon(icon, size: tabSize),
             label: Text(text),
-            onPressed: widget.editFrom == null ? (isScheduled ? onSchedulePost : onPost) : onPost,
+            onPressed: (isScheduled || isEditSchedule) ? onSchedulePost : onPost,
             onLongPress: widget.editFrom == null ? () => setState(() => isScheduled = !isScheduled) : null,
           ),
         );
@@ -333,7 +336,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
         return FilledButton.icon(
           icon: Icon(icon, size: tabSize),
           label: Text(text),
-          onPressed: widget.editFrom == null ? (isScheduled ? onSchedulePost : onPost) : onPost,
+          onPressed: (isScheduled || isEditSchedule) ? onSchedulePost : onPost,
           onLongPress: widget.editFrom == null ? () => setState(() => isScheduled = !isScheduled) : null,
         );
     }
@@ -369,9 +372,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       scheduledAt: scheduledAt,
     );
 
+    final AccountSchema? account = status?.account;
     final StatusSchema? post = widget.editFrom == null ?
-        await status?.createStatus(schema: schema, idempotentKey: idempotentKey) :
-        await status?.editStatus(id: widget.editFrom!.id, schema: schema, idempotentKey: idempotentKey);
+        await status?.createStatus(schema: schema, idempotentKey: idempotentKey, account: account!) :
+        await status?.editStatus(id: widget.editFrom!.id, schema: schema, idempotentKey: idempotentKey, account: account!);
+
     if (mounted) {
       if (post != null) widget.onPost?.call(post);
       context.pop();
@@ -380,8 +385,13 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
 
   // The callback when the user long presses the post button to schedule the post.
   void onSchedulePost() async {
+    final Duration minDuration = const Duration(minutes: 5);
     final DateTime now = DateTime.now();
-    final DateTime? datetime = await picker.DatePicker.showDateTimePicker(context, currentTime: now);
+    final DateTime? datetime = await picker.DatePicker.showDateTimePicker(
+      context,
+      currentTime: now.add(minDuration),
+      minTime: now.add(minDuration),
+    );
 
     if (datetime == null) {
       logger.d("No date selected for scheduling the post.");
@@ -421,6 +431,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
 
   bool get isSignedIn => status?.domain?.isNotEmpty == true && status?.accessToken?.isNotEmpty == true;
   bool get isReadyToPost => controller.text.isNotEmpty || medias.isNotEmpty || (poll?.isValid ?? false);
+  bool get isEditSchedule => widget.editFrom?.scheduledAt != null;
 }
 
 // The autocomplete form for the status input field, which can suggest accounts or hashtags.

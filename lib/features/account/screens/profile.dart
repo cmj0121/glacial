@@ -94,11 +94,7 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
           case AccountProfileType.post:
           case AccountProfileType.pin:
           case AccountProfileType.schedule:
-            return Timeline(
-              status: status!,
-              type: type.timelineType,
-              account: widget.schema,
-            );
+            return Timeline(status: status!, type: type.timelineType, account: widget.schema);
           case AccountProfileType.hashtag:
             return const FollowedHashtags();
           case AccountProfileType.mute:
