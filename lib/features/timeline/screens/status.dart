@@ -651,15 +651,23 @@ class StatusHistory extends ConsumerStatefulWidget {
   ConsumerState<StatusHistory> createState() => _StatusHistoryState();
 }
 
-class _StatusHistoryState extends ConsumerState<StatusHistory> {
+class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProviderStateMixin {
   bool isDisposed = false;
   int selectedIndex = 0;
   List<StatusEditSchema> history = [];
+
+  late final PageController pageController;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -684,19 +692,12 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> {
 
     return Row(
       children: [
-        Expanded(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return SlideTransition(
-                position: Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(animation),
-                child: FadeTransition(
-                  opacity: animation,
-                  child: child,
-                ),
-              );
-            },
-            child: buildHistory(),
+        Flexible(
+          child: PageView(
+            controller: pageController,
+            scrollDirection: Axis.vertical,
+            children: List.generate(history.length, (index) => buildHistory(index)),
+            onPageChanged: (index) => setState(() => selectedIndex = index),
           ),
         ),
         buildSlider(),
@@ -717,8 +718,8 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> {
   }
 
   // Build the history of the status, showing the edit history of the status.
-  Widget buildHistory() {
-    final StatusEditSchema schema = history[selectedIndex];
+  Widget buildHistory(int index) {
+    final StatusEditSchema schema = history[index];
     return Align(
       key: ValueKey(selectedIndex),
       alignment: Alignment.topLeft,
@@ -734,6 +735,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> {
       this.history = history;
       selectedIndex = history.isEmpty ? 0 : history.length - 1;
     });
+    pageController = PageController(initialPage: selectedIndex, keepPage: true);
   }
 
   void onDismiss() {
@@ -758,6 +760,7 @@ class StatusEdit extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
+        const SizedBox(height: 8),
         Text(schema.createdAt.toLocal().toString(), style: const TextStyle(color: Colors.grey)),
         const Divider(),
         HtmlDone(html: schema.content, emojis: schema.emojis),
