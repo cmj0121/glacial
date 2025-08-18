@@ -46,7 +46,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   late bool isSensitive = widget.editFrom?.sensitive ?? false;
   late String? spoiler = widget.editFrom?.spoiler.isNotEmpty == true ? widget.editFrom?.spoiler : null;
   late List<AttachmentSchema> medias = widget.editFrom?.attachments ?? [];
-  late VisibilityType vtype = widget.editFrom?.visibility ?? pref?.visibility ?? VisibilityType.public;
+  late VisibilityType vtype = widget.replyTo?.visibility ?? pref?.visibility ?? VisibilityType.public;
   late DateTime? scheduledAt = widget.editFrom?.scheduledAt;
 
   @override
