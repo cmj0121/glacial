@@ -303,6 +303,8 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
         break;
       case DrawerButtonType.logout:
         await storage.logout(status, ref: ref);
+        // always force reload the app after logout
+        ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
         return;
       default:
         break;
