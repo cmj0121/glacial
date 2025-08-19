@@ -720,7 +720,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
 
   void onSave() async {
     final AccountSchema? account = await status?.updateAccount(schema);
-    ref.read(accessStatusProvider.notifier).state = status?.copyWith(account: account);
+    if (mounted) {
+      ref.read(accessStatusProvider.notifier).state = status?.copyWith(account: account);
+    }
   }
 }
 
