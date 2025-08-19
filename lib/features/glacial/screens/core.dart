@@ -148,6 +148,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     final String path = GoRouter.of(context).state.uri.toString();
     final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final bool isSignedIn = status?.accessToken?.isNotEmpty == true;
 
     final List<Widget> children = actions.map((action) {
       final int index = actions.indexOf(action);
@@ -159,7 +160,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           return NotificationBadge(
             size: sidebarSize,
             isSelected: isSelected,
-            onPressed: () => debounce.callOnce(() => onSelect(index)),
+            onPressed: isSignedIn ? () => debounce.callOnce(() => onSelect(index)) : null,
           );
         case SidebarButtonType.post:
           if (status?.accessToken?.isNotEmpty == true) {
@@ -175,6 +176,15 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
           }
 
           return SignIn(size: sidebarSize);
+        case SidebarButtonType.admin:
+          return IconButton(
+            icon: icon,
+            tooltip: action.tooltip(context),
+            color: isSelected ? Theme.of(context).colorScheme.primary : null,
+            hoverColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            onPressed: null,
+          );
         default:
           return IconButton(
             icon: icon,
@@ -182,7 +192,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
             color: isSelected ? Theme.of(context).colorScheme.primary : null,
             hoverColor: Colors.transparent,
             focusColor: Colors.transparent,
-            onPressed: () => debounce.callOnce(() => onSelect(index)),
+            onPressed: (action.supportAnonymous || isSignedIn) ? () => debounce.callOnce(() => onSelect(index)) : null,
           );
       }
     }).toList();
@@ -303,6 +313,8 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
         break;
       case DrawerButtonType.logout:
         await storage.logout(status, ref: ref);
+        // always force reload the app after logout
+        ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
         return;
       default:
         break;
