@@ -48,6 +48,8 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
         controller: controller,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
+          hintText: AppLocalizations.of(context)?.desc_create_list ?? "Create a new list",
+          hintStyle: TextStyle(color: Theme.of(context).colorScheme.outline),
         ),
         onSubmitted: (_) => onSubmitted(),
       ),
@@ -166,6 +168,18 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        Flexible(
+          flex: 10,
+          child: TextField(
+            enabled: showMembers,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              hintText: AppLocalizations.of(context)?.desc_list_search_following ?? "Search following accounts to add",
+              hintStyle: TextStyle(color: Theme.of(context).colorScheme.outline),
+            ),
+            onSubmitted: (value) => onSearchAccount(value.trim()),
+          ),
+        ),
         const Spacer(),
         IconButton(
           icon: Icon(
@@ -253,9 +267,95 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
     );
   }
 
+  // Pop-up the dialog and find the possibble accounts to add to the list.
+  void onSearchAccount(String name) async {
+    if (name.isEmpty) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: ListAccountWidget(
+          name: name,
+          onSelected: (account) async {
+            await status?.addAccountsToList(schema.id, [account.id]);
+            onReload();
+          }
+        ),
+      ),
+    );
+  }
+
   void onReload() async {
     final ListSchema? schema = await status?.getList(this.schema.id);
     setState(() => this.schema = schema ?? this.schema);
+  }
+}
+
+// The list account widget to show the possible accounts to add to the list.
+class ListAccountWidget extends ConsumerStatefulWidget {
+  final String name;
+  final ValueChanged<AccountSchema>? onSelected;
+
+  const ListAccountWidget({
+    super.key,
+    required this.name,
+    this.onSelected,
+  });
+
+  @override
+  ConsumerState<ListAccountWidget> createState() => _ListAccountWidgetState();
+}
+
+class _ListAccountWidgetState extends ConsumerState<ListAccountWidget> {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+  bool isLoading = false;
+  bool isCompleted = false;
+  List<AccountSchema> accounts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isCompleted && accounts.isEmpty) {
+      final String message = AppLocalizations.of(context)?.txt_no_result ?? "No results found";
+      return NoResult(message: message, icon: Icons.coffee);
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (isLoading) const ClockProgressIndicator(),
+        Flexible(
+          child: ListView.builder(
+            itemCount: accounts.length,
+            itemBuilder: (context, index) => AccountLite(
+              schema: accounts[index],
+              onTap: () => widget.onSelected?.call(accounts[index]),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void onLoad() async {
+    if (isLoading || isCompleted) return;
+
+    setState(() => isLoading = true);
+
+    final int count = this.accounts.length;
+    final List<AccountSchema> accounts = await status?.searchAccounts(widget.name, offset: count, following: true) ?? [];
+
+    setState(() {
+      isLoading = false;
+      isCompleted = accounts.isEmpty;
+      this.accounts.addAll(accounts);
+    });
   }
 }
 

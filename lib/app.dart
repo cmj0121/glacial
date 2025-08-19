@@ -150,8 +150,9 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             break;
           case RoutePath.listItem:
             final ListSchema schema = state.extra as ListSchema;
+            final String prefix = AppLocalizations.of(context)?.btn_sidebar_lists ?? "Lists";
 
-            title = Text(schema.title);
+            title = Text('$prefix: ${schema.title}');
             backable = true;
             break;
           default:

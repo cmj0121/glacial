@@ -426,6 +426,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get desc_preference_reply_none => 'Tag no one';
 
   @override
+  String get desc_create_list => 'Create a new List';
+
+  @override
+  String get desc_list_search_following =>
+      'Search the following account to add into List';
+
+  @override
   String err_invalid_instance(Object domain) {
     return 'invalid Mastodon server domain: $domain';
   }

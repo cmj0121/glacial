@@ -287,12 +287,17 @@ extension AccountsExtensions on AccessStatusSchema {
   }
 
   // Search for matching accounts by username or display name.
-  Future<List<AccountSchema>> searchAccounts(String query, {int? limit}) async {
+  Future<List<AccountSchema>> searchAccounts(String query, {int? limit, int? offset, bool following=false}) async {
     if (query.isEmpty) {
       return [];
     }
 
-    final Map<String, String> queryParameters = {"q": query, "limit": limit?.toString() ?? "40"};
+    final Map<String, String> queryParameters = {
+      "q": query,
+      "limit": limit?.toString() ?? "40",
+      "offset": offset?.toString() ?? "0",
+      "following": following.toString(),
+    };
     final String endpoint = '/api/v1/accounts/search';
     final String body = await getAPI(endpoint, queryParameters: queryParameters) ?? '[]';
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;

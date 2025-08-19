@@ -412,6 +412,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get desc_preference_reply_none => '不標記任何人';
 
   @override
+  String get desc_create_list => '建立一個新列表';
+
+  @override
+  String get desc_list_search_following => '搜尋追隨中的帳號加入列表';
+
+  @override
   String err_invalid_instance(Object domain) {
     return '不合法/不存在的 Mastodon 伺服器: $domain';
   }

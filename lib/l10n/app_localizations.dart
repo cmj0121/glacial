@@ -884,6 +884,18 @@ abstract class AppLocalizations {
   /// **'Tag no one'**
   String get desc_preference_reply_none;
 
+  /// No description provided for @desc_create_list.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new List'**
+  String get desc_create_list;
+
+  /// No description provided for @desc_list_search_following.
+  ///
+  /// In en, this message translates to:
+  /// **'Search the following account to add into List'**
+  String get desc_list_search_following;
+
   /// No description provided for @err_invalid_instance.
   ///
   /// In en, this message translates to:

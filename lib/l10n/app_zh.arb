@@ -131,6 +131,8 @@
   "desc_preference_reply_all": "標記所有在嘟文中提及的人",
   "desc_preference_reply_only": "只標記發嘟文的人",
   "desc_preference_reply_none": "不標記任何人",
+  "desc_create_list": "建立一個新列表",
+  "desc_list_search_following": "搜尋追隨中的帳號加入列表",
   "err_invalid_instance": "不合法/不存在的 Mastodon 伺服器: {domain}",
   "msg_preference_engineer_clear_cache": "清除快取成功",
   "msg_copied_to_clipboard": "複製到剪貼簿",
