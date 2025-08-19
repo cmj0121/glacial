@@ -30,24 +30,12 @@ class SwipeTabView extends StatefulWidget {
 class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMixin {
   late final TabController tabController;
   late final PageController pageController;
-  late final List<int> visibleIndexes;
 
   Map<int, Widget> cachedWidgets = {};
 
   @override
   void initState() {
     super.initState();
-
-    // Calculate which tabs are visible based on the onTabTappable callback, and then
-    // store the index mapping to the visibleIndexes list.
-    //
-    // visibleIndexes[ PAGE INDEX ] = TAB INDEX
-    visibleIndexes = List.generate(widget.itemCount, (index) => widget.onTabTappable?.call(index) ?? true)
-        .asMap()
-        .entries
-        .map((entry) => entry.value ? entry.key : null)
-        .whereType<int>()
-        .toList();
 
     final int initialIndex = widget.tabController?.index ?? 0;
 
@@ -136,6 +124,19 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
 
   // Get the leftmost index of the visible indexes.
   int get leftmostIndex => visibleIndexes.isNotEmpty ? visibleIndexes.first : 0;
+
+  // Calculate which tabs are visible based on the onTabTappable callback, and then
+  // store the index mapping to the visibleIndexes list.
+  //
+  // visibleIndexes[ PAGE INDEX ] = TAB INDEX
+  List<int> get visibleIndexes {
+    return List.generate(widget.itemCount, (index) => widget.onTabTappable?.call(index) ?? true)
+        .asMap()
+        .entries
+        .map((entry) => entry.value ? entry.key : null)
+        .whereType<int>()
+        .toList();
+  }
 }
 
 // The customized tab view that can be used to show the active and inactive
