@@ -148,6 +148,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             backable = true;
             actions.add(FollowedHashtagButton(hashtag: hashtag));
             break;
+          case RoutePath.listItem:
+            final ListSchema schema = state.extra as ListSchema;
+            final String prefix = AppLocalizations.of(context)?.btn_sidebar_lists ?? "Lists";
+
+            title = Text('$prefix: ${schema.title}');
+            backable = true;
+            break;
           default:
             break;
         }
@@ -174,7 +181,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         ),
         GoRoute(
           path: RoutePath.list.path,
-          builder: (_, _) => const WIP(),
+          builder: (_, _) => const ListTimelineTab(),
         ),
         GoRoute(
           path: RoutePath.trends.path,
@@ -269,6 +276,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         GoRoute(
           path: RoutePath.directory.path,
           builder: (BuildContext context, GoRouterState state) => const DirectoryAccount(),
+        ),
+        GoRoute(
+          path: RoutePath.listItem.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final ListSchema? schema = state.extra as ListSchema?;
+            return schema == null ? const SizedBox.shrink() : LiteTimeline(schema: schema);
+          },
         ),
       ],
     );

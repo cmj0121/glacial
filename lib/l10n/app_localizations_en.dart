@@ -90,6 +90,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_timeline_bookmarks => 'Bookmarks';
 
   @override
+  String get btn_timeline_list => 'Lists';
+
+  @override
   String get btn_preference_theme => 'Theme';
 
   @override
@@ -347,6 +350,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_profile_general_bio => 'Bio';
 
   @override
+  String get txt_list_policy_followed => 'Show replies to any followed user';
+
+  @override
+  String get txt_list_policy_list => 'Show replies to members of the list';
+
+  @override
+  String get txt_list_policy_none => 'Do not show any replies';
+
+  @override
+  String get txt_list_exclusive => 'Removed from the Home timeline feed';
+
+  @override
+  String get txt_list_inclusive => 'Keep it in the Home timeline feed';
+
+  @override
   String get desc_preference_status =>
       'Setup and control your default status behavior';
 
@@ -392,7 +410,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get desc_profile_post_indexable =>
-      'The public post cannot be seachable';
+      'The public post cannot be searchable';
 
   @override
   String get desc_profile_hide_collections =>
@@ -406,6 +424,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get desc_preference_reply_none => 'Tag no one';
+
+  @override
+  String get desc_create_list => 'Create a new List';
+
+  @override
+  String get desc_list_search_following =>
+      'Search the following account to add into List';
 
   @override
   String err_invalid_instance(Object domain) {

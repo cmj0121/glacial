@@ -260,6 +260,12 @@ abstract class AppLocalizations {
   /// **'Bookmarks'**
   String get btn_timeline_bookmarks;
 
+  /// No description provided for @btn_timeline_list.
+  ///
+  /// In en, this message translates to:
+  /// **'Lists'**
+  String get btn_timeline_list;
+
   /// No description provided for @btn_preference_theme.
   ///
   /// In en, this message translates to:
@@ -746,6 +752,36 @@ abstract class AppLocalizations {
   /// **'Bio'**
   String get txt_profile_general_bio;
 
+  /// No description provided for @txt_list_policy_followed.
+  ///
+  /// In en, this message translates to:
+  /// **'Show replies to any followed user'**
+  String get txt_list_policy_followed;
+
+  /// No description provided for @txt_list_policy_list.
+  ///
+  /// In en, this message translates to:
+  /// **'Show replies to members of the list'**
+  String get txt_list_policy_list;
+
+  /// No description provided for @txt_list_policy_none.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not show any replies'**
+  String get txt_list_policy_none;
+
+  /// No description provided for @txt_list_exclusive.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from the Home timeline feed'**
+  String get txt_list_exclusive;
+
+  /// No description provided for @txt_list_inclusive.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it in the Home timeline feed'**
+  String get txt_list_inclusive;
+
   /// No description provided for @desc_preference_status.
   ///
   /// In en, this message translates to:
@@ -821,7 +857,7 @@ abstract class AppLocalizations {
   /// No description provided for @desc_profile_post_indexable.
   ///
   /// In en, this message translates to:
-  /// **'The public post cannot be seachable'**
+  /// **'The public post cannot be searchable'**
   String get desc_profile_post_indexable;
 
   /// No description provided for @desc_profile_hide_collections.
@@ -847,6 +883,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tag no one'**
   String get desc_preference_reply_none;
+
+  /// No description provided for @desc_create_list.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new List'**
+  String get desc_create_list;
+
+  /// No description provided for @desc_list_search_following.
+  ///
+  /// In en, this message translates to:
+  /// **'Search the following account to add into List'**
+  String get desc_list_search_following;
 
   /// No description provided for @err_invalid_instance.
   ///

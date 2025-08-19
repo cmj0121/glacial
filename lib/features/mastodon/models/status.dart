@@ -197,7 +197,11 @@ class AccessStatusSchema {
   }
 
   // Call the API endpoint with the DELETE method and return the response body as a string.
-  Future<String?> deleteAPI(String endpoint, {Map<String, String>? queryParameters, Map<String, String>? headers}) async {
+  Future<String?> deleteAPI(String endpoint, {
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  }) async {
     if (domain?.isNotEmpty != true) {
       logger.w("No server selected, but it's required to fetch the API.");
       return null;
@@ -210,6 +214,7 @@ class AccessStatusSchema {
         ...?headers,
         ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
       },
+      body: body != null ? jsonEncode(body) : null,
     );
 
     return response.body;

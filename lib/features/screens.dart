@@ -3,6 +3,7 @@
 export 'account/screens/core.dart';
 export 'auth/screens/core.dart';
 export 'glacial/screens/core.dart';
+export 'list/screens/core.dart';
 export 'mastodon/screens/core.dart';
 export 'notifications/screens/core.dart';
 export 'preference/screens/core.dart';

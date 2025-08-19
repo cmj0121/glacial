@@ -11,6 +11,7 @@ enum RoutePath {
   // The home page of the Glacial, showing the timeline, trends, notifications, and other features.
   timeline,          // The timeline page of the app.
   list,              // The list page of the app to show the pinned lists.
+  listItem,          // The list item page of the app to show the list details.
   trends,            // The trends page of the app.
   notifications,     // The notifications page of the app.
   admin,             // The admin page of the app.
@@ -43,6 +44,8 @@ enum RoutePath {
         return '/home/timeline';
       case RoutePath.list:
         return '/home/list';
+      case RoutePath.listItem:
+        return '/home/list/item';
       case RoutePath.trends:
         return '/home/trends';
       case RoutePath.notifications:

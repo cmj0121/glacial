@@ -90,6 +90,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_timeline_bookmarks => '書籤';
 
   @override
+  String get btn_timeline_list => '列表';
+
+  @override
   String get btn_preference_theme => '主題';
 
   @override
@@ -343,6 +346,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_profile_general_bio => '個人簡歷';
 
   @override
+  String get txt_list_policy_followed => '顯示所有回覆';
+
+  @override
+  String get txt_list_policy_list => '僅顯示清單中的回覆';
+
+  @override
+  String get txt_list_policy_none => '不顯示回覆';
+
+  @override
+  String get txt_list_exclusive => '從首頁時間軸移除';
+
+  @override
+  String get txt_list_inclusive => '維持在首頁時間軸';
+
+  @override
   String get desc_preference_status => '控制你嘟文的預設行為';
 
   @override
@@ -392,6 +410,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_preference_reply_none => '不標記任何人';
+
+  @override
+  String get desc_create_list => '建立一個新列表';
+
+  @override
+  String get desc_list_search_following => '搜尋追隨中的帳號加入列表';
 
   @override
   String err_invalid_instance(Object domain) {
