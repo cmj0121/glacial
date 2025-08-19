@@ -64,6 +64,16 @@ enum SidebarButtonType {
         return RoutePath.post;
     }
   }
+
+  bool get supportAnonymous {
+    switch (this) {
+      case timeline:
+      case trending:
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 
 // The possible actions in the drawer and used to interact with the current server.

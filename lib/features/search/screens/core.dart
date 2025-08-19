@@ -8,7 +8,7 @@ import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
 // The search explorer widget that show the search icon and the text field to search for a Mastodon server.
-class SearchExplorer extends StatefulWidget {
+class SearchExplorer extends ConsumerStatefulWidget {
   final double size;
   final double maxWidth;
 
@@ -19,12 +19,13 @@ class SearchExplorer extends StatefulWidget {
   });
 
   @override
-  State<SearchExplorer> createState() => _ExplorerState();
+  ConsumerState<SearchExplorer> createState() => _ExplorerState();
 }
 
-class _ExplorerState extends State<SearchExplorer> with SingleTickerProviderStateMixin {
-  final TextEditingController controller = TextEditingController();
-  final FocusNode focusNode = FocusNode();
+class _ExplorerState extends ConsumerState<SearchExplorer> with SingleTickerProviderStateMixin {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+  late final TextEditingController controller = TextEditingController();
+  late final FocusNode focusNode = FocusNode();
 
   bool showInput = false;
 
@@ -47,12 +48,14 @@ class _ExplorerState extends State<SearchExplorer> with SingleTickerProviderStat
   }
 
   Widget buildContent() {
+    final bool isSignedIn = status?.accessToken?.isNotEmpty == true;
+
     final Widget icon = IconButton(
       icon: Icon(Icons.search, size: widget.size),
       tooltip: AppLocalizations.of(context)?.btn_search ?? "Search",
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
-      onPressed: onShowSearch,
+      onPressed: isSignedIn ? onShowSearch : null,
     );
 
     return AnimatedSize(
