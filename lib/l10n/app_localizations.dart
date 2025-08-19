@@ -773,7 +773,7 @@ abstract class AppLocalizations {
   /// No description provided for @txt_list_exclusive.
   ///
   /// In en, this message translates to:
-  /// **'Removed from the Home timelime feed'**
+  /// **'Removed from the Home timeline feed'**
   String get txt_list_exclusive;
 
   /// No description provided for @txt_list_inclusive.

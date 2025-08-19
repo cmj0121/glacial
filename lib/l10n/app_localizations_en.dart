@@ -359,7 +359,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_list_policy_none => 'Do not show any replies';
 
   @override
-  String get txt_list_exclusive => 'Removed from the Home timelime feed';
+  String get txt_list_exclusive => 'Removed from the Home timeline feed';
 
   @override
   String get txt_list_inclusive => 'Keep it in the Home timeline feed';

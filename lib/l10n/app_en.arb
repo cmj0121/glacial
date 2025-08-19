@@ -112,7 +112,7 @@
   "txt_list_policy_followed": "Show replies to any followed user",
   "txt_list_policy_list": "Show replies to members of the list",
   "txt_list_policy_none": "Do not show any replies",
-  "txt_list_exclusive": "Removed from the Home timelime feed",
+  "txt_list_exclusive": "Removed from the Home timeline feed",
   "txt_list_inclusive": "Keep it in the Home timeline feed",
   "desc_preference_status": "Setup and control your default status behavior",
   "desc_poll_show_hide_total": "Show/Hide vote counts until the poll ends",
