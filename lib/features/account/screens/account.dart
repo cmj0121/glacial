@@ -127,11 +127,13 @@ class AccountAvatar extends StatelessWidget {
 class AccountLite extends StatelessWidget {
   final AccountSchema? schema;
   final double size;
+  final VoidCallback? onTap;
 
   const AccountLite({
     super.key,
     this.schema,
     this.size = 32,
+    this.onTap,
   });
 
   @override
@@ -144,7 +146,7 @@ class AccountLite extends StatelessWidget {
     return ListTile(
       leading: buildAvatar(),
       title: Text(name, overflow: TextOverflow.ellipsis),
-      onTap: () => context.push(RoutePath.profile.path, extra: schema),
+      onTap: onTap ?? () => context.push(RoutePath.profile.path, extra: schema),
     );
   }
 

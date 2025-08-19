@@ -111,6 +111,7 @@ class Timeline extends StatefulWidget {
   final AccessStatusSchema status;
   final AccountSchema? account;
   final String? hashtag;
+  final String? listId;
   final ScrollController? controller;
   final VoidCallback? onDeleted;
 
@@ -120,6 +121,7 @@ class Timeline extends StatefulWidget {
     required this.status,
     this.account,
     this.hashtag,
+    this.listId,
     this.controller,
     this.onDeleted,
   });
@@ -244,6 +246,7 @@ class _TimelineState extends State<Timeline> {
       widget.type,
       account: widget.type == TimelineType.schedule ? widget.status.account : widget.account,
       tag: widget.hashtag,
+      listId: widget.listId,
       maxId: maxId,
     );
 

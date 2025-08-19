@@ -5,7 +5,7 @@
 //     - [+] GET /api/v1/timelines/tag/:hashtag
 //     - [+] GET /api/v1/timelines/home
 //     - [ ] GET /api/v1/timelines/link?url=:url
-//     - [ ] GET /api/v1/timelines/list/:list_id
+//     - [+] GET /api/v1/timelines/list/:list_id
 //     - [x] GET /api/v1/timelines/direct          (deprecated in 3.0.0)
 //
 // ## Bookmark APIs
@@ -28,7 +28,7 @@ import 'package:glacial/features/models.dart';
 // The API extensions for the timeline endpoints in the Mastodon server.
 extension TimelineExtensions on AccessStatusSchema {
   // Fetch timeline's statuses based on the timeline type.
-  Future<List<StatusSchema>> fetchTimeline(TimelineType type, {String? maxId, AccountSchema? account, String? tag}) async {
+  Future<List<StatusSchema>> fetchTimeline(TimelineType type, {String? maxId, AccountSchema? account, String? tag, String? listId}) async {
     final Map<String, String> query = {"max_id": maxId ?? ""};
     late final String endpoint;
 
@@ -75,6 +75,10 @@ extension TimelineExtensions on AccessStatusSchema {
         query["local"] = "true";
         query["remote"] = "true";
         endpoint = "/api/v1/timelines/tag/$tag";
+        break;
+      case TimelineType.list:
+        query["max_id"] = maxId ?? "";
+        endpoint = "/api/v1/timelines/list/$listId";
         break;
     }
 

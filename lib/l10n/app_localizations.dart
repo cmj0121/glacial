@@ -260,6 +260,12 @@ abstract class AppLocalizations {
   /// **'Bookmarks'**
   String get btn_timeline_bookmarks;
 
+  /// No description provided for @btn_timeline_list.
+  ///
+  /// In en, this message translates to:
+  /// **'Lists'**
+  String get btn_timeline_list;
+
   /// No description provided for @btn_preference_theme.
   ///
   /// In en, this message translates to:
@@ -745,6 +751,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bio'**
   String get txt_profile_general_bio;
+
+  /// No description provided for @txt_list_policy_followed.
+  ///
+  /// In en, this message translates to:
+  /// **'Show replies to any followed user'**
+  String get txt_list_policy_followed;
+
+  /// No description provided for @txt_list_policy_list.
+  ///
+  /// In en, this message translates to:
+  /// **'Show replies to members of the list'**
+  String get txt_list_policy_list;
+
+  /// No description provided for @txt_list_policy_none.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not show any replies'**
+  String get txt_list_policy_none;
+
+  /// No description provided for @txt_list_exclusive.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from the Home timelime feed'**
+  String get txt_list_exclusive;
+
+  /// No description provided for @txt_list_inclusive.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it in the Home timeline feed'**
+  String get txt_list_inclusive;
 
   /// No description provided for @desc_preference_status.
   ///

@@ -13,6 +13,7 @@ enum TimelineType {
   favourites,    // The favourite timeline for the logged in user.
   bookmarks,     // The bookmark timeline for the logged in user.
   // The extra timeline types, not shown in the timeline tab.
+  list,          // The list timeline for the logged in user.
   user,          // The statuses posted from the given user.
   pin,           // The pinned statuses for the logged in user.
   schedule,      // The scheduled statuses for the logged in user.
@@ -33,6 +34,8 @@ enum TimelineType {
         return active ? Icons.star : Icons.star_outline_outlined;
       case bookmarks:
         return active ? Icons.bookmarks : Icons.bookmarks_outlined;
+      case list:
+        return active ? Icons.list : Icons.list_outlined;
       case user:
         return active ? Icons.article : Icons.article_outlined;
       case pin:
@@ -59,6 +62,8 @@ enum TimelineType {
         return AppLocalizations.of(context)?.btn_timeline_favourites ?? "Favourites";
       case bookmarks:
         return AppLocalizations.of(context)?.btn_timeline_bookmarks ?? "Bookmarks";
+      case list:
+        return AppLocalizations.of(context)?.btn_timeline_list ?? "Lists";
       case user:
         return AppLocalizations.of(context)?.btn_profile_post ?? "Posts";
       case pin:

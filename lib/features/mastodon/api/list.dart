@@ -17,7 +17,6 @@ import 'dart:convert';
 
 import 'package:glacial/features/models.dart';
 
-
 extension ListsExtensions on AccessStatusSchema {
   // Fetch all lists that the user owns.
   Future<List<ListSchema>> getLists() async {
@@ -66,7 +65,7 @@ extension ListsExtensions on AccessStatusSchema {
     final String endpoint = '/api/v1/lists/$id';
     final Map<String, dynamic> body = <String, dynamic>{
       'title': title,
-      if (replyPolicy != null) 'reply_policy': replyPolicy.name,
+      if (replyPolicy != null) 'replies_policy': replyPolicy.name,
       if (exclusive != null) 'exclusive': exclusive,
     };
 
@@ -106,4 +105,5 @@ extension ListsExtensions on AccessStatusSchema {
     await deleteAPI(endpoint, body: body);
   }
 }
+
 // vim: set ts=2 sw=2 sts=2 et:

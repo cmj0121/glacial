@@ -90,6 +90,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_timeline_bookmarks => 'Bookmarks';
 
   @override
+  String get btn_timeline_list => 'Lists';
+
+  @override
   String get btn_preference_theme => 'Theme';
 
   @override
@@ -345,6 +348,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_profile_general_bio => 'Bio';
+
+  @override
+  String get txt_list_policy_followed => 'Show replies to any followed user';
+
+  @override
+  String get txt_list_policy_list => 'Show replies to members of the list';
+
+  @override
+  String get txt_list_policy_none => 'Do not show any replies';
+
+  @override
+  String get txt_list_exclusive => 'Removed from the Home timelime feed';
+
+  @override
+  String get txt_list_inclusive => 'Keep it in the Home timeline feed';
 
   @override
   String get desc_preference_status =>
