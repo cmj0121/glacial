@@ -1,5 +1,6 @@
 // The system preference settings to control the app's behavior and features.
 import 'package:app_badge_plus/app_badge_plus.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:duration/duration.dart';
@@ -183,16 +184,17 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
   // Build the engineer settings that are not meant for the general user.
   Widget buildEngineerSettings() {
     final Storage storage = Storage();
+    final DefaultCacheManager cacheManager = DefaultCacheManager();
 
     // The list of button to clear the cache or reset the app.
     return ListView(
       children: [
         ListTile(
           title: Text(AppLocalizations.of(context)?.btn_preference_engineer_clear_cache ?? "Clear All Cache"),
-          subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_clear_cache ?? "Clear all cached data and reset the app."),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_clear_cache ?? "Clear all cached data."),
           leading: Icon(Icons.delete_outline_outlined, size: iconSize, color: Theme.of(context).colorScheme.error),
           onTap: () async {
-            await storage.purge();
+            await cacheManager.emptyCache();
 
             if (mounted) {
               final String message = AppLocalizations.of(context)?.msg_preference_engineer_clear_cache ?? "Cache cleared successfully.";
@@ -208,6 +210,20 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           ),
           leading: Icon(Icons.notifications, size: iconSize, color: Theme.of(context).colorScheme.tertiary),
           onTap: () => sendDummyNotification(),
+        ),
+        const SizedBox(height: 16),
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.btn_preference_engineer_reset ?? "Reset system"),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_reset ?? "Clear all settings and reset the app."),
+          leading: Icon(Icons.restart_alt, size: iconSize, color: Theme.of(context).colorScheme.error),
+          onTap: () async {
+            await storage.purge();
+
+            if (mounted) {
+              final String message = AppLocalizations.of(context)?.msg_preference_engineer_reset ?? "Settings cleared successfully.";
+              await showSnackbar(context, message);
+            }
+          },
         ),
       ],
     );

@@ -284,6 +284,12 @@ abstract class AppLocalizations {
   /// **'Clear All Cache'**
   String get btn_preference_engineer_clear_cache;
 
+  /// No description provided for @btn_preference_engineer_reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset system'**
+  String get btn_preference_engineer_reset;
+
   /// No description provided for @btn_preference_engineer_test_notifier.
   ///
   /// In en, this message translates to:
@@ -563,8 +569,14 @@ abstract class AppLocalizations {
   /// No description provided for @desc_preference_engineer_clear_cache.
   ///
   /// In en, this message translates to:
-  /// **'Clear all cached data and reset the app'**
+  /// **'Clear all cached data'**
   String get desc_preference_engineer_clear_cache;
+
+  /// No description provided for @desc_preference_engineer_reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all settings and reset the app'**
+  String get desc_preference_engineer_reset;
 
   /// No description provided for @desc_preference_engineer_test_notifier.
   ///
@@ -925,6 +937,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cache cleared successfully'**
   String get msg_preference_engineer_clear_cache;
+
+  /// No description provided for @msg_preference_engineer_reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset successfully'**
+  String get msg_preference_engineer_reset;
 
   /// No description provided for @msg_copied_to_clipboard.
   ///
