@@ -30,6 +30,7 @@
   "btn_timeline_list": "列表",
   "btn_preference_theme": "主題",
   "btn_preference_engineer": "工程設定",
+  "btn_preference_about": "系統資訊",
   "btn_preference_engineer_clear_cache": "清除快取",
   "btn_preference_engineer_reset": "重置系統",
   "btn_preference_engineer_test_notifier": "通知測試",

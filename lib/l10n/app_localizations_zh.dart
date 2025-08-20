@@ -99,6 +99,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_preference_engineer => '工程設定';
 
   @override
+  String get btn_preference_about => '系統資訊';
+
+  @override
   String get btn_preference_engineer_clear_cache => '清除快取';
 
   @override

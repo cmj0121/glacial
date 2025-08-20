@@ -4,6 +4,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:duration/duration.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -79,6 +81,8 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             child = buildSystemSettings();
           case SystemPreferenceType.engineer:
             child = buildEngineerSettings();
+          case SystemPreferenceType.about:
+            child = buildAppInfo();
         }
 
         return Padding(
@@ -224,6 +228,45 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
               await showSnackbar(context, message);
             }
           },
+        ),
+      ],
+    );
+  }
+
+  // Build the app information section.
+  Widget buildAppInfo() {
+    final PackageInfo info = Info().info!;
+    final String author = "cmj <cmj@cmj.tw>";
+    final String repo = "https://github.com/cmj0121";
+    final String link = "https://apps.apple.com/app/6745746223";
+    final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          leading: Icon(Icons.numbers, size: iconSize),
+          title: Text("App Version"),
+          subtitle: Text('${info.version} (${info.buildNumber})', style: labelStyle),
+          onTap: () => launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication),
+        ),
+        ListTile(
+          leading: Icon(Icons.person, size: iconSize),
+          title: Text("Author"),
+          subtitle: Text(author, style: labelStyle),
+          onTap: () => launchUrl(Uri.parse(repo), mode: LaunchMode.externalApplication),
+        ),
+        ListTile(
+          leading: Icon(Icons.code, size: iconSize),
+          title: Text("Repository"),
+          subtitle: Text(repo, style: labelStyle),
+          onTap: () => launchUrl(Uri.parse("$repo/${info.appName}"), mode: LaunchMode.externalApplication),
+        ),
+        ListTile(
+          leading: Icon(Icons.copyright, size: iconSize),
+          title: Text("Copyright"),
+          subtitle: Text("© $author", style: labelStyle),
+          onTap: () => launchUrl(Uri.parse("$repo/${info.appName}?tab=License-1-ov-file"), mode: LaunchMode.externalApplication),
         ),
       ],
     );

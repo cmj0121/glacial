@@ -278,6 +278,12 @@ abstract class AppLocalizations {
   /// **'Engineer Settings'**
   String get btn_preference_engineer;
 
+  /// No description provided for @btn_preference_about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get btn_preference_about;
+
   /// No description provided for @btn_preference_engineer_clear_cache.
   ///
   /// In en, this message translates to:

@@ -99,6 +99,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_preference_engineer => 'Engineer Settings';
 
   @override
+  String get btn_preference_about => 'About';
+
+  @override
   String get btn_preference_engineer_clear_cache => 'Clear All Cache';
 
   @override

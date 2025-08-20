@@ -30,6 +30,7 @@
   "btn_timeline_list": "Lists",
   "btn_preference_theme": "Theme",
   "btn_preference_engineer": "Engineer Settings",
+  "btn_preference_about": "About",
   "btn_preference_engineer_clear_cache": "Clear All Cache",
   "btn_preference_engineer_reset": "Reset system",
   "btn_preference_engineer_test_notifier": "Test Notification",

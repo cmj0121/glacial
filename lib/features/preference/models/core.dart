@@ -9,7 +9,8 @@ import 'package:glacial/features/models.dart';
 // The tab type of the system preference settings.
 enum SystemPreferenceType {
   theme,    // The theme settings of the app.
-  engineer; // The engineer settings of the app.
+  engineer, // The engineer settings of the app.
+  about;    // The about info page.
 
   // The icon associated with the system preference type.
   IconData icon({bool active = false}) {
@@ -18,6 +19,8 @@ enum SystemPreferenceType {
         return active ? Icons.color_lens : Icons.color_lens_outlined;
       case engineer:
         return active ? Icons.engineering : Icons.engineering_outlined;
+      case about:
+        return active ? Icons.info : Icons.info_outline;
     }
   }
 
@@ -28,6 +31,8 @@ enum SystemPreferenceType {
         return AppLocalizations.of(context)?.btn_preference_theme ?? "Theme";
       case engineer:
         return AppLocalizations.of(context)?.btn_preference_engineer ?? "Engineer Settings";
+      case about:
+        return AppLocalizations.of(context)?.btn_preference_about ?? "About";
     }
   }
 }
