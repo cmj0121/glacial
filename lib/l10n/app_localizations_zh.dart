@@ -102,6 +102,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_preference_engineer_clear_cache => '清除快取';
 
   @override
+  String get btn_preference_engineer_reset => '重置系統';
+
+  @override
   String get btn_preference_engineer_test_notifier => '通知測試';
 
   @override
@@ -250,7 +253,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_follow_request_reject => '拒絕';
 
   @override
-  String get desc_preference_engineer_clear_cache => '清除快取並重設';
+  String get desc_preference_engineer_clear_cache => '清除快取並移除快取資料';
+
+  @override
+  String get desc_preference_engineer_reset => '清除設定並且重置系統';
 
   @override
   String get desc_preference_engineer_test_notifier => '測試發送通知到本裝置';
@@ -433,6 +439,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_preference_engineer_clear_cache => '清除快取成功';
+
+  @override
+  String get msg_preference_engineer_reset => '重置成功';
 
   @override
   String get msg_copied_to_clipboard => '複製到剪貼簿';

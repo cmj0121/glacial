@@ -102,6 +102,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_preference_engineer_clear_cache => 'Clear All Cache';
 
   @override
+  String get btn_preference_engineer_reset => 'Reset system';
+
+  @override
   String get btn_preference_engineer_test_notifier => 'Test Notification';
 
   @override
@@ -250,8 +253,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_follow_request_reject => 'Reject';
 
   @override
-  String get desc_preference_engineer_clear_cache =>
-      'Clear all cached data and reset the app';
+  String get desc_preference_engineer_clear_cache => 'Clear all cached data';
+
+  @override
+  String get desc_preference_engineer_reset =>
+      'Clear all settings and reset the app';
 
   @override
   String get desc_preference_engineer_test_notifier =>
@@ -449,6 +455,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get msg_preference_engineer_clear_cache =>
       'Cache cleared successfully';
+
+  @override
+  String get msg_preference_engineer_reset => 'Reset successfully';
 
   @override
   String get msg_copied_to_clipboard => 'Copy to clipboard';
