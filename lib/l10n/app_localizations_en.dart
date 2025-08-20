@@ -183,6 +183,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_relationship_follow_each_other => 'Be friend';
 
   @override
+  String get btn_relationship_follow_request => 'Requested and wait approved';
+
+  @override
   String get btn_relationship_stranger => 'Stranger';
 
   @override
@@ -239,6 +242,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btn_notification_unknown => 'Unknown';
+
+  @override
+  String get btn_follow_request_accept => 'Accept';
+
+  @override
+  String get btn_follow_request_reject => 'Reject';
 
   @override
   String get desc_preference_engineer_clear_cache =>
@@ -450,6 +459,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String msg_notification_body(Object count) {
     return 'You have $count unread notifications';
+  }
+
+  @override
+  String msg_follow_request(Object name) {
+    return 'Follow Request from $name';
   }
 
   @override

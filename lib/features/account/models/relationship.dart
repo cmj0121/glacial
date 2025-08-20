@@ -39,6 +39,7 @@ enum RelationshipType {
   following,          // You are following this user.
   followedBy,         // This user is following you.
   followEachOther,    // You and this user are following each other.
+  followRequest,      // You have sent a follow request to this user and wait for their approval.
   stranger,           // You are not following this user, and they are not following you.
   blockedBy,          // This user is blocking you.
   // The more actions relationship types.
@@ -57,6 +58,8 @@ enum RelationshipType {
         return Icons.visibility;
       case followEachOther:
         return Icons.handshake_sharp;
+      case followRequest:
+        return Icons.pending_actions_rounded;
       case stranger:
         return Icons.person_add;
       case blockedBy:
@@ -84,6 +87,8 @@ enum RelationshipType {
         return AppLocalizations.of(context)?.btn_relationship_followed_by ?? "Followed by";
       case followEachOther:
         return AppLocalizations.of(context)?.btn_relationship_follow_each_other ?? "Follow each other";
+      case followRequest:
+        return AppLocalizations.of(context)?.btn_relationship_follow_request ?? "Follow Request";
       case stranger:
         return AppLocalizations.of(context)?.btn_relationship_stranger ?? "Stranger";
       case blockedBy:
@@ -225,6 +230,8 @@ class RelationshipSchema {
       return RelationshipType.blockedBy;
     } else if (blocking) {
       return RelationshipType.unblock;
+    } else if (requested) {
+      return RelationshipType.followRequest;
     } else if (following && followedBy) {
       return RelationshipType.followEachOther;
     } else if (following) {

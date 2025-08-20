@@ -58,6 +58,7 @@
   "btn_relationship_following": "追隨中",
   "btn_relationship_followed_by": "被跟隨",
   "btn_relationship_follow_each_other": "互為朋友",
+  "btn_relationship_follow_request": "追隨請求 (等待同意)",
   "btn_relationship_stranger": "陌生人",
   "btn_relationship_blocked_by": "被封鎖",
   "btn_relationship_mute": "靜音 {acct}",
@@ -74,6 +75,8 @@
   "btn_notification_poll": "投票結果",
   "btn_notification_update": "編輯",
   "btn_notification_unknown": "未知",
+  "btn_follow_request_accept": "同意",
+  "btn_follow_request_reject": "拒絕",
   "desc_preference_engineer_clear_cache": "清除快取並重設",
   "desc_preference_engineer_test_notifier": "測試發送通知到本裝置",
   "txt_spoiler": "暴雷",
@@ -138,5 +141,6 @@
   "msg_copied_to_clipboard": "複製到剪貼簿",
   "msg_notification_title": "新的通知訊息",
   "msg_notification_body": "你有 {count} 筆未讀訊息",
+  "msg_follow_request": "來自 {name} 的好友請求",
   "dots": "..."
 }

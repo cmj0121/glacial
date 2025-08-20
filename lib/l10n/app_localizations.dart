@@ -446,6 +446,12 @@ abstract class AppLocalizations {
   /// **'Be friend'**
   String get btn_relationship_follow_each_other;
 
+  /// No description provided for @btn_relationship_follow_request.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested and wait approved'**
+  String get btn_relationship_follow_request;
+
   /// No description provided for @btn_relationship_stranger.
   ///
   /// In en, this message translates to:
@@ -541,6 +547,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unknown'**
   String get btn_notification_unknown;
+
+  /// No description provided for @btn_follow_request_accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get btn_follow_request_accept;
+
+  /// No description provided for @btn_follow_request_reject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get btn_follow_request_reject;
 
   /// No description provided for @desc_preference_engineer_clear_cache.
   ///
@@ -925,6 +943,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You have {count} unread notifications'**
   String msg_notification_body(Object count);
+
+  /// No description provided for @msg_follow_request.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow Request from {name}'**
+  String msg_follow_request(Object name);
 
   /// No description provided for @dots.
   ///

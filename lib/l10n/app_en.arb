@@ -58,6 +58,7 @@
   "btn_relationship_following": "Following",
   "btn_relationship_followed_by": "Followed by",
   "btn_relationship_follow_each_other": "Be friend",
+  "btn_relationship_follow_request": "Requested and wait approved",
   "btn_relationship_stranger": "Stranger",
   "btn_relationship_blocked_by": "Blocked By",
   "btn_relationship_mute": "Mute {acct}",
@@ -74,6 +75,8 @@
   "btn_notification_poll": "Poll",
   "btn_notification_update": "Update",
   "btn_notification_unknown": "Unknown",
+  "btn_follow_request_accept": "Accept",
+  "btn_follow_request_reject": "Reject",
   "desc_preference_engineer_clear_cache": "Clear all cached data and reset the app",
   "desc_preference_engineer_test_notifier": "Test send the notification in local device",
   "txt_spoiler": "Spoiler",
@@ -138,5 +141,6 @@
   "msg_copied_to_clipboard": "Copy to clipboard",
   "msg_notification_title": "New Notifications",
   "msg_notification_body": "You have {count} unread notifications",
+  "msg_follow_request": "Follow Request from {name}",
   "dots": "..."
 }

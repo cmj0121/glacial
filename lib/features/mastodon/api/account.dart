@@ -39,10 +39,17 @@
 //
 //   - [ ] GET   /api/v1/blocks
 //
+// ## Follow Requests APIs
+//
+//   - [ ] GET   /api/v1/follow_requests
+//   - [ ] POST  /api/v1/follow_requests/:id/authorize
+//   - [ ] POST  /api/v1/follow_requests/:id/reject
+//
 // ref:
 //   - https://docs.joinmastodon.org/methods/accounts/
 //   - https://docs.joinmastodon.org/methods/mutes/
 //   - https://docs.joinmastodon.org/methods/blocks/
+//   - https://docs.joinmastodon.org/methods/follow_requests/
 import 'dart:async';
 import 'dart:convert';
 
@@ -256,6 +263,7 @@ extension AccountsExtensions on AccessStatusSchema {
     switch (type) {
       case RelationshipType.following:
       case RelationshipType.followEachOther:
+      case RelationshipType.followRequest:
         endpoint = '/api/v1/accounts/${account.id}/unfollow';
         break;
       case RelationshipType.followedBy:
@@ -307,6 +315,54 @@ extension AccountsExtensions on AccessStatusSchema {
     accounts.map((a) => cacheAccount(a)).toList();
     return accounts;
   }
+
+  // List the accounts that request to follow the current account.
+  Future<List<AccountSchema>> fetchFollowRequests() async {
+    if (isSignedIn == false) {
+      throw Exception("You must be signed in to fetch follow requests.");
+    }
+
+    final String endpoint = '/api/v1/follow_requests';
+    final String body = await getAPI(endpoint) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+
+    logger.d("complete load the follow requests: ${accounts.length}");
+    accounts.map((a) => cacheAccount(a)).toList();
+    return accounts;
+  }
+
+  // Authorize a follow request by account ID.
+  Future<RelationshipSchema?> acceptFollowRequest(String accountID) async {
+    if (isSignedIn == false) {
+      throw Exception("You must be signed in to accept follow requests.");
+    }
+
+    final String endpoint = '/api/v1/follow_requests/$accountID/authorize';
+    final String body = await postAPI(endpoint) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+    final RelationshipSchema relationship = RelationshipSchema.fromJson(json);
+
+    logger.i("complete accept follow request for account: $accountID");
+    return relationship;
+  }
+
+  // Reject a follow request by account ID.
+  Future<RelationshipSchema?> rejectFollowRequest(String accountID) async {
+    if (isSignedIn == false) {
+      throw Exception("You must be signed in to reject follow requests.");
+    }
+
+    final String endpoint = '/api/v1/follow_requests/$accountID/reject';
+    final String body = await postAPI(endpoint) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+    final RelationshipSchema relationship = RelationshipSchema.fromJson(json);
+
+    logger.i("complete reject follow request for account: $accountID");
+    return relationship;
+  }
+
+
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

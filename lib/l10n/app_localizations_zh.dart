@@ -183,6 +183,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_relationship_follow_each_other => '互為朋友';
 
   @override
+  String get btn_relationship_follow_request => '追隨請求 (等待同意)';
+
+  @override
   String get btn_relationship_stranger => '陌生人';
 
   @override
@@ -239,6 +242,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get btn_notification_unknown => '未知';
+
+  @override
+  String get btn_follow_request_accept => '同意';
+
+  @override
+  String get btn_follow_request_reject => '拒絕';
 
   @override
   String get desc_preference_engineer_clear_cache => '清除快取並重設';
@@ -434,6 +443,11 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String msg_notification_body(Object count) {
     return '你有 $count 筆未讀訊息';
+  }
+
+  @override
+  String msg_follow_request(Object name) {
+    return '來自 $name 的好友請求';
   }
 
   @override
