@@ -21,6 +21,7 @@ class Relationship extends ConsumerStatefulWidget {
 
 class _RelationshipState extends ConsumerState<Relationship> {
   final double size = tabSize;
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
   RelationshipSchema? schema;
 
@@ -36,6 +37,7 @@ class _RelationshipState extends ConsumerState<Relationship> {
       children: [
         buildMoreActions(),
         const SizedBox(width: 8),
+        buildRequest(),
         buildRelationship(),
         const SizedBox(width: 8),
       ],
@@ -70,12 +72,80 @@ class _RelationshipState extends ConsumerState<Relationship> {
         }).toList();
       },
       onSelected: (RelationshipType r) async {
-        final AccessStatusSchema? status = ref.read(accessStatusProvider);
         await status?.changeRelationship(account: widget.schema, type: r);
         onRefresh();
       }
     );
   }
+
+  // Build the request button to show the request status if the account is not followed yet.
+  Widget buildRequest() {
+    Widget icon = Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: IconButton(
+        icon: Icon(Icons.mark_email_unread_sharp, size: size),
+        tooltip: AppLocalizations.of(context)?.btn_notification_follow_request ?? "Follow Request",
+        style: IconButton.styleFrom(
+          foregroundColor: Theme.of(context).colorScheme.onSurface,
+          backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        onPressed: () async {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              final String text = AppLocalizations.of(context)?.msg_follow_request(widget.schema.displayName) ?? "Follow request";
+              return AlertDialog(
+                title: Text(text, style: Theme.of(context).textTheme.bodyLarge),
+
+                actions: [
+                  TextButton.icon(
+                    label: Text(AppLocalizations.of(context)?.btn_follow_request_accept ?? "Accept"),
+                    icon: Icon(Icons.check, size: tabSize),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                    ),
+                    onPressed: () async {
+                      context.pop();
+                      await status?.acceptFollowRequest(widget.schema.id);
+                      onRefresh();
+                    }
+                  ),
+                  TextButton.icon(
+                    label: Text(AppLocalizations.of(context)?.btn_follow_request_reject ?? "Reject"),
+                    icon: Icon(Icons.close, size: tabSize),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.error,
+                    ),
+                    onPressed: () async {
+                      context.pop();
+                      await status?.rejectFollowRequest(widget.schema.id);
+                      onRefresh();
+                    }
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      ),
+    );
+
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return SlideTransition(
+          position: Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(animation),
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
+      },
+      child: schema?.requestedBy == true ? icon : const SizedBox.shrink(),
+    );
+  }
+
 
   // Build the relationship type icon and switch the relationship type when tapped.
   Widget buildRelationship() {
