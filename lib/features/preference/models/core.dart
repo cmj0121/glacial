@@ -93,7 +93,7 @@ class SystemPreferenceSchema {
   final ReplyTagType replyTag;
 
   const SystemPreferenceSchema({
-    this.server,
+    this.server = "mastodon.social",
     this.theme = ThemeMode.dark,
     this.visibility = VisibilityType.public,
     this.sensitive = true,
