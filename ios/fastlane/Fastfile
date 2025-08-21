@@ -32,7 +32,6 @@ platform :ios do
     sh 'cd .. && flutter pub get'
     cocoapods
 
-    increment_build_number(build_number: latest_testflight_build_number + 1)
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",

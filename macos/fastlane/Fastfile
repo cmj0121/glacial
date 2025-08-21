@@ -38,7 +38,7 @@ platform :mac do
       sh("flutter clean")
       sh("flutter build macos --release")
     end
-    increment_build_number(build_number: latest_testflight_build_number + 1)
+
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",

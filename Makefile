@@ -1,4 +1,4 @@
-SUBDIR :=
+SUBDIR  :=
 
 .PHONY: all clean test e2e run build release upgrade help $(SUBDIR)
 
@@ -26,7 +26,7 @@ build:				# build the binary/library
 release:			# build the release binary/library
 	# dart run flutter_launcher_icons -f pubspec.yaml
 	cd macos && fastlane release
-	cd ios && fastlane release
+	cd ios   && fastlane release
 
 upgrade:			# upgrade all the necessary packages
 	pre-commit autoupdate

@@ -52,9 +52,11 @@ Future<void> prologue() async {
   };
 
   // Initialization settings for both iOS and macOS
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
   const DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings();
 
   const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
     iOS: initializationSettingsDarwin,
     macOS: initializationSettingsDarwin,
   );
