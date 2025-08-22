@@ -33,7 +33,7 @@ extension AccessStatusExtension on Storage {
 
     status = status.copyWith(accessToken: accessToken, account: account, server: server);
 
-    if (ref?.context.mounted == true) {
+    if (ref?.context.mounted ?? false) {
       ref?.read(accessStatusProvider.notifier).state = status;
     }
 
@@ -45,7 +45,7 @@ extension AccessStatusExtension on Storage {
     final String json = jsonEncode(schema.toJson());
     await setString(AccessStatusSchema.key, json);
 
-    if (ref?.context.mounted == true) {
+    if (ref?.context.mounted ?? false) {
       ref?.read(accessStatusProvider.notifier).state = schema;
     }
   }
@@ -103,7 +103,7 @@ extension AccessStatusExtension on Storage {
 
     await removeAccessToken(schema?.domain);
 
-    if (ref?.context.mounted == true) {
+    if (ref?.context.mounted ?? false) {
       ref?.read(accessStatusProvider.notifier).state = status;
     }
   }

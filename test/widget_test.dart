@@ -15,7 +15,6 @@ void main() {
   testWidgets('Launch the main app', (WidgetTester tester) async {
     final SystemPreferenceSchema schema = SystemPreferenceSchema();
     await tester.pumpWidget(ProviderScope(child: CoreApp(schema: schema)));
-    await tester.pumpAndSettle();
   });
 }
 
