@@ -32,7 +32,10 @@ extension AccessStatusExtension on Storage {
     final ServerSchema? server = await ServerSchema.fetch(domain);
 
     status = status.copyWith(accessToken: accessToken, account: account, server: server);
-    ref?.read(accessStatusProvider.notifier).state = status;
+
+    if (ref?.context.mounted == true) {
+      ref?.read(accessStatusProvider.notifier).state = status;
+    }
 
     return status;
   }
@@ -42,7 +45,9 @@ extension AccessStatusExtension on Storage {
     final String json = jsonEncode(schema.toJson());
     await setString(AccessStatusSchema.key, json);
 
-    ref?.read(accessStatusProvider.notifier).state = schema;
+    if (ref?.context.mounted == true) {
+      ref?.read(accessStatusProvider.notifier).state = schema;
+    }
   }
 
   // Save the access token per domain to the storage.
@@ -97,7 +102,10 @@ extension AccessStatusExtension on Storage {
     );
 
     await removeAccessToken(schema?.domain);
-    ref?.read(accessStatusProvider.notifier).state = status;
+
+    if (ref?.context.mounted == true) {
+      ref?.read(accessStatusProvider.notifier).state = status;
+    }
   }
 }
 

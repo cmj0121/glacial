@@ -21,7 +21,7 @@ class AccessStatusSchema {
   final List<ServerInfoSchema> history;
 
   const AccessStatusSchema({
-    this.domain,
+    this.domain = "mastodon.social",
     this.accessToken,
     this.server,
     this.account,
