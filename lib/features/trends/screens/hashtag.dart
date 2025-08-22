@@ -116,6 +116,7 @@ class FollowedHashtagButton extends ConsumerStatefulWidget {
 }
 
 class _FollowedHashtagButtonState extends ConsumerState<FollowedHashtagButton> {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   HashtagSchema? schema;
 
   @override
@@ -141,18 +142,19 @@ class _FollowedHashtagButtonState extends ConsumerState<FollowedHashtagButton> {
       ),
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
-      onPressed: () async {
+      onPressed: isSignedIn ? () async {
         await (isFollowing ? status?.unfollowHashtag(widget.hashtag) : status?.followHashtag(widget.hashtag));
         onReload();
-      },
+      } : null,
     );
   }
 
   void onReload() async {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final HashtagSchema? hashtag = await status?.getHashtag(widget.hashtag);
     setState(() => schema = hashtag);
   }
+
+  bool get isSignedIn => status?.accessToken?.isNotEmpty == true;
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
