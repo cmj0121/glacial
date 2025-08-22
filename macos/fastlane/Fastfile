@@ -23,6 +23,35 @@ def required_env(key)
 end
 
 platform :mac do
+  desc "Bump the build version"
+  lane :bump_version do
+      build_number = latest_testflight_build_number(
+        app_identifier: ENV["APP_IDENTIFIER"],
+        platform: "osx",
+        username: ENV["APPLE_ID"],
+      )
+      UI.message("🚀 Latest TestFlight build number is #{build_number}")
+
+      pubspec_path = "../../pubspec.yaml"
+      content = File.read(pubspec_path)
+      # Match "version: x.y.z+build"
+      version_line = content.match(/^version:\s*\d+\.\d+\.\d+\+(\d+)$/)
+      if version_line
+        current_build = version_line[1].to_i
+        new_build = current_build + 1
+        new_version_line = "#{version_line[0].split('+')[0]}+#{new_build}\n"
+        content.sub!(version_line[0], new_version_line)
+        File.write(pubspec_path, content)
+        UI.message("📦 Bumped build number to #{new_build} in #{pubspec_path}")
+      else
+        UI.error("Could not find version line in #{pubspec_path}")
+      end
+
+      # Now git add and commit the changes
+      sh("git add #{pubspec_path}")
+      sh("git commit -m '[AUTO] bump build number to #{new_build}'")
+  end
+
   desc "Push a new beta build to TestFlight"
   lane :build do
     match(

@@ -164,7 +164,6 @@ class _PollFormState extends ConsumerState<PollForm> {
 
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   late final List<TextEditingController> controllers;
-  late final List<FocusNode> focusNodes;
   late final int maxPollCount = status?.server?.config.polls.maxOptions ?? 4;
 
   @override
@@ -173,13 +172,11 @@ class _PollFormState extends ConsumerState<PollForm> {
     super.initState();
 
     controllers = List.generate(maxPollCount, (index) => TextEditingController());
-    focusNodes = List.generate(maxPollCount, (index) => FocusNode()..addListener(() => onEditCompleted()));
   }
 
   @override
   void dispose() {
     controllers.map((controller) => controller.dispose());
-    focusNodes.map((focusNode) => focusNode.dispose());
     super.dispose();
   }
 
@@ -216,13 +213,18 @@ class _PollFormState extends ConsumerState<PollForm> {
       final TextEditingController controller = controllers[index];
       controller.text = option;
 
-      return TextField(
-        controller: controller,
-        focusNode: focusNodes[index],
-        maxLength: status?.server?.config.polls.maxCharacters ?? 100,
-        decoration: InputDecoration(icon: Icon(icon), border: const OutlineInputBorder()),
-        onSubmitted: (_) => onEditCompleted(),
-        onTapOutside: (_) => onEditCompleted(),
+      return Focus(
+        onFocusChange: (hasFocus) {
+          if (!hasFocus) {
+            onEditCompleted();
+          }
+        },
+        child: TextField(
+          controller: controller,
+          maxLength: status?.server?.config.polls.maxCharacters ?? 100,
+          decoration: InputDecoration(icon: Icon(icon), border: const OutlineInputBorder()),
+          onSubmitted: (_) => onEditCompleted(),
+        ),
       );
     });
   }

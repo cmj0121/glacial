@@ -19,6 +19,7 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   late final TextEditingController controller = TextEditingController();
 
+  bool loaded = false;
   List<ListSchema> lists = [];
 
   @override
@@ -67,19 +68,12 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
   Widget buildListView() {
     if (lists.isEmpty) {
       final String message = AppLocalizations.of(context)?.txt_no_result ?? "No results found";
-      return NoResult(message: message, icon: Icons.coffee);
+      return loaded ? NoResult(message: message, icon: Icons.coffee) : const ClockProgressIndicator();
     }
 
     return ListView.builder(
       itemCount: lists.length,
-      itemBuilder: (context, index) {
-        return Dismissible(
-          key: UniqueKey(),
-          background: Container(color: Colors.red),
-          onDismissed: (direction) => onRemove(index),
-          child: LiteTimeline.label(lists[index]),
-        );
-      },
+      itemBuilder: (context, index) => LiteTimeline.label(schema: lists[index], onRemove: () => onRemove(index)),
     );
   }
 
@@ -94,7 +88,10 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
 
   void onLoad() async {
     final List<ListSchema> lists = await status?.getLists() ?? [];
-    setState(() => this.lists = lists);
+    setState(() {
+      this.lists = lists;
+      loaded = true;
+    });
   }
 
   void onRemove(int index) async {
@@ -117,22 +114,28 @@ class LiteTimeline extends ConsumerStatefulWidget {
 
   // Render the label of the list timeline, which is a ListTile with
   // the title of the list and a tap handler to navigate to the list timeline.
-  static Widget label(ListSchema schema) {
+  static Widget label({required ListSchema schema, void Function()? onRemove}) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final TextStyle? style = Theme.of(context).textTheme.headlineMedium;
+        final TextStyle? style = Theme.of(context).textTheme.labelLarge;
 
         return InkWellDone(
           onTap: () => context.push(RoutePath.listItem.path, extra: schema),
           child: ListTile(
-            title: Text(schema.title, style: style, overflow: TextOverflow.ellipsis),
-            trailing: Row(
+            leading: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(schema.replyPolicy.icon, size: tabSize),
                 const SizedBox(width: 8),
                 Icon(schema.exclusive ? Icons.remove_circle_outline : Icons.check_circle, size: tabSize),
               ],
+            ),
+            title: Text(schema.title, style: style, overflow: TextOverflow.ellipsis),
+            trailing: IconButton(
+              icon: Icon(Icons.delete_forever_rounded, size: tabSize, color: Theme.of(context).colorScheme.error),
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              onPressed: onRemove,
             ),
           ),
         );
@@ -157,7 +160,14 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
       children: [
         buildHeader(),
         const Divider(),
-        Flexible(child: showMembers ? buildMembers() : buildTimeline()),
+        Flexible(
+          child: Dismissible(
+            key: UniqueKey(),
+            direction: DismissDirection.startToEnd,
+            child: showMembers ? buildMembers() : buildTimeline(),
+            onDismissed: (_) => context.pop(),
+          ),
+        ),
       ],
     );
   }
@@ -165,21 +175,20 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
   // Build the header of the list timeline, which includes the input field to add
   // a new account to the list and change the property of the current list.
   Widget buildHeader() {
+    final Widget searchBar = TextField(
+      decoration: InputDecoration(
+        enabled: showMembers,
+        border: InputBorder.none,
+        hintText: AppLocalizations.of(context)?.desc_list_search_following ?? "Search following accounts to add",
+        hintStyle: TextStyle(color: showMembers ? Theme.of(context).colorScheme.outline : Theme.of(context).colorScheme.surface),
+      ),
+      onSubmitted: (value) => onSearchAccount(value.trim()),
+    );
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Flexible(
-          flex: 10,
-          child: TextField(
-            enabled: showMembers,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              hintText: AppLocalizations.of(context)?.desc_list_search_following ?? "Search following accounts to add",
-              hintStyle: TextStyle(color: Theme.of(context).colorScheme.outline),
-            ),
-            onSubmitted: (value) => onSearchAccount(value.trim()),
-          ),
-        ),
+        Flexible(flex: 10, child: searchBar),
         const Spacer(),
         IconButton(
           icon: Icon(
@@ -253,13 +262,17 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
           itemCount: accounts.length,
           itemBuilder: (context, index) {
             final AccountSchema account = accounts[index];
-            return Dismissible(
-              key: UniqueKey(),
-              background: Container(color: Colors.red),
-              onDismissed: (direction) async {
-                await status?.removeAccountsFromList(schema.id, [account.id]);
-              },
-              child: AccountLite(schema: account),
+            return ListTile(
+              title: AccountLite(schema: account),
+              trailing: IconButton(
+                icon: Icon(Icons.delete_forever_rounded, size: tabSize, color: Theme.of(context).colorScheme.error),
+                hoverColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                onPressed: () async {
+                  await status?.removeAccountsFromList(schema.id, [account.id]);
+                  onReload();
+                },
+              ),
             );
           },
         );
