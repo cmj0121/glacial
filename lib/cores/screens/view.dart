@@ -338,8 +338,8 @@ class Indent extends StatelessWidget {
     super.key,
     required this.indent,
     required this.child,
-    this.width = 2.0,
-    this.padding = const EdgeInsets.only(left: 4.0),
+    this.width = 4.0,
+    this.padding = const EdgeInsets.only(left: 18.0),
   });
 
   @override
