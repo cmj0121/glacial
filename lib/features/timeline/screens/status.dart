@@ -187,8 +187,10 @@ class StatusLite extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isSchedulePost = schema.scheduledAt != null;
+
     return InkWellDone(
-      onTap: () {
+      onTap: isSchedulePost ? null : () {
         final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
 
         switch (path) {

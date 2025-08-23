@@ -176,6 +176,11 @@ class _InteractionState extends State<Interaction> {
 
   // The action is available if the user is signed in or the action is supported anonymously
   bool get isAvailable {
+    if (isScheduled) {
+      // If the post is scheduled, only the edit and delete actions are available.
+      return widget.action == StatusInteraction.edit || widget.action == StatusInteraction.delete;
+    }
+
     switch (widget.action) {
       case StatusInteraction.reply:
       case StatusInteraction.reblog:
@@ -303,6 +308,7 @@ class _InteractionState extends State<Interaction> {
 
   bool get isSignedIn => widget.status.accessToken?.isNotEmpty == true;
   bool get isSelfPost => widget.schema.account.id == widget.status.account?.id;
+  bool get isScheduled => widget.schema.scheduledAt != null;
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
