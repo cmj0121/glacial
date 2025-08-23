@@ -287,35 +287,66 @@ class UserStatistics extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double maxWidth = 420;
     final int statuses = schema.statusesCount;
     final int followers = schema.followersCount;
     final int following = schema.followingCount;
+    final List<Widget> children = [
+      TextButton.icon(
+        label: Text('$statuses'),
+        icon: const Icon(Icons.post_add),
+        onPressed: onStatusesTap,
+      ),
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        TextButton.icon(
-          label: Text('$statuses'),
-          icon: const Icon(Icons.post_add),
-          onPressed: onStatusesTap,
-        ),
+      TextButton.icon(
+        label: Text('$followers'),
+        icon: const Icon(Icons.visibility),
+        onPressed: onFollowersTap,
+      ),
+      TextButton.icon(
+        label: Text('$following'),
+        icon: const Icon(Icons.star),
+        onPressed: onFollowingTap,
+      ),
 
-        TextButton.icon(
-          label: Text('$followers'),
-          icon: const Icon(Icons.visibility),
-          onPressed: onFollowersTap,
-        ),
-        TextButton.icon(
-          label: Text('$following'),
-          icon: const Icon(Icons.star),
-          onPressed: onFollowingTap,
-        ),
+      buildFollowerLock(context),
+      buildDiscoverable(context),
+      buildIndexable(context),
+    ];
 
-        buildFollowerLock(context),
-        buildDiscoverable(context),
-        buildIndexable(context),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > maxWidth) {
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: children,
+          );
+        } else {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(2, (index) {
+              final int start = (children.length / 2 * index).floor();
+              final int end = (children.length / 2 * (index + 1)).floor();
+              final List<Widget> items = children.sublist(start, end);
+
+              if (items.isEmpty) {
+                return const SizedBox.shrink();
+              }
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: items,
+                ),
+              );
+            }),
+          );
+        }
+      },
     );
   }
 
