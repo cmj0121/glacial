@@ -125,9 +125,17 @@ class LiteTimeline extends ConsumerStatefulWidget {
             leading: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(schema.replyPolicy.icon, size: tabSize),
+                Tooltip(
+                  message: schema.replyPolicy.tooltip(context),
+                  child: Icon(schema.replyPolicy.icon, size: tabSize),
+                ),
                 const SizedBox(width: 8),
-                Icon(schema.exclusive ? Icons.remove_circle_outline : Icons.check_circle, size: tabSize),
+                Tooltip(
+                  message: schema.exclusive ?
+                    AppLocalizations.of(context)?.txt_list_exclusive ?? "Exclusive List" :
+                    AppLocalizations.of(context)?.txt_list_inclusive ?? "Non-Exclusive List",
+                  child: Icon(schema.exclusive ? Icons.remove_circle_outline : Icons.check_circle, size: tabSize),
+                ),
               ],
             ),
             title: Text(schema.title, style: style, overflow: TextOverflow.ellipsis),
