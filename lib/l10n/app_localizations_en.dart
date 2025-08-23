@@ -416,6 +416,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'The interval to refresh the app\'s data';
 
   @override
+  String get desc_preference_locale => 'The system locale would be used to';
+
+  @override
   String get desc_profile_bot =>
       'The account may perform automated actions and not monitored by humans';
 
