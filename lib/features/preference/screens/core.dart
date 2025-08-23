@@ -300,7 +300,7 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
                 itemCount: locales.length,
                 itemBuilder: (BuildContext context, int index) {
                   final Locale item = locales[index];
-                  final String name = LocaleNames.of(context)?.nameOf(item.languageCode) ?? item.languageCode;
+                  final String name = '[${item.languageCode}] ${LocaleNames.of(context)?.nameOf(item.languageCode) ?? ""}';
                   final bool selected = item.languageCode == locale.languageCode;
                   final Widget icon = selected ?
                       Icon(Icons.check, size: tabSize, color: Theme.of(context).colorScheme.primary) :
