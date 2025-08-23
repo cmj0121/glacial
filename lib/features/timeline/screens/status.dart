@@ -214,16 +214,20 @@ class StatusLite extends StatelessWidget {
 
         Indent(
           indent: indent,
-          child: SpoilerView(
-            spoiler: spoiler,
-            child: SensitiveView(
-              isSensitive: sensitive,
-              child: buildCoreContent(),
-            ),
+          child: Column(
+            children:[
+              SpoilerView(
+                spoiler: spoiler,
+                child: SensitiveView(
+                  isSensitive: sensitive,
+                  child: buildCoreContent(),
+                ),
+              ),
+
+              Application(schema: schema.application),
+            ],
           ),
         ),
-
-        Application(schema: schema.application),
       ],
     );
   }
@@ -508,24 +512,12 @@ class _StatusContextState extends ConsumerState<StatusContext> {
 
   // Build the list of the context statuses, including the ancestors and descendants
   Widget buildContent(StatusContextSchema ctx) {
-    Map<String, int> indents = {widget.schema.id: 1};
-
     final List<Widget> children = [
-      ...ctx.ancestors.map((StatusSchema status) {
-        final int indent = indents[status.inReplyToID] ?? 1;
-
-        indents[status.id] = indent + 1;
-        return Status(schema: status, indent: indent);
-      }),
+      ...ctx.ancestors.map((StatusSchema status) =>  Status(schema: status, indent: 1)),
 
       Status(schema: widget.schema),
 
-      ...ctx.descendants.map((StatusSchema status) {
-        final int indent = indents[status.inReplyToID] ?? 1;
-
-        indents[status.id] = indent + 1;
-        return Status(schema: status, indent: indent);
-      }),
+      ...ctx.descendants.map((StatusSchema status) => Status(schema: status, indent: 1)),
     ];
 
     return ScrollablePositionedList.builder(
