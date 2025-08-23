@@ -872,6 +872,12 @@ abstract class AppLocalizations {
   /// **'The interval to refresh the app\'s data'**
   String get desc_preference_refresh_interval;
 
+  /// No description provided for @desc_preference_locale.
+  ///
+  /// In en, this message translates to:
+  /// **'The system locale would be used to'**
+  String get desc_preference_locale;
+
   /// No description provided for @desc_profile_bot.
   ///
   /// In en, this message translates to:

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
@@ -41,11 +42,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
       darkTheme: ThemeData(useMaterial3: true, brightness: Brightness.dark),
 
       // Localizations support for the app.
+      locale: schema?.locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
+        LocaleNamesLocalizationsDelegate(),
       ],
       supportedLocales: AppLocalizations.supportedLocales,
 

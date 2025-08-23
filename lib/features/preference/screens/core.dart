@@ -4,6 +4,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:duration/duration.dart';
+import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,6 +20,8 @@ class SystemPreference extends ConsumerStatefulWidget {
 }
 
 class _SystemPreferenceState extends ConsumerState<SystemPreference> {
+  late final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor);
+
   int selectedIndex = 0;
 
   @override
@@ -96,7 +99,6 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
   // Build the system-wide settings that control the app's behavior and features.
   Widget buildSystemSettings() {
     final SystemPreferenceSchema schema = ref.watch(preferenceProvider) ?? SystemPreferenceSchema();
-    final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor);
 
     return ListView(
       children: <Widget>[
@@ -181,6 +183,8 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             );
           },
         ),
+        // Build the locale settings and selector.
+        buildLocaleSelector(schema: schema),
       ],
     );
   }
@@ -269,6 +273,54 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           onTap: () => launchUrl(Uri.parse("$repo/${info.appName}?tab=License-1-ov-file"), mode: LaunchMode.externalApplication),
         ),
       ],
+    );
+  }
+
+  // Build the locale selector dialog.
+  Widget buildLocaleSelector({required SystemPreferenceSchema schema}) {
+    final Locale locale = schema.locale ?? WidgetsBinding.instance.platformDispatcher.locale;
+    final String text = LocaleNames.of(context)!.nameOf(locale.languageCode) ?? locale.languageCode;
+
+    return ListTile(
+      leading: Icon(Icons.translate, size: iconSize),
+      title: Text(text),
+      subtitle: Text(
+        AppLocalizations.of(context)?.desc_preference_locale ?? "Select the app's language.",
+        style: labelStyle,
+      ),
+      onTap: () async {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            final List<Locale> locales = AppLocalizations.supportedLocales;
+
+            return Dialog(
+               child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: locales.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final Locale item = locales[index];
+                  final String name = LocaleNames.of(context)?.nameOf(item.languageCode) ?? item.languageCode;
+                  final bool selected = item.languageCode == locale.languageCode;
+                  final Widget icon = selected ?
+                      Icon(Icons.check, size: tabSize, color: Theme.of(context).colorScheme.primary) :
+                      const SizedBox.shrink();
+
+                  return ListTile(
+                    leading: icon,
+                    title: Text(name),
+                    onTap: () {
+                      context.pop();
+                      Storage().savePreference(schema.copyWith(locale: item), ref: ref);
+                      ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
+                    },
+                  );
+                },
+               ),
+            );
+          },
+        );
+      },
     );
   }
 

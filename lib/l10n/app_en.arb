@@ -129,6 +129,7 @@
   "desc_visibility_private": "The follower and the mentioned user",
   "desc_visibility_direct": "Only the mentioned user",
   "desc_preference_refresh_interval": "The interval to refresh the app's data",
+  "desc_preference_locale": "The system locale would be used to",
   "desc_profile_bot": "The account may perform automated actions and not monitored by humans",
   "desc_profile_locked": "Manually approves follow requests",
   "desc_profile_discoverable": "Account can be discoverable in the profile directory",

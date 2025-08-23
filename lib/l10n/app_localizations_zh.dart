@@ -406,6 +406,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get desc_preference_refresh_interval => '更新資料的頻率';
 
   @override
+  String get desc_preference_locale => '在系統中使用的語系';
+
+  @override
   String get desc_profile_bot => '該帳號可能會自動化操作且未受人為監控';
 
   @override

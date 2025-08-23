@@ -91,6 +91,7 @@ class SystemPreferenceSchema {
   final bool sensitive;
   final Duration refreshInterval;
   final ReplyTagType replyTag;
+  final Locale? locale;
 
   const SystemPreferenceSchema({
     this.server,
@@ -99,6 +100,7 @@ class SystemPreferenceSchema {
     this.sensitive = true,
     this.refreshInterval = const Duration(seconds: 30),
     this.replyTag = ReplyTagType.all,
+    this.locale,
   });
 
   // Convert the JSON string to a SystemPreferenceSchema object.
@@ -124,6 +126,7 @@ class SystemPreferenceSchema {
         (r) => r.name == json["reply_tag"],
         orElse: () => ReplyTagType.all,
       ),
+      locale: json["locale"] == null ? null : Locale(json["locale"] as String),
     );
   }
 
@@ -136,6 +139,7 @@ class SystemPreferenceSchema {
       "sensitive": sensitive,
       "refresh_interval": refreshInterval.inSeconds,
       "reply_tag": replyTag.name,
+      "locale": locale?.toLanguageTag(),
     };
   }
 
@@ -147,6 +151,7 @@ class SystemPreferenceSchema {
     bool? sensitive,
     Duration? refreshInterval,
     ReplyTagType? replyTag,
+    Locale? locale,
   }) {
     return SystemPreferenceSchema(
       server: server ?? this.server,
@@ -155,6 +160,7 @@ class SystemPreferenceSchema {
       sensitive: sensitive ?? this.sensitive,
       refreshInterval: refreshInterval ?? this.refreshInterval,
       replyTag: replyTag ?? this.replyTag,
+      locale: locale ?? this.locale,
     );
   }
 }
