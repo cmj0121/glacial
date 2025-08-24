@@ -22,6 +22,7 @@ class StatusSchema {
   final String? inReplyToAccountID;         // The ID of the account this status is replying to.
   final StatusSchema? reblog;               // The status being reblogged.
   final PollSchema? poll;                   // The poll attached to the status.
+  final PreviewCardSchema? card;            // Preview card for links included within status content.
   final int reblogsCount;                   // How many boosts this status has received.
   final int favouritesCount;                // How many favourites this status has received.
   final int repliesCount;                   // How many replies this status has received.
@@ -53,6 +54,7 @@ class StatusSchema {
     this.inReplyToAccountID,
     this.reblog,
     this.poll,
+    this.card,
     required this.reblogsCount,
     required this.favouritesCount,
     required this.repliesCount,
@@ -98,6 +100,7 @@ class StatusSchema {
       inReplyToAccountID: json['in_reply_to_account_id'] as String?,
       reblog: json['reblog'] == null ? null : StatusSchema.fromJson(json['reblog'] as Map<String, dynamic>),
       poll: json['poll'] == null ? null : PollSchema.fromJson(json['poll'] as Map<String, dynamic>),
+      card: json['card'] == null ? null : PreviewCardSchema.fromJson(json['card'] as Map<String, dynamic>),
       reblogsCount: json['reblogs_count'] as int,
       favouritesCount: json['favourites_count'] as int,
       repliesCount: json['replies_count'] as int,
@@ -277,6 +280,50 @@ class MentionSchema {
       username: json['username'] as String,
       url: json['url'] as String,
       acct: json['acct'] as String,
+    );
+  }
+}
+
+// The type of the preview card.
+enum PreviewCardType {
+  link,   // Link OEmbed.
+  photo,  // Photo OEmbed.
+  video,  // Video OEmbed.
+  rich;   // iframe OEmbed.
+}
+
+// Represents a rich preview card that is generated using OpenGraph tags from a URL.
+class PreviewCardSchema {
+  final String url;           // Location of linked resource.
+  final String title;         // Title of linked resource.
+  final String description;   // Description of preview.
+  final PreviewCardType type; // The type of the preview card.
+  final String html;          // HTML to be used for generating the preview card.
+  final int width;            // Width of preview, in pixels.
+  final int height;           // Height of preview, in pixels.
+  final String? image;        // Preview thumbnail.
+
+  const PreviewCardSchema({
+    required this.url,
+    required this.title,
+    required this.description,
+    required this.type,
+    required this.html,
+    required this.width,
+    required this.height,
+    this.image,
+  });
+
+  factory PreviewCardSchema.fromJson(Map<String, dynamic> json) {
+    return PreviewCardSchema(
+      url: json['url'] as String,
+      title: json['title'] as String,
+      description: json['description'] as String,
+      type: PreviewCardType.values.where((e) => e.name == json["type"]).first,
+      html: json['html'] as String,
+      width: json['width'] as int,
+      height: json['height'] as int,
+      image: json['image'] as String?,
     );
   }
 }

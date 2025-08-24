@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -242,6 +243,7 @@ class StatusLite extends StatelessWidget {
         Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
         buildTags(),
+        schema.card == null ? const SizedBox.shrink() : PreviewCard(schema: schema.card!),
       ],
     );
   }
@@ -762,6 +764,68 @@ class StatusEdit extends StatelessWidget {
         Attachments(schemas: schema.attachments),
 
       ],
+    );
+  }
+}
+
+class PreviewCard extends StatelessWidget {
+  final PreviewCardSchema schema;
+
+  const PreviewCard({
+    super.key,
+    required this.schema,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (schema.image?.isEmpty ?? true) {
+      return const SizedBox.shrink();
+    }
+
+    return InkWellDone(
+      onTap: () => context.push(RoutePath.webview.path, extra: Uri.parse(schema.url)),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: SizedBox(
+          width: schema.width.toDouble(),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: buildContent(context),
+          ),
+        ),
+      )
+    );
+  }
+
+  Widget buildContent(BuildContext context) {
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          buildImage(),
+          const SizedBox(height: 12),
+
+          Text(schema.title, style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 4),
+          Text(schema.description, style: Theme.of(context).textTheme.bodyMedium),
+        ],
+      ),
+    );
+  }
+
+  Widget buildImage() {
+    if (schema.image?.isEmpty ?? true) {
+      return const SizedBox.shrink();
+    }
+
+    return SizedBox(
+      width: schema.width.toDouble(),
+      height: schema.height.toDouble(),
+      child: CachedNetworkImage(
+        imageUrl: schema.image!,
+        placeholder: (context, url) => const ClockProgressIndicator(),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+      ),
     );
   }
 }

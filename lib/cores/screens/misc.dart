@@ -89,6 +89,9 @@ class HtmlDone extends StatelessWidget {
             ),
           ),
         ),
+        'p': Style(
+          whiteSpace: WhiteSpace.pre,
+        ),
       },
       onLinkTap: onLinkTap,
     );
