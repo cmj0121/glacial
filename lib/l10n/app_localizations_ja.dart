@@ -93,6 +93,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_timeline_list => 'リスト';
 
   @override
+  String get btn_timeline_vote => '投票';
+
+  @override
   String get btn_preference_theme => 'テーマ';
 
   @override

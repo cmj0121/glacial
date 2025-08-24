@@ -93,6 +93,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_timeline_list => 'Listen';
 
   @override
+  String get btn_timeline_vote => 'Abstimmen';
+
+  @override
   String get btn_preference_theme => 'Thema';
 
   @override

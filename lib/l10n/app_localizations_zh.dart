@@ -93,6 +93,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_timeline_list => '列表';
 
   @override
+  String get btn_timeline_vote => '投票';
+
+  @override
   String get btn_preference_theme => '主題';
 
   @override

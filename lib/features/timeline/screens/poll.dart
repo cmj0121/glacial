@@ -122,7 +122,10 @@ class _PollState extends ConsumerState<Poll> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        if (showVoteBtn) TextButton(onPressed: canVote ? onVote : null, child: const Text('Vote')),
+        if (showVoteBtn) TextButton(
+          onPressed: canVote ? onVote : null,
+          child: Text(AppLocalizations.of(context)?.btn_timeline_vote ?? "Vote"),
+        ),
         const Spacer(),
 
         (isClosed) ?
