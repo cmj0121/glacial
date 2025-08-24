@@ -799,6 +799,8 @@ class PreviewCard extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final double width = constraints.maxWidth;
+          final TextStyle? titleStyle = Theme.of(context).textTheme.titleSmall;
+          final TextStyle? descStyle = Theme.of(context).textTheme.labelMedium;
 
           if (schema.width < width /3) {
             return Row(
@@ -811,9 +813,9 @@ class PreviewCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(schema.title, style: Theme.of(context).textTheme.titleMedium),
+                      Text(schema.title, style: titleStyle, maxLines: 2, overflow: TextOverflow.ellipsis),
                       const SizedBox(height: 6),
-                      Text(schema.description, style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.justify),
+                      Text(schema.description, style: descStyle, textAlign: TextAlign.justify),
                     ],
                   ),
                 ),
@@ -829,9 +831,9 @@ class PreviewCard extends StatelessWidget {
                 buildImage(),
                 const SizedBox(height: 12),
 
-                Text(schema.title, style: Theme.of(context).textTheme.titleLarge),
+                Text(schema.title, style: titleStyle, maxLines: 2, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 4),
-                Text(schema.description, style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.justify),
+                Text(schema.description, style: descStyle, textAlign: TextAlign.justify),
               ],
             ),
           );
