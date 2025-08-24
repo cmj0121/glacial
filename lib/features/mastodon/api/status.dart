@@ -32,9 +32,16 @@
 //    - [ ] GET    /api/v1/scheduled_statuses/:id
 //    - [ ] DELETE /api/v1/scheduled_statuses/:id
 //    - [ ] PUT    /api/v1/scheduled_statuses/:id
+//
+// ## Votes APIs
+//
+//    - [ ] GET    /api/v1/polls/:id
+//    - [ ] POST   /api/v1/polls/:id/votes
+//
 // ref:
 //   - https://docs.joinmastodon.org/methods/statuses/
 //   - https://docs.joinmastodon.org/methods/scheduled_statuses/
+//   - https://docs.joinmastodon.org/methods/polls/
 import 'dart:async';
 import 'dart:convert';
 
@@ -214,6 +221,28 @@ extension StatusExtensions on AccessStatusSchema {
 
     logger.d("complete load the status history, count: ${history.length}");
     return history;
+  }
+
+  // View a poll attached to a status.
+  Future<PollSchema?> getPoll({required String pollID}) async {
+    if (pollID.isEmpty) {
+      return null;
+    }
+
+    final String endpoint = '/api/v1/polls/$pollID';
+    final String? body = await getAPI(endpoint);
+    return body == null ? null : PollSchema.fromString(body);
+  }
+
+  // Vote on a poll attached to a status.
+  Future<PollSchema> votePoll({required String pollID, required List<int> choices}) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/polls/$pollID/votes';
+    final Map<String, dynamic> body = {'choices': choices};
+
+    final String response = await postAPI(endpoint, body: body) ?? '{}';
+    return PollSchema.fromString(response);
   }
 }
 
