@@ -1,4 +1,5 @@
 // The poll data schema and its options for the Glacial app.
+import 'dart:convert';
 
 // The poll data schema.
 class PollSchema {
@@ -23,6 +24,11 @@ class PollSchema {
     this.voted,
     this.ownVotes,
   });
+
+  factory PollSchema.fromString(String str) {
+    final Map<String, dynamic> json = jsonDecode(str);
+    return PollSchema.fromJson(json);
+  }
 
   factory PollSchema.fromJson(Map<String, dynamic> json) {
     return PollSchema(

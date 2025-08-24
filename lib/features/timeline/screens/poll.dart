@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 class Poll extends ConsumerStatefulWidget {
@@ -23,7 +24,10 @@ class Poll extends ConsumerStatefulWidget {
 }
 
 class _PollState extends ConsumerState<Poll> {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
   int? selectedOption;
+
   late List<bool> selectedOptions = widget.schema?.options.map((_) => false).toList() ?? [];
 
   @override
@@ -118,7 +122,10 @@ class _PollState extends ConsumerState<Poll> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        if (showVoteBtn) TextButton(onPressed: canVote ? onVote : null, child: const Text('Vote')),
+        if (showVoteBtn) TextButton(
+          onPressed: canVote ? onVote : null,
+          child: Text(AppLocalizations.of(context)?.btn_timeline_vote ?? "Vote"),
+        ),
         const Spacer(),
 
         (isClosed) ?
@@ -130,10 +137,15 @@ class _PollState extends ConsumerState<Poll> {
 
   // Submits the selected options to the server.
   void onVote() async {
+    logger.i("Voting poll ${widget.schema?.id} with choices: $choices");
+
+    final PollSchema? poll = await status?.votePoll(pollID: widget.schema!.id, choices: choices);
+    if (poll != null) widget.onChanged?.call(poll);
   }
 
   bool get isClosed => widget.schema?.expiresAt?.isAfter(DateTime.now()) == false;
-  bool get canVote => widget.schema?.voted == false && !isClosed;
+  List<int> get choices => selectedOptions.asMap().entries.where((entry) => entry.value).map((entry) => entry.key).toList();
+  bool get canVote => widget.schema?.voted == false && !isClosed && choices.isNotEmpty;
 }
 
 // The poll form for the status, which allows the user to create a poll with options.

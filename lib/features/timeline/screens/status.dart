@@ -786,12 +786,9 @@ class PreviewCard extends StatelessWidget {
       onTap: () => context.push(RoutePath.webview.path, extra: Uri.parse(schema.url)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: SizedBox(
-          width: schema.width.toDouble(),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: buildContent(context),
-          ),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: buildContent(context),
         ),
       )
     );
@@ -799,16 +796,48 @@ class PreviewCard extends StatelessWidget {
 
   Widget buildContent(BuildContext context) {
     return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildImage(),
-          const SizedBox(height: 12),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final double width = constraints.maxWidth;
+          final TextStyle? titleStyle = Theme.of(context).textTheme.titleSmall;
+          final TextStyle? descStyle = Theme.of(context).textTheme.labelMedium;
 
-          Text(schema.title, style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 4),
-          Text(schema.description, style: Theme.of(context).textTheme.bodyMedium),
-        ],
+          if (schema.width < width /3) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildImage(),
+                const SizedBox(width: 12),
+
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(schema.title, style: titleStyle, maxLines: 2, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 6),
+                      Text(schema.description, style: descStyle, textAlign: TextAlign.justify),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }
+
+          return SizedBox(
+            width: schema.width.toDouble(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildImage(),
+                const SizedBox(height: 12),
+
+                Text(schema.title, style: titleStyle, maxLines: 2, overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 4),
+                Text(schema.description, style: descStyle, textAlign: TextAlign.justify),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

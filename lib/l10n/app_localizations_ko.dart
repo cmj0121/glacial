@@ -93,6 +93,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_timeline_list => '리스트';
 
   @override
+  String get btn_timeline_vote => '투표';
+
+  @override
   String get btn_preference_theme => '테마';
 
   @override

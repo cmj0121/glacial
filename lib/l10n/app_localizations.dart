@@ -278,6 +278,12 @@ abstract class AppLocalizations {
   /// **'Lists'**
   String get btn_timeline_list;
 
+  /// No description provided for @btn_timeline_vote.
+  ///
+  /// In en, this message translates to:
+  /// **'Vote'**
+  String get btn_timeline_vote;
+
   /// No description provided for @btn_preference_theme.
   ///
   /// In en, this message translates to:
