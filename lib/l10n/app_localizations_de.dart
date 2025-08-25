@@ -251,6 +251,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_notification_update => 'Aktualisierung';
 
   @override
+  String get btn_notification_admin_sign_up => 'Neue Anmeldung';
+
+  @override
+  String get btn_notification_admin_report => 'Neuer Bericht';
+
+  @override
   String get btn_notification_unknown => 'Unbekannt';
 
   @override

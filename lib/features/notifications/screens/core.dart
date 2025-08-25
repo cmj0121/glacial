@@ -320,6 +320,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
         );
       case NotificationType.follow:
       case NotificationType.followRequest:
+      case NotificationType.adminSignUp:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -328,18 +329,23 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
             child ?? const SizedBox.shrink(),
           ],
         );
+      case NotificationType.adminReport:
       case NotificationType.unknown:
+        logger.d("Unknown notification type: ${widget.schema.type}");
         return buildHeader();
     }
   }
 
   // Build the optional header for the notification, which shows the accounts involved in the notification.
   Widget buildHeader() {
-    final Widget icon = TextButton.icon(
-      icon: Icon(widget.schema.type.icon, size: widget.iconSize),
-      label: Text(widget.schema.type.tooltip(context)),
-      onPressed: null,
-    );
+    final TextStyle? style = Theme.of(context).textTheme.labelMedium;
+    final Color color = widget.schema.type.isAdminOnly ? Theme.of(context).colorScheme.error : Theme.of(context).disabledColor;
+
+    final List<Widget> icons = [
+      Icon(widget.schema.type.icon, size: widget.iconSize - 2, color: color),
+      const SizedBox(width: 4),
+      Text(widget.schema.type.tooltip(context), style: style?.copyWith(color: color)),
+    ];
 
     return Row(
       children: [
@@ -347,7 +353,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: AccountAvatar(schema: a, size: widget.iconSize),
         )),
-        icon,
+        ...icons,
       ],
     );
   }
@@ -369,6 +375,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
         break;
       case NotificationType.follow:
       case NotificationType.followRequest:
+      case NotificationType.adminSignUp:
         final List<AccountSchema> accounts = await status?.getAccounts(widget.schema.accounts) ?? [];
         content = Column(
           mainAxisSize: MainAxisSize.min,
@@ -376,6 +383,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
           children: accounts.map((a) => Account(schema: a)).toList(),
         );
         break;
+      case NotificationType.adminReport:
       case NotificationType.unknown:
         content = NoResult();
         break;
@@ -399,6 +407,8 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
       case NotificationType.mention:
       case NotificationType.follow:
       case NotificationType.followRequest:
+      case NotificationType.adminSignUp:
+      case NotificationType.adminReport:
       case NotificationType.unknown:
     }
   }

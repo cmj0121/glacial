@@ -77,6 +77,8 @@
   "btn_notification_favourite": "お気に入り",
   "btn_notification_poll": "投票",
   "btn_notification_update": "更新",
+  "btn_notification_admin_sign_up": "新規登録",
+  "btn_notification_admin_report": "新しいレポート",
   "btn_notification_unknown": "不明",
   "btn_follow_request_accept": "承認",
   "btn_follow_request_reject": "拒否",

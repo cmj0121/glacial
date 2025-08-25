@@ -572,6 +572,18 @@ abstract class AppLocalizations {
   /// **'Update'**
   String get btn_notification_update;
 
+  /// No description provided for @btn_notification_admin_sign_up.
+  ///
+  /// In en, this message translates to:
+  /// **'New SignUp'**
+  String get btn_notification_admin_sign_up;
+
+  /// No description provided for @btn_notification_admin_report.
+  ///
+  /// In en, this message translates to:
+  /// **'New Report'**
+  String get btn_notification_admin_report;
+
   /// No description provided for @btn_notification_unknown.
   ///
   /// In en, this message translates to:

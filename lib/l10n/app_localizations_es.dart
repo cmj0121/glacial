@@ -251,6 +251,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btn_notification_update => 'Actualizar';
 
   @override
+  String get btn_notification_admin_sign_up => 'Nuevo registro';
+
+  @override
+  String get btn_notification_admin_report => 'Nuevo informe';
+
+  @override
   String get btn_notification_unknown => 'Desconocido';
 
   @override

@@ -250,6 +250,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_notification_update => '업데이트';
 
   @override
+  String get btn_notification_admin_sign_up => '새 가입';
+
+  @override
+  String get btn_notification_admin_report => '새 보고서';
+
+  @override
   String get btn_notification_unknown => '알 수 없음';
 
   @override

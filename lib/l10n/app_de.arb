@@ -77,6 +77,8 @@
   "btn_notification_favourite": "Favorit",
   "btn_notification_poll": "Umfrage",
   "btn_notification_update": "Aktualisierung",
+  "btn_notification_admin_sign_up": "Neue Anmeldung",
+  "btn_notification_admin_report": "Neuer Bericht",
   "btn_notification_unknown": "Unbekannt",
   "btn_follow_request_accept": "Akzeptieren",
   "btn_follow_request_reject": "Ablehnen",

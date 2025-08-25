@@ -250,6 +250,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_notification_update => '編輯';
 
   @override
+  String get btn_notification_admin_sign_up => '新使用者註冊';
+
+  @override
+  String get btn_notification_admin_report => '新的回報';
+
+  @override
   String get btn_notification_unknown => '未知';
 
   @override

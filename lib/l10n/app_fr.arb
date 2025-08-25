@@ -77,6 +77,8 @@
   "btn_notification_favourite": "Favori",
   "btn_notification_poll": "Sondage",
   "btn_notification_update": "Mise à jour",
+  "btn_notification_admin_sign_up": "Nouvelle inscription",
+  "btn_notification_admin_report": "Nouveau rapport",
   "btn_notification_unknown": "Inconnu",
   "btn_follow_request_accept": "Accepter",
   "btn_follow_request_reject": "Refuser",

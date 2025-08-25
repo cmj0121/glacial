@@ -250,6 +250,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_notification_update => '更新';
 
   @override
+  String get btn_notification_admin_sign_up => '新規登録';
+
+  @override
+  String get btn_notification_admin_report => '新しいレポート';
+
+  @override
   String get btn_notification_unknown => '不明';
 
   @override
