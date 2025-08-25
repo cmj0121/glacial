@@ -149,6 +149,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     final RoutePath route = RoutePath.values.where((r) => r.path == path).first;
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final bool isSignedIn = status?.accessToken?.isNotEmpty == true;
+    final bool isAdmin = status?.account?.role?.hasPrivilege == true;
 
     final List<Widget> children = actions.map((action) {
       final int index = actions.indexOf(action);
@@ -183,7 +184,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
             color: isSelected ? Theme.of(context).colorScheme.primary : null,
             hoverColor: Colors.transparent,
             focusColor: Colors.transparent,
-            onPressed: null,
+            onPressed: isAdmin ? () => debounce.callOnce(() => onSelect(index)) : null,
           );
         default:
           return IconButton(

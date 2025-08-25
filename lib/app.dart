@@ -196,7 +196,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         ),
         GoRoute(
           path: RoutePath.admin.path,
-          builder: (_, _) => const WIP(),
+          builder: (_, _) => const AdminTab(),
         ),
 
         // The backable sub-routes that can be used to navigate to the and pop-back.
