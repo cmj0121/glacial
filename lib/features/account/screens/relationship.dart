@@ -146,7 +146,6 @@ class _RelationshipState extends ConsumerState<Relationship> {
     );
   }
 
-
   // Build the relationship type icon and switch the relationship type when tapped.
   Widget buildRelationship() {
     final bool disabled = relationship == RelationshipType.blockedBy;

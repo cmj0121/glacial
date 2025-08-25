@@ -297,9 +297,11 @@ class _InteractionState extends State<Interaction> {
         return;
       case StatusInteraction.mute:
         await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.mute);
+        widget.onDeleted?.call();
         break;
       case StatusInteraction.block:
         await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.block);
+        widget.onDeleted?.call();
         break;
     }
 

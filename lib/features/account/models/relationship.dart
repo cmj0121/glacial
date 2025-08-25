@@ -120,6 +120,7 @@ enum RelationshipType {
       case following:
       case followedBy:
       case followEachOther:
+      case followRequest:
       case stranger:
       case blockedBy:
       case unblock:
