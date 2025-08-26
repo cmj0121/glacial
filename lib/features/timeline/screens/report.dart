@@ -87,7 +87,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
 
           return ListTile(
             leading: Icon(type.icon, size: tabSize),
-            title: Text(type.name(context)),
+            title: Text(type.label(context)),
             subtitle: Text(type.tooltip(context), style: labelStyle),
             onTap: () => setState(() => category = type),
           );
@@ -98,14 +98,17 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
 
   // Build the page like form to select a category and fill out the report details.
   Widget buildReportForm() {
-    return Column(
-      children: [
-        Expanded(child: buildReportPage()),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          child: buildPageIndicator(),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Expanded(child: buildReportPage()),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: buildPageIndicator(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -168,7 +171,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
                 children: [
                   Text(
                     AppLocalizations.of(context)?.desc_report_comment ?? "Add an optional comment",
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const SizedBox(height: 8.0),
                   TextField(
@@ -191,7 +194,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
 
     return Column(
       children: [
-        Text(category!.name(context), style: Theme.of(context).textTheme.headlineMedium),
+        Text(category!.label(context), style: Theme.of(context).textTheme.headlineMedium),
         const SizedBox(height: 8.0),
         Text(category!.tooltip(context), style: Theme.of(context).textTheme.bodySmall),
         const Divider(),
@@ -259,7 +262,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
 
   // File the report to the server.
   Future<void> onFile() async {
-    final ReportFileSchema _ = ReportFileSchema(
+    final ReportFileSchema schema = ReportFileSchema(
       accountID: widget.account.id,
       statusIDs: selectedStatusIDs,
       ruleIDs: selectedRuleIDs,
@@ -267,6 +270,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
       comment: comment,
     );
 
+    await status?.report(schema);
     if (mounted) context.pop();
   }
 }

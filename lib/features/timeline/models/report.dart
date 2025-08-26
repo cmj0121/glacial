@@ -1,4 +1,6 @@
 // Report problematic users to your moderators.
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
@@ -52,7 +54,7 @@ enum ReportCategoryType {
   }
 
   // The name of the report category, in a human-readable format.
-  String name(BuildContext content) {
+  String label(BuildContext content) {
     switch (this) {
       case spam:
         return AppLocalizations.of(content)?.txt_report_spam ?? "Spam";
@@ -106,6 +108,11 @@ class ReportSchema {
     required this.targetAccount,
   });
 
+  factory ReportSchema.fromString(String str) {
+    final Map<String, dynamic> json = jsonDecode(str);
+    return ReportSchema.fromJson(json);
+  }
+
   factory ReportSchema.fromJson(Map<String, dynamic> json) {
     return ReportSchema(
       id: json['id'],
@@ -139,6 +146,17 @@ class ReportFileSchema {
     required this.category,
     this.ruleIDs = const [],
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'account_id': accountID,
+      'status_ids[]': statusIDs,
+      'comment': comment,
+      'forward': forward,
+      'category': category.name,
+      'rule_ids[]': ruleIDs,
+    };
+  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
