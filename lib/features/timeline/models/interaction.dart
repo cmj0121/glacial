@@ -12,6 +12,7 @@ enum StatusInteraction {
   share,
   mute,
   block,
+  report,
   edit,
   delete;
 
@@ -32,6 +33,8 @@ enum StatusInteraction {
         return active ? Icons.volume_off : Icons.volume_mute_outlined;
       case block:
         return active ? Icons.block : Icons.block_outlined;
+      case report:
+        return active ? Icons.report : Icons.report_outlined;
       case edit:
         return active ? Icons.edit : Icons.edit_outlined;
       case delete:
@@ -56,6 +59,8 @@ enum StatusInteraction {
         return AppLocalizations.of(context)?.btn_interaction_mute ?? "Mute";
       case block:
         return AppLocalizations.of(context)?.btn_interaction_block ?? "Block";
+      case report:
+        return AppLocalizations.of(context)?.btn_interaction_report ?? "Report";
       case edit:
         return AppLocalizations.of(context)?.btn_interaction_edit ?? "Edit";
       case delete:

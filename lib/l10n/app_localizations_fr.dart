@@ -135,6 +135,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_interaction_block => 'Bloquer';
 
   @override
+  String get btn_interaction_report => 'Signaler';
+
+  @override
   String get btn_interaction_edit => 'Modifier';
 
   @override

@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The interaction bar that shows the all the possible actions for the current
 // status, and wraps the interaction more button if there are more actions
@@ -36,6 +37,7 @@ class InteractionBar extends ConsumerWidget {
           return isSelfStatus;
         case StatusInteraction.mute:
         case StatusInteraction.block:
+        case StatusInteraction.report:
           return !isSelfStatus;
         default:
           return true; // All other actions are available
@@ -194,6 +196,7 @@ class _InteractionState extends State<Interaction> {
         return isSignedIn && isSelfPost;
       case StatusInteraction.mute:
       case StatusInteraction.block:
+      case StatusInteraction.report:
         return isSignedIn && !isSelfPost;
     }
   }
@@ -214,6 +217,8 @@ class _InteractionState extends State<Interaction> {
       case StatusInteraction.delete:
       case StatusInteraction.edit:
         return isSelfPost;
+      case StatusInteraction.report:
+        return !isSelfPost;
       default:
         return isSignedIn;
     }
@@ -260,6 +265,8 @@ class _InteractionState extends State<Interaction> {
         return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
       case StatusInteraction.bookmark:
         return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
+      case StatusInteraction.report:
+        return Theme.of(context).colorScheme.error;
       default:
         return defaultColor;
     }
@@ -303,6 +310,15 @@ class _InteractionState extends State<Interaction> {
         await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.block);
         widget.onDeleted?.call();
         break;
+      case StatusInteraction.report:
+        // Pop the opened menu first, then show the report dialog
+        if (mounted) { context.pop(); }
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => ReportDialog(account: widget.schema.account),
+        );
+        return;
     }
 
     if (mounted) { context.pop(); }

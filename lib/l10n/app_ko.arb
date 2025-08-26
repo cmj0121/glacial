@@ -42,6 +42,7 @@
   "btn_interaction_share": "공유",
   "btn_interaction_mute": "뮤트",
   "btn_interaction_block": "차단",
+  "btn_interaction_report": "신고",
   "btn_interaction_edit": "편집",
   "btn_interaction_delete": "삭제",
   "btn_profile_core": "프로필",

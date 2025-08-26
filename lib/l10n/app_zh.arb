@@ -42,6 +42,7 @@
   "btn_interaction_share" : "分享",
   "btn_interaction_mute" : "靜音",
   "btn_interaction_block" : "封鎖",
+  "btn_interaction_report": "檢舉",
   "btn_interaction_edit" : "編輯",
   "btn_interaction_delete" : "刪除",
   "btn_profile_core": "使用者頁面",

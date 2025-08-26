@@ -135,6 +135,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_interaction_block => '封鎖';
 
   @override
+  String get btn_interaction_report => '檢舉';
+
+  @override
   String get btn_interaction_edit => '編輯';
 
   @override

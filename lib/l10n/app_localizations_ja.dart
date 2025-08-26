@@ -135,6 +135,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_interaction_block => 'ブロック';
 
   @override
+  String get btn_interaction_report => '報告';
+
+  @override
   String get btn_interaction_edit => '編集';
 
   @override

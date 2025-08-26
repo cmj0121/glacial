@@ -135,6 +135,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_interaction_block => '차단';
 
   @override
+  String get btn_interaction_report => '신고';
+
+  @override
   String get btn_interaction_edit => '편집';
 
   @override

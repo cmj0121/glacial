@@ -42,6 +42,7 @@
   "btn_interaction_share": "Partager",
   "btn_interaction_mute": "Muet",
   "btn_interaction_block": "Bloquer",
+  "btn_interaction_report": "Signaler",
   "btn_interaction_edit": "Modifier",
   "btn_interaction_delete": "Supprimer",
   "btn_profile_core": "Profil",

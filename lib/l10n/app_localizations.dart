@@ -362,6 +362,12 @@ abstract class AppLocalizations {
   /// **'Block'**
   String get btn_interaction_block;
 
+  /// No description provided for @btn_interaction_report.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get btn_interaction_report;
+
   /// No description provided for @btn_interaction_edit.
   ///
   /// In en, this message translates to:
