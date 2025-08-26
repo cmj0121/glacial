@@ -316,7 +316,7 @@ class _InteractionState extends State<Interaction> {
 
         showDialog(
           context: context,
-          builder: (BuildContext context) => ReportDialog(account: widget.schema.account),
+          builder: (BuildContext context) => ReportDialog(account: widget.schema.account, status: widget.schema),
         );
         return;
     }

@@ -268,6 +268,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_follow_request_reject => '拒否';
 
   @override
+  String get btn_report_back => '戻る';
+
+  @override
+  String get btn_report_next => '次へ';
+
+  @override
+  String get btn_report_file => '報告を提出';
+
+  @override
+  String get btn_report_statuses => 'トゥート';
+
+  @override
+  String get btn_report_rules => 'ルール';
+
+  @override
   String get desc_preference_engineer_clear_cache => '全てのキャッシュをクリア';
 
   @override
@@ -391,6 +406,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_list_inclusive => 'ホームタイムラインに表示';
 
   @override
+  String get txt_report_spam => 'スパム';
+
+  @override
+  String get txt_report_legal => '違法コンテンツ';
+
+  @override
+  String get txt_report_violation => '規則違反';
+
+  @override
+  String get txt_report_other => 'その他';
+
+  @override
   String get desc_preference_status => 'デフォルトのステータス動作を設定・管理';
 
   @override
@@ -449,6 +476,21 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get desc_list_search_following => 'リストに追加するアカウントを検索';
+
+  @override
+  String get desc_report_spam => 'このアカウントは迷惑な広告を投稿しています';
+
+  @override
+  String get desc_report_legal => 'このアカウントは違法なコンテンツを投稿するか、違法行為を求めています';
+
+  @override
+  String get desc_report_violation => 'このアカウントはインスタンスの規則に違反するコンテンツを投稿しています';
+
+  @override
+  String get desc_report_other => 'その他、記載されていない理由';
+
+  @override
+  String get desc_report_comment => '報告についての詳細を提供するため、任意でコメントを追加できます。';
 
   @override
   String err_invalid_instance(Object domain) {

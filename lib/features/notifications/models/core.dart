@@ -54,7 +54,7 @@ enum NotificationType {
       case NotificationType.adminSignUp:
         return Icons.person_add_alt_rounded;
       case NotificationType.adminReport:
-        return Icons.report;
+        return Icons.feedback_rounded;
       case NotificationType.unknown:
         return Icons.sentiment_dissatisfied_outlined;
     }

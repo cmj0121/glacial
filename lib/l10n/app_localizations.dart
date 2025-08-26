@@ -608,6 +608,36 @@ abstract class AppLocalizations {
   /// **'Reject'**
   String get btn_follow_request_reject;
 
+  /// No description provided for @btn_report_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get btn_report_back;
+
+  /// No description provided for @btn_report_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get btn_report_next;
+
+  /// No description provided for @btn_report_file.
+  ///
+  /// In en, this message translates to:
+  /// **'File Report'**
+  String get btn_report_file;
+
+  /// No description provided for @btn_report_statuses.
+  ///
+  /// In en, this message translates to:
+  /// **'Toots'**
+  String get btn_report_statuses;
+
+  /// No description provided for @btn_report_rules.
+  ///
+  /// In en, this message translates to:
+  /// **'Rules'**
+  String get btn_report_rules;
+
   /// No description provided for @desc_preference_engineer_clear_cache.
   ///
   /// In en, this message translates to:
@@ -854,6 +884,30 @@ abstract class AppLocalizations {
   /// **'Keep it in the Home timeline feed'**
   String get txt_list_inclusive;
 
+  /// No description provided for @txt_report_spam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get txt_report_spam;
+
+  /// No description provided for @txt_report_legal.
+  ///
+  /// In en, this message translates to:
+  /// **'Illegal Content'**
+  String get txt_report_legal;
+
+  /// No description provided for @txt_report_violation.
+  ///
+  /// In en, this message translates to:
+  /// **'Rule Violation'**
+  String get txt_report_violation;
+
+  /// No description provided for @txt_report_other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get txt_report_other;
+
   /// No description provided for @desc_preference_status.
   ///
   /// In en, this message translates to:
@@ -973,6 +1027,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search the following account to add into List'**
   String get desc_list_search_following;
+
+  /// No description provided for @desc_report_spam.
+  ///
+  /// In en, this message translates to:
+  /// **'The account is posting unsolicited advertisements.'**
+  String get desc_report_spam;
+
+  /// No description provided for @desc_report_legal.
+  ///
+  /// In en, this message translates to:
+  /// **'The account is posting illegal content or requesting illegal actions.'**
+  String get desc_report_legal;
+
+  /// No description provided for @desc_report_violation.
+  ///
+  /// In en, this message translates to:
+  /// **'The account is posting content that violates the rules of the instance.'**
+  String get desc_report_violation;
+
+  /// No description provided for @desc_report_other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other reasons not listed.'**
+  String get desc_report_other;
+
+  /// No description provided for @desc_report_comment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the optional comment to provide more context about your report'**
+  String get desc_report_comment;
 
   /// No description provided for @err_invalid_instance.
   ///

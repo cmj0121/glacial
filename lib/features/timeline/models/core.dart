@@ -6,6 +6,7 @@ export 'emoji.dart';
 export 'interaction.dart';
 export 'poll.dart';
 export 'post.dart';
+export 'report.dart';
 export 'status.dart';
 export 'timeline.dart';
 export 'visibility.dart';

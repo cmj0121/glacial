@@ -268,6 +268,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_follow_request_reject => '거절';
 
   @override
+  String get btn_report_back => '뒤로';
+
+  @override
+  String get btn_report_next => '다음';
+
+  @override
+  String get btn_report_file => '신고 제출';
+
+  @override
+  String get btn_report_statuses => '툿(Toot)';
+
+  @override
+  String get btn_report_rules => '규칙';
+
+  @override
   String get desc_preference_engineer_clear_cache => '모든 캐시 데이터 삭제';
 
   @override
@@ -391,6 +406,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_list_inclusive => '홈 타임라인에 표시';
 
   @override
+  String get txt_report_spam => '스팸';
+
+  @override
+  String get txt_report_legal => '불법 콘텐츠';
+
+  @override
+  String get txt_report_violation => '규칙 위반';
+
+  @override
+  String get txt_report_other => '기타';
+
+  @override
   String get desc_preference_status => '기본 상태 동작 설정 및 제어';
 
   @override
@@ -449,6 +476,21 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get desc_list_search_following => '리스트에 추가할 팔로잉 계정 검색';
+
+  @override
+  String get desc_report_spam => '이 계정은 원치 않는 광고를 게시하고 있습니다';
+
+  @override
+  String get desc_report_legal => '이 계정은 불법 콘텐츠를 게시하거나 불법 행위를 요청하고 있습니다';
+
+  @override
+  String get desc_report_violation => '이 계정은 인스턴스 규칙을 위반하는 콘텐츠를 게시하고 있습니다';
+
+  @override
+  String get desc_report_other => '기타 나열되지 않은 이유';
+
+  @override
+  String get desc_report_comment => '신고에 대한 추가 설명을 위해 선택적으로 댓글을 추가하세요.';
 
   @override
   String err_invalid_instance(Object domain) {

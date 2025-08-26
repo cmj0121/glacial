@@ -269,6 +269,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_follow_request_reject => 'Refuser';
 
   @override
+  String get btn_report_back => 'Retour';
+
+  @override
+  String get btn_report_next => 'Suivant';
+
+  @override
+  String get btn_report_file => 'Déposer un rapport';
+
+  @override
+  String get btn_report_statuses => 'Toots';
+
+  @override
+  String get btn_report_rules => 'Règles';
+
+  @override
   String get desc_preference_engineer_clear_cache =>
       'Vider toutes les données en cache';
 
@@ -398,6 +413,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_list_inclusive => 'Conserver dans la timeline d’accueil';
 
   @override
+  String get txt_report_spam => 'Spam';
+
+  @override
+  String get txt_report_legal => 'Contenu illégal';
+
+  @override
+  String get txt_report_violation => 'Violation des règles';
+
+  @override
+  String get txt_report_other => 'Autre';
+
+  @override
   String get desc_preference_status =>
       'Configurer et contrôler le comportement par défaut de vos statuts';
 
@@ -471,6 +498,25 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get desc_list_search_following =>
       'Rechercher les comptes suivis pour ajouter à la liste';
+
+  @override
+  String get desc_report_spam =>
+      'Le compte publie des publicités non sollicitées.';
+
+  @override
+  String get desc_report_legal =>
+      'Le compte publie du contenu illégal ou demande des actions illégales.';
+
+  @override
+  String get desc_report_violation =>
+      'Le compte publie du contenu qui enfreint les règles de l’instance.';
+
+  @override
+  String get desc_report_other => 'Autres raisons non répertoriées.';
+
+  @override
+  String get desc_report_comment =>
+      'Ajoutez un commentaire facultatif pour donner plus de contexte à votre rapport.';
 
   @override
   String err_invalid_instance(Object domain) {

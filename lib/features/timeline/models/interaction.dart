@@ -34,7 +34,7 @@ enum StatusInteraction {
       case block:
         return active ? Icons.block : Icons.block_outlined;
       case report:
-        return active ? Icons.report : Icons.report_outlined;
+        return active ? Icons.feedback_rounded : Icons.feedback_outlined;
       case edit:
         return active ? Icons.edit : Icons.edit_outlined;
       case delete:
