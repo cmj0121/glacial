@@ -32,6 +32,9 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
   late final ScrollController controller = ScrollController();
   late final PageController pageController = PageController();
 
+  late final List<ReportStep> steps;
+  late final List<ReportCategoryType> categories;
+
   ReportCategoryType? category;
   ReportStep step = ReportStep.status;
 
@@ -49,6 +52,9 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
 
     controller.addListener(onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+
+    steps = ReportStep.values.where((step) => hasRules || step != ReportStep.rules).toList();
+    categories = ReportCategoryType.values.where((type) => hasRules || type != ReportCategoryType.violation).toList();
   }
 
   @override
@@ -80,7 +86,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        children: ReportCategoryType.values.map((ReportCategoryType type) {
+        children: categories.map((ReportCategoryType type) {
           final TextStyle? labelStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           );
@@ -116,8 +122,8 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
   Widget buildReportPage() {
     final Widget page = PageView(
       controller: pageController,
-      onPageChanged: (int index) => setState(() => step = ReportStep.values[index]),
-      children: ReportStep.values.map((step) {
+      onPageChanged: (int index) => setState(() => step = steps[index]),
+      children: steps.map((step) {
         switch (step) {
           case ReportStep.status:
             return ListView.builder(
@@ -273,6 +279,8 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
     await status?.report(schema);
     if (mounted) context.pop();
   }
+
+  bool get hasRules => status?.server?.rules.isNotEmpty == true;
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
