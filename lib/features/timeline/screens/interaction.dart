@@ -312,7 +312,7 @@ class _InteractionState extends State<Interaction> {
         break;
       case StatusInteraction.report:
         // Pop the opened menu first, then show the report dialog
-        if (mounted) { context.pop(); }
+        if (mounted) context.pop();
 
         showDialog(
           context: context,

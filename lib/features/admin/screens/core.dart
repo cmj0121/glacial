@@ -6,7 +6,7 @@ import 'package:glacial/core.dart';
 class AdminTab extends StatelessWidget {
   const AdminTab({super.key});
 
-	@override
+  @override
   Widget build(BuildContext context) {
     return const WIP();
   }
