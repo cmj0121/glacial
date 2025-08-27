@@ -135,6 +135,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_interaction_block => 'Blockieren';
 
   @override
+  String get btn_interaction_report => 'Melden';
+
+  @override
   String get btn_interaction_edit => 'Bearbeiten';
 
   @override
@@ -251,6 +254,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_notification_update => 'Aktualisierung';
 
   @override
+  String get btn_notification_admin_sign_up => 'Neue Anmeldung';
+
+  @override
+  String get btn_notification_admin_report => 'Neuer Bericht';
+
+  @override
   String get btn_notification_unknown => 'Unbekannt';
 
   @override
@@ -258,6 +267,21 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get btn_follow_request_reject => 'Ablehnen';
+
+  @override
+  String get btn_report_back => 'Zurück';
+
+  @override
+  String get btn_report_next => 'Weiter';
+
+  @override
+  String get btn_report_file => 'Bericht einreichen';
+
+  @override
+  String get btn_report_statuses => 'Toots';
+
+  @override
+  String get btn_report_rules => 'Regeln';
 
   @override
   String get desc_preference_engineer_clear_cache =>
@@ -389,6 +413,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_list_inclusive => 'In Home-Timeline belassen';
 
   @override
+  String get txt_report_spam => 'Spam';
+
+  @override
+  String get txt_report_legal => 'Illegale Inhalte';
+
+  @override
+  String get txt_report_violation => 'Regelverstoß';
+
+  @override
+  String get txt_report_other => 'Andere';
+
+  @override
   String get desc_preference_status =>
       'Standard-Verhalten der Statusmeldungen festlegen und steuern';
 
@@ -459,6 +495,25 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get desc_list_search_following =>
       'Folgende Konten suchen, um zur Liste hinzuzufügen';
+
+  @override
+  String get desc_report_spam =>
+      'Das Konto veröffentlicht unerwünschte Werbung.';
+
+  @override
+  String get desc_report_legal =>
+      'Das Konto veröffentlicht illegale Inhalte oder fordert zu illegalen Handlungen auf.';
+
+  @override
+  String get desc_report_violation =>
+      'Das Konto veröffentlicht Inhalte, die gegen die Regeln dieser Instanz verstoßen.';
+
+  @override
+  String get desc_report_other => 'Andere nicht aufgeführte Gründe.';
+
+  @override
+  String get desc_report_comment =>
+      'Fügen Sie optional einen Kommentar hinzu, um Ihren Bericht zu erläutern';
 
   @override
   String err_invalid_instance(Object domain) {

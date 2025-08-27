@@ -31,6 +31,14 @@ enum PermissionBitmap {
 
   final int bit;
   const PermissionBitmap(this.bit);
+
+  factory PermissionBitmap.fromInt(int bits) {
+    return PermissionBitmap.values.firstWhere((e) => e.bit == bits, orElse: () => throw ArgumentError("Invalid permission bit: $bits"));
+  }
+
+  factory PermissionBitmap.fromString(String str) {
+    return PermissionBitmap.fromInt(int.parse(str));
+  }
 }
 
 // The relationship type between two accounts, used to determine the relationship status.
@@ -112,6 +120,7 @@ enum RelationshipType {
       case following:
       case followedBy:
       case followEachOther:
+      case followRequest:
       case stranger:
       case blockedBy:
       case unblock:
@@ -159,6 +168,10 @@ class RoleSchema {
       highlighted: json['highlighted'] as bool,
     );
   }
+
+  // Check the user has the admin-related permission.
+  int get bits => int.parse(permissions);
+  bool get hasPrivilege => bits > 0;
 }
 
 // The relationship between accounts, such as following / blocking / muting / etc

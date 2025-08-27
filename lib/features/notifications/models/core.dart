@@ -15,12 +15,18 @@ enum NotificationType {
   favourite,      // Someone favourited one of your statuses
   poll,           // A poll you have voted in or created has ended
   update,         // A status you boosted with has been edited
+  adminSignUp,    // Someone signed up (optionally sent to admins)
+  adminReport,    // A new report has been filed
   unknown;        // An unknown notification type
 
   factory NotificationType.fromString(String type) {
     switch (type) {
       case 'follow_request':
         return NotificationType.followRequest;
+      case 'admin.sign_up':
+        return NotificationType.adminSignUp;
+      case 'admin.report':
+        return NotificationType.adminReport;
       default:
         return NotificationType.values.firstWhere((e) => e.name == type, orElse: () => NotificationType.unknown);
     }
@@ -45,6 +51,10 @@ enum NotificationType {
         return Icons.poll;
       case NotificationType.update:
         return Icons.edit;
+      case NotificationType.adminSignUp:
+        return Icons.person_add_alt_rounded;
+      case NotificationType.adminReport:
+        return Icons.feedback_rounded;
       case NotificationType.unknown:
         return Icons.sentiment_dissatisfied_outlined;
     }
@@ -69,9 +79,18 @@ enum NotificationType {
         return AppLocalizations.of(context)?.btn_notification_poll ?? "Poll";
       case NotificationType.update:
         return AppLocalizations.of(context)?.btn_notification_update ?? "Update";
+      case NotificationType.adminSignUp:
+        return AppLocalizations.of(context)?.btn_notification_admin_sign_up ?? "Admin Sign Up";
+      case NotificationType.adminReport:
+        return AppLocalizations.of(context)?.btn_notification_admin_report ?? "Admin Report";
       case NotificationType.unknown:
         return AppLocalizations.of(context)?.btn_notification_unknown ?? "Unknown";
     }
+  }
+
+  // Check the type is admin only or not
+  bool get isAdminOnly {
+    return this == NotificationType.adminSignUp || this == NotificationType.adminReport;
   }
 }
 

@@ -13,6 +13,7 @@ export 'api/list.dart';
 export 'api/marker.dart';
 export 'api/media.dart';
 export 'api/notifications.dart';
+export 'api/report.dart';
 export 'api/search.dart';
 export 'api/status.dart';
 export 'api/suggestions.dart';

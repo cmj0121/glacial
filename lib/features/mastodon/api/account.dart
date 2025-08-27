@@ -361,8 +361,6 @@ extension AccountsExtensions on AccessStatusSchema {
     logger.i("complete reject follow request for account: $accountID");
     return relationship;
   }
-
-
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

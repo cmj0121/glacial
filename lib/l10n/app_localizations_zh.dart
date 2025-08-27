@@ -135,6 +135,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_interaction_block => '封鎖';
 
   @override
+  String get btn_interaction_report => '檢舉';
+
+  @override
   String get btn_interaction_edit => '編輯';
 
   @override
@@ -250,6 +253,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_notification_update => '編輯';
 
   @override
+  String get btn_notification_admin_sign_up => '新使用者註冊';
+
+  @override
+  String get btn_notification_admin_report => '新的回報';
+
+  @override
   String get btn_notification_unknown => '未知';
 
   @override
@@ -257,6 +266,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get btn_follow_request_reject => '拒絕';
+
+  @override
+  String get btn_report_back => '返回';
+
+  @override
+  String get btn_report_next => '下一步';
+
+  @override
+  String get btn_report_file => '提交檢舉';
+
+  @override
+  String get btn_report_statuses => '嘟文';
+
+  @override
+  String get btn_report_rules => '規則';
 
   @override
   String get desc_preference_engineer_clear_cache => '清除快取並移除快取資料';
@@ -382,6 +406,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_list_inclusive => '維持在首頁時間軸';
 
   @override
+  String get txt_report_spam => '垃圾訊息';
+
+  @override
+  String get txt_report_legal => '非法內容';
+
+  @override
+  String get txt_report_violation => '違反守則';
+
+  @override
+  String get txt_report_other => '其他';
+
+  @override
   String get desc_preference_status => '控制你嘟文的預設行為';
 
   @override
@@ -440,6 +476,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_list_search_following => '搜尋追隨中的帳號加入列表';
+
+  @override
+  String get desc_report_spam => '此帳號正在張貼未經請求的廣告';
+
+  @override
+  String get desc_report_legal => '此帳號正在張貼非法內容或要求非法行為';
+
+  @override
+  String get desc_report_violation => '此帳號正在張貼違反此實例規則的內容';
+
+  @override
+  String get desc_report_other => '其他未列出的原因';
+
+  @override
+  String get desc_report_comment => '可選擇新增評論以提供更多檢舉事項';
 
   @override
   String err_invalid_instance(Object domain) {

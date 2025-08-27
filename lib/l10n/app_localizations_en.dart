@@ -135,6 +135,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_interaction_block => 'Block';
 
   @override
+  String get btn_interaction_report => 'Report';
+
+  @override
   String get btn_interaction_edit => 'Edit';
 
   @override
@@ -250,6 +253,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_notification_update => 'Update';
 
   @override
+  String get btn_notification_admin_sign_up => 'New SignUp';
+
+  @override
+  String get btn_notification_admin_report => 'New Report';
+
+  @override
   String get btn_notification_unknown => 'Unknown';
 
   @override
@@ -257,6 +266,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btn_follow_request_reject => 'Reject';
+
+  @override
+  String get btn_report_back => 'Back';
+
+  @override
+  String get btn_report_next => 'Next';
+
+  @override
+  String get btn_report_file => 'File Report';
+
+  @override
+  String get btn_report_statuses => 'Toots';
+
+  @override
+  String get btn_report_rules => 'Rules';
 
   @override
   String get desc_preference_engineer_clear_cache => 'Clear all cached data';
@@ -386,6 +410,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_list_inclusive => 'Keep it in the Home timeline feed';
 
   @override
+  String get txt_report_spam => 'Spam';
+
+  @override
+  String get txt_report_legal => 'Illegal Content';
+
+  @override
+  String get txt_report_violation => 'Rule Violation';
+
+  @override
+  String get txt_report_other => 'Other';
+
+  @override
   String get desc_preference_status =>
       'Setup and control your default status behavior';
 
@@ -455,6 +491,25 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get desc_list_search_following =>
       'Search the following account to add into List';
+
+  @override
+  String get desc_report_spam =>
+      'The account is posting unsolicited advertisements.';
+
+  @override
+  String get desc_report_legal =>
+      'The account is posting illegal content or requesting illegal actions.';
+
+  @override
+  String get desc_report_violation =>
+      'The account is posting content that violates the rules of the instance.';
+
+  @override
+  String get desc_report_other => 'Other reasons not listed.';
+
+  @override
+  String get desc_report_comment =>
+      'Add the optional comment to provide more context about your report';
 
   @override
   String err_invalid_instance(Object domain) {

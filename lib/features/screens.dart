@@ -1,6 +1,7 @@
 // The exposed screens for the Glacial app.
 
 export 'account/screens/core.dart';
+export 'admin/screens/core.dart';
 export 'auth/screens/core.dart';
 export 'glacial/screens/core.dart';
 export 'list/screens/core.dart';
