@@ -68,6 +68,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
     final bool isSignIn = status.accessToken?.isNotEmpty == true;
 
     return SwipeTabView(
+      key: UniqueKey(),
       tabController: controller,
       itemCount: types.length,
       tabBuilder: (context, index) {
@@ -84,7 +85,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
         );
       },
       itemBuilder: (context, index) => Timeline(
-         key: Key("timeline_${status.domain}_${types[index].name}"),
+         key: UniqueKey(),
          type: types[index],
          status: status,
          controller: scrollControllers[index],

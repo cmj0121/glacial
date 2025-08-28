@@ -26,6 +26,7 @@ class _DirectoryAccountState extends ConsumerState<DirectoryAccount> {
   bool isLoading = false;
   bool isCompleted = false;
   List<AccountSchema> accounts = [];
+  Set<String> accountIDs = {};
 
   @override
   void initState() {
@@ -93,13 +94,15 @@ class _DirectoryAccountState extends ConsumerState<DirectoryAccount> {
 
     final int offset = this.accounts.length;
     final List<AccountSchema> accounts = await status?.fetchDirectoryAccounts(offset: offset) ?? [];
+    final List<AccountSchema> newAccounts = accounts.where((e) => !accountIDs.contains(e.id)).toList();
 
     if (mounted) {
       setState(() {
         isRefresh = false;
         isLoading = false;
         isCompleted = accounts.isEmpty;
-        this.accounts.addAll(accounts);
+        this.accounts.addAll(newAccounts);
+        accountIDs.addAll(newAccounts.map((e) => e.id));
       });
     }
   }
