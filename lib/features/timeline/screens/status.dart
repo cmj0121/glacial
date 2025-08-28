@@ -798,11 +798,10 @@ class PreviewCard extends StatelessWidget {
     return Card(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final double width = constraints.maxWidth;
-          final TextStyle? titleStyle = Theme.of(context).textTheme.titleSmall;
+          final double width = constraints.maxWidth / 3;
           final TextStyle? descStyle = Theme.of(context).textTheme.labelMedium;
 
-          if (schema.width < width /3) {
+          if (schema.width < width) {
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -813,9 +812,20 @@ class PreviewCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(schema.title, style: titleStyle, maxLines: 2, overflow: TextOverflow.ellipsis),
+                      Text(
+                        schema.title,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       const SizedBox(height: 6),
-                      Text(schema.description, style: descStyle, textAlign: TextAlign.justify),
+                      Text(
+                        schema.description,
+                        style: descStyle,
+                        maxLines: 5,
+                        textAlign: TextAlign.justify,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ],
                   ),
                 ),
@@ -831,9 +841,20 @@ class PreviewCard extends StatelessWidget {
                 buildImage(),
                 const SizedBox(height: 12),
 
-                Text(schema.title, style: titleStyle, maxLines: 2, overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 4),
-                Text(schema.description, style: descStyle, textAlign: TextAlign.justify),
+                Text(
+                  schema.title,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  schema.description,
+                  style: descStyle,
+                  maxLines: 5,
+                  textAlign: TextAlign.justify,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           );

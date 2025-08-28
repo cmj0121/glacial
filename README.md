@@ -15,14 +15,37 @@ your Mastodon account, on any device, anywhere, anytime.
 Below are the features that have been supported and implemented. All features are implemented
 based on the [OpenAPI][2] specification after processing the official documentation.
 
+- Explore Mastodon servers, users, hashtags, and trending posts.
+- Sign in and register accounts on any Mastodon server.
+- Search the users, posts and hashtags on the connected Mastodon server.
+
 ### Explore
 
 At the beginning, it allows you to search for any Mastodon server (default to connect to mastodon.social),
 and explore users, hashtags, and trending posts on that server.
 
-![Home](./images/iPad_Pro_13_M4/01Home.png)
-![Trends](./images/iPad_Pro_13_M4/02Trends.png)
-![Dictory](./images/iPad_Pro_13_M4/03Dictory.png)
+![Dictory](./images/01Directory.webp)
+
+### Sign In
+
+You can sign in to any Mastodon server with your account, or register a new account on that server.
+You have almost all the features that the official Mastodon web client has after signing in, and the optional
+admin features if your account has relevant permissions.
+
+![Sign In](./images/02SignIn.webp)
+
+### Search
+
+You can search for users, posts, and hashtags on the connected Mastodon server by the given keywords.
+
+![Search](./images/03Search.webp)
+
+### Profile
+
+You can view and edit your profile information, including your avatar, header image, display name,
+bio, location, and website. You can also see your followers, following, and lists.
+
+![Profile](./images/04Profile.webp)
 
 ## DDD (Dream-Driven Development)
 

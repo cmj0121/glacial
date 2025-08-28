@@ -61,11 +61,9 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
 
     switch (currentState) {
       case AppLifecycleState.resumed:
-        logger.d("App is in foreground, starting task: $currentState.");
         _startTask();
         break;
       default:
-        logger.d("App is not in foreground");
         break;
     }
   }
