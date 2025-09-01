@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -85,7 +86,6 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
         );
       },
       itemBuilder: (context, index) => Timeline(
-        key: ValueKey('${status.domain}_timeline_${types[index].name}'),
         type: types[index],
         status: status,
         controller: scrollControllers[index],
@@ -134,6 +134,8 @@ class Timeline extends StatefulWidget {
 class _TimelineState extends State<Timeline> {
   final double loadingThreshold = 180;
   late final ScrollController controller = widget.controller ?? ScrollController();
+  late final ItemScrollController itemScrollController = ItemScrollController();
+  late final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
   bool isRefresh = false;
   bool isLoading = false;
@@ -143,18 +145,12 @@ class _TimelineState extends State<Timeline> {
   @override
   void initState() {
     super.initState();
-    controller.addListener(onScroll);
-
-    GlacialHome.scrollToTop = controller;
     onLoad();
   }
 
   @override
   void dispose() {
-    if (widget.controller == null) {
-      controller.removeListener(onScroll);
-      controller.dispose();
-    }
+    if (widget.controller == null) controller.dispose();
     super.dispose();
   }
 
@@ -188,8 +184,9 @@ class _TimelineState extends State<Timeline> {
       indicatorBuilder: (_, __) => const ClockProgressIndicator(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: ListView.builder(
-          controller: controller,
+        child: ScrollablePositionedList.builder(
+          itemScrollController: itemScrollController,
+          itemPositionsListener: itemPositionsListener,
           shrinkWrap: true,
           itemCount: statuses.length,
           itemBuilder: (context, index) {
@@ -213,14 +210,6 @@ class _TimelineState extends State<Timeline> {
         ),
       ),
     );
-  }
-
-  // Detect the scroll event and load more statuses when the user scrolls to the
-  // almost bottom of the list.
-  void onScroll() async {
-    if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
-      await onLoad();
-    }
   }
 
   // Clean-up and refresh the timeline when the user pulls down the list.
