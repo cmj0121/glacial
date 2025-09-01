@@ -357,6 +357,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Intervalle de rafraîchissement';
 
   @override
+  String get txt_preference_loaded_top =>
+      'Aligner lors du chargement des plus récents';
+
+  @override
   String get txt_preference_reply_all => 'Répondre à tous';
 
   @override
@@ -458,6 +462,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get desc_preference_refresh_interval =>
       'Intervalle de rafraîchissement des données de l’application';
+
+  @override
+  String get desc_preference_loaded_top =>
+      'Charger les données les plus récentes et remonter en haut en appuyant sur l’icône';
 
   @override
   String get desc_preference_locale => 'La langue du système sera utilisée';

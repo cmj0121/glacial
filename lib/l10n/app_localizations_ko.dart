@@ -352,6 +352,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_preference_refresh_interval => '갱신 간격';
 
   @override
+  String get txt_preference_loaded_top => '최신 불러올 때 정렬';
+
+  @override
   String get txt_preference_reply_all => '모든 멘션';
 
   @override
@@ -443,6 +446,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get desc_preference_refresh_interval => '앱 데이터 갱신 간격';
+
+  @override
+  String get desc_preference_loaded_top => '아이콘을 탭하면 최신 데이터를 불러오고 맨 위로 이동합니다';
 
   @override
   String get desc_preference_locale => '시스템 로케일 사용';

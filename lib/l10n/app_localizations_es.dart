@@ -356,6 +356,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_preference_refresh_interval => 'Intervalo de actualización';
 
   @override
+  String get txt_preference_loaded_top => 'Alinear al cargar lo más reciente';
+
+  @override
   String get txt_preference_reply_all => 'Todos mencionados';
 
   @override
@@ -457,6 +460,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get desc_preference_refresh_interval =>
       'Intervalo para actualizar los datos de la app';
+
+  @override
+  String get desc_preference_loaded_top =>
+      'Cargar los datos más recientes y saltar arriba al tocar el ícono';
 
   @override
   String get desc_preference_locale =>

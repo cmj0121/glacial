@@ -354,6 +354,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_preference_refresh_interval => 'Refresh Interval';
 
   @override
+  String get txt_preference_loaded_top => 'Align when loaded newest';
+
+  @override
   String get txt_preference_reply_all => 'Everyone mentioned';
 
   @override
@@ -453,6 +456,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get desc_preference_refresh_interval =>
       'The interval to refresh the app\'s data';
+
+  @override
+  String get desc_preference_loaded_top =>
+      'Load the newest data and jump to top when tapping the icon';
 
   @override
   String get desc_preference_locale => 'The system locale would be used to';

@@ -258,7 +258,9 @@ class _TimelineState extends State<Timeline> {
     });
 
     // Scroll to the old position after the new statuses are added.
-    WidgetsBinding.instance.addPostFrameCallback((_) => itemScrollController.jumpTo(index: oldIndex));
+    if (widget.pref?.loadedTop ?? false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => itemScrollController.jumpTo(index: oldIndex));
+    }
   }
 
   // Clean-up and refresh the timeline when the user pulls down the list.

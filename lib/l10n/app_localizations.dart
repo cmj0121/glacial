@@ -776,6 +776,12 @@ abstract class AppLocalizations {
   /// **'Refresh Interval'**
   String get txt_preference_refresh_interval;
 
+  /// No description provided for @txt_preference_loaded_top.
+  ///
+  /// In en, this message translates to:
+  /// **'Align when loaded newest'**
+  String get txt_preference_loaded_top;
+
   /// No description provided for @txt_preference_reply_all.
   ///
   /// In en, this message translates to:
@@ -961,6 +967,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The interval to refresh the app\'s data'**
   String get desc_preference_refresh_interval;
+
+  /// No description provided for @desc_preference_loaded_top.
+  ///
+  /// In en, this message translates to:
+  /// **'Load the newest data and jump to top when tapping the icon'**
+  String get desc_preference_loaded_top;
 
   /// No description provided for @desc_preference_locale.
   ///

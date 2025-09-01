@@ -352,6 +352,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_preference_refresh_interval => '更新間隔';
 
   @override
+  String get txt_preference_loaded_top => '最新を読み込んだときに整列';
+
+  @override
   String get txt_preference_reply_all => '全員に返信';
 
   @override
@@ -443,6 +446,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get desc_preference_refresh_interval => 'アプリデータ更新間隔';
+
+  @override
+  String get desc_preference_loaded_top => 'アイコンをタップすると最新データを読み込み、先頭に移動します';
 
   @override
   String get desc_preference_locale => 'システムのロケールが使用されます';

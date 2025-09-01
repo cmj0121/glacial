@@ -356,6 +356,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_preference_refresh_interval => 'Intervalo de Atualização';
 
   @override
+  String get txt_preference_loaded_top =>
+      'Alinhar ao carregar os mais recentes';
+
+  @override
   String get txt_preference_reply_all => 'Todos mencionados';
 
   @override
@@ -455,6 +459,10 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get desc_preference_refresh_interval =>
       'Intervalo para atualizar os dados do app';
+
+  @override
+  String get desc_preference_loaded_top =>
+      'Carregar os dados mais recentes e ir para o topo ao tocar no ícone';
 
   @override
   String get desc_preference_locale => 'O locale do sistema será usado';
