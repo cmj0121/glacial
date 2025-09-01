@@ -251,7 +251,7 @@ class _TimelineState extends State<Timeline> {
   // scroll position.
   void onClickUnreaded() async {
     final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
-    final int oldIndex = unreaded.length + positions.first.index;
+    final int newIndex = widget.pref?.loadedTop == true ? 0 : (unreaded.length + positions.first.index);
 
     setState(() {
       statuses = [...unreaded, ...statuses];
@@ -259,9 +259,7 @@ class _TimelineState extends State<Timeline> {
     });
 
     // Scroll to the old position after the new statuses are added.
-    if (widget.pref?.loadedTop ?? false == false) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => itemScrollController.jumpTo(index: oldIndex));
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => itemScrollController.jumpTo(index: newIndex));
   }
 
   // Clean-up and refresh the timeline when the user pulls down the list.
