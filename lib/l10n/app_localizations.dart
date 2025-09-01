@@ -284,6 +284,12 @@ abstract class AppLocalizations {
   /// **'Vote'**
   String get btn_timeline_vote;
 
+  /// No description provided for @btn_timeline_unread.
+  ///
+  /// In en, this message translates to:
+  /// **'#{count} Unread Toots'**
+  String btn_timeline_unread(Object count);
+
   /// No description provided for @btn_preference_theme.
   ///
   /// In en, this message translates to:
@@ -776,6 +782,12 @@ abstract class AppLocalizations {
   /// **'Refresh Interval'**
   String get txt_preference_refresh_interval;
 
+  /// No description provided for @txt_preference_loaded_top.
+  ///
+  /// In en, this message translates to:
+  /// **'Align when loaded newest'**
+  String get txt_preference_loaded_top;
+
   /// No description provided for @txt_preference_reply_all.
   ///
   /// In en, this message translates to:
@@ -961,6 +973,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The interval to refresh the app\'s data'**
   String get desc_preference_refresh_interval;
+
+  /// No description provided for @desc_preference_loaded_top.
+  ///
+  /// In en, this message translates to:
+  /// **'Load the newest data and jump to top when tapping the icon'**
+  String get desc_preference_loaded_top;
 
   /// No description provided for @desc_preference_locale.
   ///

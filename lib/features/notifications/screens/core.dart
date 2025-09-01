@@ -6,6 +6,7 @@ import 'package:app_badge_plus/app_badge_plus.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -139,7 +140,8 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
   final double loadingThreshold = 180;
 
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
-  late final ScrollController controller = ScrollController();
+  late final ItemScrollController itemScrollController = ItemScrollController();
+  late final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
   bool isRefresh = false;
   bool isLoading = false;
@@ -150,15 +152,15 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
   void initState() {
     super.initState();
 
-    controller.addListener(onScroll);
-    GlacialHome.scrollToTop = controller;
-    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
-  }
+    itemPositionsListener.itemPositions.addListener(() {
+      final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
+      final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
+      if (lastIndex != null && lastIndex > groups.length - 5) onLoad();
+    });
+
+    GlacialHome.itemScrollToTop = itemScrollController;
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
   }
 
   @override
@@ -182,8 +184,9 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
 
   // Build the notification content.
   Widget buildContent() {
-    final Widget builder =  ListView.builder(
-      controller: controller,
+    final Widget builder = ScrollablePositionedList.builder(
+      itemScrollController: itemScrollController,
+      itemPositionsListener: itemPositionsListener,
       itemCount: groups.length,
       itemBuilder: (BuildContext context, int index) => SingleNotification(schema: groups[index]),
     );
@@ -193,14 +196,6 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
       indicatorBuilder: (_, __) => const ClockProgressIndicator(),
       child: isRefresh ? const SizedBox.shrink() : builder,
     );
-  }
-
-  // Detect the scroll event and load more statuses when the user scrolls to the
-  // almost bottom of the list.
-  void onScroll() async {
-    if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
-      onLoad();
-    }
   }
 
   // Clean-up and refresh the timeline when the user pulls down the list.

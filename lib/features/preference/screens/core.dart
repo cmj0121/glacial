@@ -183,6 +183,18 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             );
           },
         ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_loaded_top ?? "Load Newest on Launch"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_loaded_top ?? "Load the newest statuses and jump to top when the app is launched.",
+            style: labelStyle,
+          ),
+          value: schema.loadedTop,
+          secondary: Icon(schema.loadedTop ? Icons.vertical_align_top : Icons.vertical_align_center, size: iconSize),
+          onChanged: (bool value) {
+            Storage().savePreference(schema.copyWith(loadedTop: value), ref: ref);
+          },
+        ),
         // Build the locale settings and selector.
         buildLocaleSelector(schema: schema),
       ],

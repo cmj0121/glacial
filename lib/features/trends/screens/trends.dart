@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -20,7 +21,6 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
   final List<TrendsType> tabs = TrendsType.values;
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   late final TabController controller;
-  late List<ScrollController> scrollControllers = [];
 
   late int selectedIndex;
   late Widget? child;
@@ -32,7 +32,6 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
       length: tabs.length,
       vsync: this,
     );
-    scrollControllers = List.generate(tabs.length, (index) => ScrollController());
   }
 
   @override
@@ -63,7 +62,6 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
       itemBuilder: (context, index) => Trends(
          type: tabs[index],
          status: status!,
-         controller: scrollControllers[index],
       ),
       onTabTappable: (index) => tabs[index] != TrendsType.users || isSignedIn,
     );
@@ -74,13 +72,11 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
 class Trends extends StatefulWidget {
   final TrendsType type;
   final AccessStatusSchema status;
-  final ScrollController? controller;
 
   const Trends({
     super.key,
     required this.type,
     required this.status,
-    this.controller,
   });
 
   @override
@@ -89,7 +85,9 @@ class Trends extends StatefulWidget {
 
 class _TrendsState extends State<Trends> {
   final double loadingThreshold = 180;
-  late final ScrollController controller = widget.controller ?? ScrollController();
+
+  late final ItemScrollController itemScrollController = ItemScrollController();
+  late final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
   bool isRefresh = false;
   bool isLoading = false;
@@ -99,19 +97,16 @@ class _TrendsState extends State<Trends> {
   @override
   void initState() {
     super.initState();
-    controller.addListener(onScroll);
 
-    GlacialHome.scrollToTop = controller;
+    itemPositionsListener.itemPositions.addListener(() {
+      final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
+      final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
+
+      if (lastIndex != null && lastIndex > trends.length - 5) onLoad();
+    });
+
+    GlacialHome.itemScrollToTop = itemScrollController;
     onLoad();
-  }
-
-  @override
-  void dispose() {
-    if (widget.controller == null) {
-      controller.removeListener(onScroll);
-      controller.dispose();
-    }
-    super.dispose();
   }
 
   @override
@@ -139,8 +134,9 @@ class _TrendsState extends State<Trends> {
       indicatorBuilder: (_, __) => const ClockProgressIndicator(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: ListView.builder(
-          controller: controller,
+        child: ScrollablePositionedList.builder(
+          itemScrollController: itemScrollController,
+          itemPositionsListener: itemPositionsListener,
           shrinkWrap: true,
           itemCount: trends.length,
           itemBuilder: (context, index) {
@@ -182,14 +178,6 @@ class _TrendsState extends State<Trends> {
         ),
       ),
     );
-  }
-
-  // Detect the scroll event and load more statuses when the user scrolls to the
-  // almost bottom of the list.
-  void onScroll() async {
-    if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
-      onLoad();
-    }
   }
 
   // Clean-up and refresh the timeline when the user pulls down the list.

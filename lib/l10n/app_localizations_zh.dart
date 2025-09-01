@@ -96,6 +96,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_timeline_vote => '投票';
 
   @override
+  String btn_timeline_unread(Object count) {
+    return '#$count 未讀嘟文';
+  }
+
+  @override
   String get btn_preference_theme => '主題';
 
   @override
@@ -352,6 +357,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_preference_refresh_interval => '更新頻率';
 
   @override
+  String get txt_preference_loaded_top => '對齊最新的內容';
+
+  @override
   String get txt_preference_reply_all => '所有提及的';
 
   @override
@@ -443,6 +451,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_preference_refresh_interval => '更新資料的頻率';
+
+  @override
+  String get desc_preference_loaded_top => '點擊時加載最新內容且跳到開頭';
 
   @override
   String get desc_preference_locale => '在系統中使用的語系';

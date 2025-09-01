@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -14,7 +15,7 @@ import 'package:glacial/features/screens.dart';
 // server timeline and other features.
 class GlacialHome extends ConsumerStatefulWidget {
   // The global scroll-to-top controller callback
-  static ScrollController? scrollToTop;
+  static ItemScrollController? itemScrollToTop;
 
   final bool backable;
   final Widget? title;
@@ -206,15 +207,13 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     final SidebarButtonType action = actions[index];
     final String path = GoRouter.of(context).state.uri.toString();
     final RoutePath curRoute = RoutePath.values.where((r) => r.path == path).first;
+    final Duration duration = const Duration(milliseconds: 300);
+    final Curve curve = Curves.easeInOut;
 
-    if (curRoute == action.route) {
+    if (curRoute == action.route && GlacialHome.itemScrollToTop?.isAttached == true) {
       logger.d("already on the ${action.name} page, no need to navigate.");
 
-      if (GlacialHome.scrollToTop?.hasClients == true) {
-        final Duration duration = const Duration(milliseconds: 300);
-
-        GlacialHome.scrollToTop?.animateTo(0, duration: duration, curve: Curves.easeInOut);
-      }
+      GlacialHome.itemScrollToTop?.scrollTo(index: 0, duration: duration, curve: curve);
       return ;
     }
 

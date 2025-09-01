@@ -96,6 +96,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_timeline_vote => 'Abstimmen';
 
   @override
+  String btn_timeline_unread(Object count) {
+    return '#$count ungelesene Toots';
+  }
+
+  @override
   String get btn_preference_theme => 'Thema';
 
   @override
@@ -356,6 +361,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_preference_refresh_interval => 'Aktualisierungsintervall';
 
   @override
+  String get txt_preference_loaded_top => 'Ausrichten beim Laden der neuesten';
+
+  @override
   String get txt_preference_reply_all => 'Alle markieren';
 
   @override
@@ -456,6 +464,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get desc_preference_refresh_interval =>
       'Intervall für die Aktualisierung der App-Daten';
+
+  @override
+  String get desc_preference_loaded_top =>
+      'Beim Tippen auf das Symbol die neuesten Daten laden und nach oben springen';
 
   @override
   String get desc_preference_locale => 'Die Systemsprache wird verwendet';

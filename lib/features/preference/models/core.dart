@@ -90,6 +90,7 @@ class SystemPreferenceSchema {
   final VisibilityType visibility;
   final bool sensitive;
   final Duration refreshInterval;
+  final bool loadedTop;
   final ReplyTagType replyTag;
   final Locale? locale;
 
@@ -99,6 +100,7 @@ class SystemPreferenceSchema {
     this.visibility = VisibilityType.public,
     this.sensitive = true,
     this.refreshInterval = const Duration(seconds: 30),
+    this.loadedTop = false,
     this.replyTag = ReplyTagType.all,
     this.locale,
   });
@@ -122,6 +124,7 @@ class SystemPreferenceSchema {
       refreshInterval: Duration(
         seconds: json["refresh_interval"] as int? ?? 30,
       ),
+      loadedTop: json["loaded_top"] as bool? ?? false,
       replyTag: ReplyTagType.values.firstWhere(
         (r) => r.name == json["reply_tag"],
         orElse: () => ReplyTagType.all,
@@ -138,6 +141,7 @@ class SystemPreferenceSchema {
       "visibility": visibility.name,
       "sensitive": sensitive,
       "refresh_interval": refreshInterval.inSeconds,
+      "loaded_top": loadedTop,
       "reply_tag": replyTag.name,
       "locale": locale?.toLanguageTag(),
     };
@@ -150,6 +154,7 @@ class SystemPreferenceSchema {
     VisibilityType? visibility,
     bool? sensitive,
     Duration? refreshInterval,
+    bool? loadedTop,
     ReplyTagType? replyTag,
     Locale? locale,
   }) {
@@ -159,6 +164,7 @@ class SystemPreferenceSchema {
       visibility: visibility ?? this.visibility,
       sensitive: sensitive ?? this.sensitive,
       refreshInterval: refreshInterval ?? this.refreshInterval,
+      loadedTop: loadedTop ?? this.loadedTop,
       replyTag: replyTag ?? this.replyTag,
       locale: locale ?? this.locale,
     );

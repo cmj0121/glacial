@@ -1,7 +1,10 @@
 // The Timeline widget in the current selected Mastodon server.
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -28,7 +31,6 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
   final List<TimelineType> types = TimelineType.values.where((type) => type.inTimelineTab).toList();
 
   late final TabController controller;
-  late List<ScrollController> scrollControllers = [];
 
   @override
   void initState() {
@@ -39,16 +41,12 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
       vsync: this,
     );
 
-    scrollControllers = List.generate(types.length, (index) => ScrollController());
     controller.index = types.indexWhere((type) => type == widget.initialType);
   }
 
   @override
   void dispose() {
     controller.dispose();
-    for (final ScrollController scrollController in scrollControllers) {
-      scrollController.dispose();
-    }
     super.dispose();
   }
 
@@ -66,6 +64,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
 
   Widget buildContent(BuildContext context, AccessStatusSchema status) {
     final bool isSignIn = status.accessToken?.isNotEmpty == true;
+    final SystemPreferenceSchema? pref = ref.watch(preferenceProvider);
 
     return SwipeTabView(
       key: ValueKey('${status.domain}_timeline}'),
@@ -85,23 +84,12 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
         );
       },
       itemBuilder: (context, index) => Timeline(
-        key: ValueKey('${status.domain}_timeline_${types[index].name}'),
         type: types[index],
         status: status,
-        controller: scrollControllers[index],
+        pref: pref,
         onDeleted: () => context.pop(),
       ),
       onTabTappable: (index) => isSignIn || types[index].supportAnonymous,
-      onDoubleTap: onDoubleTap,
-    );
-  }
-
-  // Scroll to the top of the timeline when the user double taps on the tab.
-  void onDoubleTap(int index) {
-    scrollControllers[index].animateTo(
-      0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
     );
   }
 }
@@ -110,20 +98,20 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
 class Timeline extends StatefulWidget {
   final TimelineType type;
   final AccessStatusSchema status;
+  final SystemPreferenceSchema? pref;
   final AccountSchema? account;
   final String? hashtag;
   final String? listId;
-  final ScrollController? controller;
   final VoidCallback? onDeleted;
 
   const Timeline({
     super.key,
     required this.type,
     required this.status,
+    this.pref,
     this.account,
     this.hashtag,
     this.listId,
-    this.controller,
     this.onDeleted,
   });
 
@@ -133,28 +121,47 @@ class Timeline extends StatefulWidget {
 
 class _TimelineState extends State<Timeline> {
   final double loadingThreshold = 180;
-  late final ScrollController controller = widget.controller ?? ScrollController();
+  late final ItemScrollController itemScrollController = ItemScrollController();
+  late final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
   bool isRefresh = false;
   bool isLoading = false;
   bool isCompleted = false;
+  Timer? timer;
+
+  List<StatusSchema> unreaded = [];
   List<StatusSchema> statuses = [];
 
   @override
   void initState() {
     super.initState();
-    controller.addListener(onScroll);
 
-    GlacialHome.scrollToTop = controller;
-    onLoad();
+    itemPositionsListener.itemPositions.addListener(() {
+      final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
+      final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
+
+      if (lastIndex != null && lastIndex > statuses.length - 5) onLoad();
+    });
+
+    GlacialHome.itemScrollToTop = itemScrollController;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final Duration? refreshInterval = widget.pref?.refreshInterval;
+
+      if (refreshInterval != null && refreshInterval.inSeconds > 0) {
+        final int interval = refreshInterval.inSeconds;
+
+        timer = Timer.periodic(Duration(seconds: interval), (Timer timer) async {
+          onLoadUnreaded();
+        });
+      }
+
+      onLoad();
+    });
   }
 
   @override
   void dispose() {
-    if (widget.controller == null) {
-      controller.removeListener(onScroll);
-      controller.dispose();
-    }
+    timer?.cancel();
     super.dispose();
   }
 
@@ -171,8 +178,32 @@ class _TimelineState extends State<Timeline> {
         mainAxisSize: MainAxisSize.min,
         children: [
           (isLoading && !isRefresh) ? ClockProgressIndicator() : const SizedBox.shrink(),
+          buildUnreadedBanner(),
           Flexible(child: buildContent()),
         ],
+      ),
+    );
+  }
+
+  // Build the unreaded count widget and the list of statuses.
+  Widget buildUnreadedBanner() {
+    final TextStyle? style = Theme.of(context).textTheme.labelLarge;
+
+    if (unreaded.isEmpty) return const SizedBox.shrink();
+    final String text = AppLocalizations.of(context)?.btn_timeline_unread(unreaded.length) ?? "Unreaded ${unreaded.length}";
+
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        icon: const Icon(Icons.mark_email_unread, size: tabSize),
+        label: Text(text, style: style),
+        style: FilledButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+          foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+        ),
+        onPressed: onClickUnreaded,
       ),
     );
   }
@@ -188,8 +219,9 @@ class _TimelineState extends State<Timeline> {
       indicatorBuilder: (_, __) => const ClockProgressIndicator(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: ListView.builder(
-          controller: controller,
+        child: ScrollablePositionedList.builder(
+          itemScrollController: itemScrollController,
+          itemPositionsListener: itemPositionsListener,
           shrinkWrap: true,
           itemCount: statuses.length,
           itemBuilder: (context, index) {
@@ -215,11 +247,20 @@ class _TimelineState extends State<Timeline> {
     );
   }
 
-  // Detect the scroll event and load more statuses when the user scrolls to the
-  // almost bottom of the list.
-  void onScroll() async {
-    if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
-      await onLoad();
+  // Show the unreaded statuses when the user taps on the unreaded banner and keep the current
+  // scroll position.
+  void onClickUnreaded() async {
+    final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
+    final int oldIndex = unreaded.length + positions.first.index;
+
+    setState(() {
+      statuses = [...unreaded, ...statuses];
+      unreaded.clear();
+    });
+
+    // Scroll to the old position after the new statuses are added.
+    if (widget.pref?.loadedTop ?? false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => itemScrollController.jumpTo(index: oldIndex));
     }
   }
 
@@ -229,6 +270,7 @@ class _TimelineState extends State<Timeline> {
       isRefresh = true;
       isLoading = false;
       isCompleted = false;
+      unreaded.clear();
     });
 
     await onLoad();
@@ -259,6 +301,36 @@ class _TimelineState extends State<Timeline> {
         statuses.addAll(schemas);
       });
     }
+  }
+
+  // Load the possible unreaded statuses when the app is resumed.
+  Future<void> onLoadUnreaded() async {
+    String? minId = unreaded.isEmpty ?
+        (statuses.isNotEmpty ? statuses.first.id : null) :
+        unreaded.first.id;
+
+    if (minId == null) [];
+
+    while (true) {
+      final List<StatusSchema> schemas = await onLoadUnreadedMore(minId);
+
+      if (schemas.isEmpty) break;
+
+      setState(() => unreaded = [...schemas, ...unreaded]);
+      minId = schemas.first.id;
+
+      await Future.delayed(const Duration(milliseconds: 750));
+    }
+  }
+
+  Future<List<StatusSchema>> onLoadUnreadedMore(String? minId) async {
+    return await widget.status.fetchTimeline(
+      widget.type,
+      account: widget.type == TimelineType.schedule ? widget.status.account : widget.account,
+      tag: widget.hashtag,
+      listId: widget.listId,
+      minId: minId,
+    );
   }
 }
 
