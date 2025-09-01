@@ -15,7 +15,6 @@ import 'package:glacial/features/screens.dart';
 // server timeline and other features.
 class GlacialHome extends ConsumerStatefulWidget {
   // The global scroll-to-top controller callback
-  static ScrollController? scrollToTop;
   static ItemScrollController? itemScrollToTop;
 
   final bool backable;
@@ -211,12 +210,10 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     final Duration duration = const Duration(milliseconds: 300);
     final Curve curve = Curves.easeInOut;
 
-    if (curRoute == action.route) {
+    if (curRoute == action.route && GlacialHome.itemScrollToTop?.isAttached == true) {
       logger.d("already on the ${action.name} page, no need to navigate.");
 
-      if (GlacialHome.scrollToTop?.hasClients == true) GlacialHome.scrollToTop?.animateTo(0, duration: duration, curve: curve);
-      if (GlacialHome.itemScrollToTop?.isAttached == true) GlacialHome.itemScrollToTop?.scrollTo(index: 0, duration: duration, curve: curve);
-
+      GlacialHome.itemScrollToTop?.scrollTo(index: 0, duration: duration, curve: curve);
       return ;
     }
 
