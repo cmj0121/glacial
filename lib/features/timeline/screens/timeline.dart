@@ -31,7 +31,6 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
   final List<TimelineType> types = TimelineType.values.where((type) => type.inTimelineTab).toList();
 
   late final TabController controller;
-  late List<ScrollController> scrollControllers = [];
 
   @override
   void initState() {
@@ -42,16 +41,12 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
       vsync: this,
     );
 
-    scrollControllers = List.generate(types.length, (index) => ScrollController());
     controller.index = types.indexWhere((type) => type == widget.initialType);
   }
 
   @override
   void dispose() {
     controller.dispose();
-    for (final ScrollController scrollController in scrollControllers) {
-      scrollController.dispose();
-    }
     super.dispose();
   }
 
@@ -92,20 +87,9 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
         type: types[index],
         status: status,
         pref: pref,
-        controller: scrollControllers[index],
         onDeleted: () => context.pop(),
       ),
       onTabTappable: (index) => isSignIn || types[index].supportAnonymous,
-      onDoubleTap: onDoubleTap,
-    );
-  }
-
-  // Scroll to the top of the timeline when the user double taps on the tab.
-  void onDoubleTap(int index) {
-    scrollControllers[index].animateTo(
-      0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
     );
   }
 }
@@ -118,7 +102,6 @@ class Timeline extends StatefulWidget {
   final AccountSchema? account;
   final String? hashtag;
   final String? listId;
-  final ScrollController? controller;
   final VoidCallback? onDeleted;
 
   const Timeline({
@@ -129,7 +112,6 @@ class Timeline extends StatefulWidget {
     this.account,
     this.hashtag,
     this.listId,
-    this.controller,
     this.onDeleted,
   });
 
@@ -139,7 +121,6 @@ class Timeline extends StatefulWidget {
 
 class _TimelineState extends State<Timeline> {
   final double loadingThreshold = 180;
-  late final ScrollController controller = widget.controller ?? ScrollController();
   late final ItemScrollController itemScrollController = ItemScrollController();
   late final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
@@ -155,7 +136,14 @@ class _TimelineState extends State<Timeline> {
   void initState() {
     super.initState();
 
-    GlacialHome.scrollToTop = controller;
+    itemPositionsListener.itemPositions.addListener(() {
+      final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
+      final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
+
+      if (lastIndex != null && lastIndex > statuses.length - 5) onLoad();
+    });
+
+    GlacialHome.itemScrollToTop = itemScrollController;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final Duration? refreshInterval = widget.pref?.refreshInterval;
 
@@ -166,13 +154,13 @@ class _TimelineState extends State<Timeline> {
           onLoadUnreaded();
         });
       }
+
       onLoad();
     });
   }
 
   @override
   void dispose() {
-    if (widget.controller == null) controller.dispose();
     timer?.cancel();
     super.dispose();
   }
