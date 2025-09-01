@@ -259,7 +259,7 @@ class _TimelineState extends State<Timeline> {
     });
 
     // Scroll to the old position after the new statuses are added.
-    if (widget.pref?.loadedTop ?? false) {
+    if (widget.pref?.loadedTop ?? false == false) {
       WidgetsBinding.instance.addPostFrameCallback((_) => itemScrollController.jumpTo(index: oldIndex));
     }
   }
