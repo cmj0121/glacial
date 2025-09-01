@@ -284,6 +284,12 @@ abstract class AppLocalizations {
   /// **'Vote'**
   String get btn_timeline_vote;
 
+  /// No description provided for @btn_timeline_unread.
+  ///
+  /// In en, this message translates to:
+  /// **'#{count} Unread Toots'**
+  String btn_timeline_unread(Object count);
+
   /// No description provided for @btn_preference_theme.
   ///
   /// In en, this message translates to:

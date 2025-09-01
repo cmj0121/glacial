@@ -190,12 +190,13 @@ class _TimelineState extends State<Timeline> {
     final TextStyle? style = Theme.of(context).textTheme.labelLarge;
 
     if (unreaded.isEmpty) return const SizedBox.shrink();
+    final String text = AppLocalizations.of(context)?.btn_timeline_unread(unreaded.length) ?? "Unreaded ${unreaded.length}";
 
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
         icon: const Icon(Icons.mark_email_unread, size: tabSize),
-        label: Text("#${unreaded.length} Unreaded Statuses", style: style),
+        label: Text(text, style: style),
         style: FilledButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),

@@ -29,6 +29,7 @@
   "btn_timeline_bookmarks": "Lesezeichen",
   "btn_timeline_list": "Listen",
   "btn_timeline_vote": "Abstimmen",
+  "btn_timeline_unread": "#{count} ungelesene Toots",
   "btn_preference_theme": "Thema",
   "btn_preference_engineer": "Entwicklereinstellungen",
   "btn_preference_about": "Über",

@@ -29,6 +29,7 @@
   "btn_timeline_bookmarks": "Signets",
   "btn_timeline_list": "Listes",
   "btn_timeline_vote": "Voter",
+  "btn_timeline_unread": "#{count} toots non lus",
   "btn_preference_theme": "Thème",
   "btn_preference_engineer": "Paramètres développeur",
   "btn_preference_about": "À propos",

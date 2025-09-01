@@ -29,6 +29,7 @@
   "btn_timeline_bookmarks": "書籤",
   "btn_timeline_list": "列表",
   "btn_timeline_vote": "投票",
+  "btn_timeline_unread": "#{count} 未讀嘟文",
   "btn_preference_theme": "主題",
   "btn_preference_engineer": "工程設定",
   "btn_preference_about": "系統資訊",

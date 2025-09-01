@@ -96,6 +96,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_timeline_vote => '投票';
 
   @override
+  String btn_timeline_unread(Object count) {
+    return '#$count 未讀嘟文';
+  }
+
+  @override
   String get btn_preference_theme => '主題';
 
   @override

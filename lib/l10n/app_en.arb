@@ -29,6 +29,7 @@
   "btn_timeline_bookmarks": "Bookmarks",
   "btn_timeline_list": "Lists",
   "btn_timeline_vote": "Vote",
+  "btn_timeline_unread": "#{count} Unread Toots",
   "btn_preference_theme": "Theme",
   "btn_preference_engineer": "Engineer Settings",
   "btn_preference_about": "About",

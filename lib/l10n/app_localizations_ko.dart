@@ -96,6 +96,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_timeline_vote => '투표';
 
   @override
+  String btn_timeline_unread(Object count) {
+    return '읽지 않은 툿 #$count개';
+  }
+
+  @override
   String get btn_preference_theme => '테마';
 
   @override

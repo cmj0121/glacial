@@ -96,6 +96,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btn_timeline_vote => 'Votar';
 
   @override
+  String btn_timeline_unread(Object count) {
+    return '#$count toots sin leer';
+  }
+
+  @override
   String get btn_preference_theme => 'Tema';
 
   @override
