@@ -65,7 +65,6 @@ platform :ios do
       end
     end
 
-
     Dir.chdir "../.." do
       for device in devices
         sh "xcrun simctl shutdown all"
@@ -80,7 +79,6 @@ platform :ios do
          sh "xcrun simctl shutdown '#{device}'"
          sh "xcrun simctl erase '#{device}'"
         end
-
       end
     end
   end
