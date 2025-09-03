@@ -2,24 +2,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:integration_test/integration_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:glacial/app.dart';
-import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
 import 'misc.dart';
 
 void main() {
-  isTestMode = true;
-  SharedPreferences.setMockInitialValues({});
-
-  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
-
   testWidgets('[E2E] show trends info', (WidgetTester tester) async {
+    await prologue();
+
     // The default system preference schema.
     final SystemPreferenceSchema schema = SystemPreferenceSchema();
 
@@ -55,8 +48,6 @@ void main() {
     expect(timeline, findsOneWidget, reason: 'Timeline should be present in the trends tab');
     final Timeline timelineWidget = tester.widget<Timeline>(timeline);
     expect(timelineWidget.type, TimelineType.hashtag, reason: 'Timeline should be a hashtag timeline');
-
-
   });
 }
 

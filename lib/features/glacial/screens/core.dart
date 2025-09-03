@@ -370,7 +370,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
 
     try {
       await storage.loadPreference(ref: ref);
-      if (!isTestMode) await storage.loadAccessStatus(ref: ref);
+      await storage.loadAccessStatus(ref: ref);
     } catch (e) {
       setState(() => error = e.toString());
       return ;

@@ -75,6 +75,7 @@ platform :ios do
         begin
           run_test(device, "app_switch_server")
           run_test(device, "app_trends")
+          run_test(device, "app_timeline")
         ensure
          sh "xcrun simctl shutdown '#{device}'"
          sh "xcrun simctl erase '#{device}'"

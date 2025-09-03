@@ -1,9 +1,40 @@
 // The integrations misc library for Glacial app testing.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:integration_test/integration_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:glacial/main.dart' as main;
+import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
+
+Future<void> prologue({String? domain}) async {
+  await main.init();
+
+  SharedPreferences.setMockInitialValues({});
+
+  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  final Storage storage = Storage();
+  final AccessStatusSchema status = AccessStatusSchema();
+
+  binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
+  await storage.purge();
+  await storage.saveAccessStatus(status.copyWith(domain: ''));
+
+  if (domain?.isNotEmpty == true) {
+    final String? accessToken = dotenv.env['ACCESS_TOKEN'];
+
+    if (accessToken == null || accessToken.isEmpty) {
+      throw Exception('ACCESS_TOKEN is not set in .env file');
+    }
+
+    await storage.saveAccessToken(domain!, accessToken);
+    await storage.saveAccessStatus(status.copyWith(domain: domain));
+  }
+}
 
 Future<void> selectMastodonServer(WidgetTester tester, String serverUrl) async {
   // Find the server explorer text field and enter a server URL.
