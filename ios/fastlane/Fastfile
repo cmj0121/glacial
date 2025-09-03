@@ -47,7 +47,7 @@ platform :ios do
   desc "Run the end-to-end (E2E) tests"
   lane :e2e do
     # find the device by the command `xcrun simctl list devices`
-    devices = ["iPad mini (6th generation)", "iPhone 16 Plus"]
+    devices = ["iPad mini (A17 Pro)", "iPhone 16 Plus"]
 
     # define the function to run the test script with take the screenshots
     def run_test(device, script)
