@@ -11,6 +11,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
 
 const double iconSize = 32.0; // The default icon size used in the app.
 const double tabSize = 24.0; // The default tab size used in the app.
+bool isTestMode = false; // Whether the app is running in test mode.
 
 // The logger instance.
 final Logger logger = Logger(

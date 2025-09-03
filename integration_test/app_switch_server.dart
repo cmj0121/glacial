@@ -5,12 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:glacial/app.dart';
+import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
 import 'misc.dart';
 
 void main() {
+  isTestMode = true;
+
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
 
