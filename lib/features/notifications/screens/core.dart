@@ -184,6 +184,10 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
 
   // Build the notification content.
   Widget buildContent() {
+    if (groups.isEmpty) {
+      return isCompleted ? NoResult() : const SizedBox.shrink();
+    }
+
     final Widget builder = ScrollablePositionedList.builder(
       itemScrollController: itemScrollController,
       itemPositionsListener: itemPositionsListener,
