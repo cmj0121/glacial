@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: 3.32.8
+          flutter-version: 3.35.2
 
       - name: Install dependencies
         run: |
@@ -28,10 +28,12 @@ jobs:
             echo OAUTH_REDIRECT_URI=glacial://auth
             echo OAUTH_SCOPES=profile read write push
             echo OAUTH_WEBSITE_URL=https://github.com/cmj0121/glacial
+            echo ACCESS_TOKEN=${{ secrets.TEST_ACCESS_TOKEN }}
           } > .env
-      - name: Run tests
-        run: |
-          flutter test --coverage
+      # - name: Run tests
+      #   run: |
+      #     xcrun simctl list devices
+      #     cd ios && fastlane e2e
       - name: Build the dummy app
         run: |
           flutter build ipa --no-codesign

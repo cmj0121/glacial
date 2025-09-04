@@ -15,7 +15,7 @@ extension MarkerExtensions on AccessStatusSchema {
   // Get current positions in timelines.
   Future<MarkersSchema?> getMarker({required TimelineMarkerType type}) async {
     final String endpoint = '/api/v1/markers';
-    final Map<String, String> queryParameters = {"type": type.name};
+    final Map<String, String> queryParameters = {"timeline[]": type.name};
     final String body = await getAPI(endpoint, queryParameters: queryParameters) ?? '{}';
 
     return MarkersSchema.fromString(body);

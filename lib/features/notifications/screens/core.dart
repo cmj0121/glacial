@@ -184,6 +184,10 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
 
   // Build the notification content.
   Widget buildContent() {
+    if (groups.isEmpty) {
+      return isCompleted ? NoResult() : const SizedBox.shrink();
+    }
+
     final Widget builder = ScrollablePositionedList.builder(
       itemScrollController: itemScrollController,
       itemPositionsListener: itemPositionsListener,
@@ -373,7 +377,10 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
         content = Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: accounts.map((a) => Account(schema: a)).toList(),
+          children: accounts.map((a) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Account(schema: a),
+          )).toList(),
         );
         break;
       case NotificationType.adminReport:

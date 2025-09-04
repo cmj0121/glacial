@@ -61,13 +61,18 @@ Future<void> prologue() async {
     macOS: initializationSettingsDarwin,
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-  await dotenv.load(fileName: ".env");
-  await Info.init();
-  await Storage.init();
+  await init();
 
   logger.d("completely preloaded system-wise settings ...");
 }
+
+// Initialize for the local services
+Future<void> init() async {
+  await dotenv.load(fileName: ".env");
+  await Info.init();
+  await Storage.init();
+}
+
 
 // The entry point of the app that starts the Flutter application.
 void start() async {
