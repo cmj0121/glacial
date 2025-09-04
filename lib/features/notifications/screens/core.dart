@@ -373,7 +373,10 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
         content = Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: accounts.map((a) => Account(schema: a)).toList(),
+          children: accounts.map((a) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Account(schema: a),
+          )).toList(),
         );
         break;
       case NotificationType.adminReport:
