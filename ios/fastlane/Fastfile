@@ -32,6 +32,7 @@ platform :ios do
     sh 'cd .. && flutter pub get'
     cocoapods
 
+    sh 'flutter build ios --config-only --release'
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
