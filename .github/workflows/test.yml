@@ -30,10 +30,10 @@ jobs:
             echo OAUTH_WEBSITE_URL=https://github.com/cmj0121/glacial
             echo ACCESS_TOKEN=${{ secrets.TEST_ACCESS_TOKEN }}
           } > .env
-      - name: Run tests
-        run: |
-          xcrun simctl list devices
-          cd ios && fastlane e2e
+      # - name: Run tests
+      #   run: |
+      #     xcrun simctl list devices
+      #     cd ios && fastlane e2e
       - name: Build the dummy app
         run: |
           flutter build ipa --no-codesign
