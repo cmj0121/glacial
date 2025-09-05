@@ -183,10 +183,11 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           path: RoutePath.timeline.path,
           builder: (_, _) {
             final AccessStatusSchema? status = ref.read(accessStatusProvider);
+            final bool isSignedIn = status?.isSignedIn == true;
 
             return TimelineTab(
+              key: ValueKey('timeline_tab_${status?.domain}_$isSignedIn'),
               initialType: status?.isSignedIn == true ? TimelineType.home : TimelineType.local,
-              key: ValueKey('timeline_tab_${status?.domain}'),
             );
           },
         ),
