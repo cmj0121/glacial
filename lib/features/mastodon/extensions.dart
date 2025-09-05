@@ -103,6 +103,7 @@ extension AccessStatusExtension on Storage {
       history: schema?.history ?? [],
     );
 
+    await status.revokeAccessToken(domain: schema?.domain, token: schema?.accessToken);
     await removeAccessToken(schema?.domain);
 
     if (ref?.context.mounted ?? false) {

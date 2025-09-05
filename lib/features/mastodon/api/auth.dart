@@ -66,7 +66,12 @@ extension AuthExtensions on AccessStatusSchema {
   }
 
   // Revoke an access token to make it no longer valid for use.
-  Future<void> revokeAccessToken({required String domain, required String token}) async {
+  Future<void> revokeAccessToken({String? domain, String? token}) async {
+    if (domain == null || domain.isEmpty) {
+      logger.w("no domain to revoke access token");
+      return;
+    }
+
     final Storage storage = Storage();
     final OAuth2Info info = await storage.getOAuth2Info(domain);
 
