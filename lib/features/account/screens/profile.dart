@@ -97,6 +97,8 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
             return Timeline(status: status!, type: type.timelineType, account: widget.schema);
           case AccountProfileType.hashtag:
             return const FollowedHashtags();
+          case AccountProfileType.filter:
+            return const WIP();
           case AccountProfileType.mute:
             return AccountList(loader: status?.fetchMutedAccounts);
           case AccountProfileType.block:

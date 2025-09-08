@@ -53,6 +53,7 @@
   "btn_profile_following": "フォロー中",
   "btn_profile_scheduled": "約投稿",
   "btn_profile_hashtag": "フォロー中のハッシュタグ",
+  "btn_profile_filter": "フィルター",
   "btn_profile_mute": "ミュートユーザー",
   "btn_profile_block": "ブロックユーザー",
   "btn_profile_general_info": "基本情報",

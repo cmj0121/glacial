@@ -170,6 +170,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_profile_hashtag => 'Hashtags suivis';
 
   @override
+  String get btn_profile_filter => 'Filtres';
+
+  @override
   String get btn_profile_mute => 'Utilisateurs muets';
 
   @override

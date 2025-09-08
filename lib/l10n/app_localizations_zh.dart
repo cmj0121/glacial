@@ -170,6 +170,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_profile_hashtag => '追蹤標籤';
 
   @override
+  String get btn_profile_filter => '過濾器';
+
+  @override
   String get btn_profile_mute => '靜音用戶';
 
   @override

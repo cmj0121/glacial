@@ -428,6 +428,12 @@ abstract class AppLocalizations {
   /// **'Following Hashtags'**
   String get btn_profile_hashtag;
 
+  /// No description provided for @btn_profile_filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get btn_profile_filter;
+
   /// No description provided for @btn_profile_mute.
   ///
   /// In en, this message translates to:

@@ -122,6 +122,7 @@ enum AccountProfileType {
   following,     // The accounts followed by the logged in user.
   schedule,      // The scheduled statuses for the logged in user.
   hashtag,       // The hashtag timeline for the current server.
+  filter,        // The created and managed filters.
   mute,          // The muted accounts for the logged in user.
   block;         // The blocked accounts for the logged in user.
 
@@ -142,6 +143,8 @@ enum AccountProfileType {
         return AppLocalizations.of(context)?.btn_profile_scheduled ?? "Scheduled Posts";
       case hashtag:
         return AppLocalizations.of(context)?.btn_profile_hashtag ?? "Hashtags";
+      case filter:
+        return AppLocalizations.of(context)?.btn_profile_filter ?? "Filters";
       case mute:
         return AppLocalizations.of(context)?.btn_profile_mute ?? "Muted Accounts";
       case block:
@@ -166,6 +169,8 @@ enum AccountProfileType {
         return active ? Icons.schedule : Icons.schedule_outlined;
       case hashtag:
         return active ? Icons.tag : Icons.tag_outlined;
+      case filter:
+        return active ? Icons.filter_list : Icons.filter_list_outlined;
       case mute:
         return active ? Icons.volume_off : Icons.volume_off_outlined;
       case block:
@@ -181,6 +186,7 @@ enum AccountProfileType {
       case AccountProfileType.pin:
       case AccountProfileType.followers:
       case AccountProfileType.following:
+      case AccountProfileType.filter:
         return true;
       default:
         return false;

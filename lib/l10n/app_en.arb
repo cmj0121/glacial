@@ -53,6 +53,7 @@
   "btn_profile_following": "Following",
   "btn_profile_scheduled": "Scheduled Toots",
   "btn_profile_hashtag": "Following Hashtags",
+  "btn_profile_filter": "Filters",
   "btn_profile_mute": "Muted Users",
   "btn_profile_block": "Blocked Users",
   "btn_profile_general_info": "General Info",

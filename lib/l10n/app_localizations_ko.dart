@@ -170,6 +170,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_profile_hashtag => '팔로우 중인 해시태그';
 
   @override
+  String get btn_profile_filter => '필터';
+
+  @override
   String get btn_profile_mute => '뮤트한 사용자';
 
   @override

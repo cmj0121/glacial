@@ -170,6 +170,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_profile_hashtag => 'フォロー中のハッシュタグ';
 
   @override
+  String get btn_profile_filter => 'フィルター';
+
+  @override
   String get btn_profile_mute => 'ミュートユーザー';
 
   @override

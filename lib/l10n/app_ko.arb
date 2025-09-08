@@ -53,6 +53,7 @@
   "btn_profile_following": "팔로잉",
   "btn_profile_scheduled": "예약 글",
   "btn_profile_hashtag": "팔로우 중인 해시태그",
+  "btn_profile_filter": "필터",
   "btn_profile_mute": "뮤트한 사용자",
   "btn_profile_block": "차단한 사용자",
   "btn_profile_general_info": "기본 정보",

@@ -170,6 +170,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_profile_hashtag => 'Tags Seguidas';
 
   @override
+  String get btn_profile_filter => 'Filtros';
+
+  @override
   String get btn_profile_mute => 'Usuários Silenciados';
 
   @override
