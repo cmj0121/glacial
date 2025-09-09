@@ -10,6 +10,7 @@ import 'package:glacial/features/models.dart';
 
 export 'api/account.dart';
 export 'api/auth.dart';
+export 'api/filters.dart';
 export 'api/list.dart';
 export 'api/marker.dart';
 export 'api/media.dart';

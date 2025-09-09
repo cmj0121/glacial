@@ -1,7 +1,6 @@
 // The Account profile widget to show the details of the user.
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -98,7 +97,7 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
           case AccountProfileType.hashtag:
             return const FollowedHashtags();
           case AccountProfileType.filter:
-            return const WIP();
+            return const Filters();
           case AccountProfileType.mute:
             return AccountList(loader: status?.fetchMutedAccounts);
           case AccountProfileType.block:
@@ -516,9 +515,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
         ListTile(
           leading: Tooltip(
             message: AppLocalizations.of(context)?.txt_profile_general_name ?? "Display Name",
-            child: Icon(CupertinoIcons.question_square, size: iconSize),
+            child: Icon(Icons.text_fields_outlined, size: iconSize),
           ),
-          title: PopUpTextField(
+          title: TextField(
             controller: nameController,
             style: Theme.of(context).textTheme.titleMedium,
             decoration: InputDecoration(border: InputBorder.none),

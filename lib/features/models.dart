@@ -2,6 +2,7 @@
 
 export 'account/models/core.dart';
 export 'auth/models/core.dart';
+export 'filters/models/core.dart';
 export 'glacial/models/core.dart';
 export 'list/models/core.dart';
 export 'mastodon/models/core.dart';

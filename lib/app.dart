@@ -158,6 +158,10 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             title = Text('$prefix: ${schema.title}');
             backable = true;
             break;
+          case RoutePath.filterForm:
+            title = Text(AppLocalizations.of(context)?.btn_profile_filter ?? 'Filters');
+            backable = true;
+            break;
           default:
             break;
         }
@@ -285,6 +289,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (BuildContext context, GoRouterState state) {
             final ListSchema? schema = state.extra as ListSchema?;
             return schema == null ? const SizedBox.shrink() : LiteTimeline(schema: schema);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.filterForm.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final String title = state.extra as String;
+            return FiltersForm(title: title);
           },
         ),
       ],
