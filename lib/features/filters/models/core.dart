@@ -162,19 +162,23 @@ class FiltersSchema {
       context: context,
       action: action,
       expiresIn: expiresAt?.difference(DateTime.now()).inSeconds,
-      keywords: keywords?.map((k) => FilterKeywordFormSchema(keyword: k.keyword, wholeWord: k.wholeWord)).toList() ?? [],
+      keywords: keywords?.map((k) => FilterKeywordFormSchema(id: k.id, keyword: k.keyword, wholeWord: k.wholeWord)).toList() ?? [],
     );
   }
 }
 
 // A keyword to be added to the newly-created filter group.
 class FilterKeywordFormSchema {
+  final String? id;       // Provide the ID of an existing keyword to modify it, instead of creating a new keyword.
   final String keyword;   // The phrase to be matched against.
   final bool wholeWord;   // Should the filter consider word boundaries?
+  final bool destroy;     // If true, will remove the keyword with the given ID.
 
   const FilterKeywordFormSchema({
+    this.id,
     required this.keyword,
     required this.wholeWord,
+    this.destroy = false,
   });
 
   factory FilterKeywordFormSchema.empty() {
@@ -189,8 +193,18 @@ class FilterKeywordFormSchema {
     bool? wholeWord,
   }) {
     return FilterKeywordFormSchema(
+      id: id,
       keyword: keyword ?? this.keyword,
       wholeWord: wholeWord ?? this.wholeWord,
+    );
+  }
+
+  FilterKeywordFormSchema destroyed() {
+    return FilterKeywordFormSchema(
+      id: id,
+      keyword: keyword,
+      wholeWord: wholeWord,
+      destroy: true,
     );
   }
 
@@ -200,8 +214,10 @@ class FilterKeywordFormSchema {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'keyword': keyword,
       'whole_word': wholeWord,
+      '_destroy': destroy,
     };
   }
 }

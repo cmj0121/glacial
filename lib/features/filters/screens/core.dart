@@ -175,7 +175,7 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
           buildExpiration(),
           buildContexts(),
 
-          ...form.keywords.asMap().entries.map((entry) => FilterKeywordForm(
+          ...form.keywords.where((item) => !item.destroy).toList().asMap().entries.map((entry) => FilterKeywordForm(
             key: UniqueKey(),
             schema: entry.value,
             onChanged: (item) {
@@ -185,7 +185,7 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
             },
             onDelete: () {
               List<FilterKeywordFormSchema> updated = List.from(form.keywords);
-              updated.removeAt(entry.key);
+              updated[entry.key] = updated[entry.key].destroyed();
               setState(() => form = form.copyWith(keywords: updated));
             },
           )),
@@ -362,6 +362,15 @@ class _FilterKeywordFormState extends State<FilterKeywordForm> {
 
   @override
   Widget build(BuildContext context) {
+    return Focus(
+      onFocusChange: (hasFocus) {
+        if (!hasFocus && widget.onDelete != null) onSave();
+      },
+      child: buildContent(),
+    );
+  }
+
+  Widget buildContent() {
     final bool whole = item.wholeWord;
     final bool deletable = widget.onDelete != null;
 
@@ -386,7 +395,10 @@ class _FilterKeywordFormState extends State<FilterKeywordForm> {
         focusColor: Colors.transparent,
         onPressed: deletable ? widget.onDelete : onSave,
       ),
-      onTap: () => setState(() => item = item.copyWith(wholeWord: !item.wholeWord)),
+      onTap: () {
+        setState(() => item = item.copyWith(wholeWord: !item.wholeWord));
+        if (widget.onDelete != null) widget.onChanged?.call(item);
+      },
     );
   }
 
