@@ -617,8 +617,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
       },
       background: Container(
         alignment: Alignment.centerLeft,
-        color: Colors.red,
-        child: const Icon(Icons.delete_forever_rounded, color: Colors.white),
+        color: Theme.of(context).colorScheme.error,
+        child: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.onError),
       ),
       child: ListTile(
         leading: Icon(FieldSchema.icons[index % FieldSchema.icons.length], size: iconSize),

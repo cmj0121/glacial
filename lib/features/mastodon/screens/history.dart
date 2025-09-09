@@ -78,8 +78,8 @@ class _HistoryDrawerState extends ConsumerState<HistoryDrawer> {
           key: ValueKey(info.domain),
           background: Container(
             alignment: Alignment.centerLeft,
-            color: Colors.red,
-            child: const Icon(Icons.delete_forever_rounded, color: Colors.white),
+            color: Theme.of(context).colorScheme.error,
+            child: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.onError),
           ),
           direction: DismissDirection.startToEnd,
           onDismissed: (direction) => onRemoveHistory(info),

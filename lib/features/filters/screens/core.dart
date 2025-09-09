@@ -70,13 +70,24 @@ class _FiltersState extends ConsumerState<Filters> {
       itemCount: filters.length,
       itemBuilder: (context, index) {
         final FiltersSchema filter = filters[index];
-
-        return ListTile(
+        final Widget tile = ListTile(
           leading: Tooltip(
             message: filter.action.title(context),
             child: Icon(filter.action.icon, size: iconSize),
           ),
           title: Text(filter.title),
+        );
+
+        return Dismissible(
+          key: UniqueKey(),
+          background: Container(
+            alignment: Alignment.centerLeft,
+            color: Theme.of(context).colorScheme.error,
+            child: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.onError),
+          ),
+          direction: DismissDirection.startToEnd,
+          onDismissed: (direction) => onDelete(schema: filter),
+          child: tile,
         );
       },
     );
@@ -91,6 +102,11 @@ class _FiltersState extends ConsumerState<Filters> {
     await context.push(RoutePath.filterForm.path, extra: controller.text);
     controller.clear();
     await onLoad();
+  }
+
+  void onDelete({required FiltersSchema schema}) async {
+    await status?.deleteFilter(id: schema.id);
+    setState(() => filters.remove(schema));
   }
 }
 

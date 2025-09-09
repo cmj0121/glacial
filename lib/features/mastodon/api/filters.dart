@@ -42,6 +42,12 @@ extension FiltersExtensions on AccessStatusSchema {
 
     return FiltersSchema.fromJson(json);
   }
+
+  // Delete a filter group with the given id.
+  Future<void> deleteFilter({required String id}) async {
+    final String endpoint = '/api/v2/filters/$id';
+    await deleteAPI(endpoint);
+  }
 }
 
 
