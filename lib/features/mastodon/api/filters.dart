@@ -5,7 +5,7 @@
 //   - [+] GET    /api/v2/filters
 //   - [ ] GET    /api/v2/filters/:id
 //   - [+] POST   /api/v2/filters
-//   - [ ] PUT    /api/v2/filters/:id
+//   - [+] PUT    /api/v2/filters/:id
 //   - [+] DELETE /api/v2/filters/:id
 //   - [ ] GET    /api/v2/filters/:filter_id/keywords
 //   - [ ] POST   /api/v2/filters/:filter_id/keywords
@@ -38,6 +38,15 @@ extension FiltersExtensions on AccessStatusSchema {
   Future<FiltersSchema> createFilter({required FilterFormSchema schema}) async {
     final String endpoint = '/api/v2/filters';
     final String body = await postAPI(endpoint, body: schema.toJson()) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+
+    return FiltersSchema.fromJson(json);
+  }
+
+  // Update a filter group with the given parameters.
+  Future<FiltersSchema> updateFilter({required String id, required FilterFormSchema schema}) async {
+    final String endpoint = '/api/v2/filters/$id';
+    final String body = await putAPI(endpoint, body: schema.toJson()) ?? '{}';
     final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
 
     return FiltersSchema.fromJson(json);

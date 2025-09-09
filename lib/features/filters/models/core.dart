@@ -155,6 +155,16 @@ class FiltersSchema {
       statuses: json['statuses']?.map((e) => FilterStatusSchema.fromJson(e)).toList().cast<FilterStatusSchema>(),
     );
   }
+
+  FilterFormSchema asForm() {
+    return FilterFormSchema(
+      title: title,
+      context: context,
+      action: action,
+      expiresIn: expiresAt?.difference(DateTime.now()).inSeconds,
+      keywords: keywords?.map((k) => FilterKeywordFormSchema(keyword: k.keyword, wholeWord: k.wholeWord)).toList() ?? [],
+    );
+  }
 }
 
 // A keyword to be added to the newly-created filter group.

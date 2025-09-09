@@ -158,7 +158,11 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             title = Text('$prefix: ${schema.title}');
             backable = true;
             break;
-          case RoutePath.filterForm:
+          case RoutePath.createFilterForm:
+            title = Text(AppLocalizations.of(context)?.btn_profile_filter ?? 'Filters');
+            backable = true;
+            break;
+          case RoutePath.editFilterForm:
             title = Text(AppLocalizations.of(context)?.btn_profile_filter ?? 'Filters');
             backable = true;
             break;
@@ -292,10 +296,17 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           },
         ),
         GoRoute(
-          path: RoutePath.filterForm.path,
+          path: RoutePath.createFilterForm.path,
           builder: (BuildContext context, GoRouterState state) {
             final String title = state.extra as String;
             return FiltersForm(title: title);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.editFilterForm.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final FiltersSchema schema = state.extra as FiltersSchema;
+            return FiltersForm(title: schema.title, schema: schema);
           },
         ),
       ],

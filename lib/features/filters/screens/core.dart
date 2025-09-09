@@ -76,6 +76,7 @@ class _FiltersState extends ConsumerState<Filters> {
             child: Icon(filter.action.icon, size: iconSize),
           ),
           title: Text(filter.title),
+          onTap: () => context.push(RoutePath.editFilterForm.path, extra: filter),
         );
 
         return Dismissible(
@@ -99,7 +100,7 @@ class _FiltersState extends ConsumerState<Filters> {
   }
 
   void onCreate() async {
-    await context.push(RoutePath.filterForm.path, extra: controller.text);
+    await context.push(RoutePath.createFilterForm.path, extra: controller.text);
     controller.clear();
     await onLoad();
   }
@@ -112,10 +113,12 @@ class _FiltersState extends ConsumerState<Filters> {
 
 class FiltersForm extends ConsumerStatefulWidget {
   final String title;
+  final FiltersSchema? schema;
 
   const FiltersForm({
     super.key,
     required this.title,
+    this.schema,
   });
 
   @override
@@ -123,7 +126,7 @@ class FiltersForm extends ConsumerStatefulWidget {
 }
 
 class _FiltersFormState extends ConsumerState<FiltersForm> {
-  late FilterFormSchema form = FilterFormSchema.fromTitle(widget.title);
+  late FilterFormSchema form = widget.schema?.asForm() ?? FilterFormSchema.fromTitle(widget.title);
   late FilterKeywordFormSchema keyword = FilterKeywordFormSchema.empty();
 
   late final FocusNode focusNode = FocusNode();
@@ -251,13 +254,16 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
   // The expiration time of the filter.
   Widget buildExpiration() {
     final int index = durations.indexWhere((d) => d?.inSeconds == form.expiresIn);
+    final String text = index == -1 ?
+        (form.expiresIn! < 0 ? "Expired" : Duration(seconds: form.expiresIn ?? 0).pretty()) :
+        (durations[index] == null ? "Never" : "In ${durations[index]?.pretty()}");
 
     return ListTile(
       leading: Tooltip(
         message: "Expiration",
         child: Icon(Icons.schedule_outlined, size: iconSize),
       ),
-      title: Text(durations[index] == null ? "Never" : "In ${durations[index]?.pretty()}"),
+      title: Text(text),
       subtitle: Text("When the filter will expire", style: subStyle),
       onTap: () {
         final int next = (index + 1) % durations.length;
@@ -318,7 +324,7 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
 
   void onSubmit() async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
-    status?.createFilter(schema: form);
+    widget.schema == null ? status?.createFilter(schema: form) : status?.updateFilter(id: widget.schema!.id, schema: form);
 
     if (mounted && context.canPop())  context.pop();
   }
