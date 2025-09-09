@@ -97,7 +97,7 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
           case AccountProfileType.hashtag:
             return const FollowedHashtags();
           case AccountProfileType.filter:
-            return const Filters();
+            return Filters(key: UniqueKey());
           case AccountProfileType.mute:
             return AccountList(loader: status?.fetchMutedAccounts);
           case AccountProfileType.block:

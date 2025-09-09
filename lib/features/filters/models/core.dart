@@ -225,7 +225,7 @@ class FilterFormSchema {
     return {
       'title': title,
       'context': context.map((c) => c.name).toList(),
-      'action': action.name,
+      'filter_action': action.name,
       if (expiresIn != null) 'expires_in': expiresIn,
       'keywords_attributes': keywords.map((k) => k.toJson()).toList(),
     };

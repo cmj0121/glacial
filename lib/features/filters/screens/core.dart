@@ -70,7 +70,12 @@ class _FiltersState extends ConsumerState<Filters> {
       itemCount: filters.length,
       itemBuilder: (context, index) {
         final FiltersSchema filter = filters[index];
+
         return ListTile(
+          leading: Tooltip(
+            message: filter.action.title(context),
+            child: Icon(filter.action.icon, size: iconSize),
+          ),
           title: Text(filter.title),
         );
       },
@@ -89,7 +94,7 @@ class _FiltersState extends ConsumerState<Filters> {
   }
 }
 
-class FiltersForm extends StatefulWidget {
+class FiltersForm extends ConsumerStatefulWidget {
   final String title;
 
   const FiltersForm({
@@ -98,15 +103,16 @@ class FiltersForm extends StatefulWidget {
   });
 
   @override
-  State<FiltersForm> createState() => _FiltersFormState();
+  ConsumerState<FiltersForm> createState() => _FiltersFormState();
 }
 
-class _FiltersFormState extends State<FiltersForm> {
+class _FiltersFormState extends ConsumerState<FiltersForm> {
   late FilterFormSchema form = FilterFormSchema.fromTitle(widget.title);
   late FilterKeywordFormSchema keyword = FilterKeywordFormSchema.empty();
 
   late final FocusNode focusNode = FocusNode();
   late final TextEditingController controller = TextEditingController();
+  late final TextEditingController titleController = TextEditingController(text: widget.title);
   late final TextStyle? subStyle = Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).disabledColor);
 
   final List<Duration?> durations = [
@@ -123,6 +129,7 @@ class _FiltersFormState extends State<FiltersForm> {
   void dispose() {
     focusNode.dispose();
     controller.dispose();
+    titleController.dispose();
     super.dispose();
   }
 
@@ -186,18 +193,25 @@ class _FiltersFormState extends State<FiltersForm> {
 
   // The editable title field.
   Widget buildTitle() {
-    return ListTile(
-      leading: Tooltip(
-        message: "Filter name",
-        child: Icon(Icons.text_fields_outlined, size: iconSize),
+    return Focus(
+      onFocusChange: (hasFocus) {
+        if (!hasFocus) {
+          setState(() => form = form.copyWith(title: titleController.text));
+        }
+      },
+      child: ListTile(
+        leading: Tooltip(
+          message: "Filter name",
+          child: Icon(Icons.text_fields_outlined, size: iconSize),
+        ),
+        title: TextField(
+          controller: titleController,
+          style: Theme.of(context).textTheme.titleMedium,
+          decoration: InputDecoration(border: InputBorder.none),
+          onSubmitted: (String value) => form = form.copyWith(title: value),
+        ),
+        subtitle: Text("The name of the filter", style: subStyle),
       ),
-      title: TextField(
-        controller: TextEditingController(text: form.title),
-        style: Theme.of(context).textTheme.titleMedium,
-        decoration: InputDecoration(border: InputBorder.none),
-        onSubmitted: (String value) => form = form.copyWith(title: value),
-      ),
-      subtitle: Text("The name of the filter", style: subStyle),
     );
   }
 
@@ -276,11 +290,21 @@ class _FiltersFormState extends State<FiltersForm> {
       child: FilledButton.icon(
         icon: Icon(Icons.save_outlined, size: iconSize),
         label: Text("Save Filter"),
-        onPressed: () {
-          context.pop();
-        },
+        onPressed: canSubmit() ? onSubmit : null,
       ),
     );
+  }
+
+  // Check the form can be submitted.
+  bool canSubmit() {
+    return form.context.isNotEmpty;
+  }
+
+  void onSubmit() async {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    status?.createFilter(schema: form);
+
+    if (mounted && context.canPop())  context.pop();
   }
 }
 
