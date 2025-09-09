@@ -1,4 +1,6 @@
 // Represents a user-defined filter for determining which statuses should not be shown to the user.
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 enum FilterContext {
@@ -116,6 +118,11 @@ class FilterStatusSchema {
     required this.id,
     required this.statusId,
   });
+
+  factory FilterStatusSchema.fromString(String str) {
+    final Map<String, dynamic> json = jsonDecode(str);
+    return FilterStatusSchema.fromJson(json);
+  }
 
   factory FilterStatusSchema.fromJson(Map<String, dynamic> json) {
     return FilterStatusSchema(

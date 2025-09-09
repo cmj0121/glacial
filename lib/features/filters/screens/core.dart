@@ -7,6 +7,7 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
+// The page to show the filters.
 class Filters extends ConsumerStatefulWidget {
   const Filters({super.key});
 
@@ -111,6 +112,66 @@ class _FiltersState extends ConsumerState<Filters> {
   }
 }
 
+// The filter selector to add the status in the filtered list.
+class FilterSelector extends ConsumerStatefulWidget {
+  final ValueChanged<FiltersSchema>? onSelected;
+
+  const FilterSelector({
+    super.key,
+    this.onSelected,
+  });
+
+  @override
+  ConsumerState<FilterSelector> createState() => _FilterSelectorState();
+}
+
+class _FilterSelectorState extends ConsumerState<FilterSelector> {
+  List<FiltersSchema> filters = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: buildContent(),
+    );
+  }
+
+  Widget buildContent() {
+    return Column(
+      children: [
+        Text("Select a filter to apply", style: Theme.of(context).textTheme.titleSmall),
+        const Divider(),
+        ...filters.map((filter) => buildItem(filter)),
+      ],
+    );
+  }
+
+  Widget buildItem(FiltersSchema filter) {
+    return ListTile(
+      leading: Tooltip(
+        message: filter.action.title(context),
+        child: Icon(filter.action.icon, size: iconSize),
+      ),
+      title: Text(filter.title),
+      onTap: () => widget.onSelected?.call(filter),
+    );
+  }
+
+  void onLoad() async {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final List<FiltersSchema> schemas = await status?.fetchFilters() ?? [];
+
+    if (mounted)  setState(() => filters = schemas);
+  }
+}
+
+// The form to create or edit a filter.
 class FiltersForm extends ConsumerStatefulWidget {
   final String title;
   final FiltersSchema? schema;
@@ -330,6 +391,7 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
   }
 }
 
+// The form to edit a single keyword item used in the filter form.
 class FilterKeywordForm extends StatefulWidget {
   final FilterKeywordFormSchema schema;
   final FocusNode? focusNode;

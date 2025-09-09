@@ -194,6 +194,7 @@ class _InteractionState extends State<Interaction> {
       case StatusInteraction.edit:
       case StatusInteraction.delete:
         return isSignedIn && isSelfPost;
+      case StatusInteraction.filter:
       case StatusInteraction.mute:
       case StatusInteraction.block:
       case StatusInteraction.report:
@@ -254,6 +255,7 @@ class _InteractionState extends State<Interaction> {
     final Color defaultColor = Theme.of(context).colorScheme.onSurface;
 
     switch (widget.action) {
+      case StatusInteraction.filter:
       case StatusInteraction.mute:
       case StatusInteraction.block:
       case StatusInteraction.edit:
@@ -301,6 +303,24 @@ class _InteractionState extends State<Interaction> {
 
         Clipboard.setData(ClipboardData(text: widget.schema.uri));
         showSnackbar(context, text);
+        return;
+      case StatusInteraction.filter:
+        context.pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => Dialog(
+            child: FilterSelector(
+              onSelected: (filter) async {
+                context.pop();
+
+                await widget.status.addFilterStatus(filter: filter, status: widget.schema);
+
+                final StatusSchema? updatedStatus = await widget.status.getStatus(widget.schema.id);
+                if (updatedStatus != null) widget.onReload?.call(updatedStatus);
+              }
+            ),
+          ),
+        );
         return;
       case StatusInteraction.mute:
         await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.mute);

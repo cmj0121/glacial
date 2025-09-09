@@ -57,6 +57,14 @@ extension FiltersExtensions on AccessStatusSchema {
     final String endpoint = '/api/v2/filters/$id';
     await deleteAPI(endpoint);
   }
+
+  // Add a status filter to the current filter group.
+  Future<FilterStatusSchema> addFilterStatus({required FiltersSchema filter, required StatusSchema status}) async {
+    final String endpoint = '/api/v2/filters/${filter.id}/statuses';
+    final String body = await postAPI(endpoint, body: {'status_id': status.id}) ?? '{}';
+
+    return FilterStatusSchema.fromString(body);
+  }
 }
 
 
