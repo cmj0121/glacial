@@ -12,6 +12,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btn_search => 'Buscar';
 
   @override
+  String get btn_save => 'Guardar';
+
+  @override
   String get btn_close => 'Cerrar';
 
   @override
@@ -292,6 +295,36 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btn_report_rules => 'Reglas';
 
   @override
+  String get btn_filter_warn => 'Avisar';
+
+  @override
+  String get btn_filter_hide => 'Ocultar';
+
+  @override
+  String get btn_filter_blur => 'Difuminar';
+
+  @override
+  String get btn_filter_context_home => 'Cronología principal';
+
+  @override
+  String get btn_filter_context_notification => 'Notificaciones';
+
+  @override
+  String get btn_filter_context_public => 'Cronología pública';
+
+  @override
+  String get btn_filter_context_thread => 'El toot y sus respuestas';
+
+  @override
+  String get btn_filter_context_account => 'Página de perfil';
+
+  @override
+  String get btn_filter_whole_match => 'Palabra completa';
+
+  @override
+  String get btn_filter_partial_match => 'Coincidencia parcial';
+
+  @override
   String get desc_preference_engineer_clear_cache =>
       'Borrar todos los datos en caché';
 
@@ -436,6 +469,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_report_other => 'Otro';
 
   @override
+  String get txt_filter_title => 'Selecciona un filtro para aplicar';
+
+  @override
+  String get txt_filter_applied => 'Filtro ya aplicado';
+
+  @override
+  String get txt_filter_name => 'Nombre del filtro';
+
+  @override
+  String get txt_filter_expired => 'Expirado';
+
+  @override
+  String get txt_filter_never => 'Nunca';
+
+  @override
   String get desc_preference_status =>
       'Configura y controla el comportamiento predeterminado de tus publicaciones';
 
@@ -532,6 +580,41 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get desc_report_comment =>
       'Agregue un comentario opcional para dar más contexto a su informe.';
+
+  @override
+  String get desc_filter_warn => 'Muestra un aviso con el título del filtro.';
+
+  @override
+  String get desc_filter_hide => 'No mostrar este estado si se recibe.';
+
+  @override
+  String get desc_filter_blur =>
+      'Oculta el contenido tras la etiqueta de sensible.';
+
+  @override
+  String get desc_filter_context_home =>
+      'Cualquier toot coincidente en la cronología principal';
+
+  @override
+  String get desc_filter_context_notification =>
+      'Cualquier notificación coincidente';
+
+  @override
+  String get desc_filter_context_public =>
+      'Cualquier toot coincidente en la cronología pública';
+
+  @override
+  String get desc_filter_context_thread =>
+      'Cualquier toot y sus respuestas coincidentes';
+
+  @override
+  String get desc_filter_context_account => 'Cualquier perfil coincidente';
+
+  @override
+  String get desc_filter_expiration => 'Cuándo caducará el filtro';
+
+  @override
+  String get desc_filter_context => 'Dónde se aplica el filtro';
 
   @override
   String err_invalid_instance(Object domain) {

@@ -12,6 +12,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_search => '検索';
 
   @override
+  String get btn_save => '保存';
+
+  @override
   String get btn_close => '閉じる';
 
   @override
@@ -291,6 +294,36 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_report_rules => 'ルール';
 
   @override
+  String get btn_filter_warn => '警告';
+
+  @override
+  String get btn_filter_hide => '非表示';
+
+  @override
+  String get btn_filter_blur => 'ぼかす';
+
+  @override
+  String get btn_filter_context_home => 'ホームタイムライン';
+
+  @override
+  String get btn_filter_context_notification => '通知';
+
+  @override
+  String get btn_filter_context_public => '公開タイムライン';
+
+  @override
+  String get btn_filter_context_thread => 'トゥートとその返信';
+
+  @override
+  String get btn_filter_context_account => 'プロフィールページ';
+
+  @override
+  String get btn_filter_whole_match => '完全一致';
+
+  @override
+  String get btn_filter_partial_match => '部分一致';
+
+  @override
   String get desc_preference_engineer_clear_cache => '全てのキャッシュをクリア';
 
   @override
@@ -429,6 +462,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_report_other => 'その他';
 
   @override
+  String get txt_filter_title => '適用するフィルターを選択';
+
+  @override
+  String get txt_filter_applied => 'フィルターはすでに適用済み';
+
+  @override
+  String get txt_filter_name => 'フィルター名';
+
+  @override
+  String get txt_filter_expired => '期限切れ';
+
+  @override
+  String get txt_filter_never => 'なし';
+
+  @override
   String get desc_preference_status => 'デフォルトのステータス動作を設定・管理';
 
   @override
@@ -505,6 +553,36 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get desc_report_comment => '報告についての詳細を提供するため、任意でコメントを追加できます。';
+
+  @override
+  String get desc_filter_warn => '一致したフィルターをタイトルで警告します。';
+
+  @override
+  String get desc_filter_hide => 'このステータスを表示しません。';
+
+  @override
+  String get desc_filter_blur => 'センシティブな内容をぼかします。';
+
+  @override
+  String get desc_filter_context_home => 'ホームタイムライン上の一致するトゥート';
+
+  @override
+  String get desc_filter_context_notification => '一致する通知';
+
+  @override
+  String get desc_filter_context_public => '公開タイムライン上の一致するトゥート';
+
+  @override
+  String get desc_filter_context_thread => '一致するトゥートと返信';
+
+  @override
+  String get desc_filter_context_account => '一致するプロフィールページ';
+
+  @override
+  String get desc_filter_expiration => 'フィルターの有効期限';
+
+  @override
+  String get desc_filter_context => 'フィルターを適用する場所';
 
   @override
   String err_invalid_instance(Object domain) {

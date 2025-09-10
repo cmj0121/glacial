@@ -12,6 +12,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_search => '검색';
 
   @override
+  String get btn_save => '저장';
+
+  @override
   String get btn_close => '닫기';
 
   @override
@@ -291,6 +294,36 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_report_rules => '규칙';
 
   @override
+  String get btn_filter_warn => '경고';
+
+  @override
+  String get btn_filter_hide => '숨기기';
+
+  @override
+  String get btn_filter_blur => '흐리기';
+
+  @override
+  String get btn_filter_context_home => '홈 타임라인';
+
+  @override
+  String get btn_filter_context_notification => '알림';
+
+  @override
+  String get btn_filter_context_public => '공개 타임라인';
+
+  @override
+  String get btn_filter_context_thread => '글과 답글';
+
+  @override
+  String get btn_filter_context_account => '프로필 페이지';
+
+  @override
+  String get btn_filter_whole_match => '완전 일치';
+
+  @override
+  String get btn_filter_partial_match => '부분 일치';
+
+  @override
   String get desc_preference_engineer_clear_cache => '모든 캐시 데이터 삭제';
 
   @override
@@ -429,6 +462,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_report_other => '기타';
 
   @override
+  String get txt_filter_title => '적용할 필터 선택';
+
+  @override
+  String get txt_filter_applied => '필터가 이미 적용됨';
+
+  @override
+  String get txt_filter_name => '필터 이름';
+
+  @override
+  String get txt_filter_expired => '만료됨';
+
+  @override
+  String get txt_filter_never => '없음';
+
+  @override
   String get desc_preference_status => '기본 상태 동작 설정 및 제어';
 
   @override
@@ -505,6 +553,36 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get desc_report_comment => '신고에 대한 추가 설명을 위해 선택적으로 댓글을 추가하세요.';
+
+  @override
+  String get desc_filter_warn => '일치하는 필터를 제목으로 표시합니다.';
+
+  @override
+  String get desc_filter_hide => '해당 상태를 표시하지 않습니다.';
+
+  @override
+  String get desc_filter_blur => '민감한 콘텐츠를 흐리게 합니다.';
+
+  @override
+  String get desc_filter_context_home => '홈 타임라인에서 일치하는 글';
+
+  @override
+  String get desc_filter_context_notification => '일치하는 알림';
+
+  @override
+  String get desc_filter_context_public => '공개 타임라인에서 일치하는 글';
+
+  @override
+  String get desc_filter_context_thread => '일치하는 글과 답글';
+
+  @override
+  String get desc_filter_context_account => '일치하는 프로필 페이지';
+
+  @override
+  String get desc_filter_expiration => '필터 만료 시점';
+
+  @override
+  String get desc_filter_context => '필터 적용 위치';
 
   @override
   String err_invalid_instance(Object domain) {

@@ -12,6 +12,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_search => 'Pesquisar';
 
   @override
+  String get btn_save => 'Salvar';
+
+  @override
   String get btn_close => 'Fechar';
 
   @override
@@ -292,6 +295,36 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_report_rules => 'Regras';
 
   @override
+  String get btn_filter_warn => 'Avisar';
+
+  @override
+  String get btn_filter_hide => 'Ocultar';
+
+  @override
+  String get btn_filter_blur => 'Desfocar';
+
+  @override
+  String get btn_filter_context_home => 'Linha do tempo inicial';
+
+  @override
+  String get btn_filter_context_notification => 'Notificações';
+
+  @override
+  String get btn_filter_context_public => 'Linha do tempo pública';
+
+  @override
+  String get btn_filter_context_thread => 'O toot e suas respostas';
+
+  @override
+  String get btn_filter_context_account => 'Página de perfil';
+
+  @override
+  String get btn_filter_whole_match => 'Correspondência exata';
+
+  @override
+  String get btn_filter_partial_match => 'Correspondência parcial';
+
+  @override
   String get desc_preference_engineer_clear_cache =>
       'Limpar todos os dados em cache';
 
@@ -436,6 +469,21 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_report_other => 'Outro';
 
   @override
+  String get txt_filter_title => 'Selecione um filtro para aplicar';
+
+  @override
+  String get txt_filter_applied => 'Filtro já aplicado';
+
+  @override
+  String get txt_filter_name => 'Nome do filtro';
+
+  @override
+  String get txt_filter_expired => 'Expirado';
+
+  @override
+  String get txt_filter_never => 'Nunca';
+
+  @override
   String get desc_preference_status =>
       'Configurar e controlar o comportamento padrão de status';
 
@@ -529,6 +577,42 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get desc_report_comment =>
       'Adicione um comentário opcional para fornecer mais contexto ao seu relatório.';
+
+  @override
+  String get desc_filter_warn => 'Mostrar um aviso com o título do filtro.';
+
+  @override
+  String get desc_filter_hide => 'Não mostrar este status se recebido.';
+
+  @override
+  String get desc_filter_blur =>
+      'Ocultar o conteúdo atrás do aviso de sensível.';
+
+  @override
+  String get desc_filter_context_home =>
+      'Qualquer toot correspondente na linha do tempo inicial';
+
+  @override
+  String get desc_filter_context_notification =>
+      'Qualquer notificação correspondente';
+
+  @override
+  String get desc_filter_context_public =>
+      'Qualquer toot correspondente na linha do tempo pública';
+
+  @override
+  String get desc_filter_context_thread =>
+      'Qualquer toot e suas respostas correspondentes';
+
+  @override
+  String get desc_filter_context_account =>
+      'Qualquer página de perfil correspondente';
+
+  @override
+  String get desc_filter_expiration => 'Quando o filtro expira';
+
+  @override
+  String get desc_filter_context => 'Onde aplicar o filtro';
 
   @override
   String err_invalid_instance(Object domain) {

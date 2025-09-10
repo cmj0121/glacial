@@ -147,9 +147,11 @@ class _FilterSelectorState extends ConsumerState<FilterSelector> {
   }
 
   Widget buildContent() {
+    final String text = AppLocalizations.of(context)?.txt_filter_title ?? "Select a filter to apply";
+
     return Column(
       children: [
-        Text("Select a filter to apply", style: Theme.of(context).textTheme.titleSmall),
+        Text(text, style: Theme.of(context).textTheme.titleSmall),
         const Divider(),
         ...filters.map((filter) => buildItem(filter)),
       ],
@@ -157,6 +159,7 @@ class _FilterSelectorState extends ConsumerState<FilterSelector> {
   }
 
   Widget buildItem(FiltersSchema filter) {
+    final String text = AppLocalizations.of(context)?.txt_filter_applied ?? "Filter already applied";
     final bool isSelected = widget.status.filtered?.any((result) => result.filter.id == filter.id) ?? false;
     final TextStyle? style = Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).disabledColor);
 
@@ -166,7 +169,7 @@ class _FilterSelectorState extends ConsumerState<FilterSelector> {
         child: Icon(filter.action.icon, size: iconSize),
       ),
       title: Text(filter.title),
-      subtitle: isSelected ? Text("Already applied", style: style) : null,
+      subtitle: isSelected ? Text(text, style: style) : null,
       onTap: () => isSelected ? widget.onDeleted?.call(filter) : widget.onSelected?.call(filter),
     );
   }
@@ -281,6 +284,8 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
 
   // The editable title field.
   Widget buildTitle() {
+    final String text = AppLocalizations.of(context)?.txt_filter_name ?? "The name of the filter";
+
     return Focus(
       onFocusChange: (hasFocus) {
         if (!hasFocus) {
@@ -288,17 +293,14 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
         }
       },
       child: ListTile(
-        leading: Tooltip(
-          message: "Filter name",
-          child: Icon(Icons.text_fields_outlined, size: iconSize),
-        ),
+        leading: Icon(Icons.text_fields_outlined, size: iconSize),
         title: TextField(
           controller: titleController,
           style: Theme.of(context).textTheme.titleMedium,
           decoration: InputDecoration(border: InputBorder.none),
           onSubmitted: (String value) => form = form.copyWith(title: value),
         ),
-        subtitle: Text("The name of the filter", style: subStyle),
+        subtitle: Text(text, style: subStyle),
       ),
     );
   }
@@ -306,10 +308,7 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
   // The action to the filter.
   Widget buildAction() {
     return ListTile(
-      leading: Tooltip(
-        message: "Action",
-        child: Icon(form.action.icon, size: iconSize),
-      ),
+      leading: Icon(form.action.icon, size: iconSize),
       title: Text(form.action.title(context)),
       subtitle: Text(form.action.desc(context), style: subStyle),
       onTap: () {
@@ -323,17 +322,18 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
   // The expiration time of the filter.
   Widget buildExpiration() {
     final int index = durations.indexWhere((d) => d?.inSeconds == form.expiresIn);
+    final String textExpired = AppLocalizations.of(context)?.txt_filter_expired ?? "Expired";
+    final String textNever = AppLocalizations.of(context)?.txt_filter_never ?? "Never";
+    final String descExpired = AppLocalizations.of(context)?.desc_filter_expiration ?? "When the filter will expire";
+
     final String text = index == -1 ?
-        (form.expiresIn! < 0 ? "Expired" : Duration(seconds: form.expiresIn ?? 0).pretty()) :
-        (durations[index] == null ? "Never" : "In ${durations[index]?.pretty()}");
+        (form.expiresIn! < 0 ? textExpired : Duration(seconds: form.expiresIn ?? 0).pretty()) :
+        (durations[index] == null ? textNever : "In ${durations[index]?.pretty()}");
 
     return ListTile(
-      leading: Tooltip(
-        message: "Expiration",
-        child: Icon(Icons.schedule_outlined, size: iconSize),
-      ),
+      leading: Icon(Icons.schedule_outlined, size: iconSize),
       title: Text(text),
-      subtitle: Text("When the filter will expire", style: subStyle),
+      subtitle: Text(descExpired, style: subStyle),
       onTap: () {
         final int next = (index + 1) % durations.length;
         setState(() => form = form.copyWith(expiresIn: durations[next]?.inSeconds ?? 0));
@@ -344,6 +344,7 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
   // Build the optional field for applying the filter to specific contexts.
   Widget buildContexts() {
     final List<FilterContext> contexts = FilterContext.values;
+    final String text = AppLocalizations.of(context)?.desc_filter_context ?? "Where the filter should be applied";
     final Widget chips = Wrap(
       spacing: 8.0,
       runSpacing: 4.0,
@@ -365,22 +366,20 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
     );
 
     return ListTile(
-      leading: Tooltip(
-        message: "Contexts",
-        child: Icon(Icons.ballot_rounded, size: iconSize),
-      ),
+      leading: Icon(Icons.ballot_rounded, size: iconSize),
       title: chips,
-      subtitle: Text("Where the filter should be applied", style: subStyle),
+      subtitle: Text(text, style: subStyle),
     );
   }
 
   // Build the submit button that can post the status or schedule the post.
   Widget buildSubmitButton() {
+    final String text = AppLocalizations.of(context)?.btn_save ?? "Save";
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
         icon: Icon(Icons.save_outlined, size: iconSize),
-        label: Text("Save Filter"),
+        label: Text(text),
         onPressed: canSubmit() ? onSubmit : null,
       ),
     );
@@ -446,7 +445,9 @@ class _FilterKeywordFormState extends State<FilterKeywordForm> {
 
     return ListTile(
       leading: Tooltip(
-        message: whole ? "Whole word" : "Partial match",
+        message: whole ?
+          (AppLocalizations.of(context)?.btn_filter_whole_match ?? "Whole word match") :
+          (AppLocalizations.of(context)?.btn_filter_partial_match ?? "Partial word match"),
         child: Icon(whole ? Icons.code_outlined : Icons.code_off_outlined, size: iconSize),
       ),
       title: TextField(

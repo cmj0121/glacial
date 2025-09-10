@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
+import 'package:glacial/core.dart';
+
 enum FilterContext {
   home,         // The home timeline.
   notifications,// The notifications timeline.
@@ -17,30 +19,30 @@ enum FilterContext {
   String title(BuildContext context) {
     switch (this) {
       case FilterContext.home:
-        return "Home timeline";
+        return AppLocalizations.of(context)?.btn_filter_context_home ?? "Home";
       case FilterContext.notifications:
-        return "Notifications timeline";
+        return AppLocalizations.of(context)?.btn_filter_context_notification ?? "Notifications";
       case FilterContext.public:
-        return "Public timeline";
+        return AppLocalizations.of(context)?.btn_filter_context_public ?? "Public";
       case FilterContext.thread:
-        return "A status and its replies";
+        return AppLocalizations.of(context)?.btn_filter_context_thread ?? "Thread";
       case FilterContext.account:
-        return "A profile page";
+        return AppLocalizations.of(context)?.btn_filter_context_account ?? "Account";
     }
   }
 
   String tooltip(BuildContext context) {
     switch (this) {
       case FilterContext.home:
-        return "The home timeline";
+        return AppLocalizations.of(context)?.desc_filter_context_home ?? "The home timeline";
       case FilterContext.notifications:
-        return "The notifications timeline";
+        return AppLocalizations.of(context)?.desc_filter_context_notification ?? "The notifications timeline";
       case FilterContext.public:
-        return "The public timeline";
+        return AppLocalizations.of(context)?.desc_filter_context_public ?? "The public timeline";
       case FilterContext.thread:
-        return "A status and its replies";
+        return AppLocalizations.of(context)?.desc_filter_context_thread ?? "A status and its replies";
       case FilterContext.account:
-        return "A profile page";
+        return AppLocalizations.of(context)?.desc_filter_context_account ?? "A profile page";
     }
   }
 }
@@ -68,22 +70,22 @@ enum FilterAction {
   String title(BuildContext context) {
     switch (this) {
       case FilterAction.warn:
-        return "Warn";
+        return AppLocalizations.of(context)?.btn_filter_warn ?? "Warn";
       case FilterAction.hide:
-        return "Hide";
+        return AppLocalizations.of(context)?.btn_filter_hide ?? "Hide";
       case FilterAction.blur:
-        return "Blur";
+        return AppLocalizations.of(context)?.btn_filter_blur ?? "Blur";
     }
   }
 
   String desc(BuildContext context) {
     switch (this) {
       case FilterAction.warn:
-        return "Show a warning that identifies the matching filter by title.";
+        return AppLocalizations.of(context)?.desc_filter_warn ?? "Warn";
       case FilterAction.hide:
-        return "Do not show this status if it is received.";
+        return AppLocalizations.of(context)?.desc_filter_hide ?? "Hide";
       case FilterAction.blur:
-        return "Hide/blur media attachments with a warning identifying the matching filter by title.";
+        return AppLocalizations.of(context)?.desc_filter_blur ?? "Blur";
     }
   }
 }

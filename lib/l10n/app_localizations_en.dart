@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_search => 'Search';
 
   @override
+  String get btn_save => 'Save';
+
+  @override
   String get btn_close => 'Close';
 
   @override
@@ -291,6 +294,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_report_rules => 'Rules';
 
   @override
+  String get btn_filter_warn => 'Warn';
+
+  @override
+  String get btn_filter_hide => 'Hide';
+
+  @override
+  String get btn_filter_blur => 'Blur';
+
+  @override
+  String get btn_filter_context_home => 'Home timeline';
+
+  @override
+  String get btn_filter_context_notification => 'Notifications timeline';
+
+  @override
+  String get btn_filter_context_public => 'Public timeline';
+
+  @override
+  String get btn_filter_context_thread => 'The toot and its replies';
+
+  @override
+  String get btn_filter_context_account => 'The profile page';
+
+  @override
+  String get btn_filter_whole_match => 'Whole world';
+
+  @override
+  String get btn_filter_partial_match => 'Partial match';
+
+  @override
   String get desc_preference_engineer_clear_cache => 'Clear all cached data';
 
   @override
@@ -433,6 +466,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_report_other => 'Other';
 
   @override
+  String get txt_filter_title => 'Select a filter to apply';
+
+  @override
+  String get txt_filter_applied => 'Filter already applied';
+
+  @override
+  String get txt_filter_name => 'The name of the filter';
+
+  @override
+  String get txt_filter_expired => 'Expired';
+
+  @override
+  String get txt_filter_never => 'Never';
+
+  @override
   String get desc_preference_status =>
       'Setup and control your default status behavior';
 
@@ -525,6 +573,40 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get desc_report_comment =>
       'Add the optional comment to provide more context about your report';
+
+  @override
+  String get desc_filter_warn =>
+      'Show a warning that identifies the matching filter by title.';
+
+  @override
+  String get desc_filter_hide => 'Do not show this status if it is received.';
+
+  @override
+  String get desc_filter_blur =>
+      'Hide the content behind the sensitive content';
+
+  @override
+  String get desc_filter_context_home =>
+      'Any matched toots show in the home timelnie';
+
+  @override
+  String get desc_filter_context_notification => 'Any matched notifications';
+
+  @override
+  String get desc_filter_context_public =>
+      'Any matched toots show in the public timelnie';
+
+  @override
+  String get desc_filter_context_thread => 'Any matched toots and it replies';
+
+  @override
+  String get desc_filter_context_account => 'Any matched account profile page';
+
+  @override
+  String get desc_filter_expiration => 'When the filter will expire';
+
+  @override
+  String get desc_filter_context => 'Where the filter should be applied';
 
   @override
   String err_invalid_instance(Object domain) {
