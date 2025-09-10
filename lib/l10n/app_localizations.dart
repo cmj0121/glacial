@@ -707,7 +707,7 @@ abstract class AppLocalizations {
   /// No description provided for @btn_filter_whole_match.
   ///
   /// In en, this message translates to:
-  /// **'Whole world'**
+  /// **'Whole word'**
   String get btn_filter_whole_match;
 
   /// No description provided for @btn_filter_partial_match.
@@ -1199,7 +1199,7 @@ abstract class AppLocalizations {
   /// No description provided for @desc_filter_context_home.
   ///
   /// In en, this message translates to:
-  /// **'Any matched toots show in the home timelnie'**
+  /// **'Any matched toots show in the home timeline'**
   String get desc_filter_context_home;
 
   /// No description provided for @desc_filter_context_notification.
@@ -1211,13 +1211,13 @@ abstract class AppLocalizations {
   /// No description provided for @desc_filter_context_public.
   ///
   /// In en, this message translates to:
-  /// **'Any matched toots show in the public timelnie'**
+  /// **'Any matched toots show in the public timeline'**
   String get desc_filter_context_public;
 
   /// No description provided for @desc_filter_context_thread.
   ///
   /// In en, this message translates to:
-  /// **'Any matched toots and it replies'**
+  /// **'Any matched toots and its replies'**
   String get desc_filter_context_thread;
 
   /// No description provided for @desc_filter_context_account.

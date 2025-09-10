@@ -318,7 +318,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_filter_context_account => 'The profile page';
 
   @override
-  String get btn_filter_whole_match => 'Whole world';
+  String get btn_filter_whole_match => 'Whole word';
 
   @override
   String get btn_filter_partial_match => 'Partial match';
@@ -587,17 +587,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get desc_filter_context_home =>
-      'Any matched toots show in the home timelnie';
+      'Any matched toots show in the home timeline';
 
   @override
   String get desc_filter_context_notification => 'Any matched notifications';
 
   @override
   String get desc_filter_context_public =>
-      'Any matched toots show in the public timelnie';
+      'Any matched toots show in the public timeline';
 
   @override
-  String get desc_filter_context_thread => 'Any matched toots and it replies';
+  String get desc_filter_context_thread => 'Any matched toots and its replies';
 
   @override
   String get desc_filter_context_account => 'Any matched account profile page';
