@@ -10,6 +10,7 @@ enum StatusInteraction {
   favourite,
   bookmark,
   share,
+  filter,
   mute,
   block,
   report,
@@ -29,6 +30,8 @@ enum StatusInteraction {
         return active ? Icons.bookmark : Icons.bookmark_outline_outlined;
       case share:
         return active ? Icons.share : Icons.share_outlined;
+      case filter:
+        return active ? Icons.filter_alt : Icons.filter_alt_outlined;
       case mute:
         return active ? Icons.volume_off : Icons.volume_mute_outlined;
       case block:
@@ -55,6 +58,8 @@ enum StatusInteraction {
         return AppLocalizations.of(context)?.btn_interaction_bookmark ?? "Bookmark";
       case share:
         return AppLocalizations.of(context)?.btn_interaction_share ?? "Share";
+      case filter:
+        return "Filter";
       case mute:
         return AppLocalizations.of(context)?.btn_interaction_mute ?? "Mute";
       case block:

@@ -12,6 +12,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_search => 'Rechercher';
 
   @override
+  String get btn_save => 'Enregistrer';
+
+  @override
   String get btn_close => 'Fermer';
 
   @override
@@ -170,6 +173,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_profile_hashtag => 'Hashtags suivis';
 
   @override
+  String get btn_profile_filter => 'Filtres';
+
+  @override
   String get btn_profile_mute => 'Utilisateurs muets';
 
   @override
@@ -287,6 +293,36 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get btn_report_rules => 'Règles';
+
+  @override
+  String get btn_filter_warn => 'Avertir';
+
+  @override
+  String get btn_filter_hide => 'Masquer';
+
+  @override
+  String get btn_filter_blur => 'Flouter';
+
+  @override
+  String get btn_filter_context_home => 'Fil d’accueil';
+
+  @override
+  String get btn_filter_context_notification => 'Notifications';
+
+  @override
+  String get btn_filter_context_public => 'Fil public';
+
+  @override
+  String get btn_filter_context_thread => 'Le toot et ses réponses';
+
+  @override
+  String get btn_filter_context_account => 'Page de profil';
+
+  @override
+  String get btn_filter_whole_match => 'Correspondance exacte';
+
+  @override
+  String get btn_filter_partial_match => 'Correspondance partielle';
 
   @override
   String get desc_preference_engineer_clear_cache =>
@@ -434,6 +470,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_report_other => 'Autre';
 
   @override
+  String get txt_filter_title => 'Choisir un filtre à appliquer';
+
+  @override
+  String get txt_filter_applied => 'Filtre déjà appliqué';
+
+  @override
+  String get txt_filter_name => 'Nom du filtre';
+
+  @override
+  String get txt_filter_expired => 'Expiré';
+
+  @override
+  String get txt_filter_never => 'Jamais';
+
+  @override
   String get desc_preference_status =>
       'Configurer et contrôler le comportement par défaut de vos statuts';
 
@@ -530,6 +581,41 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get desc_report_comment =>
       'Ajoutez un commentaire facultatif pour donner plus de contexte à votre rapport.';
+
+  @override
+  String get desc_filter_warn =>
+      'Afficher un avertissement avec le titre du filtre.';
+
+  @override
+  String get desc_filter_hide => 'Ne pas afficher ce statut.';
+
+  @override
+  String get desc_filter_blur => 'Flouter le contenu sensible.';
+
+  @override
+  String get desc_filter_context_home =>
+      'Tout toot correspondant dans le fil d’accueil';
+
+  @override
+  String get desc_filter_context_notification =>
+      'Toute notification correspondante';
+
+  @override
+  String get desc_filter_context_public =>
+      'Tout toot correspondant dans le fil public';
+
+  @override
+  String get desc_filter_context_thread =>
+      'Tout toot et ses réponses correspondants';
+
+  @override
+  String get desc_filter_context_account => 'Tout profil correspondant';
+
+  @override
+  String get desc_filter_expiration => 'Quand le filtre expirera';
+
+  @override
+  String get desc_filter_context => 'Où appliquer le filtre';
 
   @override
   String err_invalid_instance(Object domain) {

@@ -1,0 +1,522 @@
+// Create and manage filters.
+import 'package:flutter/material.dart';
+import 'package:duration/duration.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
+
+// The page to show the filters.
+class Filters extends ConsumerStatefulWidget {
+  const Filters({super.key});
+
+  @override
+  ConsumerState<Filters> createState() => _FiltersState();
+}
+
+class _FiltersState extends ConsumerState<Filters> {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+  late final TextEditingController controller = TextEditingController();
+
+  List<FiltersSchema> filters = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        buildAddField(),
+        Expanded(child: buildContent()),
+      ],
+    );
+  }
+
+  // Build the icon to add new filter.
+  Widget buildAddField() {
+    return ListTile(
+      title: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+        ),
+        onSubmitted: (_) => onCreate(),
+      ),
+      trailing: IconButton(
+        icon: const Icon(Icons.add, size: iconSize),
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        onPressed: () => onCreate(),
+      ),
+    );
+  }
+
+  Widget buildContent() {
+    if (filters.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return ListView.builder(
+      itemCount: filters.length,
+      itemBuilder: (context, index) {
+        final FiltersSchema filter = filters[index];
+        final Widget tile = ListTile(
+          leading: Tooltip(
+            message: filter.action.title(context),
+            child: Icon(filter.action.icon, size: iconSize),
+          ),
+          title: Text(filter.title),
+          onTap: () => context.push(RoutePath.editFilterForm.path, extra: filter),
+        );
+
+        return Dismissible(
+          key: UniqueKey(),
+          background: Container(
+            alignment: Alignment.centerLeft,
+            color: Theme.of(context).colorScheme.error,
+            child: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.onError),
+          ),
+          direction: DismissDirection.startToEnd,
+          onDismissed: (direction) => onDelete(schema: filter),
+          child: tile,
+        );
+      },
+    );
+  }
+
+  Future<void> onLoad() async {
+    final List<FiltersSchema> schemas = await status?.fetchFilters() ?? [];
+    setState(() => filters = schemas);
+  }
+
+  void onCreate() async {
+    await context.push(RoutePath.createFilterForm.path, extra: controller.text);
+    controller.clear();
+    await onLoad();
+  }
+
+  void onDelete({required FiltersSchema schema}) async {
+    await status?.deleteFilter(id: schema.id);
+    setState(() => filters.remove(schema));
+  }
+}
+
+// The filter selector to add the status in the filtered list.
+class FilterSelector extends ConsumerStatefulWidget {
+  final StatusSchema status;
+  final ValueChanged<FiltersSchema>? onSelected;
+  final ValueChanged<FiltersSchema>? onDeleted;
+
+  const FilterSelector({
+    super.key,
+    required this.status,
+    this.onSelected,
+    this.onDeleted,
+  });
+
+  @override
+  ConsumerState<FilterSelector> createState() => _FilterSelectorState();
+}
+
+class _FilterSelectorState extends ConsumerState<FilterSelector> {
+  List<FiltersSchema> filters = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: buildContent(),
+    );
+  }
+
+  Widget buildContent() {
+    final String text = AppLocalizations.of(context)?.txt_filter_title ?? "Select a filter to apply";
+
+    return Column(
+      children: [
+        Text(text, style: Theme.of(context).textTheme.titleSmall),
+        const Divider(),
+        ...filters.map((filter) => buildItem(filter)),
+      ],
+    );
+  }
+
+  Widget buildItem(FiltersSchema filter) {
+    final String text = AppLocalizations.of(context)?.txt_filter_applied ?? "Filter already applied";
+    final bool isSelected = widget.status.filtered?.any((result) => result.filter.id == filter.id) ?? false;
+    final TextStyle? style = Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).disabledColor);
+
+    return ListTile(
+      leading: Tooltip(
+        message: filter.action.title(context),
+        child: Icon(filter.action.icon, size: iconSize),
+      ),
+      title: Text(filter.title),
+      subtitle: isSelected ? Text(text, style: style) : null,
+      onTap: () => isSelected ? widget.onDeleted?.call(filter) : widget.onSelected?.call(filter),
+    );
+  }
+
+  void onLoad() async {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final List<FiltersSchema> schemas = await status?.fetchFilters() ?? [];
+
+    if (mounted)  setState(() => filters = schemas);
+  }
+}
+
+// The form to create or edit a filter.
+class FiltersForm extends ConsumerStatefulWidget {
+  final String title;
+  final FiltersSchema? schema;
+
+  const FiltersForm({
+    super.key,
+    required this.title,
+    this.schema,
+  });
+
+  @override
+  ConsumerState<FiltersForm> createState() => _FiltersFormState();
+}
+
+class _FiltersFormState extends ConsumerState<FiltersForm> {
+  late FilterFormSchema form = widget.schema?.asForm() ?? FilterFormSchema.fromTitle(widget.title);
+  late FilterKeywordFormSchema keyword = FilterKeywordFormSchema.empty();
+
+  late final FocusNode focusNode = FocusNode();
+  late final TextEditingController controller = TextEditingController();
+  late final TextEditingController titleController = TextEditingController(text: widget.title);
+  late final TextStyle? subStyle = Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).disabledColor);
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+  final List<Duration?> durations = [
+    null,
+    const Duration(minutes: 30),
+    const Duration(hours: 1),
+    const Duration(hours: 6),
+    const Duration(hours: 12),
+    const Duration(days: 1),
+    const Duration(days: 7),
+  ];
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    controller.dispose();
+    titleController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Expanded(flex: 10, child: buildContent()),
+          const Spacer(),
+          buildSubmitButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget buildContent() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          buildTitle(),
+          buildAction(),
+          buildExpiration(),
+          buildContexts(),
+
+          ...form.keywords.where((item) => !item.destroy).toList().asMap().entries.map((entry) => FilterKeywordForm(
+            key: UniqueKey(),
+            schema: entry.value,
+            onChanged: (item) {
+              final List<FilterKeywordFormSchema> updated = List.from(form.keywords);
+              updated[entry.key] = item;
+              setState(() => form = form.copyWith(keywords: updated));
+            },
+            onDelete: () {
+              List<FilterKeywordFormSchema> updated = List.from(form.keywords);
+              updated[entry.key] = updated[entry.key].destroyed();
+              setState(() => form = form.copyWith(keywords: updated));
+            },
+          )),
+
+          // The new keyword item.
+          FilterKeywordForm(
+            key: UniqueKey(),
+            schema: keyword,
+            focusNode: focusNode,
+            onChanged: (item) {
+              final List<FilterKeywordFormSchema> updated = List.from(form.keywords)..add(item);
+
+              setState((){
+                form = form.copyWith(keywords: updated);
+                keyword = FilterKeywordFormSchema.empty();
+              });
+              focusNode.requestFocus();
+            }
+          ),
+
+          ...buildFilteredStatus(),
+        ],
+      ),
+    );
+  }
+
+  // The editable title field.
+  Widget buildTitle() {
+    final String text = AppLocalizations.of(context)?.txt_filter_name ?? "The name of the filter";
+
+    return Focus(
+      onFocusChange: (hasFocus) {
+        if (!hasFocus) {
+          setState(() => form = form.copyWith(title: titleController.text));
+        }
+      },
+      child: ListTile(
+        leading: Icon(Icons.text_fields_outlined, size: iconSize),
+        title: TextField(
+          controller: titleController,
+          style: Theme.of(context).textTheme.titleMedium,
+          decoration: InputDecoration(border: InputBorder.none),
+          onSubmitted: (String value) => form = form.copyWith(title: value),
+        ),
+        subtitle: Text(text, style: subStyle),
+      ),
+    );
+  }
+
+  // The action to the filter.
+  Widget buildAction() {
+    return ListTile(
+      leading: Icon(form.action.icon, size: iconSize),
+      title: Text(form.action.title(context)),
+      subtitle: Text(form.action.desc(context), style: subStyle),
+      onTap: () {
+        final int index = FilterAction.values.indexOf(form.action);
+        final int next = (index + 1) % FilterAction.values.length;
+        setState(() => form = form.copyWith(action: FilterAction.values[next]));
+      },
+    );
+  }
+
+  // The expiration time of the filter.
+  Widget buildExpiration() {
+    final int index = durations.indexWhere((d) => d?.inSeconds == form.expiresIn);
+    final String textExpired = AppLocalizations.of(context)?.txt_filter_expired ?? "Expired";
+    final String textNever = AppLocalizations.of(context)?.txt_filter_never ?? "Never";
+    final String descExpired = AppLocalizations.of(context)?.desc_filter_expiration ?? "When the filter will expire";
+
+    final String text = index == -1 ?
+        (form.expiresIn! < 0 ? textExpired : Duration(seconds: form.expiresIn ?? 0).pretty()) :
+        (durations[index] == null ? textNever : "In ${durations[index]?.pretty()}");
+
+    return ListTile(
+      leading: Icon(Icons.schedule_outlined, size: iconSize),
+      title: Text(text),
+      subtitle: Text(descExpired, style: subStyle),
+      onTap: () {
+        final int next = (index + 1) % durations.length;
+        setState(() => form = form.copyWith(expiresIn: durations[next]?.inSeconds ?? 0));
+       },
+    );
+  }
+
+  // Build the optional field for applying the filter to specific contexts.
+  Widget buildContexts() {
+    final List<FilterContext> contexts = FilterContext.values;
+    final String text = AppLocalizations.of(context)?.desc_filter_context ?? "Where the filter should be applied";
+    final Widget chips = Wrap(
+      spacing: 8.0,
+      runSpacing: 4.0,
+      children: contexts.map((item) {
+      final bool selected = form.context.contains(item);
+        return FilterChip(
+          label: Text(item.title(context), overflow: TextOverflow.ellipsis),
+          tooltip: item.tooltip(context),
+          selected: selected,
+          avatar: const SizedBox.shrink(),
+          selectedColor: Theme.of(context).colorScheme.primaryContainer,
+          onSelected: (bool value) {
+            final List<FilterContext> updated = List.from(form.context);
+            value ? updated.add(item) : updated.remove(item);
+            setState(() => form = form.copyWith(context: updated));
+          },
+        );
+      }).toList(),
+    );
+
+    return ListTile(
+      leading: Icon(Icons.ballot_rounded, size: iconSize),
+      title: chips,
+      subtitle: Text(text, style: subStyle),
+    );
+  }
+
+  // List the filtered status if any.
+  List<Widget> buildFilteredStatus() {
+    if (widget.schema?.statuses?.isNotEmpty != true) {
+      return [];
+    }
+
+    return [
+      const Divider(),
+      ...widget.schema?.statuses?.map((s) {
+        return FutureBuilder(
+          future: status?.getStatus(s.statusId, loadCache: true),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) return const SizedBox.shrink();
+
+            final StatusSchema? schema = snapshot.data;
+            if (schema == null) return const SizedBox.shrink();
+
+            return Dismissible(
+              key: UniqueKey(),
+              background: Container(
+                alignment: Alignment.centerLeft,
+                color: Theme.of(context).colorScheme.error,
+                child: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.onError),
+              ),
+              onDismissed: (direction) async {
+                await status?.removeFilterStatus(status: s);
+              },
+              child: StatusLite(schema: schema),
+            );
+          },
+        );
+      }).toList() ?? [],
+    ];
+  }
+
+  // Build the submit button that can post the status or schedule the post.
+  Widget buildSubmitButton() {
+    final String text = AppLocalizations.of(context)?.btn_save ?? "Save";
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        icon: Icon(Icons.save_outlined, size: iconSize),
+        label: Text(text),
+        onPressed: canSubmit ? onSubmit : null,
+      ),
+    );
+  }
+
+  // Check the form can be submitted.
+  bool get canSubmit =>  form.context.isNotEmpty;
+
+  void onSubmit() async {
+    widget.schema == null ? status?.createFilter(schema: form) : status?.updateFilter(id: widget.schema!.id, schema: form);
+
+    if (mounted && context.canPop())  context.pop();
+  }
+}
+
+// The form to edit a single keyword item used in the filter form.
+class FilterKeywordForm extends StatefulWidget {
+  final FilterKeywordFormSchema schema;
+  final FocusNode? focusNode;
+  final TextEditingController? controller;
+  final ValueChanged<FilterKeywordFormSchema>? onChanged;
+  final VoidCallback? onDelete;
+
+  const FilterKeywordForm({
+    super.key,
+    required this.schema,
+    this.focusNode,
+    this.controller,
+    this.onChanged,
+    this.onDelete,
+  });
+
+  @override
+  State<FilterKeywordForm> createState() => _FilterKeywordFormState();
+}
+
+class _FilterKeywordFormState extends State<FilterKeywordForm> {
+  late FilterKeywordFormSchema item = widget.schema;
+  late final TextEditingController controller = widget.controller ?? TextEditingController(text: widget.schema.keyword);
+
+  @override
+  void dispose() {
+    if(widget.controller == null) controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Focus(
+      onFocusChange: (hasFocus) {
+        if (!hasFocus && widget.onDelete != null) onSave();
+      },
+      child: buildContent(),
+    );
+  }
+
+  Widget buildContent() {
+    final bool whole = item.wholeWord;
+    final bool deletable = widget.onDelete != null;
+
+    return ListTile(
+      leading: Tooltip(
+        message: whole ?
+          (AppLocalizations.of(context)?.btn_filter_whole_match ?? "Whole word match") :
+          (AppLocalizations.of(context)?.btn_filter_partial_match ?? "Partial word match"),
+        child: Icon(whole ? Icons.code_outlined : Icons.code_off_outlined, size: iconSize),
+      ),
+      title: TextField(
+        controller: controller,
+        focusNode: widget.focusNode,
+        decoration: InputDecoration(border: const OutlineInputBorder()),
+        onSubmitted: (value) => onSave(),
+      ),
+      trailing: IconButton(
+        icon: Icon(
+          deletable ? Icons.delete_outline : Icons.add,
+          size: iconSize,
+          color: deletable ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.primary,
+        ),
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        onPressed: deletable ? widget.onDelete : onSave,
+      ),
+      onTap: () {
+        setState(() => item = item.copyWith(wholeWord: !item.wholeWord));
+        if (widget.onDelete != null) widget.onChanged?.call(item);
+      },
+    );
+  }
+
+  // Save the current value to the item and notify the parent widget.
+  void onSave() {
+    final String value = controller.text.trim();
+    if (value.isEmpty) return;
+
+    setState(() => item = item.copyWith(keyword: value));
+    widget.onChanged?.call(item);
+  }
+}
+
+// vim: set ts=2 sw=2 sts=2 et:

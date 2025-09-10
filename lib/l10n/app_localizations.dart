@@ -116,6 +116,12 @@ abstract class AppLocalizations {
   /// **'Search'**
   String get btn_search;
 
+  /// No description provided for @btn_save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get btn_save;
+
   /// No description provided for @btn_close.
   ///
   /// In en, this message translates to:
@@ -428,6 +434,12 @@ abstract class AppLocalizations {
   /// **'Following Hashtags'**
   String get btn_profile_hashtag;
 
+  /// No description provided for @btn_profile_filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get btn_profile_filter;
+
   /// No description provided for @btn_profile_mute.
   ///
   /// In en, this message translates to:
@@ -643,6 +655,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rules'**
   String get btn_report_rules;
+
+  /// No description provided for @btn_filter_warn.
+  ///
+  /// In en, this message translates to:
+  /// **'Warn'**
+  String get btn_filter_warn;
+
+  /// No description provided for @btn_filter_hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get btn_filter_hide;
+
+  /// No description provided for @btn_filter_blur.
+  ///
+  /// In en, this message translates to:
+  /// **'Blur'**
+  String get btn_filter_blur;
+
+  /// No description provided for @btn_filter_context_home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home timeline'**
+  String get btn_filter_context_home;
+
+  /// No description provided for @btn_filter_context_notification.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications timeline'**
+  String get btn_filter_context_notification;
+
+  /// No description provided for @btn_filter_context_public.
+  ///
+  /// In en, this message translates to:
+  /// **'Public timeline'**
+  String get btn_filter_context_public;
+
+  /// No description provided for @btn_filter_context_thread.
+  ///
+  /// In en, this message translates to:
+  /// **'The toot and its replies'**
+  String get btn_filter_context_thread;
+
+  /// No description provided for @btn_filter_context_account.
+  ///
+  /// In en, this message translates to:
+  /// **'The profile page'**
+  String get btn_filter_context_account;
+
+  /// No description provided for @btn_filter_whole_match.
+  ///
+  /// In en, this message translates to:
+  /// **'Whole word'**
+  String get btn_filter_whole_match;
+
+  /// No description provided for @btn_filter_partial_match.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial match'**
+  String get btn_filter_partial_match;
 
   /// No description provided for @desc_preference_engineer_clear_cache.
   ///
@@ -920,6 +992,36 @@ abstract class AppLocalizations {
   /// **'Other'**
   String get txt_report_other;
 
+  /// No description provided for @txt_filter_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a filter to apply'**
+  String get txt_filter_title;
+
+  /// No description provided for @txt_filter_applied.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter already applied'**
+  String get txt_filter_applied;
+
+  /// No description provided for @txt_filter_name.
+  ///
+  /// In en, this message translates to:
+  /// **'The name of the filter'**
+  String get txt_filter_name;
+
+  /// No description provided for @txt_filter_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get txt_filter_expired;
+
+  /// No description provided for @txt_filter_never.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get txt_filter_never;
+
   /// No description provided for @desc_preference_status.
   ///
   /// In en, this message translates to:
@@ -1075,6 +1177,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add the optional comment to provide more context about your report'**
   String get desc_report_comment;
+
+  /// No description provided for @desc_filter_warn.
+  ///
+  /// In en, this message translates to:
+  /// **'Show a warning that identifies the matching filter by title.'**
+  String get desc_filter_warn;
+
+  /// No description provided for @desc_filter_hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not show this status if it is received.'**
+  String get desc_filter_hide;
+
+  /// No description provided for @desc_filter_blur.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide the content behind the sensitive content'**
+  String get desc_filter_blur;
+
+  /// No description provided for @desc_filter_context_home.
+  ///
+  /// In en, this message translates to:
+  /// **'Any matched toots show in the home timeline'**
+  String get desc_filter_context_home;
+
+  /// No description provided for @desc_filter_context_notification.
+  ///
+  /// In en, this message translates to:
+  /// **'Any matched notifications'**
+  String get desc_filter_context_notification;
+
+  /// No description provided for @desc_filter_context_public.
+  ///
+  /// In en, this message translates to:
+  /// **'Any matched toots show in the public timeline'**
+  String get desc_filter_context_public;
+
+  /// No description provided for @desc_filter_context_thread.
+  ///
+  /// In en, this message translates to:
+  /// **'Any matched toots and its replies'**
+  String get desc_filter_context_thread;
+
+  /// No description provided for @desc_filter_context_account.
+  ///
+  /// In en, this message translates to:
+  /// **'Any matched account profile page'**
+  String get desc_filter_context_account;
+
+  /// No description provided for @desc_filter_expiration.
+  ///
+  /// In en, this message translates to:
+  /// **'When the filter will expire'**
+  String get desc_filter_expiration;
+
+  /// No description provided for @desc_filter_context.
+  ///
+  /// In en, this message translates to:
+  /// **'Where the filter should be applied'**
+  String get desc_filter_context;
 
   /// No description provided for @err_invalid_instance.
   ///

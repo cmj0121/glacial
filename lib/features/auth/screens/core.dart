@@ -41,26 +41,13 @@ class _SignInState extends ConsumerState<SignIn> {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final String? domain = status?.domain;
 
-    if (domain == null || domain.isEmpty) {
+    if (status == null || domain == null || domain.isEmpty) {
       logger.w("No Mastodon server selected, cannot sign in.");
       return;
     }
 
-    final Storage storage = Storage();
-    final OAuth2Info info = await storage.getOAuth2Info(domain);
-    final Map<String, dynamic> query = {
-      "client_id": info.clientId,
-      "response_type": "code",
-      "scope": info.scopes.join(" "),
-      "redirect_uri": info.redirectUri,
-      "state": state,
-    }
-        ..removeWhere((key, value) => value == null);
-
-    storage.saveStateServer(state, domain);
-
+    final Uri uri = await status.authorize(domain: domain, state: state);
     if (mounted) {
-      final Uri uri = UriEx.handle(domain, "/oauth/authorize", query);
       context.push(RoutePath.webview.path, extra: uri);
     }
   }

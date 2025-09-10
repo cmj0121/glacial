@@ -31,6 +31,7 @@ class StatusSchema {
   final bool? muted;                        // Have you muted this status?
   final bool? bookmarked;                   // Have you bookmarked this status?
   final bool? pinned;                       // Have you pinned this status?
+  final List<FilterResultSchema>? filtered; // If the current token has an authorized user: The filter and keywords that matched this status.
   final ApplicationSchema? application;     // The application used to post the status.
   final DateTime createdAt;                 // The date when this status was created.
   final DateTime? editedAt;                 // Timestamp of when the status was last edited.
@@ -63,6 +64,7 @@ class StatusSchema {
     this.muted,
     this.bookmarked,
     this.pinned,
+    this.filtered,
     this.application,
     required this.createdAt,
     this.editedAt,
@@ -109,13 +111,16 @@ class StatusSchema {
       muted: json['muted'] as bool?,
       bookmarked: json['bookmarked'] as bool?,
       pinned: json['pinned'] as bool?,
+      filtered: (json['filtered'] as List<dynamic>?)
+        ?.map((e) => FilterResultSchema.fromJson(e as Map<String, dynamic>))
+        .toList() ?? [],
       application: json['application'] == null ? null : ApplicationSchema.fromJson(json['application'] as Map<String, dynamic>),
       createdAt: DateTime.parse(json['created_at'] as String),
       editedAt: json['edited_at'] == null ? null : DateTime.parse(json['edited_at'] as String),
     );
   }
 
-   factory StatusSchema.fromScheduleJson(Map<String, dynamic> json, AccountSchema account) {
+  factory StatusSchema.fromScheduleJson(Map<String, dynamic> json, AccountSchema account) {
     final Map<String, dynamic> params = json['params'] as Map<String, dynamic>;
 
     return StatusSchema(
@@ -167,6 +172,10 @@ class StatusSchema {
     return content
         .replaceAll(RegExp(r'<[^>]*>'), '') // Remove HTML tags
         .replaceAll(RegExp(r'&[a-z]+;'), ''); // Remove HTML entities
+  }
+
+  FilterAction? get filterAction {
+    return filtered?.isNotEmpty == true ? filtered?.first.filter.action : null;
   }
 }
 
@@ -239,7 +248,6 @@ class StatusEditSchema {
         .toList() ?? [],
     );
   }
-
 }
 
 // The hashtags used within the status content.

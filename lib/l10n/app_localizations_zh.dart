@@ -12,6 +12,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_search => '搜尋';
 
   @override
+  String get btn_save => '儲存';
+
+  @override
   String get btn_close => '關閉';
 
   @override
@@ -170,6 +173,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_profile_hashtag => '追蹤標籤';
 
   @override
+  String get btn_profile_filter => '過濾器';
+
+  @override
   String get btn_profile_mute => '靜音用戶';
 
   @override
@@ -286,6 +292,36 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get btn_report_rules => '規則';
+
+  @override
+  String get btn_filter_warn => '警告';
+
+  @override
+  String get btn_filter_hide => '隱藏';
+
+  @override
+  String get btn_filter_blur => '模糊';
+
+  @override
+  String get btn_filter_context_home => '首頁時間軸';
+
+  @override
+  String get btn_filter_context_notification => '通知';
+
+  @override
+  String get btn_filter_context_public => '公開時間軸';
+
+  @override
+  String get btn_filter_context_thread => '討論串';
+
+  @override
+  String get btn_filter_context_account => '個人檔案';
+
+  @override
+  String get btn_filter_whole_match => '完整詞彙';
+
+  @override
+  String get btn_filter_partial_match => '部分詞彙';
 
   @override
   String get desc_preference_engineer_clear_cache => '清除快取並移除快取資料';
@@ -426,6 +462,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_report_other => '其他';
 
   @override
+  String get txt_filter_title => '選擇並套用過濾器';
+
+  @override
+  String get txt_filter_applied => '過濾器已套用';
+
+  @override
+  String get txt_filter_name => '過濾器名稱';
+
+  @override
+  String get txt_filter_expired => '已過期';
+
+  @override
+  String get txt_filter_never => '從不';
+
+  @override
   String get desc_preference_status => '控制你嘟文的預設行為';
 
   @override
@@ -502,6 +553,36 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_report_comment => '可選擇新增評論以提供更多檢舉事項';
+
+  @override
+  String get desc_filter_warn => '隱藏於警告標示之後';
+
+  @override
+  String get desc_filter_hide => '完全隱藏內容';
+
+  @override
+  String get desc_filter_blur => '模糊內容';
+
+  @override
+  String get desc_filter_context_home => '任何在首頁時間軸匹配的嘟文';
+
+  @override
+  String get desc_filter_context_notification => '任何匹配的通知';
+
+  @override
+  String get desc_filter_context_public => '任何在公開時間軸匹配的嘟文';
+
+  @override
+  String get desc_filter_context_thread => '任何符合的討論串';
+
+  @override
+  String get desc_filter_context_account => '任何符合的個人頁面';
+
+  @override
+  String get desc_filter_expiration => '過濾器過期時效';
+
+  @override
+  String get desc_filter_context => '過濾器套用的情境';
 
   @override
   String err_invalid_instance(Object domain) {

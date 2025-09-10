@@ -9,6 +9,8 @@ import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 export 'api/account.dart';
+export 'api/auth.dart';
+export 'api/filters.dart';
 export 'api/list.dart';
 export 'api/marker.dart';
 export 'api/media.dart';
@@ -102,6 +104,7 @@ extension AccessStatusExtension on Storage {
       history: schema?.history ?? [],
     );
 
+    await status.revokeAccessToken(domain: schema?.domain, token: schema?.accessToken);
     await removeAccessToken(schema?.domain);
 
     if (ref?.context.mounted ?? false) {

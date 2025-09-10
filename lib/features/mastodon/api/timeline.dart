@@ -90,7 +90,10 @@ extension TimelineExtensions on AccessStatusSchema {
 
     final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
-    final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
+    final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).where(
+      // filter-out the statuses that are hidden by filters.
+      (s) => s.filterAction != FilterAction.hide,
+    ).toList();
 
     // save the related info to the in-memory cache.
     status.map((s) => cacheAccount(s.account)).toList();

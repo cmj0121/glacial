@@ -158,6 +158,14 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             title = Text('$prefix: ${schema.title}');
             backable = true;
             break;
+          case RoutePath.createFilterForm:
+            title = Text(AppLocalizations.of(context)?.btn_profile_filter ?? 'Filters');
+            backable = true;
+            break;
+          case RoutePath.editFilterForm:
+            title = Text(AppLocalizations.of(context)?.btn_profile_filter ?? 'Filters');
+            backable = true;
+            break;
           default:
             break;
         }
@@ -175,10 +183,11 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           path: RoutePath.timeline.path,
           builder: (_, _) {
             final AccessStatusSchema? status = ref.read(accessStatusProvider);
+            final bool isSignedIn = status?.isSignedIn == true;
 
             return TimelineTab(
+              key: ValueKey('timeline_tab_${status?.domain}_$isSignedIn'),
               initialType: status?.isSignedIn == true ? TimelineType.home : TimelineType.local,
-              key: ValueKey('timeline_tab_${status?.domain}'),
             );
           },
         ),
@@ -285,6 +294,20 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (BuildContext context, GoRouterState state) {
             final ListSchema? schema = state.extra as ListSchema?;
             return schema == null ? const SizedBox.shrink() : LiteTimeline(schema: schema);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.createFilterForm.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final String title = state.extra as String;
+            return FiltersForm(title: title);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.editFilterForm.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final FiltersSchema schema = state.extra as FiltersSchema;
+            return FiltersForm(title: schema.title, schema: schema);
           },
         ),
       ],

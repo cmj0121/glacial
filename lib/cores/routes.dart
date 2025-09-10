@@ -19,6 +19,8 @@ enum RoutePath {
   hashtag,           // The hashtag page of the app.
   profile,           // The user's profile page of the app.
   editProfile,       // The page to edit the user's profile.
+  createFilterForm,  // The page to create a filter.
+  editFilterForm,    // The page to edit a filter.
   status,            // The list of statuses in the context of the app.
   statusInfo,        // The status info page of the app to show the status details.
   statusHistory,     // The status history page of the app to show the status history.
@@ -60,6 +62,10 @@ enum RoutePath {
         return '/home/profile';
       case RoutePath.editProfile:
         return '/home/profile/edit';
+      case RoutePath.createFilterForm:
+        return '/home/filter/form';
+      case RoutePath.editFilterForm:
+        return '/home/filter/form/edit';
       case RoutePath.status:
         return '/home/status';
       case RoutePath.statusInfo:
