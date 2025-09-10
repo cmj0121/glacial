@@ -281,4 +281,25 @@ class FilterFormSchema {
   }
 }
 
+// Represents a filter whose keywords matched a given status.
+class FilterResultSchema {
+  final FiltersSchema filter;   // The filter that was matched.
+  final List<String>? keywords; // The keyword within the filter that was matched.
+  final List<String>? statuses; // The status ID within the filter that was matched.
+
+  const FilterResultSchema({
+    required this.filter,
+    this.keywords,
+    this.statuses,
+  });
+
+  factory FilterResultSchema.fromJson(Map<String, dynamic> json) {
+    return FilterResultSchema(
+      filter: FiltersSchema.fromJson(json['filter']),
+      keywords: (json['keyword_matches'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      statuses: (json['status_matches'] as List<dynamic>?)?.map((e) => e as String).toList(),
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

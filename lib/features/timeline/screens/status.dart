@@ -214,23 +214,38 @@ class StatusLite extends StatelessWidget {
         buildHeader(context),
 
         Indent(
-          indent: indent,
+        indent: indent,
           child: Column(
             children:[
-              SpoilerView(
-                spoiler: spoiler,
-                child: SensitiveView(
-                  isSensitive: sensitive,
-                  child: buildCoreContent(),
-                ),
-              ),
-
+              buildStatusContent(context),
               Application(schema: schema.application),
             ],
           ),
         ),
       ],
     );
+  }
+
+  Widget buildStatusContent(BuildContext context) {
+    final FilterAction? action = schema.filterAction;
+
+    switch (action) {
+      case FilterAction.warn:
+      case FilterAction.hide:
+      case FilterAction.blur:
+        return SpoilerView(
+          spoiler: action!.desc(context),
+          child: buildCoreContent(),
+        );
+      default:
+        return SpoilerView(
+          spoiler: spoiler,
+          child: SensitiveView(
+            isSensitive: sensitive,
+            child: buildCoreContent(),
+          ),
+        );
+    }
   }
 
   // Build the core content of the status which may be hidden or shown by the
@@ -270,6 +285,7 @@ class StatusLite extends StatelessWidget {
         buildEditLog(context),
         StatusVisibility(type: schema.visibility, size: iconSize),
         buildLikes(context),
+        buildFiltered(context),
         const SizedBox(width: 4),
       ],
     );
@@ -290,6 +306,18 @@ class StatusLite extends StatelessWidget {
     return Tooltip(
       message: schema.createdAt.toLocal().toString(),
       child: Text(duration, style: const TextStyle(color: Colors.grey)),
+    );
+  }
+
+  // Build the filtered icon if the status is filtered.
+  Widget buildFiltered(BuildContext context) {
+    FilterAction? filter = schema.filterAction;
+
+    if (filter == null) return const SizedBox.shrink();
+
+    return Tooltip(
+      message: filter.desc(context),
+      child: Icon(filter.icon, size: iconSize),
     );
   }
 

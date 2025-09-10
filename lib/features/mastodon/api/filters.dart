@@ -12,10 +12,10 @@
 //   - [ ] GET    /api/v2/filters/keywords/:id
 //   - [ ] PUT    /api/v2/filters/keywords/:id
 //   - [ ] DELETE /api/v2/filters/keywords/:id
-//   - [ ] GET    /api/v2/filters/:filter_id/statuses
-//   - [ ] POST   /api/v2/filters/:filter_id/statuses
+//   - [+] GET    /api/v2/filters/:filter_id/statuses
+//   - [+] POST   /api/v2/filters/:filter_id/statuses
 //   - [ ] GET    /api/v2/filters/statuses/:id
-//   - [ ] DELETE /api/v2/filters/statuses/:id
+//   - [+] DELETE /api/v2/filters/statuses/:id
 //
 // ref:
 //   - https://docs.joinmastodon.org/methods/filters/
@@ -58,12 +58,27 @@ extension FiltersExtensions on AccessStatusSchema {
     await deleteAPI(endpoint);
   }
 
+  // Obtain a list of all status filters within this filter group.
+  Future<List<FilterStatusSchema>> fetchFilterStatuses({required FiltersSchema filter}) async {
+    final String endpoint = '/api/v2/filters/${filter.id}/statuses';
+    final String body = await getAPI(endpoint) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+
+    return json.map((e) => FilterStatusSchema.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
   // Add a status filter to the current filter group.
   Future<FilterStatusSchema> addFilterStatus({required FiltersSchema filter, required StatusSchema status}) async {
     final String endpoint = '/api/v2/filters/${filter.id}/statuses';
     final String body = await postAPI(endpoint, body: {'status_id': status.id}) ?? '{}';
 
     return FilterStatusSchema.fromString(body);
+  }
+
+  // Remove a status filter from the current filter group.
+  Future<void> removeFilterStatus({required FilterStatusSchema status}) async {
+    final String endpoint = '/api/v2/filters/statuses/${status.id}';
+    await deleteAPI(endpoint);
   }
 }
 

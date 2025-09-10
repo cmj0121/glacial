@@ -310,6 +310,7 @@ class _InteractionState extends State<Interaction> {
           context: context,
           builder: (BuildContext context) => Dialog(
             child: FilterSelector(
+              status: widget.schema,
               onSelected: (filter) async {
                 context.pop();
 
@@ -317,7 +318,19 @@ class _InteractionState extends State<Interaction> {
 
                 final StatusSchema? updatedStatus = await widget.status.getStatus(widget.schema.id);
                 if (updatedStatus != null) widget.onReload?.call(updatedStatus);
-              }
+              },
+              onDeleted: (filter) async {
+                context.pop();
+
+                final List<FilterStatusSchema> statusFilters = await widget.status.fetchFilterStatuses(filter: filter);
+                final FilterStatusSchema? status = statusFilters.where((s) => s.statusId == widget.schema.id).firstOrNull;
+                if (status == null) return;
+
+                await widget.status.removeFilterStatus(status: status);
+
+                final StatusSchema? updatedStatus = await widget.status.getStatus(widget.schema.id);
+                if (updatedStatus != null) widget.onReload?.call(updatedStatus);
+              },
             ),
           ),
         );

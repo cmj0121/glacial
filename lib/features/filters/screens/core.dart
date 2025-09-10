@@ -114,11 +114,15 @@ class _FiltersState extends ConsumerState<Filters> {
 
 // The filter selector to add the status in the filtered list.
 class FilterSelector extends ConsumerStatefulWidget {
+  final StatusSchema status;
   final ValueChanged<FiltersSchema>? onSelected;
+  final ValueChanged<FiltersSchema>? onDeleted;
 
   const FilterSelector({
     super.key,
+    required this.status,
     this.onSelected,
+    this.onDeleted,
   });
 
   @override
@@ -153,13 +157,17 @@ class _FilterSelectorState extends ConsumerState<FilterSelector> {
   }
 
   Widget buildItem(FiltersSchema filter) {
+    final bool isSelected = widget.status.filtered?.any((result) => result.filter.id == filter.id) ?? false;
+    final TextStyle? style = Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).disabledColor);
+
     return ListTile(
       leading: Tooltip(
         message: filter.action.title(context),
         child: Icon(filter.action.icon, size: iconSize),
       ),
       title: Text(filter.title),
-      onTap: () => widget.onSelected?.call(filter),
+      subtitle: isSelected ? Text("Already applied", style: style) : null,
+      onTap: () => isSelected ? widget.onDeleted?.call(filter) : widget.onSelected?.call(filter),
     );
   }
 
