@@ -231,10 +231,16 @@ class StatusLite extends StatelessWidget {
 
     switch (action) {
       case FilterAction.warn:
-      case FilterAction.hide:
-      case FilterAction.blur:
         return SpoilerView(
           spoiler: action!.desc(context),
+          child: buildCoreContent(),
+        );
+      case FilterAction.hide:
+        // It should not be list in the timeline, so just return an empty widget.
+        return const SizedBox.shrink();
+      case FilterAction.blur:
+        return SensitiveView(
+          isSensitive: true,
           child: buildCoreContent(),
         );
       default:

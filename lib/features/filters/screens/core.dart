@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The page to show the filters.
 class Filters extends ConsumerStatefulWidget {
@@ -205,6 +206,7 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
   late final TextEditingController controller = TextEditingController();
   late final TextEditingController titleController = TextEditingController(text: widget.title);
   late final TextStyle? subStyle = Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).disabledColor);
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
   final List<Duration?> durations = [
     null,
@@ -277,6 +279,8 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
               focusNode.requestFocus();
             }
           ),
+
+          ...buildFilteredStatus(),
         ],
       ),
     );
@@ -372,6 +376,41 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
     );
   }
 
+  // List the filtered status if any.
+  List<Widget> buildFilteredStatus() {
+    if (widget.schema?.statuses?.isNotEmpty != true) {
+      return [];
+    }
+
+    return [
+      const Divider(),
+      ...widget.schema?.statuses?.map((s) {
+        return FutureBuilder(
+          future: status?.getStatus(s.statusId, loadCache: true),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) return const SizedBox.shrink();
+
+            final StatusSchema? schema = snapshot.data;
+            if (schema == null) return const SizedBox.shrink();
+
+            return Dismissible(
+              key: UniqueKey(),
+              background: Container(
+                alignment: Alignment.centerLeft,
+                color: Theme.of(context).colorScheme.error,
+                child: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.onError),
+              ),
+              onDismissed: (direction) async {
+                await status?.removeFilterStatus(status: s);
+              },
+              child: StatusLite(schema: schema),
+            );
+          },
+        );
+      }).toList() ?? [],
+    ];
+  }
+
   // Build the submit button that can post the status or schedule the post.
   Widget buildSubmitButton() {
     final String text = AppLocalizations.of(context)?.btn_save ?? "Save";
@@ -380,18 +419,15 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
       child: FilledButton.icon(
         icon: Icon(Icons.save_outlined, size: iconSize),
         label: Text(text),
-        onPressed: canSubmit() ? onSubmit : null,
+        onPressed: canSubmit ? onSubmit : null,
       ),
     );
   }
 
   // Check the form can be submitted.
-  bool canSubmit() {
-    return form.context.isNotEmpty;
-  }
+  bool get canSubmit =>  form.context.isNotEmpty;
 
   void onSubmit() async {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
     widget.schema == null ? status?.createFilter(schema: form) : status?.updateFilter(id: widget.schema!.id, schema: form);
 
     if (mounted && context.canPop())  context.pop();
