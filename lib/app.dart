@@ -139,9 +139,11 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             backable = true;
             break;
           case RoutePath.profile:
+            final AccessStatusSchema? status = ref.read(accessStatusProvider);
             final AccountSchema account = state.extra as AccountSchema;
+            final List<EmojiSchema> emojis = [...?status?.emojis, ...account.emojis];
 
-            title = EmojiSchema.replaceEmojiToWidget(account.displayName, emojis: account.emojis);
+            title = EmojiSchema.replaceEmojiToWidget(account.displayName, emojis: emojis);
             backable = true;
             break;
           case RoutePath.hashtag:

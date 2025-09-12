@@ -21,7 +21,7 @@ class EmojiSchema {
       shortcode: json['shortcode'] as String,
       url: json['url'] as String,
       staticUrl: json['static_url'] as String,
-      visible: json['visible'] as bool? ?? true,
+      visible: json['visible'] as bool? ?? json['visible_in_picker'] as bool? ?? true,
       category: json['category'] as String?,
     );
   }

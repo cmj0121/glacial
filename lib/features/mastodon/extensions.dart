@@ -33,8 +33,9 @@ extension AccessStatusExtension on Storage {
     final String? accessToken = await loadAccessToken(domain);
     final AccountSchema? account = await status.getAccountByAccessToken(accessToken);
     final ServerSchema? server = await ServerSchema.fetch(domain);
+    final List<EmojiSchema> emojis = await status.fetchCustomEmojis();
 
-    status = status.copyWith(accessToken: accessToken, account: account, server: server);
+    status = status.copyWith(accessToken: accessToken, account: account, server: server, emojis: emojis);
 
     if (ref?.context.mounted ?? false) {
       ref?.read(accessStatusProvider.notifier).state = status;

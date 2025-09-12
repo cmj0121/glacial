@@ -41,9 +41,9 @@
 //
 // ## Follow Requests APIs
 //
-//   - [ ] GET   /api/v1/follow_requests
-//   - [ ] POST  /api/v1/follow_requests/:id/authorize
-//   - [ ] POST  /api/v1/follow_requests/:id/reject
+//   - [+] GET   /api/v1/follow_requests
+//   - [+] POST  /api/v1/follow_requests/:id/authorize
+//   - [+] POST  /api/v1/follow_requests/:id/reject
 //
 // ref:
 //   - https://docs.joinmastodon.org/methods/accounts/
