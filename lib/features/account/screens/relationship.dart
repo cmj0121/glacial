@@ -197,14 +197,7 @@ class _RelationshipState extends ConsumerState<Relationship> {
 
 // The pending follow request badge to show the pending follow request.
 class FollowRequestBadge extends ConsumerStatefulWidget {
-  final double size;
-  final VoidCallback? onPressed;
-
-  const FollowRequestBadge({
-    super.key,
-    this.size = iconSize,
-    this.onPressed,
-  });
+  const FollowRequestBadge({super.key});
 
   @override
   ConsumerState<FollowRequestBadge> createState() => _FollowRequestBadgeState();
@@ -223,22 +216,23 @@ class _FollowRequestBadgeState extends ConsumerState<FollowRequestBadge> {
 
   @override
   Widget build(BuildContext context) {
-    final SidebarButtonType action = SidebarButtonType.followRequests;
-
     if (pendingCount == 0) {
       // No need to show the badge when there is no pending follow request or the follow request page is selected.
       return const SizedBox.shrink();
     }
 
-    return Badge.count(
-      count: pendingCount,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
       child: IconButton(
-        icon: Icon(action.icon(), size: widget.size),
-        tooltip: action.tooltip(context),
+        icon: Icon(Icons.pending_actions),
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
-        onPressed: widget.onPressed,
+        style: IconButton.styleFrom(
+          foregroundColor: Theme.of(context).colorScheme.onTertiary,
+          backgroundColor: Theme.of(context).colorScheme.tertiary,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        onPressed: () => context.push(RoutePath.followRequests.path),
       ),
     );
   }

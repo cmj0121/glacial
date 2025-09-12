@@ -9,7 +9,6 @@ enum SidebarButtonType {
   list,
   trending,
   notifications,
-  followRequests,
   admin,
   post;
 
@@ -24,8 +23,6 @@ enum SidebarButtonType {
         return active ? Icons.bar_chart : Icons.trending_up_outlined;
       case notifications:
         return active ? Icons.notifications : Icons.notifications_outlined;
-      case followRequests:
-        return active ? Icons.pending_actions : Icons.pending_actions_outlined;
       case admin:
         return active ? Icons.admin_panel_settings : Icons.admin_panel_settings_outlined;
       case post:
@@ -44,8 +41,6 @@ enum SidebarButtonType {
         return AppLocalizations.of(context)?.btn_sidebar_trendings ?? "Trendings";
       case SidebarButtonType.notifications:
         return AppLocalizations.of(context)?.btn_sidebar_notifications ?? "Notifications";
-      case SidebarButtonType.followRequests:
-        return "Follow Requests";
       case SidebarButtonType.admin:
         return AppLocalizations.of(context)?.btn_sidebar_management ?? "Management";
       case SidebarButtonType.post:
@@ -63,8 +58,6 @@ enum SidebarButtonType {
         return RoutePath.trends;
       case notifications:
         return RoutePath.notifications;
-      case followRequests:
-        return RoutePath.followRequests;
       case admin:
         return RoutePath.admin;
       case post:

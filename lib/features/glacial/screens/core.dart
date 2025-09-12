@@ -164,11 +164,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
             isSelected: isSelected,
             onPressed: isSignedIn ? () => debounce.callOnce(() => onSelect(index)) : null,
           );
-        case SidebarButtonType.followRequests:
-          return FollowRequestBadge(
-            size: sidebarSize,
-            onPressed: isSignedIn ? () => debounce.callOnce(() => onSelect(index)) : null,
-          );
         case SidebarButtonType.post:
           if (status?.accessToken?.isNotEmpty == true) {
             // Already signed in, show the post button.
