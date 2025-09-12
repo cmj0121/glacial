@@ -166,7 +166,7 @@ class _StatusState extends ConsumerState<Status> {
 
 // The lightweight widget that can be used to show the status without the interaction
 // bar and the sensitive view.
-class StatusLite extends StatelessWidget {
+class StatusLite extends ConsumerWidget {
   final StatusSchema schema;
   final int indent;
   final String? spoiler;
@@ -187,7 +187,8 @@ class StatusLite extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final bool isSchedulePost = schema.scheduledAt != null;
 
     return InkWellDone(
@@ -203,11 +204,11 @@ class StatusLite extends StatelessWidget {
             break;
         }
       },
-      child: buildContent(context),
+      child: buildContent(context, status),
     );
   }
 
-  Widget buildContent(BuildContext context) {
+  Widget buildContent(BuildContext context, AccessStatusSchema? status) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -217,7 +218,7 @@ class StatusLite extends StatelessWidget {
         indent: indent,
           child: Column(
             children:[
-              buildStatusContent(context),
+              buildStatusContent(context, status),
               Application(schema: schema.application),
             ],
           ),
@@ -226,14 +227,14 @@ class StatusLite extends StatelessWidget {
     );
   }
 
-  Widget buildStatusContent(BuildContext context) {
+  Widget buildStatusContent(BuildContext context, AccessStatusSchema? status) {
     final FilterAction? action = schema.filterAction;
 
     switch (action) {
       case FilterAction.warn:
         return SpoilerView(
           spoiler: action!.desc(context),
-          child: buildCoreContent(),
+          child: buildCoreContent(status),
         );
       case FilterAction.hide:
         // It should not be list in the timeline, so just return an empty widget.
@@ -241,14 +242,14 @@ class StatusLite extends StatelessWidget {
       case FilterAction.blur:
         return SensitiveView(
           isSensitive: true,
-          child: buildCoreContent(),
+          child: buildCoreContent(status),
         );
       default:
         return SpoilerView(
           spoiler: spoiler,
           child: SensitiveView(
             isSensitive: sensitive,
-            child: buildCoreContent(),
+            child: buildCoreContent(status),
           ),
         );
     }
@@ -256,11 +257,13 @@ class StatusLite extends StatelessWidget {
 
   // Build the core content of the status which may be hidden or shown by the
   // status visibility.
-  Widget buildCoreContent() {
+  Widget buildCoreContent(AccessStatusSchema? status) {
+    final List<EmojiSchema> emojis = [...?status?.emojis, ...schema.emojis];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        HtmlDone(html: schema.content, emojis: schema.emojis, onLinkTap: (url, attributes, _) => onLinkTap?.call(url)),
+        HtmlDone(html: schema.content, emojis: emojis, onLinkTap: (url, attributes, _) => onLinkTap?.call(url)),
         Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
         buildTags(),
