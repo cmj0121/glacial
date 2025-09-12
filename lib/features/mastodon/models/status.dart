@@ -19,6 +19,7 @@ class AccessStatusSchema {
   final ServerSchema? server;
   final AccountSchema? account;
   final List<ServerInfoSchema> history;
+  final List<EmojiSchema> emojis;
 
   const AccessStatusSchema({
     this.domain = "mastodon.social",
@@ -26,6 +27,7 @@ class AccessStatusSchema {
     this.server,
     this.account,
     this.history = const [],
+    this.emojis = const [],
   });
 
   @override
@@ -54,6 +56,7 @@ class AccessStatusSchema {
     ServerSchema? server,
     AccountSchema? account,
     List<ServerInfoSchema>? history,
+    List<EmojiSchema>? emojis,
   }) {
     return AccessStatusSchema(
       domain: domain ?? this.domain,
@@ -61,6 +64,7 @@ class AccessStatusSchema {
       server: server ?? this.server,
       account: account ?? this.account,
       history: history ?? this.history,
+      emojis: emojis ?? this.emojis,
     );
   }
 
