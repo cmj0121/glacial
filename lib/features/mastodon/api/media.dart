@@ -8,8 +8,13 @@
 //   - [ ] PUT    /api/v1/media/:id
 //   - [+] POST   /api/v2/media
 //
+// ## Custom Emoji APIs
+//
+//  - [ ] GET    /api/v1/custom_emojis
+//
 // ref:
 //  - https://docs.joinmastodon.org/methods/media/
+//  - https://docs.joinmastodon.org/methods/custom_emojis/
 import 'dart:async';
 import 'dart:convert';
 
@@ -47,6 +52,15 @@ extension MediaExtensions on AccessStatusSchema {
     final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
 
     return AttachmentSchema.fromJson(json);
+  }
+
+  // Returns custom emojis that are available on the server.
+  Future<List<EmojiSchema>> fetchCustomEmojis() async {
+    final String endpoint = '/api/v1/custom_emojis';
+    final String body = await getAPI(endpoint) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+
+    return json.map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>)).toList();
   }
 }
 
