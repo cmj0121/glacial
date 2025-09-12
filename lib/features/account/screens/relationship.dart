@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The relationship between accounts, such as following / blocking / muting / etc
 class Relationship extends ConsumerStatefulWidget {
@@ -248,6 +249,43 @@ class _FollowRequestBadgeState extends ConsumerState<FollowRequestBadge> {
     final int count = accounts.length;
 
     setState(() => pendingCount = count);
+  }
+}
+
+// The follow request page to show the list of pending follow requests.
+class FollowRequests extends ConsumerWidget {
+  const FollowRequests({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+    return FutureBuilder(
+      future: fetchFollowRequests(status),
+      builder: (BuildContext context, AsyncSnapshot<List<AccountSchema>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const ClockProgressIndicator();
+        } else if (snapshot.hasError) {
+          logger.e("failed to load the follow requests: ${snapshot.error}");
+          return NoResult();
+        }
+
+        final List<AccountSchema> accounts = snapshot.data!;
+        if (accounts.isEmpty) {
+          final String message = AppLocalizations.of(context)?.txt_no_result ?? "No results found";
+          return NoResult(message: message, icon: Icons.coffee);
+        }
+
+        return ListView.builder(
+          itemCount: accounts.length,
+          itemBuilder: (BuildContext context, int index) => AccountLite(schema: accounts[index]),
+        );
+      },
+    );
+  }
+
+  Future<List<AccountSchema>> fetchFollowRequests(AccessStatusSchema? status) async {
+    return await status?.fetchFollowRequests() ?? [];
   }
 }
 
