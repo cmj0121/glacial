@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
+import 'package:glacial/features/screens.dart';
 
 // The relationship between accounts, such as following / blocking / muting / etc
 class Relationship extends ConsumerStatefulWidget {
@@ -192,6 +193,94 @@ class _RelationshipState extends ConsumerState<Relationship> {
   }
 
   RelationshipType get relationship => schema?.type ?? RelationshipType.stranger;
+}
+
+// The pending follow request badge to show the pending follow request.
+class FollowRequestBadge extends ConsumerStatefulWidget {
+  const FollowRequestBadge({super.key});
+
+  @override
+  ConsumerState<FollowRequestBadge> createState() => _FollowRequestBadgeState();
+}
+
+class _FollowRequestBadgeState extends ConsumerState<FollowRequestBadge> {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+  int pendingCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (pendingCount == 0) {
+      // No need to show the badge when there is no pending follow request or the follow request page is selected.
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: IconButton(
+        icon: Icon(Icons.pending_actions),
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        style: IconButton.styleFrom(
+          foregroundColor: Theme.of(context).colorScheme.onTertiary,
+          backgroundColor: Theme.of(context).colorScheme.tertiary,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        onPressed: () => context.push(RoutePath.followRequests.path),
+      ),
+    );
+  }
+
+  // Try to load the ending follow requests when the widget is built.
+  Future<void> onLoad() async {
+    final List<AccountSchema> accounts = await status?.fetchFollowRequests() ?? [];
+    final int count = accounts.length;
+
+    setState(() => pendingCount = count);
+  }
+}
+
+// The follow request page to show the list of pending follow requests.
+class FollowRequests extends ConsumerWidget {
+  const FollowRequests({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+    return FutureBuilder(
+      future: fetchFollowRequests(status),
+      builder: (BuildContext context, AsyncSnapshot<List<AccountSchema>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const ClockProgressIndicator();
+        } else if (snapshot.hasError) {
+          logger.e("failed to load the follow requests: ${snapshot.error}");
+          return NoResult();
+        }
+
+        final List<AccountSchema> accounts = snapshot.data!;
+        if (accounts.isEmpty) {
+          final String message = AppLocalizations.of(context)?.txt_no_result ?? "No results found";
+          return NoResult(message: message, icon: Icons.coffee);
+        }
+
+        return ListView.builder(
+          itemCount: accounts.length,
+          itemBuilder: (BuildContext context, int index) => AccountLite(schema: accounts[index]),
+        );
+      },
+    );
+  }
+
+  Future<List<AccountSchema>> fetchFollowRequests(AccessStatusSchema? status) async {
+    return await status?.fetchFollowRequests() ?? [];
+  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

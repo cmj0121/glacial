@@ -265,6 +265,7 @@ class ProfilePage extends ConsumerWidget {
 
         const Spacer(),
 
+        schema.id == status.account?.id ? FollowRequestBadge() : const SizedBox.shrink(),
         schema.id == status.account?.id ? EditProfilePage.icon() : Relationship(schema: schema),
       ],
     );
