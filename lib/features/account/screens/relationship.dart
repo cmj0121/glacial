@@ -194,4 +194,61 @@ class _RelationshipState extends ConsumerState<Relationship> {
   RelationshipType get relationship => schema?.type ?? RelationshipType.stranger;
 }
 
+// The pending follow request badge to show the pending follow request.
+class FollowRequestBadge extends ConsumerStatefulWidget {
+  final double size;
+  final VoidCallback? onPressed;
+
+  const FollowRequestBadge({
+    super.key,
+    this.size = iconSize,
+    this.onPressed,
+  });
+
+  @override
+  ConsumerState<FollowRequestBadge> createState() => _FollowRequestBadgeState();
+}
+
+class _FollowRequestBadgeState extends ConsumerState<FollowRequestBadge> {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+  int pendingCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final SidebarButtonType action = SidebarButtonType.followRequests;
+
+    if (pendingCount == 0) {
+      // No need to show the badge when there is no pending follow request or the follow request page is selected.
+      return const SizedBox.shrink();
+    }
+
+    return Badge.count(
+      count: pendingCount,
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      child: IconButton(
+        icon: Icon(action.icon(), size: widget.size),
+        tooltip: action.tooltip(context),
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        onPressed: widget.onPressed,
+      ),
+    );
+  }
+
+  // Try to load the ending follow requests when the widget is built.
+  Future<void> onLoad() async {
+    final List<AccountSchema> accounts = await status?.fetchFollowRequests() ?? [];
+    final int count = accounts.length;
+
+    setState(() => pendingCount = count);
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

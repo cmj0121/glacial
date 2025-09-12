@@ -8,6 +8,7 @@ enum RoutePath {
   webview,           // The in-app webview page of the app.
   media,             // The media viewer page of the app to view the media content.
   preference,        // The preference settings page of the app.
+  followRequests,   // The follow requests page of the app.
   // The home page of the Glacial, showing the timeline, trends, notifications, and other features.
   timeline,          // The timeline page of the app.
   list,              // The list page of the app to show the pinned lists.
@@ -40,6 +41,8 @@ enum RoutePath {
         return '/webview';
       case RoutePath.preference:
         return '/preference';
+      case RoutePath.followRequests:
+        return '/follow_requests';
       case RoutePath.media:
         return '/media';
       case RoutePath.timeline:
