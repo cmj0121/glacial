@@ -264,6 +264,7 @@ class StatusLite extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         HtmlDone(html: schema.content, emojis: emojis, onLinkTap: (url, attributes, _) => onLinkTap?.call(url)),
+        Quote(schema: schema.quote),
         Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
         buildTags(),
