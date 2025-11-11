@@ -7,6 +7,7 @@ import 'package:glacial/core.dart';
 enum StatusInteraction {
   reply,
   reblog,
+  quote,
   favourite,
   bookmark,
   share,
@@ -24,6 +25,8 @@ enum StatusInteraction {
         return active ? Icons.turn_left : Icons.turn_left_outlined;
       case reblog:
         return active ? Icons.repeat : Icons.repeat_outlined;
+      case quote:
+        return active ? Icons.format_quote : Icons.format_quote_outlined;
       case favourite:
         return active ? Icons.star : Icons.star_outline_outlined;
       case bookmark:
@@ -52,6 +55,8 @@ enum StatusInteraction {
         return AppLocalizations.of(context)?.btn_interaction_reply ?? "Reply";
       case reblog:
         return AppLocalizations.of(context)?.btn_interaction_reblog ?? "Reblog";
+      case quote:
+        return 'Quote';
       case favourite:
         return AppLocalizations.of(context)?.btn_interaction_favourite ?? "Favourite";
       case bookmark:
@@ -79,6 +84,7 @@ enum StatusInteraction {
     switch (this) {
       case reply:
       case reblog:
+      case quote:
       case favourite:
       case bookmark:
       case share:

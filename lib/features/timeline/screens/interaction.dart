@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -32,6 +33,9 @@ class InteractionBar extends ConsumerWidget {
     final bool isSelfStatus = schema.account.id == status.account?.id;
     final List<StatusInteraction> actions = StatusInteraction.values.where((a) {
       switch (a) {
+        case StatusInteraction.quote:
+          // Only 4.5.0+ supports quote interaction
+          return Version.parse(status.server?.version ?? '0.0.0') >= Version.parse('4.5.0');
         case StatusInteraction.edit:
         case StatusInteraction.delete:
           return isSelfStatus;
@@ -186,6 +190,7 @@ class _InteractionState extends State<Interaction> {
     switch (widget.action) {
       case StatusInteraction.reply:
       case StatusInteraction.reblog:
+      case StatusInteraction.quote:
       case StatusInteraction.favourite:
       case StatusInteraction.bookmark:
         return isSignedIn;
@@ -236,6 +241,8 @@ class _InteractionState extends State<Interaction> {
     switch (widget.action) {
       case StatusInteraction.reply:
         return widget.schema.repliesCount;
+      case StatusInteraction.quote:
+        return widget.schema.quotesCount;
       case StatusInteraction.reblog:
         return widget.schema.reblogsCount;
       case StatusInteraction.favourite:
@@ -278,6 +285,8 @@ class _InteractionState extends State<Interaction> {
     switch (widget.action) {
       case StatusInteraction.reply:
         context.push(RoutePath.post.path, extra: widget.schema);
+        return;
+      case StatusInteraction.quote:
         return;
       case StatusInteraction.reblog:
       case StatusInteraction.favourite:
