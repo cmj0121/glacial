@@ -196,7 +196,7 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           },
         ),
         ListTile(
-          title: Text('Quote Reply Policy'),
+          title: Text(AppLocalizations.of(context)?.desc_quote_policy ?? "Quote Policy"),
           subtitle: Text(schema.quotePolicy.description(context), style: labelStyle),
           leading: Icon(schema.quotePolicy.icon, size: iconSize),
           onTap: () async {

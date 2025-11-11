@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
 // The state of the quote. Unknown values should be treated as unauthorized.
@@ -82,13 +83,13 @@ enum QuoteApprovalType {
   String tooltip(BuildContext context) {
     switch (this) {
       case QuoteApprovalType.public:
-        return "Anyone can quote this status.";
+        return AppLocalizations.of(context)?.desc_quote_approval_public ?? "Public";
       case QuoteApprovalType.followers:
-        return "Only followers can quote this status.";
+        return AppLocalizations.of(context)?.desc_quote_approval_followers ?? "Followers";
       case QuoteApprovalType.following:
-        return "Only people followed by the author can quote this status.";
+        return AppLocalizations.of(context)?.desc_quote_approval_following ?? "Following";
       case QuoteApprovalType.unsupportedPolicy:
-        return "No supported quote policy.";
+        return AppLocalizations.of(context)?.desc_quote_approval_unsupport ?? "Unsupported";
     }
   }
 }
@@ -189,22 +190,22 @@ enum QuotePolicyType {
   String title(BuildContext context) {
     switch (this) {
       case QuotePolicyType.public:
-        return "Public";
+        return AppLocalizations.of(context)?.txt_quote_policy_public ?? "Public";
       case QuotePolicyType.followers:
-        return "Followers";
+        return AppLocalizations.of(context)?.txt_quote_policy_followers ?? "Followers";
       case QuotePolicyType.nobody:
-        return "Nobody";
+        return AppLocalizations.of(context)?.txt_quote_policy_nobody ?? "Nobody";
     }
   }
 
   String description(BuildContext context) {
     switch (this) {
       case QuotePolicyType.public:
-        return "Anyone can quote this status.";
+        return AppLocalizations.of(context)?.desc_quote_policy_public ?? "Public";
       case QuotePolicyType.followers:
-        return "Only followers can quote this status.";
+        return AppLocalizations.of(context)?.desc_quote_policy_followers ?? "Followers";
       case QuotePolicyType.nobody:
-        return "No one can quote this status.";
+        return AppLocalizations.of(context)?.desc_quote_policy_nobody ?? "Nobody";
     }
   }
 

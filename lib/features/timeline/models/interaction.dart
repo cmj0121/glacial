@@ -59,7 +59,7 @@ enum StatusInteraction {
       case reblog:
         return AppLocalizations.of(context)?.btn_interaction_reblog ?? "Reblog";
       case quote:
-        return 'Quote';
+        return AppLocalizations.of(context)?.btn_interaction_quote ?? "Quote";
       case favourite:
         return AppLocalizations.of(context)?.btn_interaction_favourite ?? "Favourite";
       case bookmark:
@@ -67,7 +67,7 @@ enum StatusInteraction {
       case share:
         return AppLocalizations.of(context)?.btn_interaction_share ?? "Share";
       case filter:
-        return "Filter";
+        return AppLocalizations.of(context)?.btn_interaction_filter ?? "Filter";
       case mute:
         return AppLocalizations.of(context)?.btn_interaction_mute ?? "Mute";
       case block:
@@ -75,7 +75,7 @@ enum StatusInteraction {
       case report:
         return AppLocalizations.of(context)?.btn_interaction_report ?? "Report";
       case policy:
-        return "Change Quote Policy";
+        return AppLocalizations.of(context)?.btn_interaction_policy ?? "Policy";
       case edit:
         return AppLocalizations.of(context)?.btn_interaction_edit ?? "Edit";
       case delete:
