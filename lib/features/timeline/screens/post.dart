@@ -47,6 +47,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   late String? spoiler = widget.editFrom?.spoiler.isNotEmpty == true ? widget.editFrom?.spoiler : null;
   late List<AttachmentSchema> medias = widget.editFrom?.attachments ?? [];
   late VisibilityType vtype = widget.replyTo?.visibility ?? pref?.visibility ?? VisibilityType.public;
+  late QuotePolicyType qtype = pref?.quotePolicy ?? QuotePolicyType.public;
   late DateTime? scheduledAt = widget.editFrom?.scheduledAt;
 
   @override
@@ -235,6 +236,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           size: tabSize,
           onChanged: (widget.editFrom == null && !isEditSchedule) ? (type) => setState(() => vtype = type ?? vtype) : null,
         ),
+        QuotePolicyTypeSelector(
+          policy: qtype,
+          size: tabSize,
+          onChanged: (value) => setState(() => qtype = value ?? qtype),
+        ),
 
         // The media icon button to open the image picker and upload media files.
         IconButton(
@@ -370,6 +376,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       sensitive: isSensitive,
       inReplyToID: widget.replyTo?.id,
       scheduledAt: scheduledAt,
+      quoteApprovalPolicy: qtype,
     );
 
     final AccountSchema? account = status?.account;

@@ -195,6 +195,17 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             Storage().savePreference(schema.copyWith(loadedTop: value), ref: ref);
           },
         ),
+        ListTile(
+          title: Text('Quote Reply Policy'),
+          subtitle: Text(schema.quotePolicy.description(context), style: labelStyle),
+          leading: Icon(schema.quotePolicy.icon, size: iconSize),
+          onTap: () async {
+            final int index = QuotePolicyType.values.indexOf(schema.quotePolicy);
+            final int nextIndex = (index + 1) % QuotePolicyType.values.length;
+
+            Storage().savePreference(schema.copyWith(quotePolicy: QuotePolicyType.values[nextIndex]), ref: ref);
+          },
+        ),
         // Build the locale settings and selector.
         buildLocaleSelector(schema: schema),
       ],

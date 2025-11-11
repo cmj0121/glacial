@@ -1,5 +1,6 @@
 // Represents a quote or a quote placeholder, with the current authorization status.
 import 'dart:convert';
+import 'package:flutter/material.dart';
 
 import 'package:glacial/features/models.dart';
 
@@ -94,6 +95,54 @@ class QuoteApprovalSchema {
       currentUser:
           QuoteApprovalType.fromString(json['current_user'] as String),
     );
+  }
+}
+
+// Sets who is allowed to quote the status.
+// Ignored if visibility is private or direct, in which case the policy will always be set to nobody.
+enum QuotePolicyType {
+  public,    // Anyone is allowed to quote this status and will have their quote automatically accepted, unless they are blocked.
+  followers, // Only followers and the author are allowed to quote this status, and will have their quote automatically accepted.
+  nobody;    // Only the author is allowed to quote the status.
+
+  factory QuotePolicyType.fromString(String type) {
+    return QuotePolicyType.values.firstWhere(
+      (e) => e.name == type,
+      orElse: () => QuotePolicyType.nobody
+    );
+  }
+
+  IconData get icon {
+    switch (this) {
+      case QuotePolicyType.public:
+        return Icons.format_quote_sharp;
+      case QuotePolicyType.followers:
+        return Icons.group;
+      case QuotePolicyType.nobody:
+        return Icons.lock;
+    }
+  }
+
+  String title(BuildContext context) {
+    switch (this) {
+      case QuotePolicyType.public:
+        return "Public";
+      case QuotePolicyType.followers:
+        return "Followers";
+      case QuotePolicyType.nobody:
+        return "Nobody";
+    }
+  }
+
+  String description(BuildContext context) {
+    switch (this) {
+      case QuotePolicyType.public:
+        return "Anyone can quote this status.";
+      case QuotePolicyType.followers:
+        return "Only followers can quote this status.";
+      case QuotePolicyType.nobody:
+        return "No one can quote this status.";
+    }
   }
 }
 
