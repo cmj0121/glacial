@@ -49,7 +49,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   late String? spoiler = widget.editFrom?.spoiler.isNotEmpty == true ? widget.editFrom?.spoiler : null;
   late List<AttachmentSchema> medias = widget.editFrom?.attachments ?? [];
   late VisibilityType vtype = widget.replyTo?.visibility ?? pref?.visibility ?? VisibilityType.public;
-  late QuotePolicyType qtype = pref?.quotePolicy ?? QuotePolicyType.public;
+  late QuotePolicyType qtype = widget.editFrom?.quoteApproval?.toUser ?? pref?.quotePolicy ?? QuotePolicyType.public;
   late DateTime? scheduledAt = widget.editFrom?.scheduledAt;
 
   @override
@@ -130,7 +130,9 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
 
   // Build the optional quote-to widget with the greyed out quote-to status.
   Widget buildQuoteTo() {
-    if (widget.quoteTo == null) {
+    final StatusSchema? quote = widget.quoteTo ?? widget.editFrom?.quote?.quotedStatus;
+
+    if (quote == null) {
       return const SizedBox.shrink();
     }
 
@@ -145,7 +147,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: StatusLite(schema: widget.quoteTo!),
+            child: StatusLite(schema: quote),
           ),
         ),
       ),

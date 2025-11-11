@@ -15,6 +15,7 @@ enum StatusInteraction {
   mute,
   block,
   report,
+  policy,  // Change the interaction policy
   edit,
   delete;
 
@@ -43,6 +44,8 @@ enum StatusInteraction {
         return active ? Icons.feedback_rounded : Icons.feedback_outlined;
       case edit:
         return active ? Icons.edit : Icons.edit_outlined;
+      case policy:
+        return active ? Icons.format_quote : Icons.format_quote_outlined;
       case delete:
         return active ? Icons.delete : Icons.delete_outline_outlined;
     }
@@ -71,6 +74,8 @@ enum StatusInteraction {
         return AppLocalizations.of(context)?.btn_interaction_block ?? "Block";
       case report:
         return AppLocalizations.of(context)?.btn_interaction_report ?? "Report";
+      case policy:
+        return "Change Quote Policy";
       case edit:
         return AppLocalizations.of(context)?.btn_interaction_edit ?? "Edit";
       case delete:

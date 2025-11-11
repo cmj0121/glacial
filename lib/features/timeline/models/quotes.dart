@@ -75,7 +75,20 @@ enum QuoteApprovalType {
       case QuoteApprovalType.following:
         return Icons.person_add;
       case QuoteApprovalType.unsupportedPolicy:
-        return Icons.help_outline;
+        return Icons.cancel_outlined;
+    }
+  }
+
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case QuoteApprovalType.public:
+        return "Anyone can quote this status.";
+      case QuoteApprovalType.followers:
+        return "Only followers can quote this status.";
+      case QuoteApprovalType.following:
+        return "Only people followed by the author can quote this status.";
+      case QuoteApprovalType.unsupportedPolicy:
+        return "No supported quote policy.";
     }
   }
 }
@@ -124,6 +137,28 @@ class QuoteApprovalSchema {
           CurrentQuoteApprovalType.fromString(json['current_user'] as String),
     );
   }
+
+  // The highest level of quote approval for the current user, maybe automatic or manual.
+  QuotePolicyType get toUser {
+    if (automatic.isEmpty && manual.isEmpty) {
+      return QuotePolicyType.nobody;
+    }
+
+    final QuoteApprovalType combined = [
+      ...automatic,
+      ...manual,
+    ].reduce((value, element) => value.index < element.index ? value : element);
+
+    switch (combined) {
+      case QuoteApprovalType.public:
+        return QuotePolicyType.public;
+      case QuoteApprovalType.followers:
+      case QuoteApprovalType.following:
+        return QuotePolicyType.followers;
+      case QuoteApprovalType.unsupportedPolicy:
+        return QuotePolicyType.nobody;
+    }
+  }
 }
 
 // Sets who is allowed to quote the status.
@@ -171,6 +206,12 @@ enum QuotePolicyType {
       case QuotePolicyType.nobody:
         return "No one can quote this status.";
     }
+  }
+
+  // Get the next policy
+  QuotePolicyType get next {
+    final int nextIndex = (index + 1) % QuotePolicyType.values.length;
+    return QuotePolicyType.values[nextIndex];
   }
 }
 
