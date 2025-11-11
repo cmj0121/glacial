@@ -664,6 +664,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get desc_quote_policy_nobody => 'Nadie puede citar este estado.';
 
   @override
+  String get desc_quote_removed => 'El estado citado no está disponible';
+
+  @override
   String err_invalid_instance(Object domain) {
     return 'Dominio de servidor Mastodon inválido: $domain';
   }

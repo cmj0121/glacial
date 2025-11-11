@@ -628,6 +628,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get desc_quote_policy_nobody => '아무도 이 게시물을 인용할 수 없습니다.';
 
   @override
+  String get desc_quote_removed => '인용된 게시물을 사용할 수 없습니다';
+
+  @override
   String err_invalid_instance(Object domain) {
     return '유효하지 않은 Mastodon 서버: $domain';
   }

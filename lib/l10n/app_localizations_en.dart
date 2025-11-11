@@ -654,6 +654,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get desc_quote_policy_nobody => 'No one can quote this status.';
 
   @override
+  String get desc_quote_removed => 'The Quote Status is Unavailable';
+
+  @override
   String err_invalid_instance(Object domain) {
     return 'invalid Mastodon server domain: $domain';
   }

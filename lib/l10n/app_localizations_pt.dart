@@ -663,6 +663,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get desc_quote_policy_nobody => 'Ninguém pode citar este post.';
 
   @override
+  String get desc_quote_removed => 'A postagem citada não está disponível';
+
+  @override
   String err_invalid_instance(Object domain) {
     return 'Domínio do servidor Mastodon inválido: $domain';
   }

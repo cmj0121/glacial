@@ -202,6 +202,7 @@
   "desc_quote_policy_public": "任何人都可以引用嘟文.",
   "desc_quote_policy_followers": "限追蹤者可以引用嘟文",
   "desc_quote_policy_nobody": "禁止其他人引用嘟文",
+  "desc_quote_removed": "無法取得引用嘟文",
   "err_invalid_instance": "不合法/不存在的 Mastodon 伺服器: {domain}",
   "msg_preference_engineer_clear_cache": "清除快取成功",
   "msg_preference_engineer_reset": "重置成功",

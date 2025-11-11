@@ -627,6 +627,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get desc_quote_policy_nobody => '誰もこの投稿を引用できません。';
 
   @override
+  String get desc_quote_removed => '引用された投稿を取得できません';
+
+  @override
   String err_invalid_instance(Object domain) {
     return '無効なMastodonサーバー: $domain';
   }

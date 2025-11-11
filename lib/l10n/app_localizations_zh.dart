@@ -627,6 +627,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get desc_quote_policy_nobody => '禁止其他人引用嘟文';
 
   @override
+  String get desc_quote_removed => '無法取得引用嘟文';
+
+  @override
   String err_invalid_instance(Object domain) {
     return '不合法/不存在的 Mastodon 伺服器: $domain';
   }

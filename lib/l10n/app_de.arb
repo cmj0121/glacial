@@ -202,6 +202,7 @@
   "desc_quote_policy_public": "Jeder kann diesen Beitrag zitieren.",
   "desc_quote_policy_followers": "Nur Follower können diesen Beitrag zitieren.",
   "desc_quote_policy_nobody": "Niemand kann diesen Beitrag zitieren.",
+  "desc_quote_removed": "Der zitierte Beitrag ist nicht verfügbar",
   "err_invalid_instance": "Ungültiger Mastodon-Server: {domain}",
   "msg_preference_engineer_clear_cache": "Cache erfolgreich gelöscht",
   "msg_preference_engineer_reset": "Zurücksetzen erfolgreich",

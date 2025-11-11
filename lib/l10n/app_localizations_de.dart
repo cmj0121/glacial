@@ -660,6 +660,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Niemand kann diesen Beitrag zitieren.';
 
   @override
+  String get desc_quote_removed => 'Der zitierte Beitrag ist nicht verfügbar';
+
+  @override
   String err_invalid_instance(Object domain) {
     return 'Ungültiger Mastodon-Server: $domain';
   }

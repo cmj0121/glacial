@@ -202,6 +202,7 @@
   "desc_quote_policy_public": "Qualquer pessoa pode citar este post.",
   "desc_quote_policy_followers": "Apenas seguidores podem citar este post.",
   "desc_quote_policy_nobody": "Ninguém pode citar este post.",
+  "desc_quote_removed": "A postagem citada não está disponível",
   "err_invalid_instance": "Domínio do servidor Mastodon inválido: {domain}",
   "msg_preference_engineer_clear_cache": "Cache limpo com sucesso",
   "msg_preference_engineer_reset": "Reset realizado com sucesso",

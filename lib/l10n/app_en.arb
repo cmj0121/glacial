@@ -202,6 +202,7 @@
   "desc_quote_policy_public": "Anyone can quote this status.",
   "desc_quote_policy_followers": "Only followers can quote this status.",
   "desc_quote_policy_nobody": "No one can quote this status.",
+  "desc_quote_removed": "The Quote Status is Unavailable",
   "err_invalid_instance": "invalid Mastodon server domain: {domain}",
   "msg_preference_engineer_clear_cache": "Cache cleared successfully",
   "msg_preference_engineer_reset": "Reset successfully",

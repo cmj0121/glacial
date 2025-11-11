@@ -1,6 +1,7 @@
 // The Quote widget to show the quoted status
 import 'package:flutter/material.dart';
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -22,6 +23,21 @@ class Quote extends StatelessWidget {
   }
 
   Widget buildContent(BuildContext context) {
+    if (schema?.quotedStatus == null) {
+      // Mark the quote as unavailable.
+      final String text = AppLocalizations.of(context)?.desc_quote_removed ?? "The Quote Status is Unavailable";
+      return Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        child: ListTile(
+          leading: Icon(Icons.delete_outline, size: tabSize),
+          title: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+        ),
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,

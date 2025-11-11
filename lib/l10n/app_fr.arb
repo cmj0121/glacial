@@ -202,6 +202,7 @@
   "desc_quote_policy_public": "N’importe qui peut citer ce statut.",
   "desc_quote_policy_followers": "Seuls les abonnés peuvent citer ce statut.",
   "desc_quote_policy_nobody": "Personne ne peut citer ce statut.",
+  "desc_quote_removed": "Le statut cité n’est pas disponible",
   "err_invalid_instance": "Serveur Mastodon invalide : {domain}",
   "msg_preference_engineer_clear_cache": "Cache vidé avec succès",
   "msg_preference_engineer_reset": "Réinitialisation réussie",

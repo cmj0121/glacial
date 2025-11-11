@@ -202,6 +202,7 @@
   "desc_quote_policy_public": "Cualquiera puede citar este estado.",
   "desc_quote_policy_followers": "Solo los seguidores pueden citar este estado.",
   "desc_quote_policy_nobody": "Nadie puede citar este estado.",
+  "desc_quote_removed": "El estado citado no está disponible",
   "err_invalid_instance": "Dominio de servidor Mastodon inválido: {domain}",
   "msg_preference_engineer_clear_cache": "Caché borrada correctamente",
   "msg_preference_engineer_reset": "Restablecido correctamente",

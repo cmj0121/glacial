@@ -1322,6 +1322,12 @@ abstract class AppLocalizations {
   /// **'No one can quote this status.'**
   String get desc_quote_policy_nobody;
 
+  /// No description provided for @desc_quote_removed.
+  ///
+  /// In en, this message translates to:
+  /// **'The Quote Status is Unavailable'**
+  String get desc_quote_removed;
+
   /// No description provided for @err_invalid_instance.
   ///
   /// In en, this message translates to:

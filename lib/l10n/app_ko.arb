@@ -202,6 +202,7 @@
   "desc_quote_policy_public": "누구나 이 게시물을 인용할 수 있습니다.",
   "desc_quote_policy_followers": "팔로워만 이 게시물을 인용할 수 있습니다.",
   "desc_quote_policy_nobody": "아무도 이 게시물을 인용할 수 없습니다.",
+  "desc_quote_removed": "인용된 게시물을 사용할 수 없습니다",
   "err_invalid_instance": "유효하지 않은 Mastodon 서버: {domain}",
   "msg_preference_engineer_clear_cache": "캐시 삭제 완료",
   "msg_preference_engineer_reset": "리셋 완료",
