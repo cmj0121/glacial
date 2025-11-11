@@ -23,9 +23,12 @@ class StatusSchema {
   final StatusSchema? reblog;               // The status being reblogged.
   final PollSchema? poll;                   // The poll attached to the status.
   final PreviewCardSchema? card;            // Preview card for links included within status content.
+  final QuoteSchema? quote;                 // Information about the status being quoted, if any
+  final QuoteApprovalSchema? quoteApproval; // Summary of the post quote’s approval policy.
   final int reblogsCount;                   // How many boosts this status has received.
   final int favouritesCount;                // How many favourites this status has received.
   final int repliesCount;                   // How many replies this status has received.
+  final int? quotesCount;                   // How many accepted quotes this status has.
   final bool? favourited;                   // Have you favourited this status?
   final bool? reblogged;                    // Have you reblogged this status?
   final bool? muted;                        // Have you muted this status?
@@ -56,9 +59,12 @@ class StatusSchema {
     this.reblog,
     this.poll,
     this.card,
+    this.quote,
+    this.quoteApproval,
     required this.reblogsCount,
     required this.favouritesCount,
     required this.repliesCount,
+    this.quotesCount,
     this.favourited,
     this.reblogged,
     this.muted,
@@ -103,9 +109,12 @@ class StatusSchema {
       reblog: json['reblog'] == null ? null : StatusSchema.fromJson(json['reblog'] as Map<String, dynamic>),
       poll: json['poll'] == null ? null : PollSchema.fromJson(json['poll'] as Map<String, dynamic>),
       card: json['card'] == null ? null : PreviewCardSchema.fromJson(json['card'] as Map<String, dynamic>),
+      quote: json['quote'] == null ? null : QuoteSchema.fromJson(json['quote'] as Map<String, dynamic>),
+      quoteApproval: json['quote_approval'] == null ? null : QuoteApprovalSchema.fromJson(json['quote_approval'] as Map<String, dynamic>),
       reblogsCount: json['reblogs_count'] as int,
       favouritesCount: json['favourites_count'] as int,
       repliesCount: json['replies_count'] as int,
+      quotesCount: json['quotes_count'] as int?,
       favourited: json['favourited'] as bool?,
       reblogged: json['reblogged'] as bool?,
       muted: json['muted'] as bool?,
