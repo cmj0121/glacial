@@ -35,7 +35,6 @@ class Quote extends StatelessWidget {
   }
 }
 
-
 class QuotePolicy extends StatelessWidget {
   final QuotePolicyType policy;
 

@@ -65,13 +65,41 @@ enum QuoteApprovalType {
       orElse: () => QuoteApprovalType.unsupportedPolicy,
     );
   }
+
+  IconData get icon {
+    switch (this) {
+      case QuoteApprovalType.public:
+        return Icons.format_quote_sharp;
+      case QuoteApprovalType.followers:
+        return Icons.group;
+      case QuoteApprovalType.following:
+        return Icons.person_add;
+      case QuoteApprovalType.unsupportedPolicy:
+        return Icons.help_outline;
+    }
+  }
+}
+
+// Describes how this status’ quote policy applies to the current user.
+enum CurrentQuoteApprovalType {
+  automatic,  // The requesting user is expected to be allowed to quote
+  manual,     // The requesting user is expected to be allowed to quote after manual review
+  denied,     // The requesting user is not expected to be allowed to quote this post.
+  unknown;    // The user is not covered by the quote policies supported by Mastodon
+
+  factory CurrentQuoteApprovalType.fromString(String type) {
+    return CurrentQuoteApprovalType.values.firstWhere(
+      (e) => e.name == type,
+      orElse: () => CurrentQuoteApprovalType.unknown,
+    );
+  }
 }
 
 // Summary of a status' quote approval policy and how it applies to the requesting user.
 class QuoteApprovalSchema {
   final List<QuoteApprovalType> automatic;
   final List<QuoteApprovalType> manual;
-  final QuoteApprovalType currentUser;
+  final CurrentQuoteApprovalType currentUser;
 
   QuoteApprovalSchema({
     required this.automatic,
@@ -93,7 +121,7 @@ class QuoteApprovalSchema {
           .map((e) => QuoteApprovalType.fromString(e as String))
           .toList(),
       currentUser:
-          QuoteApprovalType.fromString(json['current_user'] as String),
+          CurrentQuoteApprovalType.fromString(json['current_user'] as String),
     );
   }
 }

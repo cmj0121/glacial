@@ -26,6 +26,7 @@ enum RoutePath {
   statusInfo,        // The status info page of the app to show the status details.
   statusHistory,     // The status history page of the app to show the status history.
   post,              // The post page of the app to create a new post.
+  postQuote,         // The post page of the app to create a quote post.
   edit,              // The edit page of the app to edit an existing post.
   directory,         // The directory page of the app to expore the accounts in the Mastodon server.
   wip;               // The work-in-progress page of the app.
@@ -77,6 +78,8 @@ enum RoutePath {
         return '/home/status/history';
       case RoutePath.post:
         return '/home/post';
+      case RoutePath.postQuote:
+        return '/home/post/quote';
       case RoutePath.edit:
         return '/home/edit';
       case RoutePath.directory:

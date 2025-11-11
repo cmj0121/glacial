@@ -16,12 +16,14 @@ import 'package:glacial/features/screens.dart';
 // The form of the new status that user can fill in to create a new status.
 class PostStatusForm extends ConsumerStatefulWidget {
   final StatusSchema? replyTo;
+  final StatusSchema? quoteTo;
   final StatusSchema? editFrom;
   final ValueChanged<StatusSchema>? onPost;
 
   const PostStatusForm({
     super.key,
     this.replyTo,
+    this.quoteTo,
     this.editFrom,
     this.onPost,
   });
@@ -101,6 +103,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
         buildReplyTo(),
         buildSpoilerField(),
         buildTextField(),
+        buildQuoteTo(),
 
         const SizedBox(height: 16),
         PollForm(schema: poll, onChanged: (poll) => setState(() => this.poll = poll)),
@@ -121,6 +124,30 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       child: ColorFiltered(
         colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
         child: StatusLite(schema: widget.replyTo!),
+      ),
+    );
+  }
+
+  // Build the optional quote-to widget with the greyed out quote-to status.
+  Widget buildQuoteTo() {
+    if (widget.quoteTo == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: ColorFiltered(
+          colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: StatusLite(schema: widget.quoteTo!),
+          ),
+        ),
       ),
     );
   }
@@ -375,6 +402,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       visibility: vtype,
       sensitive: isSensitive,
       inReplyToID: widget.replyTo?.id,
+      quotedStatusID: widget.quoteTo?.id,
       scheduledAt: scheduledAt,
       quoteApprovalPolicy: qtype,
     );

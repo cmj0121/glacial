@@ -188,9 +188,16 @@ class _InteractionState extends State<Interaction> {
     }
 
     switch (widget.action) {
+      case StatusInteraction.quote:
+        switch (widget.schema.quoteApproval?.currentUser) {
+          case CurrentQuoteApprovalType.automatic:
+          case CurrentQuoteApprovalType.manual:
+            return true;
+          default:
+            return false;
+        }
       case StatusInteraction.reply:
       case StatusInteraction.reblog:
-      case StatusInteraction.quote:
       case StatusInteraction.favourite:
       case StatusInteraction.bookmark:
         return isSignedIn;
@@ -287,6 +294,7 @@ class _InteractionState extends State<Interaction> {
         context.push(RoutePath.post.path, extra: widget.schema);
         return;
       case StatusInteraction.quote:
+        context.push(RoutePath.postQuote.path, extra: widget.schema);
         return;
       case StatusInteraction.reblog:
       case StatusInteraction.favourite:

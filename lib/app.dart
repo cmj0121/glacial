@@ -121,6 +121,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
 
         switch (path) {
           case RoutePath.post:
+          case RoutePath.postQuote:
           case RoutePath.edit:
           case RoutePath.status:
           case RoutePath.editProfile:
@@ -220,6 +221,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (BuildContext context, GoRouterState state) {
             final StatusSchema? schema = state.extra as StatusSchema?;
             return PostStatusForm(replyTo: schema);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.postQuote.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final StatusSchema? schema = state.extra as StatusSchema?;
+            return PostStatusForm(quoteTo: schema);
           },
         ),
         GoRoute(
