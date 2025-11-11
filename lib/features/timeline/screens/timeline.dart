@@ -128,6 +128,7 @@ class _TimelineState extends State<Timeline> {
   bool isLoading = false;
   bool isCompleted = false;
   Timer? timer;
+  String? maxId;
 
   List<StatusSchema> unreaded = [];
   List<StatusSchema> statuses = [];
@@ -282,8 +283,8 @@ class _TimelineState extends State<Timeline> {
 
     if (mounted) setState(() => isLoading = true);
 
-    final String? maxId = statuses.isNotEmpty ? statuses.last.id : null;
-    final List<StatusSchema> schemas = await widget.status.fetchTimeline(
+    final String? maxId = this.maxId ?? (statuses.isNotEmpty ? statuses.last.id : null);
+    final (schemas, newMaxId) = await widget.status.fetchTimeline(
       widget.type,
       account: widget.type == TimelineType.schedule ? widget.status.account : widget.account,
       tag: widget.hashtag,
@@ -297,6 +298,7 @@ class _TimelineState extends State<Timeline> {
         isLoading = false;
         isCompleted = schemas.isEmpty;
         statuses.addAll(schemas);
+        this.maxId = newMaxId;
       });
     }
   }
@@ -322,13 +324,15 @@ class _TimelineState extends State<Timeline> {
   }
 
   Future<List<StatusSchema>> onLoadUnreadedMore(String? minId) async {
-    return await widget.status.fetchTimeline(
+    final (schema, _) = await widget.status.fetchTimeline(
       widget.type,
       account: widget.type == TimelineType.schedule ? widget.status.account : widget.account,
       tag: widget.hashtag,
       listId: widget.listId,
       minId: minId,
     );
+
+    return schema;
   }
 }
 

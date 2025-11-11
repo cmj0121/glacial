@@ -40,6 +40,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
 
   bool isLoading = false;
   bool isCompleted = false;
+  String? maxId;
 
   late List<StatusSchema> statuses = [];
   late List<String> selectedStatusIDs = [widget.status.id];
@@ -256,13 +257,14 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
 
     setState(() => isLoading = true);
 
-    final String? maxId = statuses.isEmpty ? null : statuses.last.id;
-    final List<StatusSchema>? fetched = await status?.fetchTimeline(TimelineType.user, account: widget.account, maxId: maxId);
+    final String? maxId = this.maxId ?? (statuses.isEmpty ? null : statuses.last.id);
+    final (fetched, newMaxId) = await status?.fetchTimeline(TimelineType.user, account: widget.account, maxId: maxId) ?? (null, null);
 
     setState(() {
       isLoading = false;
       isCompleted = (fetched?.isEmpty ?? true);
       statuses.addAll(fetched ?? []);
+      this.maxId = newMaxId;
     });
   }
 
