@@ -10,5 +10,6 @@ export 'report.dart';
 export 'status.dart';
 export 'timeline.dart';
 export 'visibility.dart';
+export 'quotes.dart';
 
 // vim: set ts=2 sw=2 sts=2 et:

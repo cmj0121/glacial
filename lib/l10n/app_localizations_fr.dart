@@ -152,6 +152,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_interaction_delete => 'Supprimer';
 
   @override
+  String get btn_interaction_quote => 'Citation';
+
+  @override
+  String get btn_interaction_filter => 'Filtre';
+
+  @override
+  String get btn_interaction_policy => 'Politique';
+
+  @override
   String get btn_profile_core => 'Profil';
 
   @override
@@ -485,6 +494,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_filter_never => 'Jamais';
 
   @override
+  String get txt_quote_policy_public => 'Public';
+
+  @override
+  String get txt_quote_policy_followers => 'Abonnés';
+
+  @override
+  String get txt_quote_policy_nobody => 'Personne';
+
+  @override
   String get desc_preference_status =>
       'Configurer et contrôler le comportement par défaut de vos statuts';
 
@@ -616,6 +634,38 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get desc_filter_context => 'Où appliquer le filtre';
+
+  @override
+  String get desc_quote_approval_public =>
+      'N’importe qui peut citer ce statut.';
+
+  @override
+  String get desc_quote_approval_followers =>
+      'Seuls les abonnés peuvent citer ce statut.';
+
+  @override
+  String get desc_quote_approval_following =>
+      'Seules les personnes suivies par l’auteur peuvent citer ce statut.';
+
+  @override
+  String get desc_quote_approval_unsupport =>
+      'Aucune politique de citation prise en charge.';
+
+  @override
+  String get desc_quote_policy => 'Politique de citation';
+
+  @override
+  String get desc_quote_policy_public => 'N’importe qui peut citer ce statut.';
+
+  @override
+  String get desc_quote_policy_followers =>
+      'Seuls les abonnés peuvent citer ce statut.';
+
+  @override
+  String get desc_quote_policy_nobody => 'Personne ne peut citer ce statut.';
+
+  @override
+  String get desc_quote_removed => 'Le statut cité n’est pas disponible';
 
   @override
   String err_invalid_instance(Object domain) {

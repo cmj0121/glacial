@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -32,9 +33,14 @@ class InteractionBar extends ConsumerWidget {
     final bool isSelfStatus = schema.account.id == status.account?.id;
     final List<StatusInteraction> actions = StatusInteraction.values.where((a) {
       switch (a) {
+        case StatusInteraction.quote:
+          // Only 4.5.0+ supports quote interaction
+          return Version.parse(status.server?.version ?? '0.0.0') >= Version.parse('4.5.0');
         case StatusInteraction.edit:
+        case StatusInteraction.policy:
         case StatusInteraction.delete:
           return isSelfStatus;
+        case StatusInteraction.filter:
         case StatusInteraction.mute:
         case StatusInteraction.block:
         case StatusInteraction.report:
@@ -167,9 +173,21 @@ class _InteractionState extends State<Interaction> {
   // Build the normal icon for the interaction that shows the icon and the
   // action text.
   Widget buildFullButton(BuildContext context) {
+    late final String title;
+
+    switch (widget.action) {
+      case StatusInteraction.policy:
+        final QuotePolicyType policy = widget.schema.quoteApproval?.toUser ?? QuotePolicyType.nobody;
+        title = policy.title(context);
+        break;
+      default:
+        title = widget.action.tooltip(context);
+        break;
+    }
+
     return ListTile(
       leading: Icon(icon, size: tabSize),
-      title: Text(widget.action.tooltip(context)),
+      title: Text(title),
       textColor: color,
       iconColor: color,
       onTap: isAvailable ? onPressed : null,
@@ -184,6 +202,14 @@ class _InteractionState extends State<Interaction> {
     }
 
     switch (widget.action) {
+      case StatusInteraction.quote:
+        switch (widget.schema.quoteApproval?.currentUser) {
+          case CurrentQuoteApprovalType.automatic:
+          case CurrentQuoteApprovalType.manual:
+            return true;
+          default:
+            return false;
+        }
       case StatusInteraction.reply:
       case StatusInteraction.reblog:
       case StatusInteraction.favourite:
@@ -192,6 +218,7 @@ class _InteractionState extends State<Interaction> {
       case StatusInteraction.share:
         return true;
       case StatusInteraction.edit:
+      case StatusInteraction.policy:
       case StatusInteraction.delete:
         return isSignedIn && isSelfPost;
       case StatusInteraction.filter:
@@ -228,7 +255,13 @@ class _InteractionState extends State<Interaction> {
   // Get the icon for the interaction, which may be active or not based on the
   // current status of the interaction.
   IconData get icon {
-    return widget.action.icon(active: isActive); // Replace with actual logic to determine active state
+    switch (widget.action) {
+      case StatusInteraction.policy:
+        final QuotePolicyType policy = widget.schema.quoteApproval?.toUser ?? QuotePolicyType.nobody;
+        return policy.icon;
+      default:
+        return widget.action.icon(active: isActive); // Replace with actual logic to determine active state
+    }
   }
 
   // The total count of the interaction of the status, if applicable.
@@ -236,6 +269,8 @@ class _InteractionState extends State<Interaction> {
     switch (widget.action) {
       case StatusInteraction.reply:
         return widget.schema.repliesCount;
+      case StatusInteraction.quote:
+        return widget.schema.quotesCount;
       case StatusInteraction.reblog:
         return widget.schema.reblogsCount;
       case StatusInteraction.favourite:
@@ -279,6 +314,9 @@ class _InteractionState extends State<Interaction> {
       case StatusInteraction.reply:
         context.push(RoutePath.post.path, extra: widget.schema);
         return;
+      case StatusInteraction.quote:
+        context.push(RoutePath.postQuote.path, extra: widget.schema);
+        return;
       case StatusInteraction.reblog:
       case StatusInteraction.favourite:
       case StatusInteraction.bookmark:
@@ -293,6 +331,17 @@ class _InteractionState extends State<Interaction> {
       case StatusInteraction.edit:
         context.pop();
         context.push(RoutePath.edit.path, extra: widget.schema);
+        return;
+      case StatusInteraction.policy:
+        context.pop();
+
+        final QuotePolicyType policy = widget.schema.quoteApproval?.toUser ?? QuotePolicyType.nobody;
+        final StatusSchema updatedStatus = await widget.status.editStatusInteractionPolicy(
+          schema: widget.schema,
+          policy: policy.next,
+        );
+
+        widget.onReload?.call(updatedStatus);
         return;
       case StatusInteraction.delete:
         await widget.status.deleteStatus(widget.schema);

@@ -152,6 +152,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_interaction_delete => '刪除';
 
   @override
+  String get btn_interaction_quote => '引用';
+
+  @override
+  String get btn_interaction_filter => '過濾';
+
+  @override
+  String get btn_interaction_policy => '策略';
+
+  @override
   String get btn_profile_core => '使用者頁面';
 
   @override
@@ -477,6 +486,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_filter_never => '從不';
 
   @override
+  String get txt_quote_policy_public => '任意';
+
+  @override
+  String get txt_quote_policy_followers => '追蹤者';
+
+  @override
+  String get txt_quote_policy_nobody => '沒有人';
+
+  @override
   String get desc_preference_status => '控制你嘟文的預設行為';
 
   @override
@@ -583,6 +601,33 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_filter_context => '過濾器套用的情境';
+
+  @override
+  String get desc_quote_approval_public => '任何人都可以引用嘟文.';
+
+  @override
+  String get desc_quote_approval_followers => '限追蹤者可以引用嘟文';
+
+  @override
+  String get desc_quote_approval_following => '限追蹤中可以引用嘟文';
+
+  @override
+  String get desc_quote_approval_unsupport => '不支援引用嘟文';
+
+  @override
+  String get desc_quote_policy => '嘟文引用原則';
+
+  @override
+  String get desc_quote_policy_public => '任何人都可以引用嘟文.';
+
+  @override
+  String get desc_quote_policy_followers => '限追蹤者可以引用嘟文';
+
+  @override
+  String get desc_quote_policy_nobody => '禁止其他人引用嘟文';
+
+  @override
+  String get desc_quote_removed => '無法取得引用嘟文';
 
   @override
   String err_invalid_instance(Object domain) {

@@ -392,6 +392,24 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get btn_interaction_delete;
 
+  /// No description provided for @btn_interaction_quote.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote'**
+  String get btn_interaction_quote;
+
+  /// No description provided for @btn_interaction_filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get btn_interaction_filter;
+
+  /// No description provided for @btn_interaction_policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy'**
+  String get btn_interaction_policy;
+
   /// No description provided for @btn_profile_core.
   ///
   /// In en, this message translates to:
@@ -1022,6 +1040,24 @@ abstract class AppLocalizations {
   /// **'Never'**
   String get txt_filter_never;
 
+  /// No description provided for @txt_quote_policy_public.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get txt_quote_policy_public;
+
+  /// No description provided for @txt_quote_policy_followers.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get txt_quote_policy_followers;
+
+  /// No description provided for @txt_quote_policy_nobody.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody'**
+  String get txt_quote_policy_nobody;
+
   /// No description provided for @desc_preference_status.
   ///
   /// In en, this message translates to:
@@ -1237,6 +1273,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Where the filter should be applied'**
   String get desc_filter_context;
+
+  /// No description provided for @desc_quote_approval_public.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone can quote this status.'**
+  String get desc_quote_approval_public;
+
+  /// No description provided for @desc_quote_approval_followers.
+  ///
+  /// In en, this message translates to:
+  /// **'Only followers can quote this status.'**
+  String get desc_quote_approval_followers;
+
+  /// No description provided for @desc_quote_approval_following.
+  ///
+  /// In en, this message translates to:
+  /// **'Only people followed by the author can quote this status.'**
+  String get desc_quote_approval_following;
+
+  /// No description provided for @desc_quote_approval_unsupport.
+  ///
+  /// In en, this message translates to:
+  /// **'No supported quote policy.'**
+  String get desc_quote_approval_unsupport;
+
+  /// No description provided for @desc_quote_policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote Policy'**
+  String get desc_quote_policy;
+
+  /// No description provided for @desc_quote_policy_public.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone can quote this status.'**
+  String get desc_quote_policy_public;
+
+  /// No description provided for @desc_quote_policy_followers.
+  ///
+  /// In en, this message translates to:
+  /// **'Only followers can quote this status.'**
+  String get desc_quote_policy_followers;
+
+  /// No description provided for @desc_quote_policy_nobody.
+  ///
+  /// In en, this message translates to:
+  /// **'No one can quote this status.'**
+  String get desc_quote_policy_nobody;
+
+  /// No description provided for @desc_quote_removed.
+  ///
+  /// In en, this message translates to:
+  /// **'The Quote Status is Unavailable'**
+  String get desc_quote_removed;
 
   /// No description provided for @err_invalid_instance.
   ///

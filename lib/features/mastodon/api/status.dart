@@ -244,6 +244,22 @@ extension StatusExtensions on AccessStatusSchema {
     final String response = await postAPI(endpoint, body: body) ?? '{}';
     return PollSchema.fromString(response);
   }
+
+  // Edit a given status to change its interaction policies. Currently, this means changing its quote approval policy.
+  Future<StatusSchema> editStatusInteractionPolicy({
+    required StatusSchema schema,
+    required QuotePolicyType policy,
+  }) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/statuses/${schema.id}/interaction_policy';
+    final Map<String, dynamic> body = {
+      'quote_approval_policy': policy.name,
+    };
+
+    final String response = await putAPI(endpoint, body: body) ?? '{}';
+    return StatusSchema.fromString(response);
+  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

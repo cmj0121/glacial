@@ -152,6 +152,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btn_interaction_delete => 'Eliminar';
 
   @override
+  String get btn_interaction_quote => 'Cita';
+
+  @override
+  String get btn_interaction_filter => 'Filtro';
+
+  @override
+  String get btn_interaction_policy => 'Política';
+
+  @override
   String get btn_profile_core => 'Perfil';
 
   @override
@@ -484,6 +493,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_filter_never => 'Nunca';
 
   @override
+  String get txt_quote_policy_public => 'Público';
+
+  @override
+  String get txt_quote_policy_followers => 'Seguidores';
+
+  @override
+  String get txt_quote_policy_nobody => 'Nadie';
+
+  @override
   String get desc_preference_status =>
       'Configura y controla el comportamiento predeterminado de tus publicaciones';
 
@@ -615,6 +633,38 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get desc_filter_context => 'Dónde se aplica el filtro';
+
+  @override
+  String get desc_quote_approval_public =>
+      'Cualquiera puede citar este estado.';
+
+  @override
+  String get desc_quote_approval_followers =>
+      'Solo los seguidores pueden citar este estado.';
+
+  @override
+  String get desc_quote_approval_following =>
+      'Solo las personas seguidas por el autor pueden citar este estado.';
+
+  @override
+  String get desc_quote_approval_unsupport =>
+      'Política de citas no compatible.';
+
+  @override
+  String get desc_quote_policy => 'Política de citas';
+
+  @override
+  String get desc_quote_policy_public => 'Cualquiera puede citar este estado.';
+
+  @override
+  String get desc_quote_policy_followers =>
+      'Solo los seguidores pueden citar este estado.';
+
+  @override
+  String get desc_quote_policy_nobody => 'Nadie puede citar este estado.';
+
+  @override
+  String get desc_quote_removed => 'El estado citado no está disponible';
 
   @override
   String err_invalid_instance(Object domain) {

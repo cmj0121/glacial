@@ -28,7 +28,7 @@ import 'package:glacial/features/models.dart';
 // The API extensions for the timeline endpoints in the Mastodon server.
 extension TimelineExtensions on AccessStatusSchema {
   // Fetch timeline's statuses based on the timeline type.
-  Future<List<StatusSchema>> fetchTimeline(TimelineType type, {
+  Future<(List<StatusSchema>, String?)> fetchTimeline(TimelineType type, {
     String? maxId,
     String? minId,
     AccountSchema? account,
@@ -65,13 +65,15 @@ extension TimelineExtensions on AccessStatusSchema {
         break;
       case TimelineType.user:
       case TimelineType.pin:
-        return fetchAccountTimeline(account: account, maxId: maxId, pinned: type == TimelineType.pin);
+        final statuses = await fetchAccountTimeline(account: account, maxId: maxId, pinned: type == TimelineType.pin);
+        return (statuses, null);
       case TimelineType.schedule:
         if (account == null) {
           throw Exception("Account must be provided for scheduled statuses.");
         }
 
-        return fetchScheduledStatuses(account: account, maxId: maxId);
+        final statuses = await fetchScheduledStatuses(account: account, maxId: maxId);
+        return (statuses, null);
       case TimelineType.hashtag:
         if (tag?.isNotEmpty != true) {
           throw Exception("Tag must be provided for hashtag timeline.");
@@ -88,7 +90,7 @@ extension TimelineExtensions on AccessStatusSchema {
         break;
     }
 
-    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
+    final (body, nextId) = await getAPIEx(endpoint, queryParameters: query);
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
     final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).where(
       // filter-out the statuses that are hidden by filters.
@@ -101,7 +103,7 @@ extension TimelineExtensions on AccessStatusSchema {
     status.map((s) async => await getAccount(s.inReplyToAccountID)).toList();
 
     logger.d("complete load the timeline of type: $type, count: ${status.length}");
-    return status;
+    return (status, nextId);
   }
 }
 

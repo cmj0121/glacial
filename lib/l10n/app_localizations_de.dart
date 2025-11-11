@@ -152,6 +152,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_interaction_delete => 'Löschen';
 
   @override
+  String get btn_interaction_quote => 'Zitat';
+
+  @override
+  String get btn_interaction_filter => 'Filter';
+
+  @override
+  String get btn_interaction_policy => 'Richtlinie';
+
+  @override
   String get btn_profile_core => 'Profil';
 
   @override
@@ -484,6 +493,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_filter_never => 'Nie';
 
   @override
+  String get txt_quote_policy_public => 'Öffentlich';
+
+  @override
+  String get txt_quote_policy_followers => 'Follower';
+
+  @override
+  String get txt_quote_policy_nobody => 'Niemand';
+
+  @override
   String get desc_preference_status =>
       'Standard-Verhalten der Statusmeldungen festlegen und steuern';
 
@@ -610,6 +628,39 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get desc_filter_context => 'Wo der Filter angewendet wird';
+
+  @override
+  String get desc_quote_approval_public =>
+      'Jeder kann diesen Beitrag zitieren.';
+
+  @override
+  String get desc_quote_approval_followers =>
+      'Nur Follower können diesen Beitrag zitieren.';
+
+  @override
+  String get desc_quote_approval_following =>
+      'Nur Personen, denen der Autor folgt, können diesen Beitrag zitieren.';
+
+  @override
+  String get desc_quote_approval_unsupport =>
+      'Keine unterstützte Zitatrichtlinie.';
+
+  @override
+  String get desc_quote_policy => 'Zitatrichtlinie';
+
+  @override
+  String get desc_quote_policy_public => 'Jeder kann diesen Beitrag zitieren.';
+
+  @override
+  String get desc_quote_policy_followers =>
+      'Nur Follower können diesen Beitrag zitieren.';
+
+  @override
+  String get desc_quote_policy_nobody =>
+      'Niemand kann diesen Beitrag zitieren.';
+
+  @override
+  String get desc_quote_removed => 'Der zitierte Beitrag ist nicht verfügbar';
 
   @override
   String err_invalid_instance(Object domain) {

@@ -7,6 +7,7 @@ import 'package:glacial/core.dart';
 enum StatusInteraction {
   reply,
   reblog,
+  quote,
   favourite,
   bookmark,
   share,
@@ -14,6 +15,7 @@ enum StatusInteraction {
   mute,
   block,
   report,
+  policy,  // Change the interaction policy
   edit,
   delete;
 
@@ -24,6 +26,8 @@ enum StatusInteraction {
         return active ? Icons.turn_left : Icons.turn_left_outlined;
       case reblog:
         return active ? Icons.repeat : Icons.repeat_outlined;
+      case quote:
+        return active ? Icons.format_quote : Icons.format_quote_outlined;
       case favourite:
         return active ? Icons.star : Icons.star_outline_outlined;
       case bookmark:
@@ -40,6 +44,8 @@ enum StatusInteraction {
         return active ? Icons.feedback_rounded : Icons.feedback_outlined;
       case edit:
         return active ? Icons.edit : Icons.edit_outlined;
+      case policy:
+        return active ? Icons.format_quote : Icons.format_quote_outlined;
       case delete:
         return active ? Icons.delete : Icons.delete_outline_outlined;
     }
@@ -52,6 +58,8 @@ enum StatusInteraction {
         return AppLocalizations.of(context)?.btn_interaction_reply ?? "Reply";
       case reblog:
         return AppLocalizations.of(context)?.btn_interaction_reblog ?? "Reblog";
+      case quote:
+        return AppLocalizations.of(context)?.btn_interaction_quote ?? "Quote";
       case favourite:
         return AppLocalizations.of(context)?.btn_interaction_favourite ?? "Favourite";
       case bookmark:
@@ -59,13 +67,15 @@ enum StatusInteraction {
       case share:
         return AppLocalizations.of(context)?.btn_interaction_share ?? "Share";
       case filter:
-        return "Filter";
+        return AppLocalizations.of(context)?.btn_interaction_filter ?? "Filter";
       case mute:
         return AppLocalizations.of(context)?.btn_interaction_mute ?? "Mute";
       case block:
         return AppLocalizations.of(context)?.btn_interaction_block ?? "Block";
       case report:
         return AppLocalizations.of(context)?.btn_interaction_report ?? "Report";
+      case policy:
+        return AppLocalizations.of(context)?.btn_interaction_policy ?? "Policy";
       case edit:
         return AppLocalizations.of(context)?.btn_interaction_edit ?? "Edit";
       case delete:
@@ -79,6 +89,7 @@ enum StatusInteraction {
     switch (this) {
       case reply:
       case reblog:
+      case quote:
       case favourite:
       case bookmark:
       case share:

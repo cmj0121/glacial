@@ -16,12 +16,14 @@ import 'package:glacial/features/screens.dart';
 // The form of the new status that user can fill in to create a new status.
 class PostStatusForm extends ConsumerStatefulWidget {
   final StatusSchema? replyTo;
+  final StatusSchema? quoteTo;
   final StatusSchema? editFrom;
   final ValueChanged<StatusSchema>? onPost;
 
   const PostStatusForm({
     super.key,
     this.replyTo,
+    this.quoteTo,
     this.editFrom,
     this.onPost,
   });
@@ -47,6 +49,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   late String? spoiler = widget.editFrom?.spoiler.isNotEmpty == true ? widget.editFrom?.spoiler : null;
   late List<AttachmentSchema> medias = widget.editFrom?.attachments ?? [];
   late VisibilityType vtype = widget.replyTo?.visibility ?? pref?.visibility ?? VisibilityType.public;
+  late QuotePolicyType qtype = widget.editFrom?.quoteApproval?.toUser ?? pref?.quotePolicy ?? QuotePolicyType.public;
   late DateTime? scheduledAt = widget.editFrom?.scheduledAt;
 
   @override
@@ -100,6 +103,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
         buildReplyTo(),
         buildSpoilerField(),
         buildTextField(),
+        buildQuoteTo(),
 
         const SizedBox(height: 16),
         PollForm(schema: poll, onChanged: (poll) => setState(() => this.poll = poll)),
@@ -120,6 +124,32 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       child: ColorFiltered(
         colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
         child: StatusLite(schema: widget.replyTo!),
+      ),
+    );
+  }
+
+  // Build the optional quote-to widget with the greyed out quote-to status.
+  Widget buildQuoteTo() {
+    final StatusSchema? quote = widget.quoteTo ?? widget.editFrom?.quote?.quotedStatus;
+
+    if (quote == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: ColorFiltered(
+          colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: StatusLite(schema: quote),
+          ),
+        ),
       ),
     );
   }
@@ -234,6 +264,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           type: vtype,
           size: tabSize,
           onChanged: (widget.editFrom == null && !isEditSchedule) ? (type) => setState(() => vtype = type ?? vtype) : null,
+        ),
+        QuotePolicyTypeSelector(
+          policy: qtype,
+          size: tabSize,
+          onChanged: (value) => setState(() => qtype = value ?? qtype),
         ),
 
         // The media icon button to open the image picker and upload media files.
@@ -369,7 +404,9 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       visibility: vtype,
       sensitive: isSensitive,
       inReplyToID: widget.replyTo?.id,
+      quotedStatusID: widget.quoteTo?.id,
       scheduledAt: scheduledAt,
+      quoteApprovalPolicy: qtype,
     );
 
     final AccountSchema? account = status?.account;

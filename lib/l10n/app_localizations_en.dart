@@ -152,6 +152,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_interaction_delete => 'Delete';
 
   @override
+  String get btn_interaction_quote => 'Quote';
+
+  @override
+  String get btn_interaction_filter => 'Filter';
+
+  @override
+  String get btn_interaction_policy => 'Policy';
+
+  @override
   String get btn_profile_core => 'Profile';
 
   @override
@@ -481,6 +490,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_filter_never => 'Never';
 
   @override
+  String get txt_quote_policy_public => 'Public';
+
+  @override
+  String get txt_quote_policy_followers => 'Followers';
+
+  @override
+  String get txt_quote_policy_nobody => 'Nobody';
+
+  @override
   String get desc_preference_status =>
       'Setup and control your default status behavior';
 
@@ -607,6 +625,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get desc_filter_context => 'Where the filter should be applied';
+
+  @override
+  String get desc_quote_approval_public => 'Anyone can quote this status.';
+
+  @override
+  String get desc_quote_approval_followers =>
+      'Only followers can quote this status.';
+
+  @override
+  String get desc_quote_approval_following =>
+      'Only people followed by the author can quote this status.';
+
+  @override
+  String get desc_quote_approval_unsupport => 'No supported quote policy.';
+
+  @override
+  String get desc_quote_policy => 'Quote Policy';
+
+  @override
+  String get desc_quote_policy_public => 'Anyone can quote this status.';
+
+  @override
+  String get desc_quote_policy_followers =>
+      'Only followers can quote this status.';
+
+  @override
+  String get desc_quote_policy_nobody => 'No one can quote this status.';
+
+  @override
+  String get desc_quote_removed => 'The Quote Status is Unavailable';
 
   @override
   String err_invalid_instance(Object domain) {

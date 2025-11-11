@@ -189,6 +189,7 @@ class StatusLite extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final bool isSelfPost = status?.account?.id == schema.account.id;
     final bool isSchedulePost = schema.scheduledAt != null;
 
     return InkWellDone(
@@ -204,15 +205,15 @@ class StatusLite extends ConsumerWidget {
             break;
         }
       },
-      child: buildContent(context, status),
+      child: buildContent(context, status, isSelfPost: isSelfPost),
     );
   }
 
-  Widget buildContent(BuildContext context, AccessStatusSchema? status) {
+  Widget buildContent(BuildContext context, AccessStatusSchema? status, {bool isSelfPost = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildHeader(context),
+        buildHeader(context, isSelfPost: isSelfPost),
 
         Indent(
         indent: indent,
@@ -264,6 +265,7 @@ class StatusLite extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         HtmlDone(html: schema.content, emojis: emojis, onLinkTap: (url, attributes, _) => onLinkTap?.call(url)),
+        Quote(schema: schema.quote),
         Poll(schema: schema.poll),
         Attachments(schemas: schema.attachments),
         buildTags(),
@@ -274,25 +276,27 @@ class StatusLite extends ConsumerWidget {
 
   // Build the header of the status, including the author and the date and
   // visibility information.
-  Widget buildHeader(BuildContext context) {
+  Widget buildHeader(BuildContext context, {bool isSelfPost = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
         const Spacer(),
-        buildMeta(context),
+        buildMeta(context, isSelfPost: isSelfPost),
       ],
     );
   }
 
   // The metadata of the status, which may include the reply or reblog information.
-  Widget buildMeta(BuildContext context) {
+  Widget buildMeta(BuildContext context, {bool isSelfPost = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         buildTimeInfo(),
         buildEditLog(context),
+        isSelfPost ? buildQuote(context) : const SizedBox.shrink(),
         StatusVisibility(type: schema.visibility, size: iconSize),
+
         buildLikes(context),
         buildFiltered(context),
         const SizedBox(width: 4),
@@ -351,6 +355,20 @@ class StatusLite extends ConsumerWidget {
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
       onPressed: schema.editedAt == null ? null : () => context.push(RoutePath.statusHistory.path, extra: schema),
+    );
+  }
+
+  // Build the post's quote settings, for self post only.
+  Widget buildQuote(BuildContext context) {
+    final QuotePolicyType policy = schema.quoteApproval?.toUser ?? QuotePolicyType.nobody;
+
+    return IconButton(
+      icon: Icon(policy.icon, size: iconSize),
+      tooltip: policy.description(context),
+      padding: EdgeInsets.zero,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onPressed: null,
     );
   }
 

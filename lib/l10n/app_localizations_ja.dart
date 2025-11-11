@@ -152,6 +152,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_interaction_delete => '削除';
 
   @override
+  String get btn_interaction_quote => '引用';
+
+  @override
+  String get btn_interaction_filter => 'フィルター';
+
+  @override
+  String get btn_interaction_policy => 'ポリシー';
+
+  @override
   String get btn_profile_core => 'プロフィール';
 
   @override
@@ -477,6 +486,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_filter_never => 'なし';
 
   @override
+  String get txt_quote_policy_public => '公開';
+
+  @override
+  String get txt_quote_policy_followers => 'フォロワー';
+
+  @override
+  String get txt_quote_policy_nobody => 'なし';
+
+  @override
   String get desc_preference_status => 'デフォルトのステータス動作を設定・管理';
 
   @override
@@ -583,6 +601,33 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get desc_filter_context => 'フィルターを適用する場所';
+
+  @override
+  String get desc_quote_approval_public => '誰でもこの投稿を引用できます。';
+
+  @override
+  String get desc_quote_approval_followers => 'フォロワーのみがこの投稿を引用できます。';
+
+  @override
+  String get desc_quote_approval_following => '作者がフォローしている人のみがこの投稿を引用できます。';
+
+  @override
+  String get desc_quote_approval_unsupport => '引用ポリシーはサポートされていません。';
+
+  @override
+  String get desc_quote_policy => '引用ポリシー';
+
+  @override
+  String get desc_quote_policy_public => '誰でもこの投稿を引用できます。';
+
+  @override
+  String get desc_quote_policy_followers => 'フォロワーのみがこの投稿を引用できます。';
+
+  @override
+  String get desc_quote_policy_nobody => '誰もこの投稿を引用できません。';
+
+  @override
+  String get desc_quote_removed => '引用された投稿を取得できません';
 
   @override
   String err_invalid_instance(Object domain) {

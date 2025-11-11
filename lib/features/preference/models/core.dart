@@ -93,6 +93,7 @@ class SystemPreferenceSchema {
   final bool loadedTop;
   final ReplyTagType replyTag;
   final Locale? locale;
+  final QuotePolicyType quotePolicy;
 
   const SystemPreferenceSchema({
     this.server,
@@ -103,6 +104,7 @@ class SystemPreferenceSchema {
     this.loadedTop = false,
     this.replyTag = ReplyTagType.all,
     this.locale,
+    this.quotePolicy = QuotePolicyType.public,
   });
 
   // Convert the JSON string to a SystemPreferenceSchema object.
@@ -130,6 +132,9 @@ class SystemPreferenceSchema {
         orElse: () => ReplyTagType.all,
       ),
       locale: json["locale"] == null ? null : Locale(json["locale"] as String),
+      quotePolicy: json["quote_approval_policy"] == null
+          ? QuotePolicyType.public
+          : QuotePolicyType.fromString(json["quote_approval_policy"] as String),
     );
   }
 
@@ -144,6 +149,7 @@ class SystemPreferenceSchema {
       "loaded_top": loadedTop,
       "reply_tag": replyTag.name,
       "locale": locale?.toLanguageTag(),
+      "quote_approval_policy": quotePolicy.name,
     };
   }
 
@@ -157,6 +163,7 @@ class SystemPreferenceSchema {
     bool? loadedTop,
     ReplyTagType? replyTag,
     Locale? locale,
+    QuotePolicyType? quotePolicy,
   }) {
     return SystemPreferenceSchema(
       server: server ?? this.server,
@@ -167,6 +174,7 @@ class SystemPreferenceSchema {
       loadedTop: loadedTop ?? this.loadedTop,
       replyTag: replyTag ?? this.replyTag,
       locale: locale ?? this.locale,
+      quotePolicy: quotePolicy ?? this.quotePolicy,
     );
   }
 }

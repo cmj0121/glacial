@@ -152,6 +152,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_interaction_delete => '삭제';
 
   @override
+  String get btn_interaction_quote => '인용';
+
+  @override
+  String get btn_interaction_filter => '필터';
+
+  @override
+  String get btn_interaction_policy => '정책';
+
+  @override
   String get btn_profile_core => '프로필';
 
   @override
@@ -477,6 +486,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_filter_never => '없음';
 
   @override
+  String get txt_quote_policy_public => '공개';
+
+  @override
+  String get txt_quote_policy_followers => '팔로워';
+
+  @override
+  String get txt_quote_policy_nobody => '없음';
+
+  @override
   String get desc_preference_status => '기본 상태 동작 설정 및 제어';
 
   @override
@@ -583,6 +601,34 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get desc_filter_context => '필터 적용 위치';
+
+  @override
+  String get desc_quote_approval_public => '누구나 이 게시물을 인용할 수 있습니다.';
+
+  @override
+  String get desc_quote_approval_followers => '팔로워만 이 게시물을 인용할 수 있습니다.';
+
+  @override
+  String get desc_quote_approval_following =>
+      '작성자가 팔로우하는 사람만 이 게시물을 인용할 수 있습니다.';
+
+  @override
+  String get desc_quote_approval_unsupport => '인용 정책이 지원되지 않습니다.';
+
+  @override
+  String get desc_quote_policy => '인용 정책';
+
+  @override
+  String get desc_quote_policy_public => '누구나 이 게시물을 인용할 수 있습니다.';
+
+  @override
+  String get desc_quote_policy_followers => '팔로워만 이 게시물을 인용할 수 있습니다.';
+
+  @override
+  String get desc_quote_policy_nobody => '아무도 이 게시물을 인용할 수 없습니다.';
+
+  @override
+  String get desc_quote_removed => '인용된 게시물을 사용할 수 없습니다';
 
   @override
   String err_invalid_instance(Object domain) {
