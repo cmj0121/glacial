@@ -42,7 +42,7 @@ class _PollState extends ConsumerState<Poll> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ...buildOptions(widget.schema!),
+            ...(canVote ? buildOptions(widget.schema!) : buildVoteResult(widget.schema!)),
             buildActions(widget.schema!),
           ],
         ),
@@ -52,44 +52,11 @@ class _PollState extends ConsumerState<Poll> {
 
   // The list of the options in the poll.
   List<Widget> buildOptions(PollSchema schema) {
-    return schema.options.map((option) {
-      final int index = schema.options.indexOf(option);
-      final int totalCount = schema.options.map((o) => o.votesCount ?? 0).reduce((a, b) => a + b);
+    switch (schema.multiple) {
+      case true:
+        return schema.options.map((option) {
+          final int index = schema.options.indexOf(option);
 
-      if (!canVote) {
-        // If the poll is already voted, display the selected options.
-        final int count = option.votesCount ?? 0;
-        final bool isSelected = schema.ownVotes?.contains(index) ?? false;
-
-        // show the bottom line as the ratio of votes
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final double width = constraints.maxWidth * (totalCount > 0 ? count / totalCount : 0);
-
-            return Stack(
-              alignment: Alignment.bottomLeft,
-              children: [
-                ListTile(
-                  leading: Text('+$count', style: Theme.of(context).textTheme.bodySmall),
-                  title: Text( option.title),
-                  trailing: isSelected ? const Icon(Icons.check) : null,
-                ),
-                Container(
-                  height: 4,
-                  width: width == 0 ? 12 : width,
-                  decoration: BoxDecoration(
-                    color: width > 0 ? Theme.of(context).colorScheme.primary : Theme.of(context).disabledColor,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ]
-            );
-          },
-        );
-      }
-
-      switch (schema.multiple) {
-        case true:
           return CheckboxListTile(
             title: Text(option.title),
             value: selectedOptions[index],
@@ -99,17 +66,63 @@ class _PollState extends ConsumerState<Poll> {
               setState(() => selectedOptions[index] = value ?? false);
             },
           );
-        case false:
-          return RadioListTile(
-            title: Text(option.title),
-            value: index,
-            visualDensity: VisualDensity.compact,
+        }).toList();
+      case false:
+        return [
+          RadioGroup(
             groupValue: selectedOption,
             onChanged: (int? value) {
-              setState(() => value == null ? selectedOption = null : selectedOption = value);
+              setState(() => selectedOption = value);
             },
+            child: Column(
+              children: schema.options.map((option) {
+                final int index = schema.options.indexOf(option);
+                return RadioListTile(
+                  title: Text(option.title),
+                  value: index,
+                );
+              }).toList(),
+            ),
+          ),
+        ];
+    }
+  }
+
+  // Build the final Vote results.
+  List<Widget> buildVoteResult(PollSchema schema) {
+    return schema.options.map((option) {
+      final int index = schema.options.indexOf(option);
+      final int totalCount = schema.options.map((o) => o.votesCount ?? 0).reduce((a, b) => a + b);
+
+      // If the poll is already voted, display the selected options.
+      final int count = option.votesCount ?? 0;
+      final bool isSelected = schema.ownVotes?.contains(index) ?? false;
+
+      // show the bottom line as the ratio of votes
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final double width = constraints.maxWidth * (totalCount > 0 ? count / totalCount : 0);
+
+          return Stack(
+            alignment: Alignment.bottomLeft,
+            children: [
+              ListTile(
+                leading: Text('+$count', style: Theme.of(context).textTheme.bodySmall),
+                title: Text( option.title),
+                trailing: isSelected ? const Icon(Icons.check) : null,
+              ),
+              Container(
+                height: 4,
+                width: width == 0 ? 12 : width,
+                decoration: BoxDecoration(
+                  color: width > 0 ? Theme.of(context).colorScheme.primary : Theme.of(context).disabledColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ]
           );
-      }
+        },
+      );
     }).toList();
   }
 
