@@ -115,7 +115,7 @@ class _PollState extends ConsumerState<Poll> {
 
   // The possible actions and metadata of the poll.
   Widget buildActions(PollSchema schema) {
-    final bool showVoteBtn = canVote && selectedOption != null || selectedOptions.any((e) => e);
+    final bool showVoteBtn = canVote && choices.isNotEmpty;
     final Duration expiresIn = schema.expiresAt?.difference(DateTime.now()) ?? Duration.zero;
     final String remainingTime = timeago.format(DateTime.now().subtract(expiresIn), locale: 'en_short');
 
@@ -123,7 +123,7 @@ class _PollState extends ConsumerState<Poll> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         if (showVoteBtn) TextButton(
-          onPressed: canVote ? onVote : null,
+          onPressed: onVote,
           child: Text(AppLocalizations.of(context)?.btn_timeline_vote ?? "Vote"),
         ),
         const Spacer(),
@@ -137,15 +137,16 @@ class _PollState extends ConsumerState<Poll> {
 
   // Submits the selected options to the server.
   void onVote() async {
-    logger.i("Voting poll ${widget.schema?.id} with choices: $choices");
-
     final PollSchema? poll = await status?.votePoll(pollID: widget.schema!.id, choices: choices);
     if (poll != null) widget.onChanged?.call(poll);
   }
 
   bool get isClosed => widget.schema?.expiresAt?.isAfter(DateTime.now()) == false;
-  List<int> get choices => selectedOptions.asMap().entries.where((entry) => entry.value).map((entry) => entry.key).toList();
-  bool get canVote => widget.schema?.voted == false && !isClosed && choices.isNotEmpty;
+  bool get canVote => widget.schema?.voted == false && !isClosed;
+  List<int> get choices => [
+    ...selectedOptions.asMap().entries.where((entry) => entry.value).map((entry) => entry.key),
+    if (selectedOption != null) selectedOption!,
+  ];
 }
 
 // The poll form for the status, which allows the user to create a poll with options.
