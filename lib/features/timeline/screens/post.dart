@@ -526,8 +526,9 @@ class _AutoCompleteFormState extends ConsumerState<AutoCompleteForm> {
         final int atIndex = text.lastIndexOf("@");
         final int hashIndex = text.lastIndexOf("#");
         final int spaceIndex = text.lastIndexOf(" ");
+        final int newlineIndex = text.lastIndexOf("\n");
 
-        if (atIndex < 0 && hashIndex < 0 || (max(atIndex, hashIndex) < spaceIndex)) {
+        if (atIndex < 0 && hashIndex < 0 || (max(atIndex, hashIndex) < max(spaceIndex, newlineIndex))) {
           // If the last token is not an @ or #, return an empty list.
           return const Iterable.empty();
         }
