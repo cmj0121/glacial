@@ -298,7 +298,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
         icon: Icon(
           Icons.warning,
           size: tabSize,
-          color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary
+          color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary,
         ),
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
