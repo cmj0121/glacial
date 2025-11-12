@@ -283,7 +283,6 @@ class _TimelineState extends State<Timeline> {
 
     if (mounted) setState(() => isLoading = true);
 
-    final String? maxId = this.maxId ?? (statuses.isNotEmpty ? statuses.last.id : null);
     final (schemas, newMaxId) = await widget.status.fetchTimeline(
       widget.type,
       account: widget.type == TimelineType.schedule ? widget.status.account : widget.account,
@@ -292,13 +291,16 @@ class _TimelineState extends State<Timeline> {
       maxId: maxId,
     );
 
+    // Check the new statuses is repeating the old ones to avoid infinite loading.
+    final bool isRepeat = schemas.map((s) => s.id).toSet().intersection(statuses.map((s) => s.id).toSet()).length == schemas.length;
+
     if (mounted) {
       setState(() {
         isRefresh = false;
         isLoading = false;
-        isCompleted = schemas.isEmpty;
-        statuses.addAll(schemas);
-        this.maxId = newMaxId;
+        isCompleted = isRepeat || schemas.isEmpty;
+        statuses.addAll(isRepeat ? [] : schemas);
+        maxId = isRepeat ? null : (newMaxId ?? (schemas.isNotEmpty ? schemas.last.id : null));
       });
     }
   }

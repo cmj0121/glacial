@@ -58,6 +58,10 @@ class _StatusState extends ConsumerState<Status> {
             sensitive: sensitive,
             iconSize: iconSize,
             headerHeight: headerHeight,
+            onPollVote: (_) async {
+              final StatusSchema updatedStatus = await status?.getStatus(schema.id) ?? schema;
+              onReload(updatedStatus);
+            },
             onLinkTap: onLinkTap,
           ),
 
@@ -173,6 +177,7 @@ class StatusLite extends ConsumerWidget {
   final bool sensitive;
   final double headerHeight;
   final double iconSize;
+  final ValueChanged<PollSchema>? onPollVote;
   final ValueChanged<String?>? onLinkTap;
 
   const StatusLite({
@@ -183,6 +188,7 @@ class StatusLite extends ConsumerWidget {
     this.sensitive = false,
     this.iconSize = 16.0,
     this.headerHeight = 48.0,
+    this.onPollVote,
     this.onLinkTap,
   });
 
@@ -266,7 +272,7 @@ class StatusLite extends ConsumerWidget {
       children: [
         HtmlDone(html: schema.content, emojis: emojis, onLinkTap: (url, attributes, _) => onLinkTap?.call(url)),
         Quote(schema: schema.quote),
-        Poll(schema: schema.poll),
+        Poll(schema: schema.poll, onChanged: (poll) => onPollVote?.call(poll)),
         Attachments(schemas: schema.attachments),
         buildTags(),
         schema.card == null ? const SizedBox.shrink() : PreviewCard(schema: schema.card!),
