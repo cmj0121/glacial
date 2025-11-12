@@ -89,6 +89,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
             child: buildContent(),
           ),
         ),
+        buildSubmitButton(fullWidth: true),
       ],
     );
   }
@@ -259,91 +260,77 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   // Build the possible actions for the post status form.
   Widget buildActions() {
     final int maxMedias = status?.server?.config.statuses.maxAttachments ?? 4;
+    final List<Widget> selector = [
+      VisibilitySelector(
+        type: vtype,
+        size: tabSize,
+        onChanged: (widget.editFrom == null && !isEditSchedule) ? (type) => setState(() => vtype = type ?? vtype) : null,
+      ),
+      QuotePolicyTypeSelector(
+        policy: qtype,
+        size: tabSize,
+        onChanged: (value) => setState(() => qtype = value ?? qtype),
+      ),
+    ];
     final List<Widget> actions = [
-        VisibilitySelector(
-          type: vtype,
+      // The media icon button to open the image picker and upload media files.
+      IconButton(
+        icon: Icon(
+          Icons.perm_media_rounded,
           size: tabSize,
-          onChanged: (widget.editFrom == null && !isEditSchedule) ? (type) => setState(() => vtype = type ?? vtype) : null,
+          color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary,
         ),
-        QuotePolicyTypeSelector(
-          policy: qtype,
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        onPressed: (poll == null && maxMedias > medias.length && isSignedIn && !isEditSchedule) ? onImagePicker : null,
+      ),
+      // The poll icon button to toggle the poll form.
+      IconButton(
+        icon: Icon(Icons.poll_outlined, size: tabSize, ),
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        onPressed: (medias.isEmpty && !isEditSchedule) ?
+          () => setState(() => poll = poll == null ? NewPollSchema() : null) :
+          null,
+      ),
+      // The spoiler icon button to toggle the spoiler text field.
+      IconButton(
+        icon: Icon(
+          Icons.warning,
           size: tabSize,
-          onChanged: (value) => setState(() => qtype = value ?? qtype),
+          color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary,
         ),
-
-        // The media icon button to open the image picker and upload media files.
-        IconButton(
-          icon: Icon(
-            Icons.perm_media_rounded,
-            size: tabSize,
-            color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary,
-          ),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
-          onPressed: (poll == null && maxMedias > medias.length && isSignedIn && !isEditSchedule) ? onImagePicker : null,
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        onPressed: !isEditSchedule ? () => setState(() => spoiler = spoiler == null ? "" : null) : null,
+      ),
+      // The sensitive icon button to toggle the sensitive content of the status.
+      IconButton(
+        icon: Icon(
+          isSensitive ? Icons.visibility_off_outlined : Icons.visibility,
+          size: tabSize,
+          color: isSensitive ? Theme.of(context).colorScheme.tertiary : null
         ),
-        // The poll icon button to toggle the poll form.
-        IconButton(
-          icon: Icon(Icons.poll_outlined, size: tabSize, ),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
-          onPressed: (medias.isEmpty && !isEditSchedule) ?
-            () => setState(() => poll = poll == null ? NewPollSchema() : null) :
-            null,
-        ),
-        // The spoiler icon button to toggle the spoiler text field.
-        IconButton(
-          icon: Icon(
-            Icons.warning,
-            size: tabSize,
-            color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary
-          ),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
-          onPressed: !isEditSchedule ? () => setState(() => spoiler = spoiler == null ? "" : null) : null,
-        ),
-        // The sensitive icon button to toggle the sensitive content of the status.
-        IconButton(
-          icon: Icon(
-            isSensitive ? Icons.visibility_off_outlined : Icons.visibility,
-            size: tabSize,
-            color: isSensitive ? Theme.of(context).colorScheme.tertiary : null
-          ),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
-          onPressed: !isEditSchedule ? () => setState(() => isSensitive = !isSensitive) : null,
-        ),
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        onPressed: !isEditSchedule ? () => setState(() => isSensitive = !isSensitive) : null,
+      ),
     ];
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final double width = constraints.maxWidth;
-
-        if (width < 400) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: actions,
-              ),
-              const SizedBox(height: 8),
-              buildSubmitButton(fullWidth: true),
-            ],
-          );
-        } else {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              ...actions,
-              const Spacer(),
-              buildSubmitButton(fullWidth: false),
-            ],
-          );
-        }
-      },
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: selector,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: actions,
+        ),
+      ],
     );
   }
 
@@ -526,8 +513,9 @@ class _AutoCompleteFormState extends ConsumerState<AutoCompleteForm> {
         final int atIndex = text.lastIndexOf("@");
         final int hashIndex = text.lastIndexOf("#");
         final int spaceIndex = text.lastIndexOf(" ");
+        final int newlineIndex = text.lastIndexOf("\n");
 
-        if (atIndex < 0 && hashIndex < 0 || (max(atIndex, hashIndex) < spaceIndex)) {
+        if (atIndex < 0 && hashIndex < 0 || (max(atIndex, hashIndex) < max(spaceIndex, newlineIndex))) {
           // If the last token is not an @ or #, return an empty list.
           return const Iterable.empty();
         }
