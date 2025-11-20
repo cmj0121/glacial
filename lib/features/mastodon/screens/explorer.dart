@@ -1,6 +1,7 @@
 // The Mastodon server explorer and find a server to connect to.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -148,6 +149,11 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
     logger.i("onTap: ${schema.domain}");
     await storage.saveAccessStatus(status.copyWith(domain: schema.domain, history: history, server: schema), ref: ref);
     await storage.loadAccessStatus(ref: ref);
+
+    Sentry.configureScope((scope) {
+      // Set the server as the Sentry scope server tag.
+      scope.setTag('mastodon.server', schema.domain);
+    });
 
     if (mounted) {
       context.go(RoutePath.timeline.path);
