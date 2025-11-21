@@ -45,13 +45,13 @@ class SearchResultSchema {
     }
 
     factory SearchResultSchema.fromJson(Map<String, dynamic> json) {
-      final List<AccountSchema> accounts = (json['accounts'] as List<dynamic>)
+      final List<AccountSchema> accounts = (json['accounts'] as List<dynamic>? ?? [])
           .map((e) => AccountSchema.fromJson(e))
           .toList();
-      final List<StatusSchema> statuses = (json['statuses'] as List<dynamic>)
+      final List<StatusSchema> statuses = (json['statuses'] as List<dynamic>? ?? [])
           .map((e) => StatusSchema.fromJson(e))
           .toList();
-      final List<HashtagSchema> hashtags = (json['hashtags'] as List<dynamic>)
+      final List<HashtagSchema> hashtags = (json['hashtags'] as List<dynamic>? ?? [])
           .map((e) => HashtagSchema.fromJson(e))
           .toList();
 
