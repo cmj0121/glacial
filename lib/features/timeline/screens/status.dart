@@ -177,6 +177,7 @@ class StatusLite extends ConsumerWidget {
   final bool sensitive;
   final double headerHeight;
   final double iconSize;
+  final bool isNestedQuote;
   final ValueChanged<PollSchema>? onPollVote;
   final ValueChanged<String?>? onLinkTap;
 
@@ -188,6 +189,7 @@ class StatusLite extends ConsumerWidget {
     this.sensitive = false,
     this.iconSize = 16.0,
     this.headerHeight = 48.0,
+    this.isNestedQuote = false,
     this.onPollVote,
     this.onLinkTap,
   });
@@ -271,7 +273,7 @@ class StatusLite extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         HtmlDone(html: schema.content, emojis: emojis, onLinkTap: (url, attributes, _) => onLinkTap?.call(url)),
-        Quote(schema: schema.quote),
+        isNestedQuote ? const SizedBox.shrink() : Quote(schema: schema.quote),
         Poll(schema: schema.poll, onChanged: (poll) => onPollVote?.call(poll)),
         Attachments(schemas: schema.attachments),
         buildTags(),

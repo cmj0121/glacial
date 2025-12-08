@@ -1,43 +1,78 @@
 // The Quote widget to show the quoted status
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
-class Quote extends StatelessWidget {
+class Quote extends ConsumerWidget {
   final QuoteSchema? schema;
 
   const Quote({super.key, required this.schema});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (schema == null) {
       return const SizedBox.shrink();
     }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: buildContent(context),
+      child: buildContent(context, ref),
     );
   }
 
-  Widget buildContent(BuildContext context) {
+  Widget buildContent(BuildContext context, WidgetRef ref) {
     if (schema?.quotedStatus == null) {
-      // Mark the quote as unavailable.
-      final String text = AppLocalizations.of(context)?.desc_quote_removed ?? "The Quote Status is Unavailable";
-      return Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: ListTile(
-          leading: Icon(Icons.delete_outline, size: tabSize),
-          title: Text(text, style: Theme.of(context).textTheme.bodyMedium),
-        ),
-      );
+      return loadStatus(context, ref);
     }
 
+    final Widget quote = StatusLite(schema: schema!.quotedStatus!, isNestedQuote: true);
+    return buildQuote(context, quote);
+  }
+
+  Widget loadStatus(BuildContext context, WidgetRef ref) {
+    final String? quotedStatusID = schema?.quotedStatusID;
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+    if (quotedStatusID == null) {
+      return buildNotFound(context);
+    }
+
+    return FutureBuilder(
+      future: status?.getStatus(quotedStatusID),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SizedBox.shrink();
+        } else if (snapshot.hasError || snapshot.data == null) {
+          return buildNotFound(context);
+        } else {
+          final StatusSchema? status = snapshot.data;
+          final Widget? quote = status == null ? null : StatusLite(schema: status, isNestedQuote: true);
+          return status == null ? buildNotFound(context) : buildQuote(context, quote!);
+        }
+      },
+    );
+  }
+
+  Widget buildNotFound(BuildContext context) {
+    // Mark the quote as unavailable.
+    final String text = AppLocalizations.of(context)?.desc_quote_removed ?? "The Quote Status is Unavailable";
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      child: ListTile(
+        leading: Icon(Icons.delete_outline, size: tabSize),
+        title: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+      ),
+    );
+  }
+
+  Widget buildQuote(BuildContext context, Widget quote) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -45,7 +80,7 @@ class Quote extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: StatusLite(schema: schema!.quotedStatus!),
+        child: quote,
       ),
     );
   }
