@@ -253,17 +253,30 @@ class ProfilePage extends ConsumerWidget {
 
     return Row(
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            borderRadius: BorderRadius.circular(4),
+        Flexible(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Flexible(
+              flex: 4,
+              child: Tooltip(
+                message: acct,
+                child: Text(
+                  acct,
+                  style: Theme.of(context).textTheme.labelSmall,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
           ),
-          child: Text(acct, style: Theme.of(context).textTheme.labelSmall),
         ),
         schema.bot ? botIcon : const SizedBox.shrink(),
 
-        const Spacer(),
+        const Spacer(flex: 4),
 
         schema.id == status.account?.id ? FollowRequestBadge() : const SizedBox.shrink(),
         schema.id == status.account?.id ? EditProfilePage.icon() : Relationship(schema: schema),
