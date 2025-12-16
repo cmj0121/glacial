@@ -45,7 +45,7 @@ class Quote extends ConsumerWidget {
       future: status?.getStatus(quotedStatusID),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         } else if (snapshot.hasError || snapshot.data == null) {
           return buildNotFound(context);
         } else {
