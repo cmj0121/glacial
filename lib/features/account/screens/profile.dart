@@ -260,16 +260,13 @@ class ProfilePage extends ConsumerWidget {
               color: Theme.of(context).colorScheme.secondaryContainer,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Flexible(
-              flex: 4,
-              child: Tooltip(
-                message: acct,
-                child: Text(
-                  acct,
-                  style: Theme.of(context).textTheme.labelSmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+            child: Tooltip(
+              message: acct,
+              child: Text(
+                acct,
+                style: Theme.of(context).textTheme.labelSmall,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
