@@ -253,6 +253,11 @@ class ProfilePage extends ConsumerWidget {
 
     return Row(
       children: [
+        schema.id == status.account?.id ? EditProfilePage.icon() : Relationship(schema: schema),
+        schema.id == status.account?.id ? FollowRequestBadge() : const SizedBox.shrink(),
+
+        const SizedBox(width: 8),
+
         Flexible(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -264,7 +269,7 @@ class ProfilePage extends ConsumerWidget {
               message: acct,
               child: Text(
                 acct,
-                style: Theme.of(context).textTheme.labelSmall,
+                style: Theme.of(context).textTheme.labelLarge,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -272,11 +277,6 @@ class ProfilePage extends ConsumerWidget {
           ),
         ),
         schema.bot ? botIcon : const SizedBox.shrink(),
-
-        const Spacer(flex: 4),
-
-        schema.id == status.account?.id ? FollowRequestBadge() : const SizedBox.shrink(),
-        schema.id == status.account?.id ? EditProfilePage.icon() : Relationship(schema: schema),
       ],
     );
   }
