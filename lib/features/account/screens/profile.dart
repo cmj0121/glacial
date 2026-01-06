@@ -253,6 +253,11 @@ class ProfilePage extends ConsumerWidget {
 
     return Row(
       children: [
+        schema.id == status.account?.id ? EditProfilePage.icon() : Relationship(schema: schema),
+        schema.id == status.account?.id ? FollowRequestBadge() : const SizedBox.shrink(),
+
+        const SizedBox(width: 8),
+
         Flexible(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -260,26 +265,18 @@ class ProfilePage extends ConsumerWidget {
               color: Theme.of(context).colorScheme.secondaryContainer,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Flexible(
-              flex: 4,
-              child: Tooltip(
-                message: acct,
-                child: Text(
-                  acct,
-                  style: Theme.of(context).textTheme.labelSmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+            child: Tooltip(
+              message: acct,
+              child: Text(
+                acct,
+                style: Theme.of(context).textTheme.labelLarge,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
         ),
         schema.bot ? botIcon : const SizedBox.shrink(),
-
-        const Spacer(flex: 4),
-
-        schema.id == status.account?.id ? FollowRequestBadge() : const SizedBox.shrink(),
-        schema.id == status.account?.id ? EditProfilePage.icon() : Relationship(schema: schema),
       ],
     );
   }

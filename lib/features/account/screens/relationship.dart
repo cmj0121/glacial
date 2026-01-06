@@ -36,10 +36,10 @@ class _RelationshipState extends ConsumerState<Relationship> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        buildMoreActions(),
-        const SizedBox(width: 8),
         buildRequest(),
         buildRelationship(),
+        const SizedBox(width: 8),
+        buildMoreActions(),
         const SizedBox(width: 8),
       ],
     );
