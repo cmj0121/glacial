@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -411,14 +410,37 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   void onSchedulePost() async {
     final Duration minDuration = const Duration(minutes: 5);
     final DateTime now = DateTime.now();
-    final DateTime? datetime = await picker.DatePicker.showDateTimePicker(
-      context,
-      currentTime: now.add(minDuration),
-      minTime: now.add(minDuration),
+    final DateTime minDateTime = now.add(minDuration);
+
+    // Show date picker first
+    final DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: minDateTime,
+      firstDate: minDateTime,
+      lastDate: now.add(const Duration(days: 365)),
     );
 
-    if (datetime == null) {
+    if (date == null || !mounted) {
       logger.d("No date selected for scheduling the post.");
+      return;
+    }
+
+    // Then show time picker
+    final TimeOfDay? time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(minDateTime),
+    );
+
+    if (time == null || !mounted) {
+      logger.d("No time selected for scheduling the post.");
+      return;
+    }
+
+    final DateTime datetime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+
+    // Validate that selected datetime is at least 5 minutes in the future
+    if (datetime.isBefore(DateTime.now().add(minDuration))) {
+      logger.d("Selected time is too soon, must be at least 5 minutes in the future.");
       return;
     }
 
