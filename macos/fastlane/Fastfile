@@ -65,7 +65,7 @@ platform :mac do
     Dir.chdir "../.." do
       sh("flutter pub get")
       sh("flutter clean")
-      sh("flutter build macos --release")
+      sh("flutter build macos --release --split-debug-info=build/debug-info --obfuscate")
     end
 
     build_app(
