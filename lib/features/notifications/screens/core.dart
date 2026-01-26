@@ -136,16 +136,13 @@ class GroupNotification extends ConsumerStatefulWidget {
   ConsumerState<GroupNotification> createState() => _GroupNotificationState();
 }
 
-class _GroupNotificationState extends ConsumerState<GroupNotification> {
+class _GroupNotificationState extends ConsumerState<GroupNotification> with PaginatedListMixin {
   final double loadingThreshold = 180;
 
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   late final ItemScrollController itemScrollController = ItemScrollController();
   late final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
-  bool isRefresh = false;
-  bool isLoading = false;
-  bool isCompleted = false;
   List<GroupSchema> groups = [];
 
   @override
@@ -175,7 +172,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          isLoading ? const ClockProgressIndicator() : const SizedBox.shrink(),
+          buildLoadingIndicator(),
           Flexible(child: buildContent()),
         ],
       ),
@@ -204,30 +201,23 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
 
   // Clean-up and refresh the timeline when the user pulls down the list.
   Future<void> onRefresh() async {
-    setState(() {
-      isRefresh = true;
-      isLoading = false;
-      isCompleted = false;
-    });
-
-    await onLoad();
+    setState(() => groups.clear());
+    await refreshList(onLoad);
   }
 
   Future<void> onLoad() async {
-    if (isLoading || isCompleted) { return; }
+    if (shouldSkipLoad) return;
 
-    setState(() => isLoading = true);
+    setLoading(true);
 
     final String? maxId = groups.isNotEmpty ? groups.last.pageMaxID : null;
     final GroupNotificationSchema? schema = await status?.fetchNotifications(maxId: maxId);
     final TimelineMarkerType type = TimelineMarkerType.notifications;
 
-    setState(() {
-      isRefresh = false;
-      isLoading = false;
-      isCompleted = schema?.isEmpty ?? false;
-      groups.addAll(schema?.groups ?? []);
-    });
+    if (mounted) {
+      setState(() => groups.addAll(schema?.groups ?? []));
+      markLoadComplete(isEmpty: schema?.isEmpty ?? false);
+    }
 
     final int? id = schema?.groups.firstOrNull?.id;
     if (id != null) {

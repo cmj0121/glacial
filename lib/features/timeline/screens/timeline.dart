@@ -119,14 +119,11 @@ class Timeline extends StatefulWidget {
   State<Timeline> createState() => _TimelineState();
 }
 
-class _TimelineState extends State<Timeline> {
+class _TimelineState extends State<Timeline> with PaginatedListMixin {
   final double loadingThreshold = 180;
   late final ItemScrollController itemScrollController = ItemScrollController();
   late final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
-  bool isRefresh = false;
-  bool isLoading = false;
-  bool isCompleted = false;
   Timer? timer;
   String? maxId;
 
@@ -178,7 +175,7 @@ class _TimelineState extends State<Timeline> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          (isLoading && !isRefresh) ? const ClockProgressIndicator() : const SizedBox.shrink(),
+          buildLoadingIndicator(),
           buildUnreadedBanner(),
           Flexible(child: buildContent()),
         ],
@@ -265,23 +262,15 @@ class _TimelineState extends State<Timeline> {
 
   // Clean-up and refresh the timeline when the user pulls down the list.
   Future<void> onRefresh() async {
-    setState(() {
-      isRefresh = true;
-      isLoading = false;
-      isCompleted = false;
-      unreaded.clear();
-    });
-
-    await onLoad();
+    setState(() => unreaded.clear());
+    await refreshList(onLoad);
   }
 
   // Load the statuses from the current selected Mastodon server.
   Future<void> onLoad() async {
-    if (isLoading || isCompleted) {
-      return;
-    }
+    if (shouldSkipLoad) return;
 
-    if (mounted) setState(() => isLoading = true);
+    setLoading(true);
 
     final (schemas, newMaxId) = await widget.status.fetchTimeline(
       widget.type,
@@ -296,12 +285,10 @@ class _TimelineState extends State<Timeline> {
 
     if (mounted) {
       setState(() {
-        isRefresh = false;
-        isLoading = false;
-        isCompleted = isRepeat || schemas.isEmpty;
         statuses.addAll(isRepeat ? [] : schemas);
         maxId = isRepeat ? null : (newMaxId ?? (schemas.isNotEmpty ? schemas.last.id : null));
       });
+      markLoadComplete(isEmpty: isRepeat || schemas.isEmpty);
     }
   }
 
