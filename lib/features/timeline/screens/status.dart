@@ -82,7 +82,7 @@ class _StatusState extends ConsumerState<Status> {
   Widget buildMetadata() {
     if (widget.schema.reblog == null && widget.schema.inReplyToAccountID == null) {
       // The status is a normal status, so no need to show the metadata.
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
@@ -96,7 +96,7 @@ class _StatusState extends ConsumerState<Status> {
       if (inReplyToAccount == null) {
         // If the account is not found, we cannot show the reply metadata.
         logger.w("cannot get the account from cache: ${widget.schema.inReplyToAccountID}");
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
 
       account = inReplyToAccount;
