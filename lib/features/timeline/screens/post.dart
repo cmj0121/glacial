@@ -34,7 +34,7 @@ class PostStatusForm extends ConsumerStatefulWidget {
 class _StatusFormState extends ConsumerState<PostStatusForm> {
   final FocusNode focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
-  final double medisWidth = 100;
+  final double mediaWidth = 100;
   final String idempotentKey = const Uuid().v4();
 
   late final TextEditingController controller = TextEditingController(text: widget.editFrom?.plainText ?? "");
@@ -234,8 +234,8 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           children: [
             CachedNetworkImage(
               imageUrl: url,
-              width: medisWidth,
-              height: medisWidth,
+              width: mediaWidth,
+              height: mediaWidth,
               fit: BoxFit.cover,
               placeholder: (context, url) => const ClockProgressIndicator(),
               errorWidget: (context, url, error) => Icon(Icons.error, color: Theme.of(context).colorScheme.error),

@@ -715,7 +715,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
   int selectedIndex = 0;
   List<StatusEditSchema> history = [];
 
-  late final PageController pageController;
+  PageController? _pageController;
 
   @override
   void initState() {
@@ -725,7 +725,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
 
   @override
   void dispose() {
-    pageController.dispose();
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -753,7 +753,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
       children: [
         Flexible(
           child: PageView(
-            controller: pageController,
+            controller: _pageController,
             scrollDirection: Axis.vertical,
             children: List.generate(history.length, (index) => buildHistory(index)),
             onPageChanged: (index) => setState(() => selectedIndex = index),
@@ -794,7 +794,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
       this.history = history;
       selectedIndex = history.isEmpty ? 0 : history.length - 1;
     });
-    pageController = PageController(initialPage: selectedIndex, keepPage: true);
+    _pageController = PageController(initialPage: selectedIndex, keepPage: true);
   }
 
   void onDismiss() {

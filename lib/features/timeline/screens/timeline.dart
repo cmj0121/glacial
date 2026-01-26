@@ -311,7 +311,7 @@ class _TimelineState extends State<Timeline> {
         (statuses.isNotEmpty ? statuses.first.id : null) :
         unreaded.first.id;
 
-    if (minId == null) [];
+    if (minId == null) return;
 
     while (true) {
       final List<StatusSchema> schemas = await onLoadUnreadedMore(minId);
