@@ -535,28 +535,30 @@ class StatusContext extends ConsumerStatefulWidget {
 
 class _StatusContextState extends ConsumerState<StatusContext> {
   final ItemScrollController itemScrollController = ItemScrollController();
+  late final Future<StatusContextSchema?> _contextFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    _contextFuture = status?.getStatusContext(schema: widget.schema) ?? Future.value(null);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
-
-    if (status == null) {
-      return const SizedBox.shrink();
-    }
-
-    return FutureBuilder(
-      future: status.getStatusContext(schema: widget.schema),
+    return FutureBuilder<StatusContextSchema?>(
+      future: _contextFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Align(
             alignment: Alignment.topCenter,
-            child: ClockProgressIndicator(),
+            child: const ClockProgressIndicator(),
           );
-        } else if (snapshot.hasError) {
+        } else if (snapshot.hasError || snapshot.data == null) {
           return const SizedBox.shrink();
         }
 
-        final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
+        final StatusContextSchema ctx = snapshot.data!;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           // scroll to the current status when the widget is built
           itemScrollController.scrollTo(

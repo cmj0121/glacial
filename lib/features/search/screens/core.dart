@@ -132,11 +132,14 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
   final List<ExplorerResultType> types = ExplorerResultType.values;
 
   late final TabController controller;
+  late final Future<SearchResultSchema?> _searchFuture;
 
   @override
   void initState() {
     super.initState();
     controller = TabController(length: types.length, vsync: this);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    _searchFuture = status?.search(keyword: widget.keyword) ?? Future.value(null);
   }
 
   @override
@@ -147,23 +150,16 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
-
-    if (status == null || status.domain == null) {
-      logger.w("No server selected, but it's required to show the search results.");
-      return const SizedBox.shrink();
-    }
-
-    return FutureBuilder(
-      future: status.search(keyword: widget.keyword),
+    return FutureBuilder<SearchResultSchema?>(
+      future: _searchFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Align(
+          return const Align(
             alignment: Alignment.topCenter,
-            child: const LinearProgressIndicator(),
+            child: LinearProgressIndicator(),
           );
-        } else if (snapshot.hasError) {
-          return NoResult();
+        } else if (snapshot.hasError || snapshot.data == null) {
+          return const NoResult();
         }
 
         final SearchResultSchema schema = snapshot.data!;

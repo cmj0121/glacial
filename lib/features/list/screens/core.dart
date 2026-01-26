@@ -160,6 +160,7 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
 
   late ListSchema schema = widget.schema;
   late bool showMembers = false;
+  Future<List<AccountSchema>>? _membersFuture;
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +207,10 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
           ),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
-          onPressed: () => setState(() => showMembers = !showMembers),
+          onPressed: () => setState(() {
+            showMembers = !showMembers;
+            if (showMembers) _membersFuture = status?.getListAccounts(schema.id);
+          }),
         ),
         IconButton(
           icon: Icon(schema.replyPolicy.icon, size: tabSize),
@@ -248,19 +252,19 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
 
   // Build the list of the accounts in the list.
   Widget buildMembers() {
-    return FutureBuilder(
-      future: status?.getListAccounts(schema.id),
-      builder: (context, AsyncSnapshot<List<AccountSchema>> snapshot) {
+    return FutureBuilder<List<AccountSchema>>(
+      future: _membersFuture,
+      builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Align(
+          return const Align(
             alignment: Alignment.topCenter,
-            child: const ClockProgressIndicator(),
+            child: ClockProgressIndicator(),
           );
-        } else if (snapshot.hasError) {
-          return NoResult();
+        } else if (snapshot.hasError || snapshot.data == null) {
+          return const NoResult();
         }
 
-        final List<AccountSchema> accounts = snapshot.data ?? [];
+        final List<AccountSchema> accounts = snapshot.data!;
         if (accounts.isEmpty) {
           final String message = AppLocalizations.of(context)?.txt_no_result ?? "No results found";
           return NoResult(message: message, icon: Icons.coffee);
@@ -278,7 +282,7 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
                 focusColor: Colors.transparent,
                 onPressed: () async {
                   await status?.removeAccountsFromList(schema.id, [account.id]);
-                  onReload();
+                  setState(() => _membersFuture = status?.getListAccounts(schema.id));
                 },
               ),
             );
