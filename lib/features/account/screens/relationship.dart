@@ -261,7 +261,7 @@ class FollowRequests extends ConsumerWidget {
           return const ClockProgressIndicator();
         } else if (snapshot.hasError) {
           logger.e("failed to load the follow requests: ${snapshot.error}");
-          return NoResult();
+          return const NoResult();
         }
 
         final List<AccountSchema> accounts = snapshot.data!;

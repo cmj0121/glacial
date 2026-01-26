@@ -116,7 +116,7 @@ class _TrendsState extends State<Trends> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          (isLoading && !isRefresh) ? ClockProgressIndicator() : const SizedBox.shrink(),
+          (isLoading && !isRefresh) ? const ClockProgressIndicator() : const SizedBox.shrink(),
           Flexible(child: buildContent()),
         ],
       ),

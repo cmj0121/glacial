@@ -175,7 +175,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          isLoading ? ClockProgressIndicator() : const SizedBox.shrink(),
+          isLoading ? const ClockProgressIndicator() : const SizedBox.shrink(),
           Flexible(child: buildContent()),
         ],
       ),
@@ -185,7 +185,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> {
   // Build the notification content.
   Widget buildContent() {
     if (groups.isEmpty) {
-      return isCompleted ? NoResult() : const SizedBox.shrink();
+      return isCompleted ? const NoResult() : const SizedBox.shrink();
     }
 
     final Widget builder = ScrollablePositionedList.builder(
@@ -385,7 +385,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
         break;
       case NotificationType.adminReport:
       case NotificationType.unknown:
-        content = NoResult();
+        content = const NoResult();
         break;
     }
 

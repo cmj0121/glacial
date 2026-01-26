@@ -170,7 +170,7 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
 
   Widget buildContent(SearchResultSchema schema) {
     if (schema.isEmpty) {
-      return NoResult();
+      return const NoResult();
     }
 
     return SwipeTabView(

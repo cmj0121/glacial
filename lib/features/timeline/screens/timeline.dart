@@ -178,7 +178,7 @@ class _TimelineState extends State<Timeline> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          (isLoading && !isRefresh) ? ClockProgressIndicator() : const SizedBox.shrink(),
+          (isLoading && !isRefresh) ? const ClockProgressIndicator() : const SizedBox.shrink(),
           buildUnreadedBanner(),
           Flexible(child: buildContent()),
         ],
