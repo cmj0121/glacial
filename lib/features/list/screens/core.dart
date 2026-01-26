@@ -331,11 +331,9 @@ class ListAccountWidget extends ConsumerStatefulWidget {
   ConsumerState<ListAccountWidget> createState() => _ListAccountWidgetState();
 }
 
-class _ListAccountWidgetState extends ConsumerState<ListAccountWidget> {
+class _ListAccountWidgetState extends ConsumerState<ListAccountWidget> with PaginatedListMixin {
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
-  bool isLoading = false;
-  bool isCompleted = false;
   List<AccountSchema> accounts = [];
 
   @override
@@ -369,18 +367,17 @@ class _ListAccountWidgetState extends ConsumerState<ListAccountWidget> {
   }
 
   void onLoad() async {
-    if (isLoading || isCompleted) return;
+    if (shouldSkipLoad) return;
 
-    setState(() => isLoading = true);
+    setLoading(true);
 
     final int count = this.accounts.length;
     final List<AccountSchema> accounts = await status?.searchAccounts(widget.name, offset: count, following: true) ?? [];
 
-    setState(() {
-      isLoading = false;
-      isCompleted = accounts.isEmpty;
-      this.accounts.addAll(accounts);
-    });
+    if (mounted) {
+      setState(() => this.accounts.addAll(accounts));
+      markLoadComplete(isEmpty: accounts.isEmpty);
+    }
   }
 }
 

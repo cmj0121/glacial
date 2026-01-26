@@ -15,14 +15,12 @@ class FollowedHashtags extends ConsumerStatefulWidget {
   ConsumerState<FollowedHashtags> createState() => _FollowedHashtagsState();
 }
 
-class _FollowedHashtagsState extends ConsumerState<FollowedHashtags> {
+class _FollowedHashtagsState extends ConsumerState<FollowedHashtags> with PaginatedListMixin {
   final ScrollController controller = ScrollController();
 
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
   String? maxId;
-  bool isLoading = false;
-  bool isCompleted = false;
   List<HashtagSchema> hashtags = [];
 
   @override
@@ -81,18 +79,19 @@ class _FollowedHashtagsState extends ConsumerState<FollowedHashtags> {
 
   // Load the followed hashtags from the server.
   Future<void> onLoad() async {
-    if (isLoading || isCompleted) return;
+    if (shouldSkipLoad) return;
 
-    setState(() => isLoading = true);
+    setLoading(true);
 
     final (newHashtags, newMaxID) = await status?.fetchFollowedHashtags(maxId: maxId) ?? ([], null);
 
-    setState(() {
-      isLoading = false;
-      isCompleted = newHashtags.isEmpty || newMaxID == null;
-      maxId = newMaxID;
-      hashtags.addAll(newHashtags as List<HashtagSchema>);
-    });
+    if (mounted) {
+      setState(() {
+        maxId = newMaxID;
+        hashtags.addAll(newHashtags as List<HashtagSchema>);
+      });
+      markLoadComplete(isEmpty: newHashtags.isEmpty || newMaxID == null);
+    }
   }
 }
 
@@ -109,14 +108,12 @@ class AccountList extends ConsumerStatefulWidget {
   ConsumerState<AccountList> createState() => _AccountListState();
 }
 
-class _AccountListState extends ConsumerState<AccountList> {
+class _AccountListState extends ConsumerState<AccountList> with PaginatedListMixin {
   final ScrollController controller = ScrollController();
 
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
   String? maxId;
-  bool isLoading = false;
-  bool isCompleted = false;
   List<AccountSchema> accounts = [];
 
   @override
@@ -176,18 +173,19 @@ class _AccountListState extends ConsumerState<AccountList> {
 
   // Load the accounts from the server.
   Future<void> onLoad() async {
-    if (isLoading || isCompleted) return;
+    if (shouldSkipLoad) return;
 
-    setState(() => isLoading = true);
+    setLoading(true);
 
     final (newAccounts, newMaxID) = await widget.loader?.call(maxId: maxId) ?? ([], null);
 
-    setState(() {
-      isLoading = false;
-      isCompleted = newAccounts.isEmpty || newMaxID == null;
-      maxId = newMaxID;
-      accounts.addAll(newAccounts as List<AccountSchema>);
-    });
+    if (mounted) {
+      setState(() {
+        maxId = newMaxID;
+        accounts.addAll(newAccounts as List<AccountSchema>);
+      });
+      markLoadComplete(isEmpty: newAccounts.isEmpty || newMaxID == null);
+    }
   }
 }
 
