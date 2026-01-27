@@ -309,7 +309,7 @@ class _InteractionState extends State<Interaction> {
     }
   }
 
-  void onPressed() async {
+  Future<void> onPressed() async {
     switch (widget.action) {
       case StatusInteraction.reply:
         context.push(RoutePath.post.path, extra: widget.schema);

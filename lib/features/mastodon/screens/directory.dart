@@ -75,7 +75,7 @@ class _DirectoryAccountState extends ConsumerState<DirectoryAccount> with Pagina
 
   // Detect the scroll event and load more statuses when the user scrolls to the
   // almost bottom of the list.
-  void onScroll() async {
+  Future<void> onScroll() async {
     if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
       onLoad();
     }

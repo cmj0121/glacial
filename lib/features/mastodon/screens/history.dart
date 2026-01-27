@@ -91,7 +91,7 @@ class _HistoryDrawerState extends ConsumerState<HistoryDrawer> {
   }
 
   // Reorder the history list when the user drags the item.
-  void onReorder(int oldIndex, int newIndex) async {
+  Future<void> onReorder(int oldIndex, int newIndex) async {
     if (oldIndex < newIndex) {
       newIndex--;
     }
@@ -102,20 +102,20 @@ class _HistoryDrawerState extends ConsumerState<HistoryDrawer> {
   }
 
   // Remove a specific history item when the user swipes it away.
-  void onRemoveHistory(ServerInfoSchema domain) async {
+  Future<void> onRemoveHistory(ServerInfoSchema domain) async {
     history.remove(domain);
     onUpdateHistory();
   }
 
   // Clear all the search history.
-  void onClearHistoryAll() async {
+  Future<void> onClearHistoryAll() async {
     history.clear();
     onUpdateHistory();
     context.pop(); // Close the drawer after clearing the history
   }
 
   // Update the history in the state and notify the parent widget.
-  void onUpdateHistory() async {
+  Future<void> onUpdateHistory() async {
     final Storage storage = Storage();
     final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
 

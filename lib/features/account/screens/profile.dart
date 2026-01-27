@@ -737,12 +737,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
     onChanged(schema: schema.copyWith(fields: fields));
   }
 
-  void onChangeAvatar() async {
+  Future<void> onChangeAvatar() async {
     final XFile? file = await onImagePicker();
     setState(() => schema = schema.copyWith(avatar: file == null ? null : File(file.path)));
   }
 
-  void onChangeBanner() async {
+  Future<void> onChangeBanner() async {
     final XFile? file = await onImagePicker();
     setState(() => schema = schema.copyWith(header: file == null ? null : File(file.path)));
   }
@@ -753,7 +753,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
     return await picker.pickMedia();
   }
 
-  void onChanged({required AccountCredentialSchema schema}) async {
+  Future<void> onChanged({required AccountCredentialSchema schema}) async {
     final AccountCredentialSchema updatedSchema = schema.copyWith(
       displayName: nameController.text.trim(),
       note: noteController.text.trim(),
@@ -761,7 +761,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
     setState(() => this.schema = updatedSchema);
   }
 
-  void onSave() async {
+  Future<void> onSave() async {
     final AccountSchema? account = await status?.updateAccount(schema);
     if (mounted) {
       ref.read(accessStatusProvider.notifier).state = status?.copyWith(account: account);

@@ -37,7 +37,7 @@ class _SignInState extends ConsumerState<SignIn> {
 
   // Get the register application and navigate to the sign-in page based on the
   // current selected Mastodon server.
-  void onSignIn() async {
+  Future<void> onSignIn() async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final String? domain = status?.domain;
 

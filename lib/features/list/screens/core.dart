@@ -83,7 +83,7 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
     );
   }
 
-  void onSubmitted() async {
+  Future<void> onSubmitted() async {
     final String name = controller.text.trim();
     if (name.isEmpty) return;
 
@@ -92,7 +92,7 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
     onLoad();
   }
 
-  void onLoad() async {
+  Future<void> onLoad() async {
     final List<ListSchema> lists = await status?.getLists() ?? [];
     setState(() {
       this.lists = lists;
@@ -100,7 +100,7 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
     });
   }
 
-  void onRemove(int index) async {
+  Future<void> onRemove(int index) async {
     if (index < 0 || index >= lists.length) return;
 
     final String id = lists[index].id;
@@ -299,7 +299,7 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
   }
 
   // Pop-up the dialog and find the possibble accounts to add to the list.
-  void onSearchAccount(String name) async {
+  Future<void> onSearchAccount(String name) async {
     if (name.isEmpty) return;
 
     showDialog(
@@ -316,7 +316,7 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
     );
   }
 
-  void onReload() async {
+  Future<void> onReload() async {
     final ListSchema? schema = await status?.getList(this.schema.id);
     setState(() => this.schema = schema ?? this.schema);
   }
@@ -372,7 +372,7 @@ class _ListAccountWidgetState extends ConsumerState<ListAccountWidget> with Pagi
     );
   }
 
-  void onLoad() async {
+  Future<void> onLoad() async {
     if (shouldSkipLoad) return;
 
     setLoading(true);

@@ -177,14 +177,14 @@ class _RelationshipState extends ConsumerState<Relationship> {
   }
 
   // Switch the relationship type when tapped.
-  void onChangeRelationship() async {
+  Future<void> onChangeRelationship() async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     await status?.changeRelationship(account: widget.schema, type: relationship);
     onRefresh();
   }
 
   // refresh the relationship state when the relationship is changed.
-  void onRefresh() async {
+  Future<void> onRefresh() async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final List<AccountSchema> accounts = [widget.schema];
     final List<RelationshipSchema> relationships = await status?.fetchRelationships(accounts) ?? [];

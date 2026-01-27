@@ -302,7 +302,7 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
     );
   }
 
-  void onTap(AccessStatusSchema? status, DrawerButtonType action) async {
+  Future<void> onTap(AccessStatusSchema? status, DrawerButtonType action) async {
     final Storage storage = Storage();
 
     context.pop(); // Close the drawer before navigating
@@ -365,7 +365,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
   }
 
   // Called when the preloading is completed, it will navigate to the next page.
-  void onLoading() async {
+  Future<void> onLoading() async {
     final Storage storage = Storage();
 
     try {

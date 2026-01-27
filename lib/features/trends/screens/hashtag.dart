@@ -149,7 +149,7 @@ class _FollowedHashtagButtonState extends ConsumerState<FollowedHashtagButton> {
     );
   }
 
-  void onReload() async {
+  Future<void> onReload() async {
     final HashtagSchema? hashtag = await status?.getHashtag(widget.hashtag);
     setState(() => schema = hashtag);
   }

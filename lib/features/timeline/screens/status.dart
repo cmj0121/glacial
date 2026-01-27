@@ -129,7 +129,7 @@ class _StatusState extends ConsumerState<Status> {
   }
 
   // Handle the link tap event, and open the link in the in-app webview.
-  void onLinkTap(String? url) async {
+  Future<void> onLinkTap(String? url) async {
     final Uri? uri = url == null ? null : Uri.parse(url);
 
     if (uri == null) {
@@ -788,7 +788,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
     );
   }
 
-  void onLoad() async {
+  Future<void> onLoad() async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final List<StatusEditSchema> history = await status?.fetchHistory(schema: widget.schema) ?? [];
 

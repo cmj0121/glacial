@@ -247,7 +247,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   // Show the unreaded statuses when the user taps on the unreaded banner and keep the current
   // scroll position.
-  void onClickUnreaded() async {
+  Future<void> onClickUnreaded() async {
     final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
     final int newIndex = widget.pref?.loadedTop == true ? 0 : (unreaded.length + positions.first.index);
 

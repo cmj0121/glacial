@@ -82,7 +82,7 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
     }
   }
 
-  void _stopTask() async {
+  Future<void> _stopTask() async {
     _timer?.cancel();
     _timer = null;
   }
@@ -345,7 +345,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
     );
   }
 
-  void onLoad() async {
+  Future<void> onLoad() async {
     if (child != null) { return; }
 
     late final Widget content;

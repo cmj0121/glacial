@@ -364,7 +364,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   }
 
   // The atction to image picker and upload media files.
-  void onImagePicker() async {
+  Future<void> onImagePicker() async {
     final ImagePicker picker = ImagePicker();
     final XFile? media = await picker.pickMedia();
 
@@ -379,7 +379,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   }
 
   // The callback when the user clicks the post button.
-  void onPost({bool? edit}) async {
+  Future<void> onPost({bool? edit}) async {
     if (!isReadyToPost) { return; }
 
     final PostStatusSchema schema = PostStatusSchema(
@@ -407,7 +407,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   }
 
   // The callback when the user long presses the post button to schedule the post.
-  void onSchedulePost() async {
+  Future<void> onSchedulePost() async {
     final Duration minDuration = const Duration(minutes: 5);
     final DateTime now = DateTime.now();
     final DateTime minDateTime = now.add(minDuration);

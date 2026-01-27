@@ -101,13 +101,13 @@ class _FiltersState extends ConsumerState<Filters> {
     setState(() => filters = schemas);
   }
 
-  void onCreate() async {
+  Future<void> onCreate() async {
     await context.push(RoutePath.createFilterForm.path, extra: controller.text);
     controller.clear();
     await onLoad();
   }
 
-  void onDelete({required FiltersSchema schema}) async {
+  Future<void> onDelete({required FiltersSchema schema}) async {
     await status?.deleteFilter(id: schema.id);
     setState(() => filters.remove(schema));
   }
@@ -175,7 +175,7 @@ class _FilterSelectorState extends ConsumerState<FilterSelector> {
     );
   }
 
-  void onLoad() async {
+  Future<void> onLoad() async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final List<FiltersSchema> schemas = await status?.fetchFilters() ?? [];
 
@@ -437,7 +437,7 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
   // Check the form can be submitted.
   bool get canSubmit =>  form.context.isNotEmpty;
 
-  void onSubmit() async {
+  Future<void> onSubmit() async {
     widget.schema == null ? status?.createFilter(schema: form) : status?.updateFilter(id: widget.schema!.id, schema: form);
 
     if (mounted && context.canPop())  context.pop();

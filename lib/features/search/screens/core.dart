@@ -99,12 +99,12 @@ class _ExplorerState extends ConsumerState<SearchExplorer> with SingleTickerProv
     );
   }
 
-  void onShowSearch() async {
+  Future<void> onShowSearch() async {
     setState(() => showInput = true);
     focusNode.requestFocus();
   }
 
-  void onSearch() async {
+  Future<void> onSearch() async {
     final String query = controller.text.trim();
 
     if (query.isNotEmpty) {

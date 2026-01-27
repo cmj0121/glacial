@@ -248,7 +248,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> with PaginatedListM
   }
 
   // On scroll to the bottom load more statuses for selection.
-  void onScroll() async {
+  Future<void> onScroll() async {
     final double loadingThreshold = 200.0;
     if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
       await onLoad();

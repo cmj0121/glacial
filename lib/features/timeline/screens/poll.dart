@@ -149,7 +149,7 @@ class _PollState extends ConsumerState<Poll> {
   }
 
   // Submits the selected options to the server.
-  void onVote() async {
+  Future<void> onVote() async {
     final PollSchema? poll = await status?.votePoll(pollID: widget.schema!.id, choices: choices);
     if (poll != null) widget.onChanged?.call(poll);
   }
