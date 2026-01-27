@@ -207,6 +207,16 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
   late final TextEditingController titleController = TextEditingController(text: widget.title);
   late final TextStyle? subStyle = Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).disabledColor);
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+  late final Map<String, Future<StatusSchema?>> _statusFutures = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-cache futures for filtered statuses
+    for (final s in widget.schema?.statuses ?? []) {
+      _statusFutures[s.statusId] = status?.getStatus(s.statusId, loadCache: true) ?? Future.value(null);
+    }
+  }
 
   final List<Duration?> durations = [
     null,
@@ -386,7 +396,7 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
       const Divider(),
       ...widget.schema?.statuses?.map((s) {
         return FutureBuilder(
-          future: status?.getStatus(s.statusId, loadCache: true),
+          future: _statusFutures[s.statusId],
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) return const SizedBox.shrink();
 

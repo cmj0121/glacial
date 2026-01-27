@@ -247,15 +247,27 @@ class _FollowRequestBadgeState extends ConsumerState<FollowRequestBadge> {
 }
 
 // The follow request page to show the list of pending follow requests.
-class FollowRequests extends ConsumerWidget {
+class FollowRequests extends ConsumerStatefulWidget {
   const FollowRequests({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+  ConsumerState<FollowRequests> createState() => _FollowRequestsState();
+}
 
+class _FollowRequestsState extends ConsumerState<FollowRequests> {
+  Future<List<AccountSchema>>? _requestsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    _requestsFuture = status?.fetchFollowRequests() ?? Future.value([]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder(
-      future: fetchFollowRequests(status),
+      future: _requestsFuture,
       builder: (BuildContext context, AsyncSnapshot<List<AccountSchema>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const ClockProgressIndicator();
@@ -276,10 +288,6 @@ class FollowRequests extends ConsumerWidget {
         );
       },
     );
-  }
-
-  Future<List<AccountSchema>> fetchFollowRequests(AccessStatusSchema? status) async {
-    return await status?.fetchFollowRequests() ?? [];
   }
 }
 
