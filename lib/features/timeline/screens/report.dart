@@ -57,6 +57,14 @@ class _ReportDialogState extends ConsumerState<ReportDialog> with PaginatedListM
   }
 
   @override
+  void dispose() {
+    controller.removeListener(onScroll);
+    controller.dispose();
+    pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (status == null) {
       logger.w("No server selected, but it's required to report an account.");

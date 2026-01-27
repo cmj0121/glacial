@@ -23,6 +23,12 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
   Widget? child;
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(

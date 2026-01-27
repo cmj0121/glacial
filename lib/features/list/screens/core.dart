@@ -29,6 +29,12 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
