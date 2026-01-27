@@ -56,8 +56,6 @@ class _FiltersState extends ConsumerState<Filters> {
       ),
       trailing: IconButton(
         icon: const Icon(Icons.add, size: iconSize),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: () => onCreate(),
       ),
     );
@@ -508,8 +506,6 @@ class _FilterKeywordFormState extends State<FilterKeywordForm> {
           size: iconSize,
           color: deletable ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.primary,
         ),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: deletable ? widget.onDelete : onSave,
       ),
       onTap: () {

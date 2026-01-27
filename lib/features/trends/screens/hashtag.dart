@@ -140,8 +140,6 @@ class _FollowedHashtagButtonState extends ConsumerState<FollowedHashtagButton> {
         size: iconSize,
         color: isFollowing ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
       ),
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: isSignedIn ? () async {
         await (isFollowing ? status?.unfollowHashtag(widget.hashtag) : status?.followHashtag(widget.hashtag));
         onReload();

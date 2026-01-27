@@ -349,8 +349,6 @@ class StatusLite extends ConsumerWidget {
     return IconButton(
       icon: Icon(Icons.info_outline, size: iconSize),
       padding: EdgeInsets.zero,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: count == 0 ? null : () => context.push(RoutePath.statusInfo.path, extra: schema),
     );
   }
@@ -360,8 +358,6 @@ class StatusLite extends ConsumerWidget {
     return IconButton(
       icon: Icon(Icons.edit_outlined, size: iconSize),
       padding: EdgeInsets.zero,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: schema.editedAt == null ? null : () => context.push(RoutePath.statusHistory.path, extra: schema),
     );
   }
@@ -374,8 +370,6 @@ class StatusLite extends ConsumerWidget {
       icon: Icon(policy.icon, size: iconSize),
       tooltip: policy.description(context),
       padding: EdgeInsets.zero,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: null,
     );
   }

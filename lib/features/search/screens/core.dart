@@ -53,8 +53,6 @@ class _ExplorerState extends ConsumerState<SearchExplorer> with SingleTickerProv
     final Widget icon = IconButton(
       icon: Icon(Icons.search, size: widget.size),
       tooltip: AppLocalizations.of(context)?.btn_search ?? "Search",
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: isSignedIn ? onShowSearch : null,
     );
 
@@ -73,8 +71,6 @@ class _ExplorerState extends ConsumerState<SearchExplorer> with SingleTickerProv
       decoration: InputDecoration(
         prefixIcon: IconButton(
           icon: Icon(Icons.search, size: widget.size),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
           onPressed: () => onSearch(),
         ),
         suffixIcon: buildCleanButton(),
@@ -90,8 +86,6 @@ class _ExplorerState extends ConsumerState<SearchExplorer> with SingleTickerProv
     return  IconButton(
       icon: Icon(Icons.clear, size: widget.size),
       tooltip: AppLocalizations.of(context)?.btn_close ?? "Close",
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: () {
         controller.clear();
         setState(() => showInput = false);

@@ -62,8 +62,6 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
       ),
       trailing: IconButton(
         icon: const Icon(Icons.playlist_add, size: iconSize),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: onSubmitted,
       ),
     );
@@ -147,8 +145,6 @@ class LiteTimeline extends ConsumerStatefulWidget {
             title: Text(schema.title, style: style, overflow: TextOverflow.ellipsis),
             trailing: IconButton(
               icon: Icon(Icons.delete_forever_rounded, size: tabSize, color: Theme.of(context).colorScheme.error),
-              hoverColor: Colors.transparent,
-              focusColor: Colors.transparent,
               onPressed: onRemove,
             ),
           ),
@@ -211,8 +207,6 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
             size: tabSize,
             color: showMembers ? Theme.of(context).colorScheme.primary : null,
           ),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
           onPressed: () => setState(() {
             showMembers = !showMembers;
             if (showMembers) _membersFuture = status?.getListAccounts(schema.id);
@@ -221,8 +215,6 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
         IconButton(
           icon: Icon(schema.replyPolicy.icon, size: tabSize),
           tooltip: schema.replyPolicy.tooltip(context),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
           onPressed: () async {
             final int index = ReplyPolicyType.values.indexOf(schema.replyPolicy);
             final int nextIndex = (index + 1) % ReplyPolicyType.values.length;
@@ -235,8 +227,6 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
           tooltip: schema.exclusive ?
             AppLocalizations.of(context)?.txt_list_exclusive ?? "Exclusive List" :
             AppLocalizations.of(context)?.txt_list_inclusive ?? "Non-Exclusive List",
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
           onPressed: () async {
             await status?.updateList(id: schema.id, title: schema.title, exclusive: !schema.exclusive);
             onReload();
@@ -284,8 +274,6 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
               title: AccountLite(schema: account),
               trailing: IconButton(
                 icon: Icon(Icons.delete_forever_rounded, size: tabSize, color: Theme.of(context).colorScheme.error),
-                hoverColor: Colors.transparent,
-                focusColor: Colors.transparent,
                 onPressed: () async {
                   await status?.removeAccountsFromList(schema.id, [account.id]);
                   setState(() => _membersFuture = status?.getListAccounts(schema.id));

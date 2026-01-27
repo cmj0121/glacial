@@ -245,8 +245,6 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
               right: 0,
               child: IconButton(
                 icon: Icon(Icons.remove_circle, color: Theme.of(context).colorScheme.tertiary),
-                hoverColor: Colors.transparent,
-                focusColor: Colors.transparent,
                 onPressed: () => setState(() => medias.remove(media)),
               ),
             ),
@@ -279,15 +277,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           size: tabSize,
           color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary,
         ),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: (poll == null && maxMedias > medias.length && isSignedIn && !isEditSchedule) ? onImagePicker : null,
       ),
       // The poll icon button to toggle the poll form.
       IconButton(
         icon: Icon(Icons.poll_outlined, size: tabSize, ),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: (medias.isEmpty && !isEditSchedule) ?
           () => setState(() => poll = poll == null ? NewPollSchema() : null) :
           null,
@@ -299,8 +293,6 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           size: tabSize,
           color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary,
         ),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: !isEditSchedule ? () => setState(() => spoiler = spoiler == null ? "" : null) : null,
       ),
       // The sensitive icon button to toggle the sensitive content of the status.
@@ -310,8 +302,6 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           size: tabSize,
           color: isSensitive ? Theme.of(context).colorScheme.tertiary : null
         ),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: !isEditSchedule ? () => setState(() => isSensitive = !isSensitive) : null,
       ),
     ];

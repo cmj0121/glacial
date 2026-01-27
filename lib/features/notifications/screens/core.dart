@@ -94,8 +94,6 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
       icon: Icon(action.icon(active: widget.isSelected), size: widget.size),
       tooltip: action.tooltip(context),
       color: widget.isSelected ? Theme.of(context).colorScheme.primary : null,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: widget.onPressed,
     );
 

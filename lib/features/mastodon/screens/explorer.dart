@@ -95,8 +95,6 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
       decoration: InputDecoration(
         prefixIcon: IconButton(
           icon: Icon(Icons.search),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
           onPressed: () => onSearch(),
         ),
         suffixIcon: buildCleanButton(),
@@ -125,8 +123,6 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
 
     return  IconButton(
       icon: Icon(Icons.clear),
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: onClearSearch,
     );
   }

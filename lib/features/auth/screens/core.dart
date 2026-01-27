@@ -29,8 +29,6 @@ class _SignInState extends ConsumerState<SignIn> {
       icon: const Icon(Icons.person_outline),
       tooltip: AppLocalizations.of(context)?.btn_sidebar_sign_in ?? 'Sign In',
       color: Theme.of(context).colorScheme.onPrimaryContainer,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: onSignIn,
     );
   }

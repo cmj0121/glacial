@@ -225,8 +225,6 @@ class _FollowRequestBadgeState extends ConsumerState<FollowRequestBadge> {
       padding: const EdgeInsets.only(right: 8),
       child: IconButton(
         icon: Icon(Icons.pending_actions),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         style: IconButton.styleFrom(
           foregroundColor: Theme.of(context).colorScheme.onTertiary,
           backgroundColor: Theme.of(context).colorScheme.tertiary,
