@@ -22,9 +22,6 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   late final TabController controller;
 
-  late int selectedIndex;
-  late Widget? child;
-
   @override
   void initState() {
     super.initState();
@@ -32,6 +29,12 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
       length: tabs.length,
       vsync: this,
     );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
