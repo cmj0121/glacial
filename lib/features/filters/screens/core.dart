@@ -436,9 +436,13 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
   bool get canSubmit =>  form.context.isNotEmpty;
 
   Future<void> onSubmit() async {
-    widget.schema == null ? status?.createFilter(schema: form) : status?.updateFilter(id: widget.schema!.id, schema: form);
+    if (widget.schema == null) {
+      await status?.createFilter(schema: form);
+    } else {
+      await status?.updateFilter(id: widget.schema!.id, schema: form);
+    }
 
-    if (mounted && context.canPop())  context.pop();
+    if (mounted && context.canPop()) context.pop();
   }
 }
 
