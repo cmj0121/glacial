@@ -77,7 +77,7 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
       final int interval = refreshInterval.inSeconds;
 
       _timer = Timer.periodic(Duration(seconds: interval * (times ?? 1)), (Timer timer) async {
-        onLoad();
+        await onLoad();
       });
     }
   }

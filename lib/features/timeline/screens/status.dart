@@ -786,11 +786,13 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final List<StatusEditSchema> history = await status?.fetchHistory(schema: widget.schema) ?? [];
 
-    setState(() {
-      this.history = history;
-      selectedIndex = history.isEmpty ? 0 : history.length - 1;
-    });
-    _pageController = PageController(initialPage: selectedIndex, keepPage: true);
+    if (mounted) {
+      setState(() {
+        this.history = history;
+        selectedIndex = history.isEmpty ? 0 : history.length - 1;
+      });
+      _pageController = PageController(initialPage: selectedIndex, keepPage: true);
+    }
   }
 
   void onDismiss() {

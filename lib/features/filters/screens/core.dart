@@ -96,7 +96,7 @@ class _FiltersState extends ConsumerState<Filters> {
 
   Future<void> onLoad() async {
     final List<FiltersSchema> schemas = await status?.fetchFilters() ?? [];
-    setState(() => filters = schemas);
+    if (mounted) setState(() => filters = schemas);
   }
 
   Future<void> onCreate() async {
@@ -107,7 +107,7 @@ class _FiltersState extends ConsumerState<Filters> {
 
   Future<void> onDelete({required FiltersSchema schema}) async {
     await status?.deleteFilter(id: schema.id);
-    setState(() => filters.remove(schema));
+    if (mounted) setState(() => filters.remove(schema));
   }
 }
 

@@ -189,7 +189,7 @@ class _RelationshipState extends ConsumerState<Relationship> {
     final List<AccountSchema> accounts = [widget.schema];
     final List<RelationshipSchema> relationships = await status?.fetchRelationships(accounts) ?? [];
 
-    setState(() => schema = relationships.firstOrNull);
+    if (mounted) setState(() => schema = relationships.firstOrNull);
   }
 
   RelationshipType get relationship => schema?.type ?? RelationshipType.stranger;

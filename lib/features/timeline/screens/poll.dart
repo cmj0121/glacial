@@ -90,9 +90,10 @@ class _PollState extends ConsumerState<Poll> {
 
   // Build the final Vote results.
   List<Widget> buildVoteResult(PollSchema schema) {
+    final int totalCount = schema.options.fold(0, (sum, o) => sum + (o.votesCount ?? 0));
+
     return schema.options.map((option) {
       final int index = schema.options.indexOf(option);
-      final int totalCount = schema.options.map((o) => o.votesCount ?? 0).reduce((a, b) => a + b);
 
       // If the poll is already voted, display the selected options.
       final int count = option.votesCount ?? 0;
@@ -151,7 +152,7 @@ class _PollState extends ConsumerState<Poll> {
   // Submits the selected options to the server.
   Future<void> onVote() async {
     final PollSchema? poll = await status?.votePoll(pollID: widget.schema!.id, choices: choices);
-    if (poll != null) widget.onChanged?.call(poll);
+    if (mounted && poll != null) widget.onChanged?.call(poll);
   }
 
   bool get isClosed => widget.schema?.expiresAt?.isAfter(DateTime.now()) == false;
