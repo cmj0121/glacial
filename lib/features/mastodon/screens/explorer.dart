@@ -23,6 +23,12 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
   Widget? child;
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -89,8 +95,6 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
       decoration: InputDecoration(
         prefixIcon: IconButton(
           icon: Icon(Icons.search),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
           onPressed: () => onSearch(),
         ),
         suffixIcon: buildCleanButton(),
@@ -119,14 +123,12 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
 
     return  IconButton(
       icon: Icon(Icons.clear),
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: onClearSearch,
     );
   }
 
   // The search function that is called when the user presses the search
-  void onSearch() async {
+  Future<void> onSearch() async {
     final String query = controller.text.trim();
 
     if (query.isEmpty) {
@@ -137,7 +139,7 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
   }
 
   // The callback when user clicks the mastodon server.
-  void onSelect(ServerSchema schema) async {
+  Future<void> onSelect(ServerSchema schema) async {
     final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
     List<ServerInfoSchema> history = status.history.toList();
 

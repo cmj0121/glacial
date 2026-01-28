@@ -29,15 +29,13 @@ class _SignInState extends ConsumerState<SignIn> {
       icon: const Icon(Icons.person_outline),
       tooltip: AppLocalizations.of(context)?.btn_sidebar_sign_in ?? 'Sign In',
       color: Theme.of(context).colorScheme.onPrimaryContainer,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: onSignIn,
     );
   }
 
   // Get the register application and navigate to the sign-in page based on the
   // current selected Mastodon server.
-  void onSignIn() async {
+  Future<void> onSignIn() async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final String? domain = status?.domain;
 

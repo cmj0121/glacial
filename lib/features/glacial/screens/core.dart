@@ -66,8 +66,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
             child: AppBar(
               leading: IconButton(
                 icon: Icon(icon, size: iconSize, color: Theme.of(context).colorScheme.onSurface),
-                hoverColor: Colors.transparent,
-                focusColor: Colors.transparent,
                 onPressed: widget.backable ? () => context.pop() : () => scaffoldKey.currentState?.openDrawer(),
               ),
               title: widget.title,
@@ -171,8 +169,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
               icon: icon,
               tooltip: action.tooltip(context),
               color: isSelected ? Theme.of(context).colorScheme.primary : null,
-              hoverColor: Colors.transparent,
-              focusColor: Colors.transparent,
               onPressed: () => debounce.callOnce(() => onSelect(index)),
             );
           }
@@ -183,8 +179,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
             icon: icon,
             tooltip: action.tooltip(context),
             color: isSelected ? Theme.of(context).colorScheme.primary : null,
-            hoverColor: Colors.transparent,
-            focusColor: Colors.transparent,
             onPressed: isAdmin ? () => debounce.callOnce(() => onSelect(index)) : null,
           );
         default:
@@ -192,8 +186,6 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
             icon: icon,
             tooltip: action.tooltip(context),
             color: isSelected ? Theme.of(context).colorScheme.primary : null,
-            hoverColor: Colors.transparent,
-            focusColor: Colors.transparent,
             onPressed: (action.supportAnonymous || isSignedIn) ? () => debounce.callOnce(() => onSelect(index)) : null,
           );
       }
@@ -302,7 +294,7 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
     );
   }
 
-  void onTap(AccessStatusSchema? status, DrawerButtonType action) async {
+  Future<void> onTap(AccessStatusSchema? status, DrawerButtonType action) async {
     final Storage storage = Storage();
 
     context.pop(); // Close the drawer before navigating
@@ -365,7 +357,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
   }
 
   // Called when the preloading is completed, it will navigate to the next page.
-  void onLoading() async {
+  Future<void> onLoading() async {
     final Storage storage = Storage();
 
     try {

@@ -7,42 +7,52 @@ import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
-class Quote extends ConsumerWidget {
+class Quote extends ConsumerStatefulWidget {
   final QuoteSchema? schema;
 
   const Quote({super.key, required this.schema});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (schema == null) {
+  ConsumerState<Quote> createState() => _QuoteState();
+}
+
+class _QuoteState extends ConsumerState<Quote> {
+  Future<StatusSchema?>? _statusFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Only fetch if we need to load the status (quotedStatus is null but quotedStatusID exists)
+    if (widget.schema?.quotedStatus == null && widget.schema?.quotedStatusID != null) {
+      final AccessStatusSchema? status = ref.read(accessStatusProvider);
+      _statusFuture = status?.getStatus(widget.schema!.quotedStatusID!);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.schema == null) {
       return const SizedBox.shrink();
     }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: buildContent(context, ref),
+      child: buildContent(context),
     );
   }
 
-  Widget buildContent(BuildContext context, WidgetRef ref) {
-    if (schema?.quotedStatus == null) {
-      return loadStatus(context, ref);
+  Widget buildContent(BuildContext context) {
+    if (widget.schema?.quotedStatus != null) {
+      final Widget quote = StatusLite(schema: widget.schema!.quotedStatus!, isNestedQuote: true);
+      return buildQuote(context, quote);
     }
 
-    final Widget quote = StatusLite(schema: schema!.quotedStatus!, isNestedQuote: true);
-    return buildQuote(context, quote);
-  }
-
-  Widget loadStatus(BuildContext context, WidgetRef ref) {
-    final String? quotedStatusID = schema?.quotedStatusID;
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
-
-    if (quotedStatusID == null) {
+    if (_statusFuture == null) {
       return buildNotFound(context);
     }
 
     return FutureBuilder(
-      future: status?.getStatus(quotedStatusID),
+      future: _statusFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox.shrink();

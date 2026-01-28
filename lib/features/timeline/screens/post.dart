@@ -34,7 +34,7 @@ class PostStatusForm extends ConsumerStatefulWidget {
 class _StatusFormState extends ConsumerState<PostStatusForm> {
   final FocusNode focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
-  final double medisWidth = 100;
+  final double mediaWidth = 100;
   final String idempotentKey = const Uuid().v4();
 
   late final TextEditingController controller = TextEditingController(text: widget.editFrom?.plainText ?? "");
@@ -234,8 +234,8 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           children: [
             CachedNetworkImage(
               imageUrl: url,
-              width: medisWidth,
-              height: medisWidth,
+              width: mediaWidth,
+              height: mediaWidth,
               fit: BoxFit.cover,
               placeholder: (context, url) => const ClockProgressIndicator(),
               errorWidget: (context, url, error) => Icon(Icons.error, color: Theme.of(context).colorScheme.error),
@@ -245,8 +245,6 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
               right: 0,
               child: IconButton(
                 icon: Icon(Icons.remove_circle, color: Theme.of(context).colorScheme.tertiary),
-                hoverColor: Colors.transparent,
-                focusColor: Colors.transparent,
                 onPressed: () => setState(() => medias.remove(media)),
               ),
             ),
@@ -279,15 +277,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           size: tabSize,
           color: medias.isEmpty ? null : Theme.of(context).colorScheme.primary,
         ),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: (poll == null && maxMedias > medias.length && isSignedIn && !isEditSchedule) ? onImagePicker : null,
       ),
       // The poll icon button to toggle the poll form.
       IconButton(
         icon: Icon(Icons.poll_outlined, size: tabSize, ),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: (medias.isEmpty && !isEditSchedule) ?
           () => setState(() => poll = poll == null ? NewPollSchema() : null) :
           null,
@@ -299,8 +293,6 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           size: tabSize,
           color: spoiler == null ? null : Theme.of(context).colorScheme.tertiary,
         ),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: !isEditSchedule ? () => setState(() => spoiler = spoiler == null ? "" : null) : null,
       ),
       // The sensitive icon button to toggle the sensitive content of the status.
@@ -310,8 +302,6 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
           size: tabSize,
           color: isSensitive ? Theme.of(context).colorScheme.tertiary : null
         ),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: !isEditSchedule ? () => setState(() => isSensitive = !isSensitive) : null,
       ),
     ];
@@ -364,7 +354,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   }
 
   // The atction to image picker and upload media files.
-  void onImagePicker() async {
+  Future<void> onImagePicker() async {
     final ImagePicker picker = ImagePicker();
     final XFile? media = await picker.pickMedia();
 
@@ -379,7 +369,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   }
 
   // The callback when the user clicks the post button.
-  void onPost({bool? edit}) async {
+  Future<void> onPost({bool? edit}) async {
     if (!isReadyToPost) { return; }
 
     final PostStatusSchema schema = PostStatusSchema(
@@ -407,7 +397,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   }
 
   // The callback when the user long presses the post button to schedule the post.
-  void onSchedulePost() async {
+  Future<void> onSchedulePost() async {
     final Duration minDuration = const Duration(minutes: 5);
     final DateTime now = DateTime.now();
     final DateTime minDateTime = now.add(minDuration);

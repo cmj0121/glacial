@@ -82,7 +82,7 @@ class _StatusState extends ConsumerState<Status> {
   Widget buildMetadata() {
     if (widget.schema.reblog == null && widget.schema.inReplyToAccountID == null) {
       // The status is a normal status, so no need to show the metadata.
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
@@ -96,7 +96,7 @@ class _StatusState extends ConsumerState<Status> {
       if (inReplyToAccount == null) {
         // If the account is not found, we cannot show the reply metadata.
         logger.w("cannot get the account from cache: ${widget.schema.inReplyToAccountID}");
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
 
       account = inReplyToAccount;
@@ -129,7 +129,7 @@ class _StatusState extends ConsumerState<Status> {
   }
 
   // Handle the link tap event, and open the link in the in-app webview.
-  void onLinkTap(String? url) async {
+  Future<void> onLinkTap(String? url) async {
     final Uri? uri = url == null ? null : Uri.parse(url);
 
     if (uri == null) {
@@ -349,8 +349,6 @@ class StatusLite extends ConsumerWidget {
     return IconButton(
       icon: Icon(Icons.info_outline, size: iconSize),
       padding: EdgeInsets.zero,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: count == 0 ? null : () => context.push(RoutePath.statusInfo.path, extra: schema),
     );
   }
@@ -360,8 +358,6 @@ class StatusLite extends ConsumerWidget {
     return IconButton(
       icon: Icon(Icons.edit_outlined, size: iconSize),
       padding: EdgeInsets.zero,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: schema.editedAt == null ? null : () => context.push(RoutePath.statusHistory.path, extra: schema),
     );
   }
@@ -374,8 +370,6 @@ class StatusLite extends ConsumerWidget {
       icon: Icon(policy.icon, size: iconSize),
       tooltip: policy.description(context),
       padding: EdgeInsets.zero,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: null,
     );
   }
@@ -535,28 +529,30 @@ class StatusContext extends ConsumerStatefulWidget {
 
 class _StatusContextState extends ConsumerState<StatusContext> {
   final ItemScrollController itemScrollController = ItemScrollController();
+  late final Future<StatusContextSchema?> _contextFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    _contextFuture = status?.getStatusContext(schema: widget.schema) ?? Future.value(null);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
-
-    if (status == null) {
-      return const SizedBox.shrink();
-    }
-
-    return FutureBuilder(
-      future: status.getStatusContext(schema: widget.schema),
+    return FutureBuilder<StatusContextSchema?>(
+      future: _contextFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Align(
             alignment: Alignment.topCenter,
-            child: ClockProgressIndicator(),
+            child: const ClockProgressIndicator(),
           );
-        } else if (snapshot.hasError) {
+        } else if (snapshot.hasError || snapshot.data == null) {
           return const SizedBox.shrink();
         }
 
-        final StatusContextSchema ctx = snapshot.data as StatusContextSchema;
+        final StatusContextSchema ctx = snapshot.data!;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           // scroll to the current status when the widget is built
           itemScrollController.scrollTo(
@@ -715,7 +711,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
   int selectedIndex = 0;
   List<StatusEditSchema> history = [];
 
-  late final PageController pageController;
+  PageController? _pageController;
 
   @override
   void initState() {
@@ -725,7 +721,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
 
   @override
   void dispose() {
-    pageController.dispose();
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -753,7 +749,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
       children: [
         Flexible(
           child: PageView(
-            controller: pageController,
+            controller: _pageController,
             scrollDirection: Axis.vertical,
             children: List.generate(history.length, (index) => buildHistory(index)),
             onPageChanged: (index) => setState(() => selectedIndex = index),
@@ -786,7 +782,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
     );
   }
 
-  void onLoad() async {
+  Future<void> onLoad() async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final List<StatusEditSchema> history = await status?.fetchHistory(schema: widget.schema) ?? [];
 
@@ -794,7 +790,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
       this.history = history;
       selectedIndex = history.isEmpty ? 0 : history.length - 1;
     });
-    pageController = PageController(initialPage: selectedIndex, keepPage: true);
+    _pageController = PageController(initialPage: selectedIndex, keepPage: true);
   }
 
   void onDismiss() {

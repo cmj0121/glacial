@@ -177,14 +177,14 @@ class _RelationshipState extends ConsumerState<Relationship> {
   }
 
   // Switch the relationship type when tapped.
-  void onChangeRelationship() async {
+  Future<void> onChangeRelationship() async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     await status?.changeRelationship(account: widget.schema, type: relationship);
     onRefresh();
   }
 
   // refresh the relationship state when the relationship is changed.
-  void onRefresh() async {
+  Future<void> onRefresh() async {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final List<AccountSchema> accounts = [widget.schema];
     final List<RelationshipSchema> relationships = await status?.fetchRelationships(accounts) ?? [];
@@ -225,8 +225,6 @@ class _FollowRequestBadgeState extends ConsumerState<FollowRequestBadge> {
       padding: const EdgeInsets.only(right: 8),
       child: IconButton(
         icon: Icon(Icons.pending_actions),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         style: IconButton.styleFrom(
           foregroundColor: Theme.of(context).colorScheme.onTertiary,
           backgroundColor: Theme.of(context).colorScheme.tertiary,
@@ -247,21 +245,33 @@ class _FollowRequestBadgeState extends ConsumerState<FollowRequestBadge> {
 }
 
 // The follow request page to show the list of pending follow requests.
-class FollowRequests extends ConsumerWidget {
+class FollowRequests extends ConsumerStatefulWidget {
   const FollowRequests({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+  ConsumerState<FollowRequests> createState() => _FollowRequestsState();
+}
 
+class _FollowRequestsState extends ConsumerState<FollowRequests> {
+  Future<List<AccountSchema>>? _requestsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    _requestsFuture = status?.fetchFollowRequests() ?? Future.value([]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder(
-      future: fetchFollowRequests(status),
+      future: _requestsFuture,
       builder: (BuildContext context, AsyncSnapshot<List<AccountSchema>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const ClockProgressIndicator();
         } else if (snapshot.hasError) {
           logger.e("failed to load the follow requests: ${snapshot.error}");
-          return NoResult();
+          return const NoResult();
         }
 
         final List<AccountSchema> accounts = snapshot.data!;
@@ -276,10 +286,6 @@ class FollowRequests extends ConsumerWidget {
         );
       },
     );
-  }
-
-  Future<List<AccountSchema>> fetchFollowRequests(AccessStatusSchema? status) async {
-    return await status?.fetchFollowRequests() ?? [];
   }
 }
 

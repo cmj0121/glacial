@@ -53,8 +53,6 @@ class _ExplorerState extends ConsumerState<SearchExplorer> with SingleTickerProv
     final Widget icon = IconButton(
       icon: Icon(Icons.search, size: widget.size),
       tooltip: AppLocalizations.of(context)?.btn_search ?? "Search",
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: isSignedIn ? onShowSearch : null,
     );
 
@@ -73,8 +71,6 @@ class _ExplorerState extends ConsumerState<SearchExplorer> with SingleTickerProv
       decoration: InputDecoration(
         prefixIcon: IconButton(
           icon: Icon(Icons.search, size: widget.size),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
           onPressed: () => onSearch(),
         ),
         suffixIcon: buildCleanButton(),
@@ -90,8 +86,6 @@ class _ExplorerState extends ConsumerState<SearchExplorer> with SingleTickerProv
     return  IconButton(
       icon: Icon(Icons.clear, size: widget.size),
       tooltip: AppLocalizations.of(context)?.btn_close ?? "Close",
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
       onPressed: () {
         controller.clear();
         setState(() => showInput = false);
@@ -99,12 +93,12 @@ class _ExplorerState extends ConsumerState<SearchExplorer> with SingleTickerProv
     );
   }
 
-  void onShowSearch() async {
+  Future<void> onShowSearch() async {
     setState(() => showInput = true);
     focusNode.requestFocus();
   }
 
-  void onSearch() async {
+  Future<void> onSearch() async {
     final String query = controller.text.trim();
 
     if (query.isNotEmpty) {
@@ -132,11 +126,14 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
   final List<ExplorerResultType> types = ExplorerResultType.values;
 
   late final TabController controller;
+  late final Future<SearchResultSchema?> _searchFuture;
 
   @override
   void initState() {
     super.initState();
     controller = TabController(length: types.length, vsync: this);
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    _searchFuture = status?.search(keyword: widget.keyword) ?? Future.value(null);
   }
 
   @override
@@ -147,23 +144,16 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
-
-    if (status == null || status.domain == null) {
-      logger.w("No server selected, but it's required to show the search results.");
-      return const SizedBox.shrink();
-    }
-
-    return FutureBuilder(
-      future: status.search(keyword: widget.keyword),
+    return FutureBuilder<SearchResultSchema?>(
+      future: _searchFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Align(
+          return const Align(
             alignment: Alignment.topCenter,
-            child: const LinearProgressIndicator(),
+            child: LinearProgressIndicator(),
           );
-        } else if (snapshot.hasError) {
-          return NoResult();
+        } else if (snapshot.hasError || snapshot.data == null) {
+          return const NoResult();
         }
 
         final SearchResultSchema schema = snapshot.data!;
@@ -174,7 +164,7 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
 
   Widget buildContent(SearchResultSchema schema) {
     if (schema.isEmpty) {
-      return NoResult();
+      return const NoResult();
     }
 
     return SwipeTabView(

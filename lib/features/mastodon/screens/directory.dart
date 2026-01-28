@@ -16,15 +16,12 @@ class DirectoryAccount extends ConsumerStatefulWidget {
   ConsumerState<DirectoryAccount> createState() => _DirectoryAccountState();
 }
 
-class _DirectoryAccountState extends ConsumerState<DirectoryAccount> {
+class _DirectoryAccountState extends ConsumerState<DirectoryAccount> with PaginatedListMixin {
   final double loadingThreshold = 180;
 
   late final ScrollController controller = ScrollController();
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
-  bool isRefresh = false;
-  bool isLoading = false;
-  bool isCompleted = false;
   List<AccountSchema> accounts = [];
   Set<String> accountIDs = {};
 
@@ -51,7 +48,7 @@ class _DirectoryAccountState extends ConsumerState<DirectoryAccount> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          (isLoading && !isRefresh) ? ClockProgressIndicator() : const SizedBox.shrink(),
+          buildLoadingIndicator(),
           Flexible(child: buildContent()),
         ],
       ),
@@ -78,32 +75,28 @@ class _DirectoryAccountState extends ConsumerState<DirectoryAccount> {
 
   // Detect the scroll event and load more statuses when the user scrolls to the
   // almost bottom of the list.
-  void onScroll() async {
+  Future<void> onScroll() async {
     if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
       onLoad();
     }
   }
 
   // Load more accounts from the current selected Mastodon server.
-  void onLoad() async {
-    if (isLoading || isCompleted) {
-      return;
-    }
+  Future<void> onLoad() async {
+    if (shouldSkipLoad) return;
 
-    if (mounted) setState(() => isLoading = true);
+    setLoading(true);
 
-    final int offset = this.accounts.length;
-    final List<AccountSchema> accounts = await status?.fetchDirectoryAccounts(offset: offset) ?? [];
-    final List<AccountSchema> newAccounts = accounts.where((e) => !accountIDs.contains(e.id)).toList();
+    final int offset = accounts.length;
+    final List<AccountSchema> fetchedAccounts = await status?.fetchDirectoryAccounts(offset: offset) ?? [];
+    final List<AccountSchema> newAccounts = fetchedAccounts.where((e) => !accountIDs.contains(e.id)).toList();
 
     if (mounted) {
       setState(() {
-        isRefresh = false;
-        isLoading = false;
-        isCompleted = accounts.isEmpty;
-        this.accounts.addAll(newAccounts);
+        accounts.addAll(newAccounts);
         accountIDs.addAll(newAccounts.map((e) => e.id));
       });
+      markLoadComplete(isEmpty: fetchedAccounts.isEmpty);
     }
   }
 }

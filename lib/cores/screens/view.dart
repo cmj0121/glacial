@@ -48,22 +48,25 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
       initialPage: visibleIndexes.indexOf(initialIndex),
     );
 
-    tabController.addListener(() {
-      if (tabController.indexIsChanging) {
-        final int pageIndex = visibleIndexes.indexOf(tabController.index);
-        pageController.jumpToPage(pageIndex);
-      }
-    });
+    tabController.addListener(_onTabControllerChange);
   }
 
   @override
   void dispose() {
+    tabController.removeListener(_onTabControllerChange);
     if (widget.tabController == null) {
       // If the tabController is not provided, dispose it to avoid memory leak.
       tabController.dispose();
     }
     pageController.dispose();
     super.dispose();
+  }
+
+  void _onTabControllerChange() {
+    if (tabController.indexIsChanging) {
+      final int pageIndex = visibleIndexes.indexOf(tabController.index);
+      pageController.jumpToPage(pageIndex);
+    }
   }
 
   @override
@@ -187,14 +190,17 @@ class _SwipeTabBarState extends State<SwipeTabBar> with TickerProviderStateMixin
     );
 
     // register the controller trigger tab change
-    widget.controller?.addListener(() => onTabTap(widget.controller!.index));
+    widget.controller?.addListener(_onExternalTabChange);
   }
 
   @override
   void dispose() {
+    widget.controller?.removeListener(_onExternalTabChange);
     controller.dispose();
     super.dispose();
   }
+
+  void _onExternalTabChange() => onTabTap(widget.controller!.index);
 
   @override
   Widget build(BuildContext context) {

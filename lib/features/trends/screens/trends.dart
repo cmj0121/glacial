@@ -22,9 +22,6 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   late final TabController controller;
 
-  late int selectedIndex;
-  late Widget? child;
-
   @override
   void initState() {
     super.initState();
@@ -32,6 +29,12 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
       length: tabs.length,
       vsync: this,
     );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -83,15 +86,12 @@ class Trends extends StatefulWidget {
   State<Trends> createState() => _TrendsState();
 }
 
-class _TrendsState extends State<Trends> {
+class _TrendsState extends State<Trends> with PaginatedListMixin {
   final double loadingThreshold = 180;
 
   late final ItemScrollController itemScrollController = ItemScrollController();
   late final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
-  bool isRefresh = false;
-  bool isLoading = false;
-  bool isCompleted = false;
   List<dynamic> trends = [];
 
   @override
@@ -116,7 +116,7 @@ class _TrendsState extends State<Trends> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          (isLoading && !isRefresh) ? ClockProgressIndicator() : const SizedBox.shrink(),
+          buildLoadingIndicator(),
           Flexible(child: buildContent()),
         ],
       ),
@@ -182,33 +182,22 @@ class _TrendsState extends State<Trends> {
 
   // Clean-up and refresh the timeline when the user pulls down the list.
   Future<void> onRefresh() async {
-    setState(() {
-      isRefresh = true;
-      isLoading = false;
-      isCompleted = false;
-    });
-
-    await onLoad();
+    setState(() => trends.clear());
+    await refreshList(onLoad);
   }
 
   // Load the statuses from the current selected Mastodon server.
   Future<void> onLoad() async {
-    if (isLoading || isCompleted) {
-      return;
-    }
+    if (shouldSkipLoad) return;
 
-    if (mounted) setState(() => isLoading = true);
+    setLoading(true);
 
     final int offset = trends.length;
     final List<dynamic> newTrends = await widget.status.fetchTrends(widget.type, offset: offset);
 
     if (mounted) {
-      setState(() {
-        isRefresh = false;
-        isLoading = false;
-        isCompleted = newTrends.isEmpty;
-        trends.addAll(newTrends);
-      });
+      setState(() => trends.addAll(newTrends));
+      markLoadComplete(isEmpty: newTrends.isEmpty);
     }
   }
 }

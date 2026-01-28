@@ -29,6 +29,12 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
@@ -56,8 +62,6 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
       ),
       trailing: IconButton(
         icon: const Icon(Icons.playlist_add, size: iconSize),
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         onPressed: onSubmitted,
       ),
     );
@@ -77,7 +81,7 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
     );
   }
 
-  void onSubmitted() async {
+  Future<void> onSubmitted() async {
     final String name = controller.text.trim();
     if (name.isEmpty) return;
 
@@ -86,7 +90,7 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
     onLoad();
   }
 
-  void onLoad() async {
+  Future<void> onLoad() async {
     final List<ListSchema> lists = await status?.getLists() ?? [];
     setState(() {
       this.lists = lists;
@@ -94,7 +98,7 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
     });
   }
 
-  void onRemove(int index) async {
+  Future<void> onRemove(int index) async {
     if (index < 0 || index >= lists.length) return;
 
     final String id = lists[index].id;
@@ -141,8 +145,6 @@ class LiteTimeline extends ConsumerStatefulWidget {
             title: Text(schema.title, style: style, overflow: TextOverflow.ellipsis),
             trailing: IconButton(
               icon: Icon(Icons.delete_forever_rounded, size: tabSize, color: Theme.of(context).colorScheme.error),
-              hoverColor: Colors.transparent,
-              focusColor: Colors.transparent,
               onPressed: onRemove,
             ),
           ),
@@ -160,6 +162,7 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
 
   late ListSchema schema = widget.schema;
   late bool showMembers = false;
+  Future<List<AccountSchema>>? _membersFuture;
 
   @override
   Widget build(BuildContext context) {
@@ -204,15 +207,14 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
             size: tabSize,
             color: showMembers ? Theme.of(context).colorScheme.primary : null,
           ),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
-          onPressed: () => setState(() => showMembers = !showMembers),
+          onPressed: () => setState(() {
+            showMembers = !showMembers;
+            if (showMembers) _membersFuture = status?.getListAccounts(schema.id);
+          }),
         ),
         IconButton(
           icon: Icon(schema.replyPolicy.icon, size: tabSize),
           tooltip: schema.replyPolicy.tooltip(context),
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
           onPressed: () async {
             final int index = ReplyPolicyType.values.indexOf(schema.replyPolicy);
             final int nextIndex = (index + 1) % ReplyPolicyType.values.length;
@@ -225,8 +227,6 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
           tooltip: schema.exclusive ?
             AppLocalizations.of(context)?.txt_list_exclusive ?? "Exclusive List" :
             AppLocalizations.of(context)?.txt_list_inclusive ?? "Non-Exclusive List",
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
           onPressed: () async {
             await status?.updateList(id: schema.id, title: schema.title, exclusive: !schema.exclusive);
             onReload();
@@ -248,19 +248,19 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
 
   // Build the list of the accounts in the list.
   Widget buildMembers() {
-    return FutureBuilder(
-      future: status?.getListAccounts(schema.id),
-      builder: (context, AsyncSnapshot<List<AccountSchema>> snapshot) {
+    return FutureBuilder<List<AccountSchema>>(
+      future: _membersFuture,
+      builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Align(
+          return const Align(
             alignment: Alignment.topCenter,
-            child: const ClockProgressIndicator(),
+            child: ClockProgressIndicator(),
           );
-        } else if (snapshot.hasError) {
-          return NoResult();
+        } else if (snapshot.hasError || snapshot.data == null) {
+          return const NoResult();
         }
 
-        final List<AccountSchema> accounts = snapshot.data ?? [];
+        final List<AccountSchema> accounts = snapshot.data!;
         if (accounts.isEmpty) {
           final String message = AppLocalizations.of(context)?.txt_no_result ?? "No results found";
           return NoResult(message: message, icon: Icons.coffee);
@@ -274,11 +274,9 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
               title: AccountLite(schema: account),
               trailing: IconButton(
                 icon: Icon(Icons.delete_forever_rounded, size: tabSize, color: Theme.of(context).colorScheme.error),
-                hoverColor: Colors.transparent,
-                focusColor: Colors.transparent,
                 onPressed: () async {
                   await status?.removeAccountsFromList(schema.id, [account.id]);
-                  onReload();
+                  setState(() => _membersFuture = status?.getListAccounts(schema.id));
                 },
               ),
             );
@@ -289,7 +287,7 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
   }
 
   // Pop-up the dialog and find the possibble accounts to add to the list.
-  void onSearchAccount(String name) async {
+  Future<void> onSearchAccount(String name) async {
     if (name.isEmpty) return;
 
     showDialog(
@@ -306,7 +304,7 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
     );
   }
 
-  void onReload() async {
+  Future<void> onReload() async {
     final ListSchema? schema = await status?.getList(this.schema.id);
     setState(() => this.schema = schema ?? this.schema);
   }
@@ -327,11 +325,9 @@ class ListAccountWidget extends ConsumerStatefulWidget {
   ConsumerState<ListAccountWidget> createState() => _ListAccountWidgetState();
 }
 
-class _ListAccountWidgetState extends ConsumerState<ListAccountWidget> {
+class _ListAccountWidgetState extends ConsumerState<ListAccountWidget> with PaginatedListMixin {
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
-  bool isLoading = false;
-  bool isCompleted = false;
   List<AccountSchema> accounts = [];
 
   @override
@@ -364,19 +360,18 @@ class _ListAccountWidgetState extends ConsumerState<ListAccountWidget> {
     );
   }
 
-  void onLoad() async {
-    if (isLoading || isCompleted) return;
+  Future<void> onLoad() async {
+    if (shouldSkipLoad) return;
 
-    setState(() => isLoading = true);
+    setLoading(true);
 
     final int count = this.accounts.length;
     final List<AccountSchema> accounts = await status?.searchAccounts(widget.name, offset: count, following: true) ?? [];
 
-    setState(() {
-      isLoading = false;
-      isCompleted = accounts.isEmpty;
-      this.accounts.addAll(accounts);
-    });
+    if (mounted) {
+      setState(() => this.accounts.addAll(accounts));
+      markLoadComplete(isEmpty: accounts.isEmpty);
+    }
   }
 }
 

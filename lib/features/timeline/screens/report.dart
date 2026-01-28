@@ -27,7 +27,7 @@ class ReportDialog extends ConsumerStatefulWidget {
   ConsumerState<ReportDialog> createState() => _ReportDialogState();
 }
 
-class _ReportDialogState extends ConsumerState<ReportDialog> {
+class _ReportDialogState extends ConsumerState<ReportDialog> with PaginatedListMixin {
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   late final ScrollController controller = ScrollController();
   late final PageController pageController = PageController();
@@ -38,8 +38,6 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
   ReportCategoryType? category;
   ReportStep step = ReportStep.status;
 
-  bool isLoading = false;
-  bool isCompleted = false;
   String? maxId;
 
   late List<StatusSchema> statuses = [];
@@ -56,6 +54,14 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
 
     steps = ReportStep.values.where((step) => hasRules || step != ReportStep.rules).toList();
     categories = ReportCategoryType.values.where((type) => hasRules || type != ReportCategoryType.violation).toList();
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(onScroll);
+    controller.dispose();
+    pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -242,7 +248,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
   }
 
   // On scroll to the bottom load more statuses for selection.
-  void onScroll() async {
+  Future<void> onScroll() async {
     final double loadingThreshold = 200.0;
     if (controller.position.pixels >= controller.position.maxScrollExtent - loadingThreshold) {
       await onLoad();
@@ -251,21 +257,20 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
 
   // On load the user's statuses for selection.
   Future<void> onLoad() async {
-    if (isLoading || isCompleted) {
-      return;
-    }
+    if (shouldSkipLoad) return;
 
-    setState(() => isLoading = true);
+    setLoading(true);
 
     final String? maxId = this.maxId ?? (statuses.isEmpty ? null : statuses.last.id);
     final (fetched, newMaxId) = await status?.fetchTimeline(TimelineType.user, account: widget.account, maxId: maxId) ?? (null, null);
 
-    setState(() {
-      isLoading = false;
-      isCompleted = (fetched?.isEmpty ?? true);
-      statuses.addAll(fetched ?? []);
-      this.maxId = newMaxId;
-    });
+    if (mounted) {
+      setState(() {
+        statuses.addAll(fetched ?? []);
+        this.maxId = newMaxId;
+      });
+      markLoadComplete(isEmpty: fetched?.isEmpty ?? true);
+    }
   }
 
   // File the report to the server.

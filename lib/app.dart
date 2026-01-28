@@ -10,6 +10,18 @@ import 'package:glacial/features/screens.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
+// Global IconButton theme to disable hover/focus highlight across the app.
+final IconButtonThemeData _iconButtonTheme = IconButtonThemeData(
+  style: ButtonStyle(
+    overlayColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.hovered) || states.contains(WidgetState.focused)) {
+        return Colors.transparent;
+      }
+      return null;
+    }),
+  ),
+);
+
 // The main application widget that contains the router and the theme.
 class CoreApp extends ConsumerStatefulWidget {
   final SystemPreferenceSchema? schema;
@@ -38,8 +50,16 @@ class _CoreAppState extends ConsumerState<CoreApp> {
 
       // The theme mode
       themeMode: schema?.theme ?? ThemeMode.dark,
-      theme: ThemeData(useMaterial3: true, brightness: Brightness.light),
-      darkTheme: ThemeData(useMaterial3: true, brightness: Brightness.dark),
+      theme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.light,
+        iconButtonTheme: _iconButtonTheme,
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        iconButtonTheme: _iconButtonTheme,
+      ),
 
       // Localizations support for the app.
       locale: schema?.locale,
@@ -254,8 +274,8 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         GoRoute(
           path: RoutePath.profile.path,
           builder: (BuildContext context, GoRouterState state) {
-            final AccountSchema acocunt = state.extra as AccountSchema;
-            return AccountProfile(schema: acocunt);
+            final AccountSchema account = state.extra as AccountSchema;
+            return AccountProfile(schema: account);
           },
         ),
         GoRoute(
