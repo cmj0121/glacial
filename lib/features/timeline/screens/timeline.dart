@@ -134,12 +134,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
   void initState() {
     super.initState();
 
-    itemPositionsListener.itemPositions.addListener(() {
-      final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
-      final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
-
-      if (lastIndex != null && lastIndex > statuses.length - 5) onLoad();
-    });
+    itemPositionsListener.itemPositions.addListener(_onPositionChange);
 
     GlacialHome.itemScrollToTop = itemScrollController;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -159,8 +154,16 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   @override
   void dispose() {
+    itemPositionsListener.itemPositions.removeListener(_onPositionChange);
     timer?.cancel();
     super.dispose();
+  }
+
+  void _onPositionChange() {
+    final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
+    final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
+
+    if (lastIndex != null && lastIndex > statuses.length - 5) onLoad();
   }
 
   @override

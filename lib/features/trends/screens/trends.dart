@@ -98,15 +98,23 @@ class _TrendsState extends State<Trends> with PaginatedListMixin {
   void initState() {
     super.initState();
 
-    itemPositionsListener.itemPositions.addListener(() {
-      final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
-      final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
-
-      if (lastIndex != null && lastIndex > trends.length - 5) onLoad();
-    });
+    itemPositionsListener.itemPositions.addListener(_onPositionChange);
 
     GlacialHome.itemScrollToTop = itemScrollController;
     onLoad();
+  }
+
+  @override
+  void dispose() {
+    itemPositionsListener.itemPositions.removeListener(_onPositionChange);
+    super.dispose();
+  }
+
+  void _onPositionChange() {
+    final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
+    final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
+
+    if (lastIndex != null && lastIndex > trends.length - 5) onLoad();
   }
 
   @override
@@ -162,7 +170,7 @@ class _TrendsState extends State<Trends> with PaginatedListMixin {
                 return Tooltip(
                   message: suggestion.source.tooltip(context),
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: 6),
+                    padding: const EdgeInsets.only(bottom: 6),
                     child: child,
                   ),
                 );
