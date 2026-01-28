@@ -113,7 +113,7 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
   Future<void> onLoad() async {
     final int count = await status?.getUnreadGroupCount() ?? 0;
 
-    if (count> unreadCount) { await onNotify(count); }
+    if (count > unreadCount) { await onNotify(count); }
     setState(() => unreadCount = count);
   }
 
@@ -147,15 +147,23 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
   void initState() {
     super.initState();
 
-    itemPositionsListener.itemPositions.addListener(() {
-      final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
-      final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
-
-      if (lastIndex != null && lastIndex > groups.length - 5) onLoad();
-    });
+    itemPositionsListener.itemPositions.addListener(_onPositionChange);
 
     GlacialHome.itemScrollToTop = itemScrollController;
     WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  void dispose() {
+    itemPositionsListener.itemPositions.removeListener(_onPositionChange);
+    super.dispose();
+  }
+
+  void _onPositionChange() {
+    final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
+    final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
+
+    if (lastIndex != null && lastIndex > groups.length - 5) onLoad();
   }
 
   @override
