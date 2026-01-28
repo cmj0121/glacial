@@ -149,7 +149,7 @@ class _FollowedHashtagButtonState extends ConsumerState<FollowedHashtagButton> {
 
   Future<void> onReload() async {
     final HashtagSchema? hashtag = await status?.getHashtag(widget.hashtag);
-    setState(() => schema = hashtag);
+    if (mounted) setState(() => schema = hashtag);
   }
 
   bool get isSignedIn => status?.accessToken?.isNotEmpty == true;

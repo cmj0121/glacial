@@ -739,12 +739,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
 
   Future<void> onChangeAvatar() async {
     final XFile? file = await onImagePicker();
-    setState(() => schema = schema.copyWith(avatar: file == null ? null : File(file.path)));
+    if (mounted) setState(() => schema = schema.copyWith(avatar: file == null ? null : File(file.path)));
   }
 
   Future<void> onChangeBanner() async {
     final XFile? file = await onImagePicker();
-    setState(() => schema = schema.copyWith(header: file == null ? null : File(file.path)));
+    if (mounted) setState(() => schema = schema.copyWith(header: file == null ? null : File(file.path)));
   }
 
   // Pop-up the image picker and return the picked image path.

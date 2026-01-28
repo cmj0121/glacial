@@ -365,7 +365,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
 
     final String filepath = media.path;
     final AttachmentSchema attachment = await status!.uploadMedia(filepath);
-    setState(() => medias.add(attachment));
+    if (mounted) setState(() => medias.add(attachment));
   }
 
   // The callback when the user clicks the post button.

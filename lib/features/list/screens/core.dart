@@ -92,10 +92,12 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
 
   Future<void> onLoad() async {
     final List<ListSchema> lists = await status?.getLists() ?? [];
-    setState(() {
-      this.lists = lists;
-      loaded = true;
-    });
+    if (mounted) {
+      setState(() {
+        this.lists = lists;
+        loaded = true;
+      });
+    }
   }
 
   Future<void> onRemove(int index) async {
@@ -103,7 +105,7 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
 
     final String id = lists[index].id;
     await status?.deleteList(id);
-    setState(() => lists.removeAt(index));
+    if (mounted) setState(() => lists.removeAt(index));
   }
 }
 
@@ -276,7 +278,7 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
                 icon: Icon(Icons.delete_forever_rounded, size: tabSize, color: Theme.of(context).colorScheme.error),
                 onPressed: () async {
                   await status?.removeAccountsFromList(schema.id, [account.id]);
-                  setState(() => _membersFuture = status?.getListAccounts(schema.id));
+                  if (mounted) setState(() => _membersFuture = status?.getListAccounts(schema.id));
                 },
               ),
             );
@@ -306,7 +308,7 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
 
   Future<void> onReload() async {
     final ListSchema? schema = await status?.getList(this.schema.id);
-    setState(() => this.schema = schema ?? this.schema);
+    if (mounted) setState(() => this.schema = schema ?? this.schema);
   }
 }
 
