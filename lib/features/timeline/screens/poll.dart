@@ -202,7 +202,9 @@ class _PollFormState extends ConsumerState<PollForm> {
 
   @override
   void dispose() {
-    controllers.map((controller) => controller.dispose());
+    for (final controller in controllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 

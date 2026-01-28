@@ -471,10 +471,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
 
     nameController.dispose();
     noteController.dispose();
-    fieldControllers.map(((c) {
+    for (final c in fieldControllers) {
       c.$1.dispose();
       c.$2.dispose();
-    }));
+    }
 
     super.dispose();
   }
