@@ -80,7 +80,7 @@ class _FiltersState extends ConsumerState<Filters> {
         );
 
         return Dismissible(
-          key: UniqueKey(),
+          key: ValueKey(filter.id),
           background: Container(
             alignment: Alignment.centerLeft,
             color: Theme.of(context).colorScheme.error,
@@ -402,7 +402,7 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
             if (schema == null) return const SizedBox.shrink();
 
             return Dismissible(
-              key: UniqueKey(),
+              key: ValueKey(s.statusId),
               background: Container(
                 alignment: Alignment.centerLeft,
                 color: Theme.of(context).colorScheme.error,
