@@ -98,9 +98,12 @@ extension TimelineExtensions on AccessStatusSchema {
     ).toList();
 
     // save the related info to the in-memory cache.
-    status.map((s) => cacheAccount(s.account)).toList();
-    status.map((s) => saveStatusToCache(s)).toList();
-    status.map((s) async => await getAccount(s.inReplyToAccountID)).toList();
+    for (final s in status) {
+      cacheAccount(s.account);
+      saveStatusToCache(s);
+      // Fire-and-forget prefetch of reply account (intentionally not awaited)
+      if (s.inReplyToAccountID != null) getAccount(s.inReplyToAccountID);
+    }
 
     logger.d("complete load the timeline of type: $type, count: ${status.length}");
     return (status, nextId);

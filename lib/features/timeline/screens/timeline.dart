@@ -255,7 +255,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     final int newIndex = widget.pref?.loadedTop == true ? 0 : (unreaded.length + positions.first.index);
 
     setState(() {
-      statuses = [...unreaded, ...statuses];
+      statuses.insertAll(0, unreaded);
       unreaded.clear();
     });
 
@@ -284,7 +284,8 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     );
 
     // Check the new statuses is repeating the old ones to avoid infinite loading.
-    final bool isRepeat = schemas.map((s) => s.id).toSet().intersection(statuses.map((s) => s.id).toSet()).length == schemas.length;
+    final existingIds = statuses.map((s) => s.id).toSet();
+    final bool isRepeat = schemas.isNotEmpty && schemas.every((s) => existingIds.contains(s.id));
 
     if (mounted) {
       setState(() {
@@ -308,7 +309,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
       if (schemas.isEmpty) break;
 
-      setState(() => unreaded = [...schemas, ...unreaded]);
+      setState(() => unreaded.insertAll(0, schemas));
       minId = schemas.first.id;
 
       await Future.delayed(const Duration(milliseconds: 750));

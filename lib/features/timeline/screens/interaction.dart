@@ -15,6 +15,8 @@ import 'package:glacial/features/screens.dart';
 // status, and wraps the interaction more button if there are more actions
 // than the available space.
 class InteractionBar extends ConsumerWidget {
+  static final Version _minQuoteVersion = Version.parse('4.5.0');
+
   final StatusSchema schema;
   final ValueChanged<StatusSchema>? onReload;
   final VoidCallback? onDeleted;
@@ -31,11 +33,12 @@ class InteractionBar extends ConsumerWidget {
     final double itemWidth = 68.0;
     final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
     final bool isSelfStatus = schema.account.id == status.account?.id;
+    final Version serverVersion = Version.parse(status.server?.version ?? '0.0.0');
     final List<StatusInteraction> actions = StatusInteraction.values.where((a) {
       switch (a) {
         case StatusInteraction.quote:
           // Only 4.5.0+ supports quote interaction
-          return Version.parse(status.server?.version ?? '0.0.0') >= Version.parse('4.5.0');
+          return serverVersion >= _minQuoteVersion;
         case StatusInteraction.edit:
         case StatusInteraction.policy:
         case StatusInteraction.delete:

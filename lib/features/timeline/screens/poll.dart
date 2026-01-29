@@ -54,8 +54,9 @@ class _PollState extends ConsumerState<Poll> {
   List<Widget> buildOptions(PollSchema schema) {
     switch (schema.multiple) {
       case true:
-        return schema.options.map((option) {
-          final int index = schema.options.indexOf(option);
+        return schema.options.asMap().entries.map((entry) {
+          final int index = entry.key;
+          final PollOptionSchema option = entry.value;
 
           return CheckboxListTile(
             title: Text(option.title),
@@ -75,11 +76,10 @@ class _PollState extends ConsumerState<Poll> {
               setState(() => selectedOption = value);
             },
             child: Column(
-              children: schema.options.map((option) {
-                final int index = schema.options.indexOf(option);
+              children: schema.options.asMap().entries.map((entry) {
                 return RadioListTile(
-                  title: Text(option.title),
-                  value: index,
+                  title: Text(entry.value.title),
+                  value: entry.key,
                 );
               }).toList(),
             ),
@@ -92,8 +92,9 @@ class _PollState extends ConsumerState<Poll> {
   List<Widget> buildVoteResult(PollSchema schema) {
     final int totalCount = schema.options.fold(0, (sum, o) => sum + (o.votesCount ?? 0));
 
-    return schema.options.map((option) {
-      final int index = schema.options.indexOf(option);
+    return schema.options.asMap().entries.map((entry) {
+      final int index = entry.key;
+      final PollOptionSchema option = entry.value;
 
       // If the poll is already voted, display the selected options.
       final int count = option.votesCount ?? 0;
