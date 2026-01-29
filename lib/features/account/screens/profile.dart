@@ -224,13 +224,12 @@ class ProfilePage extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         HtmlDone(html: schema.note),
-        ...schema.fields.map((field) => buildField(context, field)),
+        ...schema.fields.asMap().entries.map((e) => buildField(context, e.value, e.key)),
       ],
     );
   }
 
-  Widget buildField(BuildContext context, FieldSchema field) {
-    final int index = schema.fields.indexOf(field);
+  Widget buildField(BuildContext context, FieldSchema field, int index) {
     final TextStyle? labelStyle = Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).disabledColor);
 
     return ListTile(
