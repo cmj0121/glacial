@@ -179,8 +179,10 @@ extension StatusExtensions on AccessStatusSchema {
     final List<StatusSchema> status = json.map((e) => StatusSchema.fromScheduleJson(e, account)).toList();
 
     // save the related info to the in-memory cache.
-    status.map((s) => cacheAccount(s.account)).toList();
-    status.map((s) async => await getAccount(s.inReplyToAccountID)).toList();
+    for (final s in status) {
+      cacheAccount(s.account);
+      if (s.inReplyToAccountID != null) getAccount(s.inReplyToAccountID);
+    }
 
     logger.d("complete load the scheduled status timeline, count: ${status.length}");
     return status;
@@ -194,7 +196,9 @@ extension StatusExtensions on AccessStatusSchema {
     final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e)).toList();
 
     // save the related info to the in-memory cache.
-    accounts.map((a) => cacheAccount(a)).toList();
+    for (final a in accounts) {
+      cacheAccount(a);
+    }
     logger.d("complete load the reblogged by accounts, count: ${accounts.length}");
     return accounts;
   }
@@ -207,7 +211,9 @@ extension StatusExtensions on AccessStatusSchema {
     final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e)).toList();
 
     // save the related info to the in-memory cache.
-    accounts.map((a) => cacheAccount(a)).toList();
+    for (final a in accounts) {
+      cacheAccount(a);
+    }
     logger.d("complete load the favourited by accounts, count: ${accounts.length}");
     return accounts;
   }
