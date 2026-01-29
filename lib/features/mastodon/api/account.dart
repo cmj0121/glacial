@@ -98,9 +98,17 @@ extension AccountsExtensions on AccessStatusSchema {
       return [];
     }
 
-    // Check if the accounts are already cached.
-    final List<AccountSchema> cachedAccounts = accountIDs.map((id) => lookupAccount(id)).whereType<AccountSchema>().toList();
-    final List<String> uncachedIDs = accountIDs.where((id) => lookupAccount(id) == null).toList();
+    // Check if the accounts are already cached (single pass lookup).
+    final List<AccountSchema> cachedAccounts = [];
+    final List<String> uncachedIDs = [];
+    for (final id in accountIDs) {
+      final account = lookupAccount(id);
+      if (account != null) {
+        cachedAccounts.add(account);
+      } else {
+        uncachedIDs.add(id);
+      }
+    }
 
     if (uncachedIDs.isEmpty) {
       return cachedAccounts;
