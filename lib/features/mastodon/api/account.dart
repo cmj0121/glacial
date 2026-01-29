@@ -99,8 +99,7 @@ extension AccountsExtensions on AccessStatusSchema {
     }
 
     // Check if the accounts are already cached.
-    final List<AccountSchema?> cached = accountIDs.map((id) => lookupAccount(id)).where((a) => a != null).toList();
-    final List<AccountSchema> cachedAccounts = cached.cast<AccountSchema>();
+    final List<AccountSchema> cachedAccounts = accountIDs.map((id) => lookupAccount(id)).whereType<AccountSchema>().toList();
     final List<String> uncachedIDs = accountIDs.where((id) => lookupAccount(id) == null).toList();
 
     if (uncachedIDs.isEmpty) {
@@ -113,7 +112,9 @@ extension AccountsExtensions on AccessStatusSchema {
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
     final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
 
-    accounts.map((a) => cacheAccount(a)).toList();
+    for (final a in accounts) {
+      cacheAccount(a);
+    }
     return [...cachedAccounts, ...accounts];
   }
 
@@ -173,8 +174,11 @@ extension AccountsExtensions on AccessStatusSchema {
     final List<StatusSchema> status = json.map((e) => StatusSchema.fromJson(e)).toList();
 
     // save the related info to the in-memory cache.
-    status.map((s) => cacheAccount(s.account)).toList();
-    status.map((s) async => await getAccount(s.inReplyToAccountID)).toList();
+    for (final s in status) {
+      cacheAccount(s.account);
+      // Fire-and-forget prefetch of reply account (intentionally not awaited)
+      if (s.inReplyToAccountID != null) getAccount(s.inReplyToAccountID);
+    }
 
     logger.d("complete load the account timelnie: ${status.length}");
     return status;
@@ -189,7 +193,9 @@ extension AccountsExtensions on AccessStatusSchema {
     final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
 
     logger.d("complete load the followers of account: ${account.id}, count: ${accounts.length}");
-    accounts.map((a) => cacheAccount(a)).toList();
+    for (final a in accounts) {
+      cacheAccount(a);
+    }
     return (accounts, nextId);
   }
 
@@ -202,7 +208,9 @@ extension AccountsExtensions on AccessStatusSchema {
     final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
 
     logger.d("complete load the following accounts of account: ${account.id}, count: ${accounts.length}");
-    accounts.map((a) => cacheAccount(a)).toList();
+    for (final a in accounts) {
+      cacheAccount(a);
+    }
     return (accounts, nextId);
   }
 
@@ -219,7 +227,9 @@ extension AccountsExtensions on AccessStatusSchema {
     final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
 
     logger.d("complete load the muted accounts: ${accounts.length}");
-    accounts.map((a) => cacheAccount(a)).toList();
+    for (final a in accounts) {
+      cacheAccount(a);
+    }
     return (accounts, nextId);
   }
 
@@ -236,7 +246,9 @@ extension AccountsExtensions on AccessStatusSchema {
     final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
 
     logger.d("complete load the muted accounts: ${accounts.length}");
-    accounts.map((a) => cacheAccount(a)).toList();
+    for (final a in accounts) {
+      cacheAccount(a);
+    }
     return (accounts, nextId);
   }
 
@@ -312,7 +324,9 @@ extension AccountsExtensions on AccessStatusSchema {
     final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
 
     logger.d("complete search accounts: ${accounts.length}");
-    accounts.map((a) => cacheAccount(a)).toList();
+    for (final a in accounts) {
+      cacheAccount(a);
+    }
     return accounts;
   }
 
@@ -328,7 +342,9 @@ extension AccountsExtensions on AccessStatusSchema {
     final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
 
     logger.d("complete load the follow requests: ${accounts.length}");
-    accounts.map((a) => cacheAccount(a)).toList();
+    for (final a in accounts) {
+      cacheAccount(a);
+    }
     return accounts;
   }
 
