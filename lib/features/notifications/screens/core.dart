@@ -275,7 +275,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
         border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
       ),
       child: Padding(
-        padding: EdgeInsets.only(top: 16, bottom: 8),
+        padding: const EdgeInsets.only(top: 16, bottom: 8),
         child: Align(
           alignment: Alignment.topLeft,
           child: buildContent(),

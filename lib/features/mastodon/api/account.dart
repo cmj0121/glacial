@@ -128,7 +128,7 @@ extension AccountsExtensions on AccessStatusSchema {
 
   // Save the account data schema to the in-memory cache.
   void cacheAccount(AccountSchema account) {
-    if (domain == null || domain?.isNotEmpty != true) {
+    if (domain?.isEmpty ?? true) {
       logger.w("server is not set, cannot save account: ${account.id}");
       return;
     }
