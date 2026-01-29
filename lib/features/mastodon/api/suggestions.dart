@@ -32,7 +32,6 @@ extension SuggestionsExtensions on AccessStatusSchema {
 
     final String endpoint = '/api/v1/suggestions/$accountID';
     await deleteAPI(endpoint);
-    return;
   }
 }
 
