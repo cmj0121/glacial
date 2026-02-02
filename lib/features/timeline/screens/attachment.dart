@@ -33,30 +33,39 @@ class Attachments extends StatelessWidget {
 
   Widget buildContent(BuildContext context) {
     if (schemas.isEmpty) {
-      // No attachments to show
       return const SizedBox.shrink();
     }
 
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: schemas.map((schema) {
-          return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(1),
-              child: Attachment(schema: schema),
+      children: schemas.asMap().entries.map((entry) {
+        final int index = entry.key;
+        final AttachmentSchema schema = entry.value;
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(1),
+            child: Attachment(
+              schema: schema,
+              schemas: schemas,
+              initialIndex: index,
             ),
-          );
-        }).toList(),
+          ),
+        );
+      }).toList(),
     );
   }
 }
 
 class Attachment extends StatelessWidget {
   final AttachmentSchema schema;
+  final List<AttachmentSchema>? schemas;
+  final int initialIndex;
 
   const Attachment({
     super.key,
     required this.schema,
+    this.schemas,
+    this.initialIndex = 0,
   });
 
   @override
@@ -66,7 +75,11 @@ class Attachment extends StatelessWidget {
         alignment: Alignment.center,
         maxWidth: double.infinity,
         maxHeight: double.infinity,
-        child: MediaHero(child: buildContent()),
+        child: MediaHero(
+          schemas: schemas ?? [schema],
+          initialIndex: initialIndex,
+          child: buildContent(),
+        ),
       ),
     );
   }
