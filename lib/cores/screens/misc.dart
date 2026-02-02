@@ -208,6 +208,7 @@ class _MediaGalleryState extends State<MediaGallery> {
   late PageController pageController;
   late int currentIndex;
   bool isZoomed = false;
+  double backgroundOpacity = 1.0;
 
   @override
   void initState() {
@@ -228,10 +229,20 @@ class _MediaGalleryState extends State<MediaGallery> {
     }
   }
 
+  void onDragUpdate(double dragDistance) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final opacity = 1.0 - (dragDistance.abs() / screenHeight).clamp(0.0, 0.5);
+    setState(() => backgroundOpacity = opacity);
+  }
+
+  void onDragEnd() {
+    setState(() => backgroundOpacity = 1.0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.black.withValues(alpha: backgroundOpacity),
       body: SafeArea(
         child: Stack(
           children: [
@@ -256,6 +267,8 @@ class _MediaGalleryState extends State<MediaGallery> {
         return MediaViewer(
           onDismiss: () => Navigator.of(context).maybePop(),
           onZoomChanged: onZoomChanged,
+          onDragUpdate: onDragUpdate,
+          onDragEnd: onDragEnd,
           child: buildMediaContent(schema),
         );
       },
@@ -322,12 +335,16 @@ class MediaViewer extends StatefulWidget {
   final Widget child;
   final VoidCallback? onDismiss;
   final ValueChanged<bool>? onZoomChanged;
+  final ValueChanged<double>? onDragUpdate;
+  final VoidCallback? onDragEnd;
 
   const MediaViewer({
     super.key,
     required this.child,
     this.onDismiss,
     this.onZoomChanged,
+    this.onDragUpdate,
+    this.onDragEnd,
   });
 
   @override
@@ -397,13 +414,17 @@ class _MediaViewerState extends State<MediaViewer> with SingleTickerProviderStat
     return GestureDetector(
       onVerticalDragUpdate: isZoomed ? null : (details) {
         setState(() => offset += Offset(0, details.delta.dy));
+        widget.onDragUpdate?.call(offset.dy);
       },
       onVerticalDragEnd: isZoomed ? null : (details) {
         final screenHeight = MediaQuery.of(context).size.height;
 
         if (offset.dy.abs() > threshold * screenHeight) {
           onDismiss();
+          return;
         }
+
+        widget.onDragEnd?.call();
 
         offsetAnimation = Tween<Offset>(begin: offset, end: Offset.zero).animate(
           CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
