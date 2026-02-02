@@ -207,6 +207,7 @@ class MediaGallery extends StatefulWidget {
 class _MediaGalleryState extends State<MediaGallery> {
   late PageController pageController;
   late int currentIndex;
+  bool isZoomed = false;
 
   @override
   void initState() {
@@ -219,6 +220,12 @@ class _MediaGalleryState extends State<MediaGallery> {
   void dispose() {
     pageController.dispose();
     super.dispose();
+  }
+
+  void onZoomChanged(bool zoomed) {
+    if (isZoomed != zoomed) {
+      setState(() => isZoomed = zoomed);
+    }
   }
 
   @override
@@ -241,12 +248,15 @@ class _MediaGalleryState extends State<MediaGallery> {
     return PageView.builder(
       controller: pageController,
       itemCount: widget.schemas.length,
+      // Disable swiping when zoomed to allow panning the image
+      physics: isZoomed ? const NeverScrollableScrollPhysics() : null,
       onPageChanged: (index) => setState(() => currentIndex = index),
       itemBuilder: (context, index) {
         final schema = widget.schemas[index];
         return MediaViewer(
-          child: buildMediaContent(schema),
           onDismiss: () => Navigator.of(context).maybePop(),
+          onZoomChanged: onZoomChanged,
+          child: buildMediaContent(schema),
         );
       },
     );
@@ -311,11 +321,13 @@ class _MediaGalleryState extends State<MediaGallery> {
 class MediaViewer extends StatefulWidget {
   final Widget child;
   final VoidCallback? onDismiss;
+  final ValueChanged<bool>? onZoomChanged;
 
   const MediaViewer({
     super.key,
     required this.child,
     this.onDismiss,
+    this.onZoomChanged,
   });
 
   @override
@@ -366,7 +378,14 @@ class _MediaViewerState extends State<MediaViewer> with SingleTickerProviderStat
       padding: const EdgeInsets.all(8.0),
       child: ValueListenableBuilder(
         valueListenable: controller,
-        builder: (context, Matrix4 value, child) => buildContent(),
+        builder: (context, Matrix4 value, child) {
+          // Notify parent about zoom state changes
+          final bool currentZoomed = value != Matrix4.identity();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.onZoomChanged?.call(currentZoomed);
+          });
+          return buildContent();
+        },
       ),
     );
   }
