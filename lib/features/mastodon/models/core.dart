@@ -1,5 +1,6 @@
 // The Mastodon server data schema.
 
+export 'announcement.dart';
 export 'server.dart';
 export 'status.dart';
 export 'rule.dart';

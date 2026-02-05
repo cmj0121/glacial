@@ -57,10 +57,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_drawer_directory => '探索帳戶';
 
   @override
+  String get btn_drawer_announcement => '公告';
+
+  @override
   String get btn_drawer_preference => '偏好設定';
 
   @override
   String get btn_drawer_logout => '登出';
+
+  @override
+  String get btn_dismiss => '已讀';
 
   @override
   String get btn_trends_links => '連結';

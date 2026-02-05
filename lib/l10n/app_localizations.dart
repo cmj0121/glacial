@@ -206,6 +206,12 @@ abstract class AppLocalizations {
   /// **'Explore Account'**
   String get btn_drawer_directory;
 
+  /// No description provided for @btn_drawer_announcement.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements'**
+  String get btn_drawer_announcement;
+
   /// No description provided for @btn_drawer_preference.
   ///
   /// In en, this message translates to:
@@ -217,6 +223,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logout'**
   String get btn_drawer_logout;
+
+  /// No description provided for @btn_dismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get btn_dismiss;
 
   /// No description provided for @btn_trends_links.
   ///

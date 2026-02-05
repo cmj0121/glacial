@@ -57,10 +57,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_drawer_directory => 'Account erkunden';
 
   @override
+  String get btn_drawer_announcement => 'Ankündigungen';
+
+  @override
   String get btn_drawer_preference => 'Einstellungen';
 
   @override
   String get btn_drawer_logout => 'Abmelden';
+
+  @override
+  String get btn_dismiss => 'Gelesen';
 
   @override
   String get btn_trends_links => 'Links';

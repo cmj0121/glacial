@@ -57,10 +57,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_drawer_directory => '계정 탐색';
 
   @override
+  String get btn_drawer_announcement => '공지사항';
+
+  @override
   String get btn_drawer_preference => '설정';
 
   @override
   String get btn_drawer_logout => '로그아웃';
+
+  @override
+  String get btn_dismiss => '읽음 처리';
 
   @override
   String get btn_trends_links => '링크';
