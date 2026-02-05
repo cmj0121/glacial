@@ -77,6 +77,8 @@
   "btn_relationship_block": "Block {acct}",
   "btn_relationship_unblock": "Unblock {acct}",
   "btn_relationship_report": "Report {acct}",
+  "btn_relationship_note": "Personal note",
+  "desc_relationship_note": "Add a personal note about this account",
   "btn_notification_mention": "Mentioned",
   "btn_notification_status": "Notification",
   "btn_notification_reblog": "Reblog",

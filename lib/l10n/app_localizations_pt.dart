@@ -253,6 +253,13 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get btn_relationship_note => 'Nota pessoal';
+
+  @override
+  String get desc_relationship_note =>
+      'Adicionar uma nota pessoal sobre esta conta';
+
+  @override
   String get btn_notification_mention => 'Mencionado';
 
   @override

@@ -252,6 +252,12 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get btn_relationship_note => '개인 메모';
+
+  @override
+  String get desc_relationship_note => '이 계정에 대한 개인 메모 추가';
+
+  @override
   String get btn_notification_mention => '멘션';
 
   @override

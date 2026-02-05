@@ -47,7 +47,7 @@ class _RelationshipState extends ConsumerState<Relationship> {
 
   // Build the more actions to interactive the account.
   Widget buildMoreActions() {
-    return PopupMenuButton(
+    return PopupMenuButton<Object>(
       icon: const Icon(Icons.more_horiz),
       tooltip: '',
       itemBuilder: (BuildContext context) {
@@ -56,27 +56,90 @@ class _RelationshipState extends ConsumerState<Relationship> {
         actions.remove(schema?.muting == true ? RelationshipType.mute : RelationshipType.unmute);
         actions.remove(schema?.blocking == true ? RelationshipType.block : RelationshipType.unblock);
 
-        return actions.map((RelationshipType action) {
-          final bool disabled = action == RelationshipType.report;
-          final Color? color = action.isDangerous ? Theme.of(context).colorScheme.error : null;
+        final String noteLabel = AppLocalizations.of(context)?.btn_relationship_note ?? "Personal note";
+        final bool hasNote = schema?.note.isNotEmpty == true;
 
-          return PopupMenuItem(
-            value: action,
-            enabled: !disabled,
+        return [
+          PopupMenuItem<Object>(
+            value: 'note',
             child: ListTile(
-              leading: Icon(action.icon(), size: size),
-              title: Text(action.tooltip(context, account: widget.schema)),
-              iconColor: disabled ? null : color,
-              textColor: disabled ? null : color,
+              leading: Icon(hasNote ? Icons.sticky_note_2 : Icons.sticky_note_2_outlined, size: size),
+              title: Text(noteLabel),
+              iconColor: hasNote ? Theme.of(context).colorScheme.tertiary : null,
+              textColor: hasNote ? Theme.of(context).colorScheme.tertiary : null,
             ),
-          );
-        }).toList();
+          ),
+          const PopupMenuDivider(),
+          ...actions.map((RelationshipType action) {
+            final bool disabled = action == RelationshipType.report;
+            final Color? color = action.isDangerous ? Theme.of(context).colorScheme.error : null;
+
+            return PopupMenuItem<Object>(
+              value: action,
+              enabled: !disabled,
+              child: ListTile(
+                leading: Icon(action.icon(), size: size),
+                title: Text(action.tooltip(context, account: widget.schema)),
+                iconColor: disabled ? null : color,
+                textColor: disabled ? null : color,
+              ),
+            );
+          }),
+        ];
       },
-      onSelected: (RelationshipType r) async {
-        await status?.changeRelationship(account: widget.schema, type: r);
-        onRefresh();
+      onSelected: (Object value) async {
+        if (value == 'note') {
+          onEditNote();
+          return;
+        }
+        if (value is RelationshipType) {
+          await status?.changeRelationship(account: widget.schema, type: value);
+          onRefresh();
+        }
       }
     );
+  }
+
+  // Show a dialog to edit the personal note for this account.
+  Future<void> onEditNote() async {
+    final TextEditingController controller = TextEditingController(text: schema?.note ?? '');
+    final String title = AppLocalizations.of(context)?.btn_relationship_note ?? "Personal note";
+    final String hint = AppLocalizations.of(context)?.desc_relationship_note ?? "Add a personal note about this account";
+
+    final String? result = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title, style: Theme.of(context).textTheme.titleMedium),
+          content: TextField(
+            controller: controller,
+            maxLines: 4,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: hint,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => context.pop(),
+              child: Text(AppLocalizations.of(context)?.btn_close ?? "Close"),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(controller.text),
+              child: Text(AppLocalizations.of(context)?.btn_save ?? "Save"),
+            ),
+          ],
+        );
+      },
+    );
+
+    controller.dispose();
+
+    if (result != null) {
+      await status?.setAccountNote(accountId: widget.schema.id, comment: result);
+      onRefresh();
+    }
   }
 
   // Build the request button to show the request status if the account is not followed yet.

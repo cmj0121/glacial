@@ -77,6 +77,8 @@
   "btn_relationship_block": "{acct} 차단",
   "btn_relationship_unblock": "{acct} 차단 해제",
   "btn_relationship_report": "{acct} 신고",
+  "btn_relationship_note": "개인 메모",
+  "desc_relationship_note": "이 계정에 대한 개인 메모 추가",
   "btn_notification_mention": "멘션",
   "btn_notification_status": "알림",
   "btn_notification_reblog": "리블로그",

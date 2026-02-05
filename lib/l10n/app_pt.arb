@@ -77,6 +77,8 @@
   "btn_relationship_block": "Bloquear {acct}",
   "btn_relationship_unblock": "Desbloquear {acct}",
   "btn_relationship_report": "Denunciar {acct}",
+  "btn_relationship_note": "Nota pessoal",
+  "desc_relationship_note": "Adicionar uma nota pessoal sobre esta conta",
   "btn_notification_mention": "Mencionado",
   "btn_notification_status": "Notificação",
   "btn_notification_reblog": "Recompartilhar",

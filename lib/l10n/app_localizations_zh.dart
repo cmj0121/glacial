@@ -252,6 +252,12 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get btn_relationship_note => '個人備註';
+
+  @override
+  String get desc_relationship_note => '為此帳號新增個人備註';
+
+  @override
   String get btn_notification_mention => '提及';
 
   @override

@@ -572,6 +572,18 @@ abstract class AppLocalizations {
   /// **'Report {acct}'**
   String btn_relationship_report(Object acct);
 
+  /// No description provided for @btn_relationship_note.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal note'**
+  String get btn_relationship_note;
+
+  /// No description provided for @desc_relationship_note.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a personal note about this account'**
+  String get desc_relationship_note;
+
   /// No description provided for @btn_notification_mention.
   ///
   /// In en, this message translates to:

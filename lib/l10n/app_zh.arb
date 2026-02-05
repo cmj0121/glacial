@@ -77,6 +77,8 @@
   "btn_relationship_block": "封鎖 {acct}",
   "btn_relationship_unblock": "解除封鎖 {acct}",
   "btn_relationship_report": "回報 {acct}",
+  "btn_relationship_note": "個人備註",
+  "desc_relationship_note": "為此帳號新增個人備註",
   "btn_notification_mention": "提及",
   "btn_notification_status": "通知",
   "btn_notification_reblog": "轉嘟",

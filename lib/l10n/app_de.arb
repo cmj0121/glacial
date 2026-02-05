@@ -77,6 +77,8 @@
   "btn_relationship_block": "{acct} blockieren",
   "btn_relationship_unblock": "{acct} Blockierung aufheben",
   "btn_relationship_report": "{acct} melden",
+  "btn_relationship_note": "Persönliche Notiz",
+  "desc_relationship_note": "Eine persönliche Notiz zu diesem Konto hinzufügen",
   "btn_notification_mention": "Erwähnt",
   "btn_notification_status": "Benachrichtigung",
   "btn_notification_reblog": "Reblog",

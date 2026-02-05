@@ -77,6 +77,8 @@
   "btn_relationship_block": "{acct}をブロック",
   "btn_relationship_unblock": "{acct}のブロック解除",
   "btn_relationship_report": "{acct}を報告",
+  "btn_relationship_note": "個人メモ",
+  "desc_relationship_note": "このアカウントについて個人メモを追加",
   "btn_notification_mention": "メンション",
   "btn_notification_status": "通知",
   "btn_notification_reblog": "リブログ",

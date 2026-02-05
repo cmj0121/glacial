@@ -24,7 +24,7 @@
 //   - [ ] GET   /api/v1/accounts/:id/endorsements
 //   - [ ] POST  /api/v1/accounts/:id/endorse
 //   - [ ] POST  /api/v1/accounts/:id/unendorse
-//   - [ ] POST  /api/v1/accounts/:id/note
+//   - [+] POST  /api/v1/accounts/:id/note
 //   - [+] GET   /api/v1/accounts/relationships
 //   - [ ] GET   /api/v1/accounts/familiar_followers
 //   - [+] GET   /api/v1/accounts/search
@@ -312,6 +312,18 @@ extension AccountsExtensions on AccessStatusSchema {
 
     logger.i("complete change the relationship to ${relationship.type} for account: ${account.id}");
     return relationship;
+  }
+
+  // Set a personal note on a user's account. The note is visible only to you.
+  Future<RelationshipSchema?> setAccountNote({required String accountId, required String comment}) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/accounts/$accountId/note';
+    final Map<String, dynamic> body = {'comment': comment};
+    final String response = await postAPI(endpoint, body: body) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(response) as Map<String, dynamic>;
+
+    return RelationshipSchema.fromJson(json);
   }
 
   // Search for matching accounts by username or display name.
