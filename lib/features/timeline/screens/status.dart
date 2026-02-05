@@ -693,7 +693,7 @@ class _StatusContextState extends ConsumerState<StatusContext> {
         return Dismissible(
           key: ValueKey(widget.schema.id),
           direction: DismissDirection.startToEnd,
-          onDismissed: (_) => context.pop(),
+          confirmDismiss: (_) async { context.pop(); return false; },
           child: buildContent(ctx),
         );
       }
@@ -861,7 +861,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
       child: isDisposed ? const SizedBox() : Dismissible(
         key: ValueKey(widget.schema.id),
         direction: DismissDirection.startToEnd,
-        onDismissed: (_) => onDismiss(),
+        confirmDismiss: (_) async { onDismiss(); return false; },
         child: buildContent(),
       ),
     );

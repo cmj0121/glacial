@@ -324,9 +324,10 @@ class _BackableViewState extends State<BackableView> {
     return Dismissible(
       key: UniqueKey(),
       direction: DismissDirection.startToEnd,
-      onDismissed: (_) async {
+      confirmDismiss: (_) async {
         setState(() => isDisposed = true);
         context.pop();
+        return false;
       },
       child: widget.child,
     );

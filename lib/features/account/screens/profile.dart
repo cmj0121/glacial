@@ -626,10 +626,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
     return Dismissible(
       key: UniqueKey(),
       direction: DismissDirection.startToEnd,
-      onDismissed: (_) {
+      confirmDismiss: (_) async {
         final List<FieldSchema> fields = List.from(schema.fields);
         fields.removeAt(index);
         onChanged(schema: schema.copyWith(fields: fields));
+        return false;
       },
       background: Container(
         alignment: Alignment.centerLeft,

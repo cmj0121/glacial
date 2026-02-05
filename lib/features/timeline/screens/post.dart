@@ -70,7 +70,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       child: Dismissible(
         key: UniqueKey(),
         direction: DismissDirection.startToEnd,
-        onDismissed: (_) => context.pop(),
+        confirmDismiss: (_) async { context.pop(); return false; },
         child: buildLayout(),
       ),
     );
