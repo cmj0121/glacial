@@ -4,7 +4,7 @@
 //
 //   - [+] GET  /api/v2/notifications
 //   - [ ] GET  /api/v2/notifications/:group_key
-//   - [ ] POST /api/v2/notifications/:group_key/dismiss
+//   - [+] POST /api/v2/notifications/:group_key/dismiss
 //   - [ ] GET  /api/v2/notifications/:group_key/accounts
 //   - [ ] GET  /api/v2/notifications/unread_count
 //
@@ -23,6 +23,14 @@ extension GroupNotificationExtensions on AccessStatusSchema {
     final String body = await getAPI(endpoint, queryParameters: queryParameters) ?? '{}';
 
     return GroupNotificationSchema.fromString(body);
+  }
+
+  // Dismiss a single notification group by its group key.
+  Future<void> dismissNotificationGroup(String groupKey) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v2/notifications/$groupKey/dismiss';
+    await postAPI(endpoint);
   }
 
   // Get the (capped) number of unread notification groups for the current user

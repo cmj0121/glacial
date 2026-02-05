@@ -138,10 +138,12 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
   final double loadingThreshold = 180;
 
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
-  late final ItemScrollController itemScrollController = ItemScrollController();
-  late final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+
+  ItemScrollController itemScrollController = ItemScrollController();
+  ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
   List<GroupSchema> groups = [];
+  int _firstVisibleIndex = 0;
 
   @override
   void initState() {
@@ -161,9 +163,12 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
 
   void _onPositionChange() {
     final List<ItemPosition> positions = itemPositionsListener.itemPositions.value.toList();
-    final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
+    if (positions.isEmpty) return;
 
-    if (lastIndex != null && lastIndex > groups.length - 5) onLoad();
+    _firstVisibleIndex = positions.first.index;
+
+    final int lastIndex = positions.last.index;
+    if (lastIndex > groups.length - 5) onLoad();
   }
 
   @override
@@ -194,8 +199,27 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
     final Widget builder = ScrollablePositionedList.builder(
       itemScrollController: itemScrollController,
       itemPositionsListener: itemPositionsListener,
+      initialScrollIndex: _firstVisibleIndex.clamp(0, groups.length - 1),
       itemCount: groups.length,
-      itemBuilder: (BuildContext context, int index) => SingleNotification(schema: groups[index]),
+      itemBuilder: (BuildContext context, int index) {
+        final GroupSchema group = groups[index];
+
+        return Dismissible(
+          key: ValueKey(group.key),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 16),
+            color: Theme.of(context).colorScheme.error,
+            child: const Icon(Icons.delete_outline, color: Colors.white),
+          ),
+          confirmDismiss: (_) async {
+            onDismissGroup(index, group.key);
+            return false;
+          },
+          child: SingleNotification(schema: group),
+        );
+      },
     );
 
     return CustomMaterialIndicator(
@@ -203,6 +227,22 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
       indicatorBuilder: (_, __) => const ClockProgressIndicator(),
       child: isRefresh ? const SizedBox.shrink() : builder,
     );
+  }
+
+  // Dismiss a notification group and rebuild the list with fresh controllers
+  // to avoid ScrollablePositionedList stale state after item removal.
+  void onDismissGroup(int index, String groupKey) {
+    itemPositionsListener.itemPositions.removeListener(_onPositionChange);
+    groups.removeAt(index);
+    status?.dismissNotificationGroup(groupKey);
+
+    // Recreate controllers to force a clean ScrollablePositionedList rebuild.
+    itemScrollController = ItemScrollController();
+    itemPositionsListener = ItemPositionsListener.create();
+    itemPositionsListener.itemPositions.addListener(_onPositionChange);
+    GlacialHome.itemScrollToTop = itemScrollController;
+
+    setState(() {});
   }
 
   // Clean-up and refresh the timeline when the user pulls down the list.
