@@ -6,7 +6,7 @@
 //   - [ ] GET  /api/v2/notifications/:group_key
 //   - [+] POST /api/v2/notifications/:group_key/dismiss
 //   - [ ] GET  /api/v2/notifications/:group_key/accounts
-//   - [ ] GET  /api/v2/notifications/unread_count
+//   - [+] GET  /api/v2/notifications/unread_count
 //
 // ref:
 //   - https://docs.joinmastodon.org/methods/grouped_notifications/

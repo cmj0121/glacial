@@ -20,18 +20,17 @@
 //    - [+] POST   /api/v1/statuses/:id/unmute
 //    - [+] POST   /api/v1/statuses/:id/pin
 //    - [+] POST   /api/v1/statuses/:id/unpin
-//    - [ ] PUT    /api/v1/statuses/:id
+//    - [+] PUT    /api/v1/statuses/:id
 //    - [+] GET    /api/v1/statuses/:id/history
 //    - [ ] GET    /api/v1/statuses/:id/source
 //    - [-] GET    /api/v1/statuses/:id/card            (deprecated in 3.0.0)
 //
 // ## Scheduled Status APIs
 //
-//    - [ ] GET    /api/v1/scheduled_statuses
-//    - [ ] POST   /api/v1/scheduled_statuses
+//    - [+] GET    /api/v1/scheduled_statuses
 //    - [ ] GET    /api/v1/scheduled_statuses/:id
-//    - [ ] DELETE /api/v1/scheduled_statuses/:id
-//    - [ ] PUT    /api/v1/scheduled_statuses/:id
+//    - [+] DELETE /api/v1/scheduled_statuses/:id
+//    - [+] PUT    /api/v1/scheduled_statuses/:id
 //
 // ## Votes APIs
 //

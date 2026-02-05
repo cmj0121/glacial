@@ -33,11 +33,11 @@
 //
 // ## Mute APIs
 //
-//   - [ ] GET   /api/v1/mutes
+//   - [+] GET   /api/v1/mutes
 //
 // ## Block APIs
 //
-//   - [ ] GET   /api/v1/blocks
+//   - [+] GET   /api/v1/blocks
 //
 // ## Follow Requests APIs
 //
