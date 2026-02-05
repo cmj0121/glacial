@@ -137,7 +137,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_interaction_share => 'Partager';
 
   @override
-  String get btn_interaction_mute => 'Muet';
+  String get btn_interaction_mute => 'Masquer la conversation';
 
   @override
   String get btn_interaction_block => 'Bloquer';

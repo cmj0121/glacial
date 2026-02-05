@@ -42,7 +42,7 @@
   "btn_interaction_favourite": "Favori",
   "btn_interaction_bookmark": "Signet",
   "btn_interaction_share": "Partager",
-  "btn_interaction_mute": "Muet",
+  "btn_interaction_mute": "Masquer la conversation",
   "btn_interaction_block": "Bloquer",
   "btn_interaction_report": "Signaler",
   "btn_interaction_edit": "Modifier",

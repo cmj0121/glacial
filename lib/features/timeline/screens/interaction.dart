@@ -44,8 +44,9 @@ class InteractionBar extends ConsumerWidget {
         case StatusInteraction.policy:
         case StatusInteraction.delete:
           return isSelfStatus;
-        case StatusInteraction.filter:
         case StatusInteraction.mute:
+          return true; // Conversation mute is available for all posts
+        case StatusInteraction.filter:
         case StatusInteraction.block:
         case StatusInteraction.report:
           return !isSelfStatus;
@@ -218,6 +219,7 @@ class _InteractionState extends State<Interaction> {
       case StatusInteraction.reblog:
       case StatusInteraction.favourite:
       case StatusInteraction.bookmark:
+      case StatusInteraction.mute:
         return isSignedIn;
       case StatusInteraction.share:
         return true;
@@ -227,7 +229,6 @@ class _InteractionState extends State<Interaction> {
       case StatusInteraction.delete:
         return isSignedIn && isSelfPost;
       case StatusInteraction.filter:
-      case StatusInteraction.mute:
       case StatusInteraction.block:
       case StatusInteraction.report:
         return isSignedIn && !isSelfPost;
@@ -249,6 +250,8 @@ class _InteractionState extends State<Interaction> {
         return widget.schema.bookmarked ?? false;
       case StatusInteraction.pin:
         return widget.schema.pinned ?? false;
+      case StatusInteraction.mute:
+        return widget.schema.muted ?? false;
       case StatusInteraction.delete:
       case StatusInteraction.edit:
         return isSelfPost;
@@ -298,11 +301,12 @@ class _InteractionState extends State<Interaction> {
 
     switch (widget.action) {
       case StatusInteraction.filter:
-      case StatusInteraction.mute:
       case StatusInteraction.block:
       case StatusInteraction.edit:
       case StatusInteraction.delete:
         return Theme.of(context).colorScheme.error;
+      case StatusInteraction.mute:
+        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
       case StatusInteraction.reblog:
         return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
       case StatusInteraction.favourite:
@@ -395,9 +399,14 @@ class _InteractionState extends State<Interaction> {
         );
         return;
       case StatusInteraction.mute:
-        await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.mute);
-        widget.onDeleted?.call();
-        break;
+        final StatusSchema mutedStatus = await widget.status.interactWithStatus(
+          widget.schema,
+          widget.action,
+          negative: isActive,
+        );
+
+        widget.onReload?.call(mutedStatus);
+        return;
       case StatusInteraction.block:
         await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.block);
         widget.onDeleted?.call();

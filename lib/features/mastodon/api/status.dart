@@ -16,8 +16,8 @@
 //    - [+] POST   /api/v1/statuses/:id/unreblog
 //    - [+] POST   /api/v1/statuses/:id/bookmark
 //    - [+] POST   /api/v1/statuses/:id/unbookmark
-//    - [ ] POST   /api/v1/statuses/:id/mute
-//    - [ ] POST   /api/v1/statuses/:id/unmute
+//    - [+] POST   /api/v1/statuses/:id/mute
+//    - [+] POST   /api/v1/statuses/:id/unmute
 //    - [+] POST   /api/v1/statuses/:id/pin
 //    - [+] POST   /api/v1/statuses/:id/unpin
 //    - [ ] PUT    /api/v1/statuses/:id
@@ -153,6 +153,9 @@ extension StatusExtensions on AccessStatusSchema {
         break;
       case StatusInteraction.pin:
         endpoint = isNegative ? '/api/v1/statuses/${status.id}/unpin' : '/api/v1/statuses/${status.id}/pin';
+        break;
+      case StatusInteraction.mute:
+        endpoint = isNegative ? '/api/v1/statuses/${status.id}/unmute' : '/api/v1/statuses/${status.id}/mute';
         break;
       default:
         throw ArgumentError('Unsupported status interaction: $action (negative: $isNegative)');

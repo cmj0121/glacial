@@ -137,7 +137,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_interaction_share => 'Teilen';
 
   @override
-  String get btn_interaction_mute => 'Stummschalten';
+  String get btn_interaction_mute => 'Unterhaltung stummschalten';
 
   @override
   String get btn_interaction_block => 'Blockieren';

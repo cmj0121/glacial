@@ -137,7 +137,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_interaction_share => '分享';
 
   @override
-  String get btn_interaction_mute => '靜音';
+  String get btn_interaction_mute => '靜音對話';
 
   @override
   String get btn_interaction_block => '封鎖';

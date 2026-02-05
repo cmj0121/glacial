@@ -42,7 +42,7 @@
   "btn_interaction_favourite" : "Favourite",
   "btn_interaction_bookmark" : "Bookmark",
   "btn_interaction_share" : "Share",
-  "btn_interaction_mute" : "Mute",
+  "btn_interaction_mute" : "Mute conversation",
   "btn_interaction_block" : "Block",
   "btn_interaction_report": "Report",
   "btn_interaction_edit" : "Edit",

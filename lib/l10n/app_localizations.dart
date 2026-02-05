@@ -365,7 +365,7 @@ abstract class AppLocalizations {
   /// No description provided for @btn_interaction_mute.
   ///
   /// In en, this message translates to:
-  /// **'Mute'**
+  /// **'Mute conversation'**
   String get btn_interaction_mute;
 
   /// No description provided for @btn_interaction_block.

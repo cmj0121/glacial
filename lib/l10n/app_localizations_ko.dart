@@ -137,7 +137,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_interaction_share => '공유';
 
   @override
-  String get btn_interaction_mute => '뮤트';
+  String get btn_interaction_mute => '대화 뮤트';
 
   @override
   String get btn_interaction_block => '차단';

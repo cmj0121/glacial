@@ -137,7 +137,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_interaction_share => '共有';
 
   @override
-  String get btn_interaction_mute => 'ミュート';
+  String get btn_interaction_mute => '会話をミュート';
 
   @override
   String get btn_interaction_block => 'ブロック';
