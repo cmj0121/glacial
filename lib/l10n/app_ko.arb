@@ -79,6 +79,7 @@
   "btn_relationship_report": "{acct} 신고",
   "btn_relationship_note": "개인 메모",
   "desc_relationship_note": "이 계정에 대한 개인 메모 추가",
+  "btn_relationship_remove_follower": "팔로워 삭제",
   "btn_notification_mention": "멘션",
   "btn_notification_status": "알림",
   "btn_notification_reblog": "리블로그",

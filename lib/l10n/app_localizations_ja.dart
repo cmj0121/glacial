@@ -258,6 +258,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get desc_relationship_note => 'このアカウントについて個人メモを追加';
 
   @override
+  String get btn_relationship_remove_follower => 'フォロワーを削除';
+
+  @override
   String get btn_notification_mention => 'メンション';
 
   @override

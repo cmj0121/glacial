@@ -83,8 +83,12 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
               onFollowingTap: () => controller.animateTo(AccountProfileType.following.index),
             );
           case AccountProfileType.followers:
-            return AccountList(loader: ({String? maxId}) =>
-              status?.fetchFollowers(account: widget.schema, maxId: maxId) ?? Future.value((<AccountSchema>[], null))
+            return AccountList(
+              loader: ({String? maxId}) =>
+                status?.fetchFollowers(account: widget.schema, maxId: maxId) ?? Future.value((<AccountSchema>[], null)),
+              onDismiss: isSelfProfile
+                ? (account) async => status?.removeFromFollowers(accountId: account.id)
+                : null,
             );
           case AccountProfileType.following:
             return AccountList(loader: ({String? maxId}) =>

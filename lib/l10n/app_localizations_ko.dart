@@ -258,6 +258,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get desc_relationship_note => '이 계정에 대한 개인 메모 추가';
 
   @override
+  String get btn_relationship_remove_follower => '팔로워 삭제';
+
+  @override
   String get btn_notification_mention => '멘션';
 
   @override

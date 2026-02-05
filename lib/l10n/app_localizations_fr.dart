@@ -260,6 +260,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'Ajouter une note personnelle sur ce compte';
 
   @override
+  String get btn_relationship_remove_follower => 'Retirer l\'abonné';
+
+  @override
   String get btn_notification_mention => 'Mention';
 
   @override

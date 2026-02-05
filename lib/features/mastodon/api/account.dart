@@ -14,7 +14,7 @@
 //   - [ ] GET   /api/v1/accounts/:id/lists
 //   - [+] POST  /api/v1/accounts/:id/follow
 //   - [+] POST  /api/v1/accounts/:id/unfollow
-//   - [ ] POST  /api/v1/accounts/:id/remove_from_followers
+//   - [+] POST  /api/v1/accounts/:id/remove_from_followers
 //   - [+] POST  /api/v1/accounts/:id/block
 //   - [+] POST  /api/v1/accounts/:id/unbloc
 //   - [+] POST  /api/v1/accounts/:id/mute
@@ -337,6 +337,17 @@ extension AccountsExtensions on AccessStatusSchema {
     final Map<String, dynamic> body = {'comment': comment};
     final String response = await postAPI(endpoint, body: body) ?? '{}';
     final Map<String, dynamic> json = jsonDecode(response) as Map<String, dynamic>;
+
+    return RelationshipSchema.fromJson(json);
+  }
+
+  // Remove the given account from your followers.
+  Future<RelationshipSchema?> removeFromFollowers({required String accountId}) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/accounts/$accountId/remove_from_followers';
+    final String body = await postAPI(endpoint) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
 
     return RelationshipSchema.fromJson(json);
   }

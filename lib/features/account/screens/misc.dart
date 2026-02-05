@@ -98,10 +98,12 @@ class _FollowedHashtagsState extends ConsumerState<FollowedHashtags> with Pagina
 // The list of the account for the user profile page.
 class AccountList extends ConsumerStatefulWidget {
   final Future<(List<AccountSchema>, String?)> Function({String? maxId})? loader;
+  final Future<void> Function(AccountSchema account)? onDismiss;
 
   const AccountList({
     super.key,
     this.loader,
+    this.onDismiss,
   });
 
   @override
@@ -156,9 +158,28 @@ class _AccountListState extends ConsumerState<AccountList> with PaginatedListMix
       itemCount: accounts.length,
       itemBuilder: (context, index) {
         final AccountSchema account = accounts[index];
-        return Padding(
+        final Widget child = Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Account(schema: account),
+        );
+
+        if (widget.onDismiss == null) return child;
+
+        return Dismissible(
+          key: ValueKey(account.id),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 16),
+            color: Theme.of(context).colorScheme.error,
+            child: const Icon(Icons.person_remove, color: Colors.white),
+          ),
+          confirmDismiss: (_) async {
+            setState(() => accounts.removeAt(index));
+            widget.onDismiss?.call(account);
+            return false;
+          },
+          child: child,
         );
       },
     );

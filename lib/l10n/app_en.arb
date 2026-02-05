@@ -79,6 +79,7 @@
   "btn_relationship_report": "Report {acct}",
   "btn_relationship_note": "Personal note",
   "desc_relationship_note": "Add a personal note about this account",
+  "btn_relationship_remove_follower": "Remove follower",
   "btn_notification_mention": "Mentioned",
   "btn_notification_status": "Notification",
   "btn_notification_reblog": "Reblog",
