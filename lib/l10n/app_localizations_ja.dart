@@ -678,5 +678,32 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get txt_notification_policy => '通知ポリシー';
+
+  @override
+  String get txt_notification_policy_not_following => 'フォローしていない人';
+
+  @override
+  String get txt_notification_policy_not_followers => 'フォロワーでない人';
+
+  @override
+  String get txt_notification_policy_new_accounts => '新しいアカウント';
+
+  @override
+  String get txt_notification_policy_private_mentions => 'プライベートメンション';
+
+  @override
+  String get txt_notification_policy_limited_accounts => 'モデレート済みアカウント';
+
+  @override
+  String get txt_notification_policy_accept => '許可';
+
+  @override
+  String get txt_notification_policy_filter => 'フィルター';
+
+  @override
+  String get txt_notification_policy_drop => '破棄';
+
+  @override
   String get dots => '...';
 }

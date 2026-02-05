@@ -1412,6 +1412,60 @@ abstract class AppLocalizations {
   /// **'Follow Request from {name}'**
   String msg_follow_request(Object name);
 
+  /// No description provided for @txt_notification_policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Policy'**
+  String get txt_notification_policy;
+
+  /// No description provided for @txt_notification_policy_not_following.
+  ///
+  /// In en, this message translates to:
+  /// **'People you don\'t follow'**
+  String get txt_notification_policy_not_following;
+
+  /// No description provided for @txt_notification_policy_not_followers.
+  ///
+  /// In en, this message translates to:
+  /// **'People not following you'**
+  String get txt_notification_policy_not_followers;
+
+  /// No description provided for @txt_notification_policy_new_accounts.
+  ///
+  /// In en, this message translates to:
+  /// **'New accounts'**
+  String get txt_notification_policy_new_accounts;
+
+  /// No description provided for @txt_notification_policy_private_mentions.
+  ///
+  /// In en, this message translates to:
+  /// **'Private mentions'**
+  String get txt_notification_policy_private_mentions;
+
+  /// No description provided for @txt_notification_policy_limited_accounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderated accounts'**
+  String get txt_notification_policy_limited_accounts;
+
+  /// No description provided for @txt_notification_policy_accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get txt_notification_policy_accept;
+
+  /// No description provided for @txt_notification_policy_filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get txt_notification_policy_filter;
+
+  /// No description provided for @txt_notification_policy_drop.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop'**
+  String get txt_notification_policy_drop;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

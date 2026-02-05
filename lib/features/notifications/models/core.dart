@@ -221,4 +221,102 @@ class MarkersSchema {
   }
 }
 
+// The notification filtering policy for the authenticated user.
+enum NotificationPolicyValue {
+  accept,  // Allow notifications from this category
+  filter,  // Filter notifications into a separate inbox
+  drop;    // Silently discard notifications from this category
+
+  factory NotificationPolicyValue.fromString(String str) {
+    return NotificationPolicyValue.values.firstWhere(
+      (e) => e.name == str,
+      orElse: () => NotificationPolicyValue.accept,
+    );
+  }
+
+  IconData get icon {
+    switch (this) {
+      case accept:
+        return Icons.check_circle_outline;
+      case filter:
+        return Icons.filter_alt_outlined;
+      case drop:
+        return Icons.block;
+    }
+  }
+
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case accept:
+        return AppLocalizations.of(context)?.txt_notification_policy_accept ?? "Accept";
+      case filter:
+        return AppLocalizations.of(context)?.txt_notification_policy_filter ?? "Filter";
+      case drop:
+        return AppLocalizations.of(context)?.txt_notification_policy_drop ?? "Drop";
+    }
+  }
+}
+
+class NotificationPolicySchema {
+  final NotificationPolicyValue forNotFollowing;
+  final NotificationPolicyValue forNotFollowers;
+  final NotificationPolicyValue forNewAccounts;
+  final NotificationPolicyValue forPrivateMentions;
+  final NotificationPolicyValue forLimitedAccounts;
+  final int pendingRequestsCount;
+  final int pendingNotificationsCount;
+
+  const NotificationPolicySchema({
+    required this.forNotFollowing,
+    required this.forNotFollowers,
+    required this.forNewAccounts,
+    required this.forPrivateMentions,
+    required this.forLimitedAccounts,
+    this.pendingRequestsCount = 0,
+    this.pendingNotificationsCount = 0,
+  });
+
+  factory NotificationPolicySchema.fromJson(Map<String, dynamic> json) {
+    final Map<String, dynamic> summary = json['summary'] as Map<String, dynamic>? ?? {};
+
+    return NotificationPolicySchema(
+      forNotFollowing: NotificationPolicyValue.fromString(json['for_not_following'] as String? ?? 'accept'),
+      forNotFollowers: NotificationPolicyValue.fromString(json['for_not_followers'] as String? ?? 'accept'),
+      forNewAccounts: NotificationPolicyValue.fromString(json['for_new_accounts'] as String? ?? 'accept'),
+      forPrivateMentions: NotificationPolicyValue.fromString(json['for_private_mentions'] as String? ?? 'accept'),
+      forLimitedAccounts: NotificationPolicyValue.fromString(json['for_limited_accounts'] as String? ?? 'accept'),
+      pendingRequestsCount: summary['pending_requests_count'] as int? ?? 0,
+      pendingNotificationsCount: summary['pending_notifications_count'] as int? ?? 0,
+    );
+  }
+
+  NotificationPolicySchema copyWith({
+    NotificationPolicyValue? forNotFollowing,
+    NotificationPolicyValue? forNotFollowers,
+    NotificationPolicyValue? forNewAccounts,
+    NotificationPolicyValue? forPrivateMentions,
+    NotificationPolicyValue? forLimitedAccounts,
+  }) {
+    return NotificationPolicySchema(
+      forNotFollowing: forNotFollowing ?? this.forNotFollowing,
+      forNotFollowers: forNotFollowers ?? this.forNotFollowers,
+      forNewAccounts: forNewAccounts ?? this.forNewAccounts,
+      forPrivateMentions: forPrivateMentions ?? this.forPrivateMentions,
+      forLimitedAccounts: forLimitedAccounts ?? this.forLimitedAccounts,
+      pendingRequestsCount: pendingRequestsCount,
+      pendingNotificationsCount: pendingNotificationsCount,
+    );
+  }
+
+  Map<String, String> toJson() {
+    return {
+      'for_not_following': forNotFollowing.name,
+      'for_not_followers': forNotFollowers.name,
+      'for_new_accounts': forNewAccounts.name,
+      'for_private_mentions': forPrivateMentions.name,
+      'for_limited_accounts': forLimitedAccounts.name,
+    };
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

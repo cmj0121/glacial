@@ -217,5 +217,14 @@
   "msg_notification_title": "Nuevas notificaciones",
   "msg_notification_body": "Tienes {count} notificaciones sin leer",
   "msg_follow_request": "Solicitud de seguimiento de {name}",
+  "txt_notification_policy": "Política de notificaciones",
+  "txt_notification_policy_not_following": "Personas que no sigues",
+  "txt_notification_policy_not_followers": "Personas que no te siguen",
+  "txt_notification_policy_new_accounts": "Cuentas nuevas",
+  "txt_notification_policy_private_mentions": "Menciones privadas",
+  "txt_notification_policy_limited_accounts": "Cuentas moderadas",
+  "txt_notification_policy_accept": "Aceptar",
+  "txt_notification_policy_filter": "Filtrar",
+  "txt_notification_policy_drop": "Descartar",
   "dots": "..."
 }

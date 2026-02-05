@@ -679,5 +679,32 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get txt_notification_policy => '알림 정책';
+
+  @override
+  String get txt_notification_policy_not_following => '팔로우하지 않는 사람';
+
+  @override
+  String get txt_notification_policy_not_followers => '팔로워가 아닌 사람';
+
+  @override
+  String get txt_notification_policy_new_accounts => '새 계정';
+
+  @override
+  String get txt_notification_policy_private_mentions => '비공개 멘션';
+
+  @override
+  String get txt_notification_policy_limited_accounts => '제한된 계정';
+
+  @override
+  String get txt_notification_policy_accept => '수락';
+
+  @override
+  String get txt_notification_policy_filter => '필터';
+
+  @override
+  String get txt_notification_policy_drop => '삭제';
+
+  @override
   String get dots => '...';
 }

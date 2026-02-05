@@ -217,5 +217,14 @@
   "msg_notification_title": "새 알림",
   "msg_notification_body": "{count}개의 읽지 않은 알림이 있습니다",
   "msg_follow_request": "{name}로부터 팔로우 요청",
+  "txt_notification_policy": "알림 정책",
+  "txt_notification_policy_not_following": "팔로우하지 않는 사람",
+  "txt_notification_policy_not_followers": "팔로워가 아닌 사람",
+  "txt_notification_policy_new_accounts": "새 계정",
+  "txt_notification_policy_private_mentions": "비공개 멘션",
+  "txt_notification_policy_limited_accounts": "제한된 계정",
+  "txt_notification_policy_accept": "수락",
+  "txt_notification_policy_filter": "필터",
+  "txt_notification_policy_drop": "삭제",
   "dots": "..."
 }

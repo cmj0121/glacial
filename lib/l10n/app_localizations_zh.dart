@@ -678,5 +678,32 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get txt_notification_policy => '通知策略';
+
+  @override
+  String get txt_notification_policy_not_following => '你未追蹤的人';
+
+  @override
+  String get txt_notification_policy_not_followers => '未追蹤你的人';
+
+  @override
+  String get txt_notification_policy_new_accounts => '新帳號';
+
+  @override
+  String get txt_notification_policy_private_mentions => '私人提及';
+
+  @override
+  String get txt_notification_policy_limited_accounts => '受管制帳號';
+
+  @override
+  String get txt_notification_policy_accept => '接受';
+
+  @override
+  String get txt_notification_policy_filter => '過濾';
+
+  @override
+  String get txt_notification_policy_drop => '丟棄';
+
+  @override
   String get dots => '...';
 }

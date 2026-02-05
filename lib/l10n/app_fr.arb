@@ -217,5 +217,14 @@
   "msg_notification_title": "Nouvelles notifications",
   "msg_notification_body": "Vous avez {count} notifications non lues",
   "msg_follow_request": "Demande d’abonnement de {name}",
+  "txt_notification_policy": "Politique de notifications",
+  "txt_notification_policy_not_following": "Personnes que vous ne suivez pas",
+  "txt_notification_policy_not_followers": "Personnes qui ne vous suivent pas",
+  "txt_notification_policy_new_accounts": "Nouveaux comptes",
+  "txt_notification_policy_private_mentions": "Mentions privées",
+  "txt_notification_policy_limited_accounts": "Comptes modérés",
+  "txt_notification_policy_accept": "Accepter",
+  "txt_notification_policy_filter": "Filtrer",
+  "txt_notification_policy_drop": "Rejeter",
   "dots": "..."
 }

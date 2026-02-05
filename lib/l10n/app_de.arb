@@ -217,5 +217,14 @@
   "msg_notification_title": "Neue Benachrichtigungen",
   "msg_notification_body": "Du hast {count} ungelesene Benachrichtigungen",
   "msg_follow_request": "Follow-Anfrage von {name}",
+  "txt_notification_policy": "Benachrichtigungsrichtlinie",
+  "txt_notification_policy_not_following": "Personen, denen du nicht folgst",
+  "txt_notification_policy_not_followers": "Personen, die dir nicht folgen",
+  "txt_notification_policy_new_accounts": "Neue Konten",
+  "txt_notification_policy_private_mentions": "Private Erwähnungen",
+  "txt_notification_policy_limited_accounts": "Moderierte Konten",
+  "txt_notification_policy_accept": "Akzeptieren",
+  "txt_notification_policy_filter": "Filtern",
+  "txt_notification_policy_drop": "Verwerfen",
   "dots": "..."
 }

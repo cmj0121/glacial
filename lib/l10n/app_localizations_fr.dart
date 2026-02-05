@@ -717,5 +717,34 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get txt_notification_policy => 'Politique de notifications';
+
+  @override
+  String get txt_notification_policy_not_following =>
+      'Personnes que vous ne suivez pas';
+
+  @override
+  String get txt_notification_policy_not_followers =>
+      'Personnes qui ne vous suivent pas';
+
+  @override
+  String get txt_notification_policy_new_accounts => 'Nouveaux comptes';
+
+  @override
+  String get txt_notification_policy_private_mentions => 'Mentions privées';
+
+  @override
+  String get txt_notification_policy_limited_accounts => 'Comptes modérés';
+
+  @override
+  String get txt_notification_policy_accept => 'Accepter';
+
+  @override
+  String get txt_notification_policy_filter => 'Filtrer';
+
+  @override
+  String get txt_notification_policy_drop => 'Rejeter';
+
+  @override
   String get dots => '...';
 }

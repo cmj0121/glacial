@@ -217,5 +217,14 @@
   "msg_notification_title": "New Notifications",
   "msg_notification_body": "You have {count} unread notifications",
   "msg_follow_request": "Follow Request from {name}",
+  "txt_notification_policy": "Notification Policy",
+  "txt_notification_policy_not_following": "People you don't follow",
+  "txt_notification_policy_not_followers": "People not following you",
+  "txt_notification_policy_new_accounts": "New accounts",
+  "txt_notification_policy_private_mentions": "Private mentions",
+  "txt_notification_policy_limited_accounts": "Moderated accounts",
+  "txt_notification_policy_accept": "Accept",
+  "txt_notification_policy_filter": "Filter",
+  "txt_notification_policy_drop": "Drop",
   "dots": "..."
 }
