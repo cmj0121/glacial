@@ -158,6 +158,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_interaction_filter => 'Filtro';
 
   @override
+  String get btn_interaction_pin => 'Fixar';
+
+  @override
   String get btn_interaction_policy => 'Política';
 
   @override

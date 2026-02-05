@@ -49,6 +49,7 @@
   "btn_interaction_delete" : "Delete",
   "btn_interaction_quote" : "Quote",
   "btn_interaction_filter": "Filter",
+  "btn_interaction_pin": "Pin",
   "btn_interaction_policy": "Policy",
   "btn_profile_core": "Profile",
   "btn_profile_post": "Toots",

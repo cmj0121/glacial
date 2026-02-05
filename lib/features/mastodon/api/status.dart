@@ -18,8 +18,8 @@
 //    - [+] POST   /api/v1/statuses/:id/unbookmark
 //    - [ ] POST   /api/v1/statuses/:id/mute
 //    - [ ] POST   /api/v1/statuses/:id/unmute
-//    - [ ] POST   /api/v1/statuses/:id/pin
-//    - [ ] POST   /api/v1/statuses/:id/unpin
+//    - [+] POST   /api/v1/statuses/:id/pin
+//    - [+] POST   /api/v1/statuses/:id/unpin
 //    - [ ] PUT    /api/v1/statuses/:id
 //    - [+] GET    /api/v1/statuses/:id/history
 //    - [ ] GET    /api/v1/statuses/:id/source
@@ -150,6 +150,9 @@ extension StatusExtensions on AccessStatusSchema {
         break;
       case StatusInteraction.bookmark:
         endpoint = isNegative ? '/api/v1/statuses/${status.id}/unbookmark' : '/api/v1/statuses/${status.id}/bookmark';
+        break;
+      case StatusInteraction.pin:
+        endpoint = isNegative ? '/api/v1/statuses/${status.id}/unpin' : '/api/v1/statuses/${status.id}/pin';
         break;
       default:
         throw ArgumentError('Unsupported status interaction: $action (negative: $isNegative)');

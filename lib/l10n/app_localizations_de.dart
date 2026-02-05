@@ -158,6 +158,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_interaction_filter => 'Filter';
 
   @override
+  String get btn_interaction_pin => 'Anheften';
+
+  @override
   String get btn_interaction_policy => 'Richtlinie';
 
   @override

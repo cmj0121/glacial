@@ -49,6 +49,7 @@
   "btn_interaction_delete": "삭제",
   "btn_interaction_quote" : "인용",
   "btn_interaction_filter": "필터",
+  "btn_interaction_pin": "고정",
   "btn_interaction_policy": "정책",
   "btn_profile_core": "프로필",
   "btn_profile_post": "글",

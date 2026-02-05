@@ -49,6 +49,7 @@
   "btn_interaction_delete" : "刪除",
   "btn_interaction_quote" : "引用",
   "btn_interaction_filter": "過濾",
+  "btn_interaction_pin": "置頂",
   "btn_interaction_policy": "策略",
   "btn_profile_core": "使用者頁面",
   "btn_profile_post": "嘟文",

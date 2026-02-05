@@ -49,6 +49,7 @@
   "btn_interaction_delete": "Excluir",
   "btn_interaction_quote" : "Citação",
   "btn_interaction_filter": "Filtro",
+  "btn_interaction_pin": "Fixar",
   "btn_interaction_policy": "Política",
   "btn_profile_core": "Perfil",
   "btn_profile_post": "Posts",

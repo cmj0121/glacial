@@ -404,6 +404,12 @@ abstract class AppLocalizations {
   /// **'Filter'**
   String get btn_interaction_filter;
 
+  /// No description provided for @btn_interaction_pin.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin'**
+  String get btn_interaction_pin;
+
   /// No description provided for @btn_interaction_policy.
   ///
   /// In en, this message translates to:

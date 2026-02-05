@@ -158,6 +158,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_interaction_filter => '過濾';
 
   @override
+  String get btn_interaction_pin => '置頂';
+
+  @override
   String get btn_interaction_policy => '策略';
 
   @override

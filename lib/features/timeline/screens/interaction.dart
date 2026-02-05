@@ -39,6 +39,7 @@ class InteractionBar extends ConsumerWidget {
         case StatusInteraction.quote:
           // Only 4.5.0+ supports quote interaction
           return serverVersion >= _minQuoteVersion;
+        case StatusInteraction.pin:
         case StatusInteraction.edit:
         case StatusInteraction.policy:
         case StatusInteraction.delete:
@@ -220,6 +221,7 @@ class _InteractionState extends State<Interaction> {
         return isSignedIn;
       case StatusInteraction.share:
         return true;
+      case StatusInteraction.pin:
       case StatusInteraction.edit:
       case StatusInteraction.policy:
       case StatusInteraction.delete:
@@ -245,6 +247,8 @@ class _InteractionState extends State<Interaction> {
         return widget.schema.favourited ?? false;
       case StatusInteraction.bookmark:
         return widget.schema.bookmarked ?? false;
+      case StatusInteraction.pin:
+        return widget.schema.pinned ?? false;
       case StatusInteraction.delete:
       case StatusInteraction.edit:
         return isSelfPost;
@@ -305,6 +309,8 @@ class _InteractionState extends State<Interaction> {
         return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
       case StatusInteraction.bookmark:
         return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
+      case StatusInteraction.pin:
+        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
       case StatusInteraction.report:
         return Theme.of(context).colorScheme.error;
       default:
@@ -323,6 +329,7 @@ class _InteractionState extends State<Interaction> {
       case StatusInteraction.reblog:
       case StatusInteraction.favourite:
       case StatusInteraction.bookmark:
+      case StatusInteraction.pin:
         final StatusSchema updatedStatus = await widget.status.interactWithStatus(
           widget.schema,
           widget.action,

@@ -158,6 +158,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_interaction_filter => '필터';
 
   @override
+  String get btn_interaction_pin => '고정';
+
+  @override
   String get btn_interaction_policy => '정책';
 
   @override
