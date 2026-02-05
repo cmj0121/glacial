@@ -147,6 +147,7 @@ class ProfilePage extends ConsumerWidget {
           buildBanner(context),
           const SizedBox(height: 16),
           buildAccountName(context, status),
+          if (schema.id != status.account?.id) FamiliarFollowers(schema: schema),
           UserStatistics(
             schema: schema,
             onStatusesTap: onStatusesTap,
@@ -765,6 +766,71 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
     if (mounted) {
       ref.read(accessStatusProvider.notifier).state = status?.copyWith(account: account);
     }
+  }
+}
+
+// Show the familiar followers (people you follow who also follow this account).
+class FamiliarFollowers extends ConsumerStatefulWidget {
+  final AccountSchema schema;
+  final double avatarSize;
+
+  const FamiliarFollowers({
+    super.key,
+    required this.schema,
+    this.avatarSize = 24,
+  });
+
+  @override
+  ConsumerState<FamiliarFollowers> createState() => _FamiliarFollowersState();
+}
+
+class _FamiliarFollowersState extends ConsumerState<FamiliarFollowers> {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+  List<AccountSchema> accounts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (accounts.isEmpty) return const SizedBox.shrink();
+
+    final String label = AppLocalizations.of(context)?.txt_familiar_followers ?? "Also followed by";
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Row(
+        children: [
+          ...accounts.take(5).map((a) => Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: AccountAvatar(schema: a, size: widget.avatarSize),
+          )),
+          Flexible(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: Theme.of(context).disabledColor,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> onLoad() async {
+    if (status?.isSignedIn != true) return;
+
+    final List<AccountSchema> result = await status?.fetchFamiliarFollowers(
+      accountId: widget.schema.id,
+    ) ?? [];
+
+    if (mounted) setState(() => accounts = result);
   }
 }
 

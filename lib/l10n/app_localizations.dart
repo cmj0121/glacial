@@ -938,6 +938,12 @@ abstract class AppLocalizations {
   /// **'Show original'**
   String get btn_translate_hide;
 
+  /// No description provided for @txt_familiar_followers.
+  ///
+  /// In en, this message translates to:
+  /// **'Also followed by'**
+  String get txt_familiar_followers;
+
   /// No description provided for @txt_no_result.
   ///
   /// In en, this message translates to:

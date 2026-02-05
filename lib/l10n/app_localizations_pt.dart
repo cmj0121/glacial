@@ -441,6 +441,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_translate_hide => 'Mostrar original';
 
   @override
+  String get txt_familiar_followers => 'Também seguido por';
+
+  @override
   String get txt_no_result => 'Nenhum resultado encontrado';
 
   @override

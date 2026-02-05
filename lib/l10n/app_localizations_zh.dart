@@ -435,6 +435,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_translate_hide => '顯示原文';
 
   @override
+  String get txt_familiar_followers => '你追蹤的人也追蹤了';
+
+  @override
   String get txt_no_result => '未找到結果';
 
   @override

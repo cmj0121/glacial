@@ -437,6 +437,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_translate_hide => 'Show original';
 
   @override
+  String get txt_familiar_followers => 'Also followed by';
+
+  @override
   String get txt_no_result => 'No results found';
 
   @override

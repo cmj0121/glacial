@@ -35,8 +35,8 @@
 //
 // ## Votes APIs
 //
-//    - [ ] GET    /api/v1/polls/:id
-//    - [ ] POST   /api/v1/polls/:id/votes
+//    - [+] GET    /api/v1/polls/:id
+//    - [+] POST   /api/v1/polls/:id/votes
 //
 // ref:
 //   - https://docs.joinmastodon.org/methods/statuses/

@@ -26,7 +26,7 @@
 //   - [ ] POST  /api/v1/accounts/:id/unendorse
 //   - [+] POST  /api/v1/accounts/:id/note
 //   - [+] GET   /api/v1/accounts/relationships
-//   - [ ] GET   /api/v1/accounts/familiar_followers
+//   - [+] GET   /api/v1/accounts/familiar_followers
 //   - [+] GET   /api/v1/accounts/search
 //   - [ ] GET   /api/v1/accounts/lookup
 //   - [ ] GET   /api/v1/accounts/:id/identity_proofs        (deprecated in 3.5.0)
@@ -274,6 +274,21 @@ extension AccountsExtensions on AccessStatusSchema {
 
     logger.d("complete load the relationships: ${relationships.length}");
     return relationships;
+  }
+
+  // Get familiar followers for the given account (people you follow who also follow them).
+  Future<List<AccountSchema>> fetchFamiliarFollowers({required String accountId}) async {
+    final String endpoint = '/api/v1/accounts/familiar_followers';
+    final Map<String, String> query = {"id[]": accountId};
+    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+
+    if (json.isEmpty) return [];
+
+    final Map<String, dynamic> entry = json.first as Map<String, dynamic>;
+    final List<dynamic> accounts = entry['accounts'] as List<dynamic>? ?? [];
+
+    return accounts.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   // Change the relationship of the account, such as follow, unfollow, block, or mute.

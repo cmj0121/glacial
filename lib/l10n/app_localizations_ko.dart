@@ -435,6 +435,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_translate_hide => '원문 보기';
 
   @override
+  String get txt_familiar_followers => '함께 팔로우 중';
+
+  @override
   String get txt_no_result => '결과 없음';
 
   @override
