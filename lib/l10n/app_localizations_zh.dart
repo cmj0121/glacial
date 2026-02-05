@@ -423,6 +423,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_show_more => '顯示更多';
 
   @override
+  String get btn_translate_show => '翻譯';
+
+  @override
+  String get btn_translate_hide => '顯示原文';
+
+  @override
   String get txt_no_result => '未找到結果';
 
   @override

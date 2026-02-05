@@ -423,6 +423,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_show_more => '더보기';
 
   @override
+  String get btn_translate_show => '번역';
+
+  @override
+  String get btn_translate_hide => '원문 보기';
+
+  @override
   String get txt_no_result => '결과 없음';
 
   @override

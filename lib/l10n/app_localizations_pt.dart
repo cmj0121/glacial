@@ -428,6 +428,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_show_more => 'Mostrar mais';
 
   @override
+  String get btn_translate_show => 'Traduzir';
+
+  @override
+  String get btn_translate_hide => 'Mostrar original';
+
+  @override
   String get txt_no_result => 'Nenhum resultado encontrado';
 
   @override

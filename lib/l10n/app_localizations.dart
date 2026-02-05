@@ -914,6 +914,18 @@ abstract class AppLocalizations {
   /// **'Show More'**
   String get txt_show_more;
 
+  /// No description provided for @btn_translate_show.
+  ///
+  /// In en, this message translates to:
+  /// **'Translate'**
+  String get btn_translate_show;
+
+  /// No description provided for @btn_translate_hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Show original'**
+  String get btn_translate_hide;
+
   /// No description provided for @txt_no_result.
   ///
   /// In en, this message translates to:

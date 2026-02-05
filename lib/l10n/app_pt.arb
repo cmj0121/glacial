@@ -134,6 +134,8 @@
   "txt_preference_reply_none": "Não marcar ninguém",
   "txt_show_less": "Mostrar menos",
   "txt_show_more": "Mostrar mais",
+  "btn_translate_show": "Traduzir",
+  "btn_translate_hide": "Mostrar original",
   "txt_no_result": "Nenhum resultado encontrado",
   "txt_profile_bot": "Conta Bot",
   "txt_profile_locked": "Conta bloqueada",

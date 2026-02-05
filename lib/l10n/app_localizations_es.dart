@@ -427,6 +427,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_show_more => 'Mostrar más';
 
   @override
+  String get btn_translate_show => 'Traducir';
+
+  @override
+  String get btn_translate_hide => 'Mostrar original';
+
+  @override
   String get txt_no_result => 'No se encontraron resultados';
 
   @override

@@ -7,7 +7,7 @@
 //    - [ ] GET    /api/v1/statuses
 //    - [+] DELETE /api/v1/statuses/:id
 //    - [+] GET    /api/v1/statuses/:id/context
-//    - [ ] POST   /api/v1/statuses/:id/translate
+//    - [+] POST   /api/v1/statuses/:id/translate
 //    - [+] GET    /api/v1/statuses/:id/reblogged_by
 //	  - [+] GET    /api/v1/statuses/:id/favourited_by
 //    - [+] POST   /api/v1/statuses/:id/favourite
@@ -268,6 +268,20 @@ extension StatusExtensions on AccessStatusSchema {
 
     final String response = await putAPI(endpoint, body: body) ?? '{}';
     return StatusSchema.fromString(response);
+  }
+
+  // Translate the status content into the given target language.
+  Future<TranslationSchema> translateStatus({
+    required StatusSchema schema,
+    String? targetLanguage,
+  }) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/statuses/${schema.id}/translate';
+    final Map<String, dynamic>? body = targetLanguage != null ? {'lang': targetLanguage} : null;
+
+    final String response = await postAPI(endpoint, body: body) ?? '{}';
+    return TranslationSchema.fromString(response);
   }
 }
 

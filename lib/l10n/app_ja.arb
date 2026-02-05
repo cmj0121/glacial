@@ -134,6 +134,8 @@
   "txt_preference_reply_none": "誰もタグ付けしない",
   "txt_show_less": "簡易表示",
   "txt_show_more": "詳細表示",
+  "btn_translate_show": "翻訳",
+  "btn_translate_hide": "原文を表示",
   "txt_no_result": "結果が見つかりません",
   "txt_profile_bot": "ボットアカウント",
   "txt_profile_locked": "アカウントロック中",

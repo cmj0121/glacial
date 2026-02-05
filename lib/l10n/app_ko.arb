@@ -134,6 +134,8 @@
   "txt_preference_reply_none": "태그 없음",
   "txt_show_less": "간략 표시",
   "txt_show_more": "더보기",
+  "btn_translate_show": "번역",
+  "btn_translate_hide": "원문 보기",
   "txt_no_result": "결과 없음",
   "txt_profile_bot": "봇 계정",
   "txt_profile_locked": "계정 잠김",
