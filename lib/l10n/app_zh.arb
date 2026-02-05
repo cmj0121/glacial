@@ -79,6 +79,8 @@
   "btn_relationship_report": "回報 {acct}",
   "btn_relationship_note": "個人備註",
   "desc_relationship_note": "為此帳號新增個人備註",
+  "btn_relationship_endorse": "在個人頁面推薦",
+  "btn_relationship_unendorse": "取消個人頁面推薦",
   "btn_relationship_remove_follower": "移除追隨者",
   "btn_notification_mention": "提及",
   "btn_notification_status": "通知",

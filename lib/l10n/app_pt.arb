@@ -79,6 +79,8 @@
   "btn_relationship_report": "Denunciar {acct}",
   "btn_relationship_note": "Nota pessoal",
   "desc_relationship_note": "Adicionar uma nota pessoal sobre esta conta",
+  "btn_relationship_endorse": "Destacar no perfil",
+  "btn_relationship_unendorse": "Remover do perfil",
   "btn_relationship_remove_follower": "Remover seguidor",
   "btn_notification_mention": "Mencionado",
   "btn_notification_status": "Notificação",

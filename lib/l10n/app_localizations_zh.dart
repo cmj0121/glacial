@@ -258,6 +258,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get desc_relationship_note => '為此帳號新增個人備註';
 
   @override
+  String get btn_relationship_endorse => '在個人頁面推薦';
+
+  @override
+  String get btn_relationship_unendorse => '取消個人頁面推薦';
+
+  @override
   String get btn_relationship_remove_follower => '移除追隨者';
 
   @override

@@ -258,6 +258,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get desc_relationship_note => 'Add a personal note about this account';
 
   @override
+  String get btn_relationship_endorse => 'Feature on profile';
+
+  @override
+  String get btn_relationship_unendorse => 'Unfeature from profile';
+
+  @override
   String get btn_relationship_remove_follower => 'Remove follower';
 
   @override

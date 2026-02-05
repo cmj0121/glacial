@@ -58,6 +58,10 @@ class _RelationshipState extends ConsumerState<Relationship> {
 
         final String noteLabel = AppLocalizations.of(context)?.btn_relationship_note ?? "Personal note";
         final bool hasNote = schema?.note.isNotEmpty == true;
+        final bool isEndorsed = schema?.endorsed == true;
+        final String endorseLabel = isEndorsed
+          ? (AppLocalizations.of(context)?.btn_relationship_unendorse ?? "Unfeature on profile")
+          : (AppLocalizations.of(context)?.btn_relationship_endorse ?? "Feature on profile");
 
         return [
           PopupMenuItem<Object>(
@@ -67,6 +71,15 @@ class _RelationshipState extends ConsumerState<Relationship> {
               title: Text(noteLabel),
               iconColor: hasNote ? Theme.of(context).colorScheme.tertiary : null,
               textColor: hasNote ? Theme.of(context).colorScheme.tertiary : null,
+            ),
+          ),
+          PopupMenuItem<Object>(
+            value: 'endorse',
+            child: ListTile(
+              leading: Icon(isEndorsed ? Icons.star : Icons.star_outline, size: size),
+              title: Text(endorseLabel),
+              iconColor: isEndorsed ? Theme.of(context).colorScheme.tertiary : null,
+              textColor: isEndorsed ? Theme.of(context).colorScheme.tertiary : null,
             ),
           ),
           const PopupMenuDivider(),
@@ -90,6 +103,10 @@ class _RelationshipState extends ConsumerState<Relationship> {
       onSelected: (Object value) async {
         if (value == 'note') {
           onEditNote();
+          return;
+        }
+        if (value == 'endorse') {
+          onToggleEndorse();
           return;
         }
         if (value is RelationshipType) {
@@ -140,6 +157,16 @@ class _RelationshipState extends ConsumerState<Relationship> {
       await status?.setAccountNote(accountId: widget.schema.id, comment: result);
       onRefresh();
     }
+  }
+
+  // Toggle the endorse/unendorse state for this account.
+  Future<void> onToggleEndorse() async {
+    if (schema?.endorsed == true) {
+      await status?.unendorseAccount(accountId: widget.schema.id);
+    } else {
+      await status?.endorseAccount(accountId: widget.schema.id);
+    }
+    onRefresh();
   }
 
   // Build the request button to show the request status if the account is not followed yet.

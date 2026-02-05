@@ -79,6 +79,8 @@
   "btn_relationship_report": "{acct}を報告",
   "btn_relationship_note": "個人メモ",
   "desc_relationship_note": "このアカウントについて個人メモを追加",
+  "btn_relationship_endorse": "プロフィールで紹介",
+  "btn_relationship_unendorse": "プロフィールから削除",
   "btn_relationship_remove_follower": "フォロワーを削除",
   "btn_notification_mention": "メンション",
   "btn_notification_status": "通知",

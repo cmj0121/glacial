@@ -584,6 +584,18 @@ abstract class AppLocalizations {
   /// **'Add a personal note about this account'**
   String get desc_relationship_note;
 
+  /// No description provided for @btn_relationship_endorse.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature on profile'**
+  String get btn_relationship_endorse;
+
+  /// No description provided for @btn_relationship_unendorse.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfeature from profile'**
+  String get btn_relationship_unendorse;
+
   /// No description provided for @btn_relationship_remove_follower.
   ///
   /// In en, this message translates to:

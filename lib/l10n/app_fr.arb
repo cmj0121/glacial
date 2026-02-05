@@ -79,6 +79,8 @@
   "btn_relationship_report": "Signaler {acct}",
   "btn_relationship_note": "Note personnelle",
   "desc_relationship_note": "Ajouter une note personnelle sur ce compte",
+  "btn_relationship_endorse": "Mettre en avant sur le profil",
+  "btn_relationship_unendorse": "Retirer du profil",
   "btn_relationship_remove_follower": "Retirer l'abonné",
   "btn_notification_mention": "Mention",
   "btn_notification_status": "Notification",

@@ -21,9 +21,9 @@
 //   - [+] POST  /api/v1/accounts/:id/unmute
 //   - [ ] POST  /api/v1/accounts/:id/pin                    (deprecated in 4.4.0)
 //   - [ ] POST  /api/v1/accounts/:id/unpin                  (deprecated in 4.4.0)
-//   - [ ] GET   /api/v1/accounts/:id/endorsements
-//   - [ ] POST  /api/v1/accounts/:id/endorse
-//   - [ ] POST  /api/v1/accounts/:id/unendorse
+//   - [+] GET   /api/v1/accounts/:id/endorsements
+//   - [+] POST  /api/v1/accounts/:id/endorse
+//   - [+] POST  /api/v1/accounts/:id/unendorse
 //   - [+] POST  /api/v1/accounts/:id/note
 //   - [+] GET   /api/v1/accounts/relationships
 //   - [+] GET   /api/v1/accounts/familiar_followers
@@ -337,6 +337,26 @@ extension AccountsExtensions on AccessStatusSchema {
     final Map<String, dynamic> body = {'comment': comment};
     final String response = await postAPI(endpoint, body: body) ?? '{}';
     final Map<String, dynamic> json = jsonDecode(response) as Map<String, dynamic>;
+
+    return RelationshipSchema.fromJson(json);
+  }
+
+  // Endorse (feature) an account on your profile.
+  Future<RelationshipSchema?> endorseAccount({required String accountId}) async {
+    checkSignedIn();
+
+    final String body = await postAPI('/api/v1/accounts/$accountId/endorse') ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+
+    return RelationshipSchema.fromJson(json);
+  }
+
+  // Unendorse (unfeature) an account from your profile.
+  Future<RelationshipSchema?> unendorseAccount({required String accountId}) async {
+    checkSignedIn();
+
+    final String body = await postAPI('/api/v1/accounts/$accountId/unendorse') ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
 
     return RelationshipSchema.fromJson(json);
   }
