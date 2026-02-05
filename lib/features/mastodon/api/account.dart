@@ -10,7 +10,7 @@
 //   - [+] GET   /api/v1/accounts/:id/statuses
 //   - [+] GET   /api/v1/accounts/:id/followers
 //   - [+] GET   /api/v1/accounts/:id/following
-//   - [ ] GET   /api/v1/accounts/:id/featured_tags
+//   - [+] GET   /api/v1/accounts/:id/featured_tags
 //   - [ ] GET   /api/v1/accounts/:id/lists
 //   - [+] POST  /api/v1/accounts/:id/follow
 //   - [+] POST  /api/v1/accounts/:id/unfollow
@@ -339,6 +339,15 @@ extension AccountsExtensions on AccessStatusSchema {
     final Map<String, dynamic> json = jsonDecode(response) as Map<String, dynamic>;
 
     return RelationshipSchema.fromJson(json);
+  }
+
+  // Get the featured tags of the given account.
+  Future<List<FeaturedTagSchema>> fetchAccountFeaturedTags({required String accountId}) async {
+    final String endpoint = '/api/v1/accounts/$accountId/featured_tags';
+    final String body = await getAPI(endpoint) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+
+    return json.map((e) => FeaturedTagSchema.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   // Remove the given account from your followers.

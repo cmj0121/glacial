@@ -447,6 +447,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_familiar_followers => 'Também seguido por';
 
   @override
+  String get txt_featured_tags => 'Tags em destaque';
+
+  @override
   String get txt_no_result => 'Nenhum resultado encontrado';
 
   @override

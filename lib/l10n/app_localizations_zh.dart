@@ -441,6 +441,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_familiar_followers => '你追蹤的人也追蹤了';
 
   @override
+  String get txt_featured_tags => '精選標籤';
+
+  @override
   String get txt_no_result => '未找到結果';
 
   @override

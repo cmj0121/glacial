@@ -443,6 +443,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_familiar_followers => 'Also followed by';
 
   @override
+  String get txt_featured_tags => 'Featured tags';
+
+  @override
   String get txt_no_result => 'No results found';
 
   @override

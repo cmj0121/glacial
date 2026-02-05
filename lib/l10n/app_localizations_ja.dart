@@ -441,6 +441,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_familiar_followers => '共通のフォロワー';
 
   @override
+  String get txt_featured_tags => '注目のタグ';
+
+  @override
   String get txt_no_result => '結果が見つかりません';
 
   @override

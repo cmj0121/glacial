@@ -441,6 +441,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_familiar_followers => '함께 팔로우 중';
 
   @override
+  String get txt_featured_tags => '추천 태그';
+
+  @override
   String get txt_no_result => '결과 없음';
 
   @override

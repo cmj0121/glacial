@@ -446,6 +446,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_familiar_followers => 'También seguido por';
 
   @override
+  String get txt_featured_tags => 'Etiquetas destacadas';
+
+  @override
   String get txt_no_result => 'No se encontraron resultados';
 
   @override

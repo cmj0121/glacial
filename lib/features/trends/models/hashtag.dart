@@ -29,4 +29,31 @@ class HashtagSchema {
   }
 }
 
+// A hashtag that is featured on a user's profile.
+class FeaturedTagSchema {
+  final String id;
+  final String name;
+  final String url;
+  final int statusesCount;
+  final String? lastStatusAt;
+
+  const FeaturedTagSchema({
+    required this.id,
+    required this.name,
+    required this.url,
+    this.statusesCount = 0,
+    this.lastStatusAt,
+  });
+
+  factory FeaturedTagSchema.fromJson(Map<String, dynamic> json) {
+    return FeaturedTagSchema(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      url: json['url'] as String? ?? '',
+      statusesCount: json['statuses_count'] as int? ?? 0,
+      lastStatusAt: json['last_status_at'] as String?,
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

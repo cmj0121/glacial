@@ -950,6 +950,12 @@ abstract class AppLocalizations {
   /// **'Also followed by'**
   String get txt_familiar_followers;
 
+  /// No description provided for @txt_featured_tags.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured tags'**
+  String get txt_featured_tags;
+
   /// No description provided for @txt_no_result.
   ///
   /// In en, this message translates to:

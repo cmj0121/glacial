@@ -152,6 +152,7 @@ class ProfilePage extends ConsumerWidget {
           const SizedBox(height: 16),
           buildAccountName(context, status),
           if (schema.id != status.account?.id) FamiliarFollowers(schema: schema),
+          FeaturedTags(schema: schema),
           UserStatistics(
             schema: schema,
             onStatusesTap: onStatusesTap,
@@ -835,6 +836,116 @@ class _FamiliarFollowersState extends ConsumerState<FamiliarFollowers> {
     ) ?? [];
 
     if (mounted) setState(() => accounts = result);
+  }
+}
+
+// Show the featured hashtags on a user's profile.
+class FeaturedTags extends ConsumerStatefulWidget {
+  final AccountSchema schema;
+
+  const FeaturedTags({super.key, required this.schema});
+
+  @override
+  ConsumerState<FeaturedTags> createState() => _FeaturedTagsState();
+}
+
+class _FeaturedTagsState extends ConsumerState<FeaturedTags> {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+  List<FeaturedTagSchema> tags = [];
+
+  bool get isSelf => widget.schema.id == status?.account?.id;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (tags.isEmpty && !isSelf) return const SizedBox.shrink();
+
+    final String label = AppLocalizations.of(context)?.txt_featured_tags ?? "Featured tags";
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (tags.isNotEmpty) Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor),
+          ),
+          const SizedBox(height: 4),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              ...tags.map((tag) => InputChip(
+                label: Text('#${tag.name}'),
+                deleteIcon: isSelf ? const Icon(Icons.close, size: 16) : null,
+                onDeleted: isSelf ? () => onRemove(tag) : null,
+                onPressed: () => context.push(RoutePath.hashtag.path, extra: tag.name),
+              )),
+              if (isSelf) ActionChip(
+                avatar: const Icon(Icons.add, size: 16),
+                label: Text(label),
+                onPressed: onAdd,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> onLoad() async {
+    final List<FeaturedTagSchema> result = await status?.fetchAccountFeaturedTags(
+      accountId: widget.schema.id,
+    ) ?? [];
+
+    if (mounted) setState(() => tags = result);
+  }
+
+  Future<void> onAdd() async {
+    final TextEditingController controller = TextEditingController();
+    final String? name = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)?.txt_featured_tags ?? "Featured tags"),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            prefixText: '#',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(AppLocalizations.of(context)?.btn_close ?? "Close"),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            child: Text(AppLocalizations.of(context)?.btn_save ?? "Save"),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+
+    if (name != null && name.isNotEmpty) {
+      await status?.featureTag(name);
+      await onLoad();
+    }
+  }
+
+  Future<void> onRemove(FeaturedTagSchema tag) async {
+    setState(() => tags.removeWhere((t) => t.id == tag.id));
+    await status?.unfeatureTag(tag.id);
   }
 }
 
