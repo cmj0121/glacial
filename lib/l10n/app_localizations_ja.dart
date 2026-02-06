@@ -720,5 +720,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_notification_policy_drop => '破棄';
 
   @override
+  String get txt_no_announcements => 'このサーバーからのお知らせはありません';
+
+  @override
   String get dots => '...';
 }

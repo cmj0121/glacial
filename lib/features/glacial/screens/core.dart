@@ -419,7 +419,10 @@ class _AnnouncementSheetState extends State<AnnouncementSheet> {
           Text(title, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
           if (announcements!.isEmpty)
-            const NoResult()
+            NoResult(
+              message: AppLocalizations.of(context)?.txt_no_announcements ?? "No announcements",
+              icon: Icons.campaign_outlined,
+            )
           else
             Flexible(
               child: ListView.separated(

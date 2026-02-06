@@ -1496,6 +1496,12 @@ abstract class AppLocalizations {
   /// **'Drop'**
   String get txt_notification_policy_drop;
 
+  /// No description provided for @txt_no_announcements.
+  ///
+  /// In en, this message translates to:
+  /// **'No announcements from this server'**
+  String get txt_no_announcements;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

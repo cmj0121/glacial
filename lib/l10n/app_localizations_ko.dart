@@ -721,5 +721,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_notification_policy_drop => '삭제';
 
   @override
+  String get txt_no_announcements => '이 서버에서 공지사항이 없습니다';
+
+  @override
   String get dots => '...';
 }

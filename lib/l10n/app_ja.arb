@@ -231,5 +231,6 @@
   "txt_notification_policy_accept": "許可",
   "txt_notification_policy_filter": "フィルター",
   "txt_notification_policy_drop": "破棄",
+  "txt_no_announcements": "このサーバーからのお知らせはありません",
   "dots": "..."
 }

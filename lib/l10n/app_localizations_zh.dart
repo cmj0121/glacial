@@ -720,5 +720,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_notification_policy_drop => '丟棄';
 
   @override
+  String get txt_no_announcements => '此伺服器沒有公告';
+
+  @override
   String get dots => '...';
 }
