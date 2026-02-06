@@ -233,5 +233,14 @@
   "txt_notification_policy_drop": "破棄",
   "txt_no_announcements": "このサーバーからのお知らせはありません",
   "txt_poll_votes": "{count} 票",
+  "txt_media_alt_text": "代替テキスト",
+  "txt_media_image_info": "画像情報",
+  "txt_media_no_exif": "EXIF情報なし",
+  "txt_server_rules": "サーバールール",
+  "txt_server_registration": "登録可能",
+  "txt_about_app_version": "アプリバージョン",
+  "txt_about_author": "作者",
+  "txt_about_repository": "リポジトリ",
+  "txt_about_copyright": "著作権",
   "dots": "..."
 }

@@ -758,5 +758,32 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get txt_media_alt_text => 'Alt Text';
+
+  @override
+  String get txt_media_image_info => 'Image Info';
+
+  @override
+  String get txt_media_no_exif => 'No EXIF data available';
+
+  @override
+  String get txt_server_rules => 'Server Rules';
+
+  @override
+  String get txt_server_registration => 'Registration';
+
+  @override
+  String get txt_about_app_version => 'App Version';
+
+  @override
+  String get txt_about_author => 'Author';
+
+  @override
+  String get txt_about_repository => 'Repository';
+
+  @override
+  String get txt_about_copyright => 'Copyright';
+
+  @override
   String get dots => '...';
 }

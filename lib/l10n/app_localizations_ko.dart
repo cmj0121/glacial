@@ -729,5 +729,32 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get txt_media_alt_text => '대체 텍스트';
+
+  @override
+  String get txt_media_image_info => '이미지 정보';
+
+  @override
+  String get txt_media_no_exif => 'EXIF 데이터 없음';
+
+  @override
+  String get txt_server_rules => '서버 규칙';
+
+  @override
+  String get txt_server_registration => '가입 가능';
+
+  @override
+  String get txt_about_app_version => '앱 버전';
+
+  @override
+  String get txt_about_author => '작성자';
+
+  @override
+  String get txt_about_repository => '저장소';
+
+  @override
+  String get txt_about_copyright => '저작권';
+
+  @override
   String get dots => '...';
 }

@@ -233,5 +233,14 @@
   "txt_notification_policy_drop": "Verwerfen",
   "txt_no_announcements": "Keine Ankündigungen von diesem Server",
   "txt_poll_votes": "{count} Stimmen",
+  "txt_media_alt_text": "Alternativtext",
+  "txt_media_image_info": "Bildinformationen",
+  "txt_media_no_exif": "Keine EXIF-Daten verfügbar",
+  "txt_server_rules": "Serverregeln",
+  "txt_server_registration": "Registrierung",
+  "txt_about_app_version": "App-Version",
+  "txt_about_author": "Autor",
+  "txt_about_repository": "Repository",
+  "txt_about_copyright": "Urheberrecht",
   "dots": "..."
 }
