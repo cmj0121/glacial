@@ -938,9 +938,9 @@ class _FeaturedTagsState extends ConsumerState<FeaturedTags> {
     );
     controller.dispose();
 
-    if (name != null && name.isNotEmpty) {
+    if (name != null && name.isNotEmpty && mounted) {
       await status?.featureTag(name);
-      await onLoad();
+      if (mounted) await onLoad();
     }
   }
 

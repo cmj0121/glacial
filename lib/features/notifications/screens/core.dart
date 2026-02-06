@@ -113,8 +113,9 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
   Future<void> onLoad() async {
     final int count = await status?.getUnreadGroupCount() ?? 0;
 
+    if (!mounted) return;
     if (count > unreadCount) { await onNotify(count); }
-    setState(() => unreadCount = count);
+    if (mounted) setState(() => unreadCount = count);
   }
 
   // Send the notification to the user when the unread count is updated.

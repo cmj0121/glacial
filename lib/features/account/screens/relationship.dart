@@ -330,7 +330,7 @@ class _FollowRequestBadgeState extends ConsumerState<FollowRequestBadge> {
     final List<AccountSchema> accounts = await status?.fetchFollowRequests() ?? [];
     final int count = accounts.length;
 
-    setState(() => pendingCount = count);
+    if (mounted) setState(() => pendingCount = count);
   }
 }
 

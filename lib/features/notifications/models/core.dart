@@ -119,8 +119,8 @@ class GroupSchema {
   factory GroupSchema.fromJson(Map<String, dynamic> json) {
     return GroupSchema(
       key: json['group_key'] as String,
-      count: json['notifications_count'] as int,
-      id: json['most_recent_notification_id'] as int,
+      count: json['notifications_count'] as int? ?? 0,
+      id: json['most_recent_notification_id'] as int? ?? 0,
       type: NotificationType.fromString(json['type'] as String),
       accounts: (json['sample_account_ids'] as List<dynamic>).map((e) => e as String).toList(),
       statusID: json['status_id'] as String?,
@@ -205,15 +205,16 @@ class MarkersSchema {
   }
 
   factory MarkersSchema.fromJson(Map<String, dynamic> json) {
-    late final Map<TimelineMarkerType, MarkerSchema> markers;
+    final Map<TimelineMarkerType, MarkerSchema> markers = {};
 
-    markers = json.map((key, value) {
-      final TimelineMarkerType type = TimelineMarkerType.values.where((e) => e.name == key).first;
-      return MapEntry(
-        type,
-        MarkerSchema.fromJson(value as Map<String, dynamic>),
-      );
-    });
+    for (final entry in json.entries) {
+      final TimelineMarkerType? type = TimelineMarkerType.values
+          .where((e) => e.name == entry.key)
+          .firstOrNull;
+      if (type != null) {
+        markers[type] = MarkerSchema.fromJson(entry.value as Map<String, dynamic>);
+      }
+    }
 
     return MarkersSchema(
       markers: markers,
