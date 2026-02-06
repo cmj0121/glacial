@@ -1,4 +1,6 @@
 // The report dialog form to report an account.
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -71,21 +73,48 @@ class _ReportDialogState extends ConsumerState<ReportDialog> with PaginatedListM
       return const SizedBox.shrink();
     }
 
-    return Dialog(
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return SlideTransition(
-            position: Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(animation),
-            child: FadeTransition(
-              opacity: animation,
-              child: child,
-            ),
-           );
-        },
-        child: category == null ? buildCategorySelection() : buildReportForm(),
-      ),
+    final Widget content = AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return SlideTransition(
+          position: Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(animation),
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+         );
+      },
+      child: category == null ? buildCategorySelection() : buildReportForm(),
     );
+
+    if (useLiquidGlass) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: GlassStyle.blurSigma,
+              sigmaY: GlassStyle.blurSigma,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface
+                    .withValues(alpha: GlassStyle.opacity),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: GlassStyle.borderOpacity),
+                  width: 1,
+                ),
+              ),
+              child: content,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Dialog(child: content);
   }
 
   // Build the landing page to select a category for the report.
@@ -140,10 +169,10 @@ class _ReportDialogState extends ConsumerState<ReportDialog> with PaginatedListM
                 final StatusSchema status = statuses[index];
                 final bool checked = selectedStatusIDs.contains(status.id);
 
-                return Card.outlined(
+                return AdaptiveGlassCard(
                   margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                  color: checked ? Theme.of(context).colorScheme.tertiaryContainer : null,
-                  child: Padding(
+                  child: Container(
+                    color: checked ? Theme.of(context).colorScheme.tertiaryContainer.withValues(alpha: 0.5) : null,
                     padding: const EdgeInsets.all(8.0),
                     child: ListTile(
                       title: IgnorePointer(child: StatusLite(schema: status)),
@@ -162,10 +191,10 @@ class _ReportDialogState extends ConsumerState<ReportDialog> with PaginatedListM
                 final RuleSchema rule = status!.server!.rules[index];
                 final bool checked = selectedRuleIDs.contains(rule.id);
 
-                return Card.outlined(
+                return AdaptiveGlassCard(
                   margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                  color: checked ? Theme.of(context).colorScheme.tertiaryContainer : null,
-                  child: Padding(
+                  child: Container(
+                    color: checked ? Theme.of(context).colorScheme.tertiaryContainer.withValues(alpha: 0.5) : null,
                     padding: const EdgeInsets.all(8.0),
                     child: ListTile(
                       title: Text(rule.text),
