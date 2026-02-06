@@ -4,7 +4,7 @@
 //
 //    - [+] POST   /api/v1/statuses
 //    - [+] GET    /api/v1/statuses/:id
-//    - [ ] GET    /api/v1/statuses
+//    - [+] GET    /api/v1/statuses
 //    - [+] DELETE /api/v1/statuses/:id
 //    - [+] GET    /api/v1/statuses/:id/context
 //    - [+] POST   /api/v1/statuses/:id/translate
@@ -22,13 +22,13 @@
 //    - [+] POST   /api/v1/statuses/:id/unpin
 //    - [+] PUT    /api/v1/statuses/:id
 //    - [+] GET    /api/v1/statuses/:id/history
-//    - [ ] GET    /api/v1/statuses/:id/source
+//    - [+] GET    /api/v1/statuses/:id/source
 //    - [-] GET    /api/v1/statuses/:id/card            (deprecated in 3.0.0)
 //
 // ## Scheduled Status APIs
 //
 //    - [+] GET    /api/v1/scheduled_statuses
-//    - [ ] GET    /api/v1/scheduled_statuses/:id
+//    - [+] GET    /api/v1/scheduled_statuses/:id
 //    - [+] DELETE /api/v1/scheduled_statuses/:id
 //    - [+] PUT    /api/v1/scheduled_statuses/:id
 //
@@ -284,6 +284,49 @@ extension StatusExtensions on AccessStatusSchema {
 
     final String response = await postAPI(endpoint, body: body) ?? '{}';
     return TranslationSchema.fromString(response);
+  }
+
+  // Fetch multiple statuses by their IDs.
+  Future<List<StatusSchema>> fetchStatuses({required List<String> ids}) async {
+    if (ids.isEmpty) {
+      return [];
+    }
+
+    final String endpoint = '/api/v1/statuses';
+    final Map<String, String> query = {'id[]': ids.join(',')};
+    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<StatusSchema> statuses = json.map((e) => StatusSchema.fromJson(e)).toList();
+
+    for (final s in statuses) {
+      saveStatusToCache(s);
+    }
+    logger.d("complete fetch statuses by IDs, count: ${statuses.length}");
+    return statuses;
+  }
+
+  // Obtain the source properties for a status so that it can be edited.
+  Future<StatusSourceSchema> getStatusSource({required String statusId}) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/statuses/$statusId/source';
+    final String body = await getAPI(endpoint) ?? '{}';
+    return StatusSourceSchema.fromString(body);
+  }
+
+  // Get a single scheduled status by its ID.
+  Future<StatusSchema?> getScheduledStatus({
+    required String id,
+    required AccountSchema account,
+  }) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/scheduled_statuses/$id';
+    final String? body = await getAPI(endpoint);
+    if (body == null) return null;
+
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+    return StatusSchema.fromScheduleJson(json, account);
   }
 }
 
