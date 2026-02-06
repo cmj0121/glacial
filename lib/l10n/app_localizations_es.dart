@@ -763,5 +763,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_no_announcements => 'No hay anuncios de este servidor';
 
   @override
+  String txt_poll_votes(int count) {
+    return '$count votos';
+  }
+
+  @override
   String get dots => '...';
 }

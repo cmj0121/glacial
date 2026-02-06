@@ -723,5 +723,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_no_announcements => 'このサーバーからのお知らせはありません';
 
   @override
+  String txt_poll_votes(int count) {
+    return '$count 票';
+  }
+
+  @override
   String get dots => '...';
 }

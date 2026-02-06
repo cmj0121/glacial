@@ -724,5 +724,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_no_announcements => '이 서버에서 공지사항이 없습니다';
 
   @override
+  String txt_poll_votes(int count) {
+    return '$count표';
+  }
+
+  @override
   String get dots => '...';
 }

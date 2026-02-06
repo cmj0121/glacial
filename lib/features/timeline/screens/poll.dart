@@ -36,16 +36,14 @@ class _PollState extends ConsumerState<Poll> {
       return const SizedBox.shrink();
     }
 
-    return Card.outlined(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ...(canVote ? buildOptions(widget.schema!) : buildVoteResult(widget.schema!)),
-            buildActions(widget.schema!),
-          ],
-        ),
+    return AdaptiveGlassCard(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...(canVote ? buildOptions(widget.schema!) : buildVoteResult(widget.schema!)),
+          buildActions(widget.schema!),
+        ],
       ),
     );
   }
@@ -143,9 +141,13 @@ class _PollState extends ConsumerState<Poll> {
         ),
         const Spacer(),
 
-        (isClosed) ?
-          Text("${schema.votersCount ?? schema.votesCount} votes", style: TextStyle(color: Theme.of(context).disabledColor)) :
-          Text("${schema.votersCount ?? schema.votesCount} votes / ~$remainingTime"),
+        Builder(builder: (context) {
+          final int voteCount = schema.votersCount ?? schema.votesCount;
+          final String votesText = AppLocalizations.of(context)?.txt_poll_votes(voteCount) ?? "$voteCount votes";
+          return isClosed
+            ? Text(votesText, style: TextStyle(color: Theme.of(context).disabledColor))
+            : Text("$votesText / ~$remainingTime");
+        }),
       ],
     );
   }
