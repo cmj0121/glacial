@@ -146,7 +146,7 @@ class AdaptiveGlassCard extends StatelessWidget {
     }
 
     return Card(
-      margin: margin as EdgeInsets?,
+      margin: margin?.resolve(TextDirection.ltr),
       shape: RoundedRectangleBorder(borderRadius: radius),
       child: InkWell(
         onTap: onTap,
