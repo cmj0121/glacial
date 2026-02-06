@@ -1,4 +1,6 @@
 // The view widget library of the app.
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
@@ -208,11 +210,13 @@ class _SwipeTabBarState extends State<SwipeTabBar> with TickerProviderStateMixin
       builder: (context, constraints) {
         final double tabWidth = constraints.maxWidth / widget.itemCount;
 
-        return Stack(
+        final Widget content = Stack(
           children: [
             Positioned.fill(
               child: ColoredBox(
-                color: Theme.of(context).colorScheme.surface,
+                color: useLiquidGlass
+                    ? Theme.of(context).colorScheme.surface.withValues(alpha: GlassStyle.opacity)
+                    : Theme.of(context).colorScheme.surface,
               ),
             ),
             buildBar(),
@@ -235,6 +239,17 @@ class _SwipeTabBarState extends State<SwipeTabBar> with TickerProviderStateMixin
             ),
           ]
         );
+
+        if (useLiquidGlass) {
+          return ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+              child: content,
+            ),
+          );
+        }
+
+        return content;
       },
     );
   }
@@ -304,9 +319,10 @@ class _BackableViewState extends State<BackableView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+      extendBodyBehindAppBar: useLiquidGlass,
+      appBar: AdaptiveGlassAppBar(
+        leading: AdaptiveGlassIconButton(
+          icon: Icons.arrow_back_ios_new_rounded,
           onPressed: () => context.pop(),
         ),
         title: widget.title == null ? null : Text(widget.title!, style: Theme.of(context).textTheme.titleLarge),
