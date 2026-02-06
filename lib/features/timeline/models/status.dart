@@ -191,6 +191,32 @@ class StatusSchema {
   }
 }
 
+// Represents the source of a status for editing purposes.
+class StatusSourceSchema {
+  final String id;          // The ID of the status in the database.
+  final String text;        // The plain text used to compose the status.
+  final String spoilerText; // The plain text used to compose the status's subject or content warning.
+
+  const StatusSourceSchema({
+    required this.id,
+    required this.text,
+    required this.spoilerText,
+  });
+
+  factory StatusSourceSchema.fromString(String str) {
+    final Map<String, dynamic> json = jsonDecode(str);
+    return StatusSourceSchema.fromJson(json);
+  }
+
+  factory StatusSourceSchema.fromJson(Map<String, dynamic> json) {
+    return StatusSourceSchema(
+      id: json['id'] as String,
+      text: json['text'] as String,
+      spoilerText: json['spoiler_text'] as String? ?? '',
+    );
+  }
+}
+
 // Represents the tree around a given status. Used for reconstructing threads of statuses.
 class StatusContextSchema {
   final List<StatusSchema> ancestors;

@@ -3,9 +3,9 @@
 // ## Media APIs
 //
 //   - [-] POST   /api/v1/media        (deprecated in 3.1.3)
-//   - [ ] GET    /api/v1/media/:id
-//   - [ ] DELETE /api/v1/media/:id
-//   - [ ] PUT    /api/v1/media/:id
+//   - [+] GET    /api/v1/media/:id
+//   - [+] DELETE /api/v1/media/:id
+//   - [+] PUT    /api/v1/media/:id
 //   - [+] POST   /api/v2/media
 //
 // ## Custom Emoji APIs
@@ -61,6 +61,45 @@ extension MediaExtensions on AccessStatusSchema {
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
 
     return json.map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  // Get a media attachment by its ID.
+  Future<AttachmentSchema?> getMedia({required String id}) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/media/$id';
+    final String? body = await getAPI(endpoint);
+    if (body == null) return null;
+
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+    return AttachmentSchema.fromJson(json);
+  }
+
+  // Update a media attachment's parameters (description and focus point).
+  Future<AttachmentSchema> updateMedia({
+    required String id,
+    String? description,
+    String? focus,
+  }) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/media/$id';
+    final Map<String, dynamic> body = {
+      if (description != null) 'description': description,
+      if (focus != null) 'focus': focus,
+    };
+
+    final String response = await putAPI(endpoint, body: body) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(response) as Map<String, dynamic>;
+    return AttachmentSchema.fromJson(json);
+  }
+
+  // Delete a media attachment that has not yet been attached to a status.
+  Future<void> deleteMedia({required String id}) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/media/$id';
+    await deleteAPI(endpoint);
   }
 }
 
