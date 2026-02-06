@@ -127,11 +127,9 @@ class MastodonServer extends StatelessWidget {
         ),
 
         InkWellDone(
-          onTap: showRules ? () => showDialog(
+          onTap: showRules ? () => showAdaptiveGlassDialog(
             context: context,
-            builder: (context) => Dialog(
-              child: ServerRules(rules: schema.rules),
-            ),
+            builder: (context) => ServerRules(rules: schema.rules),
           ) : null,
           child: ListTile(
             iconColor: Theme.of(context).colorScheme.primary,

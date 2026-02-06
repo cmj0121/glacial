@@ -369,32 +369,30 @@ class _InteractionState extends State<Interaction> {
         return;
       case StatusInteraction.filter:
         context.pop();
-        showDialog(
+        showAdaptiveGlassDialog(
           context: context,
-          builder: (BuildContext context) => Dialog(
-            child: FilterSelector(
-              status: widget.schema,
-              onSelected: (filter) async {
-                context.pop();
+          builder: (BuildContext context) => FilterSelector(
+            status: widget.schema,
+            onSelected: (filter) async {
+              context.pop();
 
-                await widget.status.addFilterStatus(filter: filter, status: widget.schema);
+              await widget.status.addFilterStatus(filter: filter, status: widget.schema);
 
-                final StatusSchema? updatedStatus = await widget.status.getStatus(widget.schema.id);
-                if (updatedStatus != null) widget.onReload?.call(updatedStatus);
-              },
-              onDeleted: (filter) async {
-                context.pop();
+              final StatusSchema? updatedStatus = await widget.status.getStatus(widget.schema.id);
+              if (updatedStatus != null) widget.onReload?.call(updatedStatus);
+            },
+            onDeleted: (filter) async {
+              context.pop();
 
-                final List<FilterStatusSchema> statusFilters = await widget.status.fetchFilterStatuses(filter: filter);
-                final FilterStatusSchema? status = statusFilters.where((s) => s.statusId == widget.schema.id).firstOrNull;
-                if (status == null) return;
+              final List<FilterStatusSchema> statusFilters = await widget.status.fetchFilterStatuses(filter: filter);
+              final FilterStatusSchema? status = statusFilters.where((s) => s.statusId == widget.schema.id).firstOrNull;
+              if (status == null) return;
 
-                await widget.status.removeFilterStatus(status: status);
+              await widget.status.removeFilterStatus(status: status);
 
-                final StatusSchema? updatedStatus = await widget.status.getStatus(widget.schema.id);
-                if (updatedStatus != null) widget.onReload?.call(updatedStatus);
-              },
-            ),
+              final StatusSchema? updatedStatus = await widget.status.getStatus(widget.schema.id);
+              if (updatedStatus != null) widget.onReload?.call(updatedStatus);
+            },
           ),
         );
         return;
@@ -415,7 +413,7 @@ class _InteractionState extends State<Interaction> {
         // Pop the opened menu first, then show the report dialog
         if (mounted) context.pop();
 
-        showDialog(
+        showAdaptiveGlassDialog(
           context: context,
           builder: (BuildContext context) => ReportDialog(account: widget.schema.account, status: widget.schema),
         );

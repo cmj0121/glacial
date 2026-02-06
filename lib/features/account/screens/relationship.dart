@@ -123,32 +123,31 @@ class _RelationshipState extends ConsumerState<Relationship> {
     final String title = AppLocalizations.of(context)?.btn_relationship_note ?? "Personal note";
     final String hint = AppLocalizations.of(context)?.desc_relationship_note ?? "Add a personal note about this account";
 
-    final String? result = await showDialog<String>(
+    final String? result = await showAdaptiveGlassDialog<String>(
       context: context,
+      title: title,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title, style: Theme.of(context).textTheme.titleMedium),
-          content: TextField(
-            controller: controller,
-            maxLines: 4,
-            autofocus: true,
-            decoration: InputDecoration(
-              hintText: hint,
-              border: const OutlineInputBorder(),
-            ),
+        return TextField(
+          controller: controller,
+          maxLines: 4,
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: hint,
+            border: const OutlineInputBorder(),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => context.pop(),
-              child: Text(AppLocalizations.of(context)?.btn_close ?? "Close"),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(context).pop(controller.text),
-              child: Text(AppLocalizations.of(context)?.btn_save ?? "Save"),
-            ),
-          ],
         );
       },
+      actions: [
+        TextButton(
+          onPressed: () => context.pop(),
+          child: Text(AppLocalizations.of(context)?.btn_close ?? "Close"),
+        ),
+        AdaptiveGlassButton(
+          filled: true,
+          onPressed: () => Navigator.of(context).pop(controller.text),
+          child: Text(AppLocalizations.of(context)?.btn_save ?? "Save"),
+        ),
+      ],
     );
 
     controller.dispose();
@@ -182,41 +181,37 @@ class _RelationshipState extends ConsumerState<Relationship> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         onPressed: () async {
-          showDialog(
+          final String text = AppLocalizations.of(context)?.msg_follow_request(widget.schema.displayName) ?? "Follow request";
+          showAdaptiveGlassDialog(
             context: context,
-            builder: (BuildContext context) {
-              final String text = AppLocalizations.of(context)?.msg_follow_request(widget.schema.displayName) ?? "Follow request";
-              return AlertDialog(
-                title: Text(text, style: Theme.of(context).textTheme.bodyLarge),
-
-                actions: [
-                  TextButton.icon(
-                    label: Text(AppLocalizations.of(context)?.btn_follow_request_accept ?? "Accept"),
-                    icon: Icon(Icons.check, size: tabSize),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.primary,
-                    ),
-                    onPressed: () async {
-                      context.pop();
-                      await status?.acceptFollowRequest(widget.schema.id);
-                      onRefresh();
-                    }
-                  ),
-                  TextButton.icon(
-                    label: Text(AppLocalizations.of(context)?.btn_follow_request_reject ?? "Reject"),
-                    icon: Icon(Icons.close, size: tabSize),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.error,
-                    ),
-                    onPressed: () async {
-                      context.pop();
-                      await status?.rejectFollowRequest(widget.schema.id);
-                      onRefresh();
-                    }
-                  ),
-                ],
-              );
-            },
+            title: text,
+            builder: (BuildContext context) => const SizedBox.shrink(),
+            actions: [
+              TextButton.icon(
+                label: Text(AppLocalizations.of(context)?.btn_follow_request_accept ?? "Accept"),
+                icon: Icon(Icons.check, size: tabSize),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () async {
+                  context.pop();
+                  await status?.acceptFollowRequest(widget.schema.id);
+                  onRefresh();
+                }
+              ),
+              TextButton.icon(
+                label: Text(AppLocalizations.of(context)?.btn_follow_request_reject ?? "Reject"),
+                icon: Icon(Icons.close, size: tabSize),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
+                onPressed: () async {
+                  context.pop();
+                  await status?.rejectFollowRequest(widget.schema.id);
+                  onRefresh();
+                }
+              ),
+            ],
           );
         }
       ),

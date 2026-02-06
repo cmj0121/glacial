@@ -292,16 +292,14 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
   Future<void> onSearchAccount(String name) async {
     if (name.isEmpty) return;
 
-    showDialog(
+    showAdaptiveGlassDialog(
       context: context,
-      builder: (context) => Dialog(
-        child: ListAccountWidget(
-          name: name,
-          onSelected: (account) async {
-            await status?.addAccountsToList(schema.id, [account.id]);
-            onReload();
-          }
-        ),
+      builder: (context) => ListAccountWidget(
+        name: name,
+        onSelected: (account) async {
+          await status?.addAccountsToList(schema.id, [account.id]);
+          onReload();
+        }
       ),
     );
   }
