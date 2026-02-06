@@ -2,6 +2,60 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/cores/http.dart';
 
 void main() {
+  group('Constants', () {
+    test('defaultTimeout is 30 seconds', () {
+      expect(defaultTimeout.inSeconds, 30);
+    });
+
+    test('defaultRateLimit is 300', () {
+      expect(defaultRateLimit, 300);
+    });
+
+    test('defaultRetryAfter is 60 seconds', () {
+      expect(defaultRetryAfter.inSeconds, 60);
+    });
+
+    test('defaultRateLimitReset is 5 minutes', () {
+      expect(defaultRateLimitReset.inMinutes, 5);
+    });
+  });
+
+  group('GlacialHttpException', () {
+    test('HttpException extends GlacialHttpException', () {
+      final exception = HttpException(
+        statusCode: 404,
+        message: 'Not Found',
+        uri: Uri.parse('https://example.com/api/test'),
+      );
+
+      expect(exception, isA<GlacialHttpException>());
+      expect(exception.uri.path, '/api/test');
+    });
+
+    test('HttpTimeoutException extends GlacialHttpException', () {
+      final exception = HttpTimeoutException(
+        uri: Uri.parse('https://example.com/api/test'),
+        timeout: const Duration(seconds: 30),
+      );
+
+      expect(exception, isA<GlacialHttpException>());
+      expect(exception.uri.path, '/api/test');
+    });
+
+    test('RateLimitException extends GlacialHttpException', () {
+      final exception = RateLimitException(
+        uri: Uri.parse('https://example.com/api/test'),
+        limit: 300,
+        remaining: 0,
+        resetAt: DateTime.now(),
+        retryAfter: const Duration(seconds: 60),
+      );
+
+      expect(exception, isA<GlacialHttpException>());
+      expect(exception.uri.path, '/api/test');
+    });
+  });
+
   group('HttpException', () {
     test('creates exception with required fields', () {
       final exception = HttpException(
@@ -116,37 +170,6 @@ void main() {
     });
   });
 
-  group('UriEx', () {
-    test('creates https URI for non-localhost', () {
-      final uri = UriEx.handle('example.com', '/api/test');
-
-      expect(uri.scheme, 'https');
-      expect(uri.host, 'example.com');
-      expect(uri.path, '/api/test');
-    });
-
-    test('creates http URI for localhost', () {
-      final uri = UriEx.handle('localhost:3000', '/api/test');
-
-      expect(uri.scheme, 'http');
-      expect(uri.host, 'localhost');
-      expect(uri.port, 3000);
-      expect(uri.path, '/api/test');
-    });
-
-    test('handles query parameters', () {
-      final uri = UriEx.handle('example.com', '/api/test', {'key': 'value'});
-
-      expect(uri.queryParameters['key'], 'value');
-    });
-
-    test('handles null path', () {
-      final uri = UriEx.handle('example.com');
-
-      expect(uri.path, '');
-    });
-  });
-
   group('HttpTimeoutException', () {
     test('creates exception with uri and timeout', () {
       final exception = HttpTimeoutException(
@@ -208,17 +231,45 @@ void main() {
       expect(config.maxRetries, 3);
       expect(config.baseDelay.inSeconds, 1);
       expect(config.backoffMultiplier, 2.0);
+      expect(config.jitterFactor, 0.1);
+    });
+
+    test('none config has zero retries', () {
+      const config = RetryConfig.none;
+
+      expect(config.maxRetries, 0);
     });
 
     test('getDelay returns exponential backoff', () {
       const config = RetryConfig(
         baseDelay: Duration(seconds: 1),
         backoffMultiplier: 2.0,
+        jitterFactor: 0.0, // No jitter for predictable testing
       );
 
+      // 2^1 = 2s, 2^2 = 4s, 2^3 = 8s
       expect(config.getDelay(1).inSeconds, 2);
       expect(config.getDelay(2).inSeconds, 4);
-      expect(config.getDelay(3).inSeconds, 6);
+      expect(config.getDelay(3).inSeconds, 8);
+    });
+
+    test('getDelay includes jitter within expected range', () {
+      const config = RetryConfig(
+        baseDelay: Duration(seconds: 1),
+        backoffMultiplier: 2.0,
+        jitterFactor: 0.5, // Large jitter for testing
+      );
+
+      // Run multiple times to test jitter randomness
+      final delays = List.generate(100, (_) => config.getDelay(1).inMilliseconds);
+
+      // Base delay for attempt 1: 1000ms * 2^1 = 2000ms
+      // With 50% jitter: should be between 1000ms and 3000ms
+      expect(delays.every((d) => d >= 1000 && d <= 3000), isTrue);
+
+      // Verify there's actually variation (not all same value)
+      final uniqueDelays = delays.toSet();
+      expect(uniqueDelays.length, greaterThan(1));
     });
 
     test('custom config overrides defaults', () {
@@ -226,17 +277,57 @@ void main() {
         maxRetries: 5,
         baseDelay: Duration(milliseconds: 500),
         backoffMultiplier: 1.5,
+        jitterFactor: 0.2,
       );
 
       expect(config.maxRetries, 5);
       expect(config.baseDelay.inMilliseconds, 500);
       expect(config.backoffMultiplier, 1.5);
+      expect(config.jitterFactor, 0.2);
+    });
+
+    test('getDelay with different multipliers', () {
+      const config = RetryConfig(
+        baseDelay: Duration(milliseconds: 100),
+        backoffMultiplier: 3.0,
+        jitterFactor: 0.0,
+      );
+
+      // 3^1 = 3, 3^2 = 9, 3^3 = 27
+      expect(config.getDelay(1).inMilliseconds, 300);
+      expect(config.getDelay(2).inMilliseconds, 900);
+      expect(config.getDelay(3).inMilliseconds, 2700);
     });
   });
 
-  group('defaultTimeout', () {
-    test('is 30 seconds', () {
-      expect(defaultTimeout.inSeconds, 30);
+  group('UriEx', () {
+    test('creates https URI for non-localhost', () {
+      final uri = UriEx.handle('example.com', '/api/test');
+
+      expect(uri.scheme, 'https');
+      expect(uri.host, 'example.com');
+      expect(uri.path, '/api/test');
+    });
+
+    test('creates http URI for localhost', () {
+      final uri = UriEx.handle('localhost:3000', '/api/test');
+
+      expect(uri.scheme, 'http');
+      expect(uri.host, 'localhost');
+      expect(uri.port, 3000);
+      expect(uri.path, '/api/test');
+    });
+
+    test('handles query parameters', () {
+      final uri = UriEx.handle('example.com', '/api/test', {'key': 'value'});
+
+      expect(uri.queryParameters['key'], 'value');
+    });
+
+    test('handles null path', () {
+      final uri = UriEx.handle('example.com');
+
+      expect(uri.path, '');
     });
   });
 }
