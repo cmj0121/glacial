@@ -94,6 +94,15 @@ class AccessStatusSchema {
       );
 
       return response.body;
+    } on HttpException catch (e) {
+      logger.e("HTTP error ${e.statusCode} at [GET] $uri: ${e.message}");
+      return null;
+    } on HttpTimeoutException catch (e) {
+      logger.e("Request timed out at [GET] $uri: $e");
+      return null;
+    } on RateLimitException catch (e) {
+      logger.w("Rate limited at [GET] $uri, retry after ${e.retryAfter.inSeconds}s");
+      return null;
     } catch (e) {
       logger.e("failed to fetch API at [GET] $uri: $e");
       return null;
@@ -121,6 +130,15 @@ class AccessStatusSchema {
       final String? nextLink = response.headers['link'];
 
       return (body, getMaxIDFromNextLink(nextLink));
+    } on HttpException catch (e) {
+      logger.e("HTTP error ${e.statusCode} at [GET] $uri: ${e.message}");
+      rethrow;
+    } on HttpTimeoutException catch (e) {
+      logger.e("Request timed out at [GET] $uri: $e");
+      rethrow;
+    } on RateLimitException catch (e) {
+      logger.w("Rate limited at [GET] $uri, retry after ${e.retryAfter.inSeconds}s");
+      rethrow;
     } catch (e) {
       logger.e("failed to fetch API at [GET] $uri: $e");
       throw Exception('Failed to fetch API at [GET] $uri: $e');

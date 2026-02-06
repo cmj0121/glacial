@@ -146,4 +146,97 @@ void main() {
       expect(uri.path, '');
     });
   });
+
+  group('HttpTimeoutException', () {
+    test('creates exception with uri and timeout', () {
+      final exception = HttpTimeoutException(
+        uri: Uri.parse('https://example.com/api/test'),
+        timeout: const Duration(seconds: 30),
+      );
+
+      expect(exception.uri.path, '/api/test');
+      expect(exception.timeout.inSeconds, 30);
+    });
+
+    test('toString provides useful message', () {
+      final exception = HttpTimeoutException(
+        uri: Uri.parse('https://example.com/api/test'),
+        timeout: const Duration(seconds: 30),
+      );
+
+      expect(exception.toString(), contains('timed out'));
+      expect(exception.toString(), contains('30s'));
+    });
+  });
+
+  group('RateLimitException', () {
+    test('creates exception with all fields', () {
+      final resetAt = DateTime.now().add(const Duration(minutes: 5));
+      final exception = RateLimitException(
+        uri: Uri.parse('https://example.com/api/test'),
+        limit: 300,
+        remaining: 0,
+        resetAt: resetAt,
+        retryAfter: const Duration(seconds: 60),
+      );
+
+      expect(exception.uri.path, '/api/test');
+      expect(exception.limit, 300);
+      expect(exception.remaining, 0);
+      expect(exception.resetAt, resetAt);
+      expect(exception.retryAfter.inSeconds, 60);
+    });
+
+    test('toString provides useful message', () {
+      final exception = RateLimitException(
+        uri: Uri.parse('https://example.com/api/test'),
+        limit: 300,
+        remaining: 0,
+        resetAt: DateTime.now(),
+        retryAfter: const Duration(seconds: 60),
+      );
+
+      expect(exception.toString(), contains('Rate limited'));
+      expect(exception.toString(), contains('60s'));
+    });
+  });
+
+  group('RetryConfig', () {
+    test('default config has expected values', () {
+      const config = RetryConfig.defaultConfig;
+
+      expect(config.maxRetries, 3);
+      expect(config.baseDelay.inSeconds, 1);
+      expect(config.backoffMultiplier, 2.0);
+    });
+
+    test('getDelay returns exponential backoff', () {
+      const config = RetryConfig(
+        baseDelay: Duration(seconds: 1),
+        backoffMultiplier: 2.0,
+      );
+
+      expect(config.getDelay(1).inSeconds, 2);
+      expect(config.getDelay(2).inSeconds, 4);
+      expect(config.getDelay(3).inSeconds, 6);
+    });
+
+    test('custom config overrides defaults', () {
+      const config = RetryConfig(
+        maxRetries: 5,
+        baseDelay: Duration(milliseconds: 500),
+        backoffMultiplier: 1.5,
+      );
+
+      expect(config.maxRetries, 5);
+      expect(config.baseDelay.inMilliseconds, 500);
+      expect(config.backoffMultiplier, 1.5);
+    });
+  });
+
+  group('defaultTimeout', () {
+    test('is 30 seconds', () {
+      expect(defaultTimeout.inSeconds, 30);
+    });
+  });
 }

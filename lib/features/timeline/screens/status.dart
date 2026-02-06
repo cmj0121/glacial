@@ -504,6 +504,12 @@ class _TranslateViewState extends State<TranslateView> {
           isLoading = false;
         });
       }
+    } on HttpException catch (e) {
+      logger.e("HTTP error translating status: ${e.statusCode} ${e.message}");
+      if (mounted) setState(() => isLoading = false);
+    } on HttpTimeoutException catch (e) {
+      logger.e("Translation request timed out: $e");
+      if (mounted) setState(() => isLoading = false);
     } catch (e) {
       logger.e("failed to translate status: $e");
       if (mounted) setState(() => isLoading = false);

@@ -16,7 +16,7 @@
 //   - [+] POST  /api/v1/accounts/:id/unfollow
 //   - [+] POST  /api/v1/accounts/:id/remove_from_followers
 //   - [+] POST  /api/v1/accounts/:id/block
-//   - [+] POST  /api/v1/accounts/:id/unbloc
+//   - [+] POST  /api/v1/accounts/:id/unblock
 //   - [+] POST  /api/v1/accounts/:id/mute
 //   - [+] POST  /api/v1/accounts/:id/unmute
 //   - [ ] POST  /api/v1/accounts/:id/pin                    (deprecated in 4.4.0)
@@ -469,6 +469,9 @@ extension AccountsExtensions on AccessStatusSchema {
 
       cacheAccount(account);
       return account;
+    } on FormatException catch (e) {
+      logger.w("failed to parse account for acct: $acct, error: $e");
+      return null;
     } catch (e) {
       logger.w("account lookup failed for acct: $acct, error: $e");
       return null;
