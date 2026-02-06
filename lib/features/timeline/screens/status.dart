@@ -450,14 +450,11 @@ class _TranslateViewState extends State<TranslateView> {
   }
 
   Widget buildTranslation() {
-    return Container(
+    return AdaptiveGlassContainer(
       width: double.infinity,
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.only(top: 4),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
-      ),
+      borderRadius: BorderRadius.circular(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -986,7 +983,7 @@ class PreviewCard extends StatelessWidget {
   }
 
   Widget buildContent(BuildContext context) {
-    return Card(
+    return AdaptiveGlassCard(
       child: LayoutBuilder(
         builder: (context, constraints) {
           final double width = constraints.maxWidth / 3;
