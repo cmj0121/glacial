@@ -681,10 +681,11 @@ class _StatusContextState extends ConsumerState<StatusContext> {
 
         final StatusContextSchema ctx = snapshot.data!;
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          // scroll to the current status when the widget is built
+          // scroll to the current status and center it on screen
           itemScrollController.scrollTo(
             index: ctx.ancestors.length,
             duration: const Duration(milliseconds: 300),
+            alignment: 0.5, // center the selected status
           );
         });
 
