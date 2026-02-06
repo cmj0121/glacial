@@ -680,10 +680,21 @@ class _StatusContextState extends ConsumerState<StatusContext> {
         }
 
         final StatusContextSchema ctx = snapshot.data!;
+
+        // Combine all statuses and sort by creation time
+        final List<StatusSchema> allStatuses = [
+          ...ctx.ancestors,
+          widget.schema,
+          ...ctx.descendants,
+        ]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+        // Find the index of the selected status after sorting
+        final int selectedIndex = allStatuses.indexWhere((s) => s.id == widget.schema.id);
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
           // scroll to the current status and center it on screen
           itemScrollController.scrollTo(
-            index: ctx.ancestors.length,
+            index: selectedIndex,
             duration: const Duration(milliseconds: 300),
             alignment: 0.5, // center the selected status
           );
@@ -693,33 +704,29 @@ class _StatusContextState extends ConsumerState<StatusContext> {
           key: ValueKey(widget.schema.id),
           direction: DismissDirection.startToEnd,
           confirmDismiss: (_) async { context.pop(); return false; },
-          child: buildContent(ctx),
+          child: buildContent(allStatuses, selectedIndex),
         );
       }
     );
   }
 
-  // Build the list of the context statuses, including the ancestors and descendants
-  Widget buildContent(StatusContextSchema ctx) {
-    final List<Widget> children = [
-      ...ctx.ancestors.map((StatusSchema status) =>  Status(schema: status, indent: 1)),
-
-      Status(schema: widget.schema),
-
-      ...ctx.descendants.map((StatusSchema status) => Status(schema: status, indent: 1)),
-    ];
-
+  // Build the list of the context statuses sorted by creation time
+  Widget buildContent(List<StatusSchema> statuses, int selectedIndex) {
     return ScrollablePositionedList.builder(
       itemScrollController: itemScrollController,
-      itemCount: children.length,
+      itemCount: statuses.length,
       itemBuilder: (context, index) {
-        final Widget child = children[index];
+        final StatusSchema status = statuses[index];
+        final bool isSelected = index == selectedIndex;
 
         return Container(
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
           ),
-          child: child,
+          child: Status(
+            schema: status,
+            indent: isSelected ? 0 : 1,
+          ),
         );
       },
     );
