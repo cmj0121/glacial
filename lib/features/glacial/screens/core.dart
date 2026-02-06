@@ -304,7 +304,7 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
         break;
       case DrawerButtonType.announcement:
         if (mounted) {
-          showModalBottomSheet(
+          showAdaptiveGlassSheet(
             context: context,
             builder: (_) => AnnouncementSheet(status: status),
           );
