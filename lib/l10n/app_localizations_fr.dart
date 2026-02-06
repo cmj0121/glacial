@@ -761,5 +761,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_notification_policy_drop => 'Rejeter';
 
   @override
+  String get txt_no_announcements => 'Aucune annonce de ce serveur';
+
+  @override
   String get dots => '...';
 }

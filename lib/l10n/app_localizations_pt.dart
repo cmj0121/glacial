@@ -759,5 +759,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_notification_policy_drop => 'Descartar';
 
   @override
+  String get txt_no_announcements => 'Nenhum anúncio deste servidor';
+
+  @override
   String get dots => '...';
 }

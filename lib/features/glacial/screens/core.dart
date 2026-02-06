@@ -61,19 +61,18 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
         return Scaffold(
           key: scaffoldKey,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(appBarHeight),
-            child: AppBar(
-              leading: IconButton(
-                icon: Icon(icon, size: iconSize, color: Theme.of(context).colorScheme.onSurface),
-                onPressed: widget.backable ? () => context.pop() : () => scaffoldKey.currentState?.openDrawer(),
-              ),
-              title: widget.title,
-              actions: [
-                ...widget.actions,
-                SearchExplorer(size: sidebarSize),
-              ],
+          extendBodyBehindAppBar: useLiquidGlass,
+          appBar: AdaptiveGlassAppBar(
+            leading: AdaptiveGlassIconButton(
+              icon: icon,
+              size: iconSize,
+              onPressed: widget.backable ? () => context.pop() : () => scaffoldKey.currentState?.openDrawer(),
             ),
+            title: widget.title,
+            actions: [
+              ...widget.actions,
+              SearchExplorer(size: sidebarSize),
+            ],
           ),
           body: SafeArea(
             child: Padding(
@@ -131,7 +130,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
       return null;
     }
 
-    return Padding(
+    return AdaptiveGlassBottomBar(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -305,7 +304,7 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
         break;
       case DrawerButtonType.announcement:
         if (mounted) {
-          showModalBottomSheet(
+          showAdaptiveGlassSheet(
             context: context,
             builder: (_) => AnnouncementSheet(status: status),
           );
@@ -420,7 +419,10 @@ class _AnnouncementSheetState extends State<AnnouncementSheet> {
           Text(title, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
           if (announcements!.isEmpty)
-            const NoResult()
+            NoResult(
+              message: AppLocalizations.of(context)?.txt_no_announcements ?? "No announcements",
+              icon: Icons.campaign_outlined,
+            )
           else
             Flexible(
               child: ListView.separated(

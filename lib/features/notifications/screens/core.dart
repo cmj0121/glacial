@@ -200,7 +200,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
         IconButton(
           icon: const Icon(Icons.tune, size: 20),
           tooltip: AppLocalizations.of(context)?.txt_notification_policy ?? "Notification Policy",
-          onPressed: () => showModalBottomSheet(
+          onPressed: () => showAdaptiveGlassSheet(
             context: context,
             builder: (_) => NotificationPolicySheet(status: status),
           ),

@@ -71,6 +71,11 @@ Future<void> init() async {
   await dotenv.load(fileName: ".env");
   await Info.init();
   await Storage.init();
+
+  // Log platform detection for Liquid Glass support
+  if (useLiquidGlass) {
+    logger.d("Liquid Glass UI enabled for Apple platform");
+  }
 }
 
 

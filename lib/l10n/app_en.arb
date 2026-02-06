@@ -231,5 +231,6 @@
   "txt_notification_policy_accept": "Accept",
   "txt_notification_policy_filter": "Filter",
   "txt_notification_policy_drop": "Drop",
+  "txt_no_announcements": "No announcements from this server",
   "dots": "..."
 }

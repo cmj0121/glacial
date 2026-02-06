@@ -912,29 +912,28 @@ class _FeaturedTagsState extends ConsumerState<FeaturedTags> {
 
   Future<void> onAdd() async {
     final TextEditingController controller = TextEditingController();
-    final String? name = await showDialog<String>(
+    final String? name = await showAdaptiveGlassDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)?.txt_featured_tags ?? "Featured tags"),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(
-            prefixText: '#',
-            border: OutlineInputBorder(),
-          ),
+      title: AppLocalizations.of(context)?.txt_featured_tags ?? "Featured tags",
+      builder: (context) => TextField(
+        controller: controller,
+        autofocus: true,
+        decoration: const InputDecoration(
+          prefixText: '#',
+          border: OutlineInputBorder(),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(AppLocalizations.of(context)?.btn_close ?? "Close"),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: Text(AppLocalizations.of(context)?.btn_save ?? "Save"),
-          ),
-        ],
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(AppLocalizations.of(context)?.btn_close ?? "Close"),
+        ),
+        AdaptiveGlassButton(
+          filled: true,
+          onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+          child: Text(AppLocalizations.of(context)?.btn_save ?? "Save"),
+        ),
+      ],
     );
     controller.dispose();
 

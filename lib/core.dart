@@ -3,9 +3,11 @@ export 'package:go_router/go_router.dart';
 
 export 'cores/http.dart';
 export 'cores/misc.dart';
+export 'cores/platform.dart';
 export 'cores/routes.dart';
 export 'cores/storage.dart';
 export 'cores/screens/animations.dart';
+export 'cores/screens/glass.dart';
 export 'cores/screens/misc.dart';
 export 'cores/screens/view.dart';
 export 'l10n/app_localizations.dart';

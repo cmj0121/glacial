@@ -750,5 +750,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_notification_policy_drop => 'Drop';
 
   @override
+  String get txt_no_announcements => 'No announcements from this server';
+
+  @override
   String get dots => '...';
 }

@@ -312,34 +312,32 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
         style: labelStyle,
       ),
       onTap: () async {
-        showDialog(
+        showAdaptiveGlassDialog(
           context: context,
           builder: (BuildContext context) {
             final List<Locale> locales = AppLocalizations.supportedLocales;
 
-            return Dialog(
-               child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: locales.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final Locale item = locales[index];
-                  final String name = '[${item.languageCode}] ${LocaleNames.of(context)?.nameOf(item.languageCode) ?? ""}';
-                  final bool selected = item.languageCode == locale.languageCode;
-                  final Widget icon = selected ?
-                      Icon(Icons.check, size: tabSize, color: Theme.of(context).colorScheme.primary) :
-                      const SizedBox.shrink();
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: locales.length,
+              itemBuilder: (BuildContext context, int index) {
+                final Locale item = locales[index];
+                final String name = '[${item.languageCode}] ${LocaleNames.of(context)?.nameOf(item.languageCode) ?? ""}';
+                final bool selected = item.languageCode == locale.languageCode;
+                final Widget icon = selected ?
+                    Icon(Icons.check, size: tabSize, color: Theme.of(context).colorScheme.primary) :
+                    const SizedBox.shrink();
 
-                  return ListTile(
-                    leading: icon,
-                    title: Text(name),
-                    onTap: () {
-                      context.pop();
-                      Storage().savePreference(schema.copyWith(locale: item), ref: ref);
-                      ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
-                    },
-                  );
-                },
-               ),
+                return ListTile(
+                  leading: icon,
+                  title: Text(name),
+                  onTap: () {
+                    context.pop();
+                    Storage().savePreference(schema.copyWith(locale: item), ref: ref);
+                    ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
+                  },
+                );
+              },
             );
           },
         );

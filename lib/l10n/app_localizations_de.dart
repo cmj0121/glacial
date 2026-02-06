@@ -757,5 +757,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_notification_policy_drop => 'Verwerfen';
 
   @override
+  String get txt_no_announcements => 'Keine Ankündigungen von diesem Server';
+
+  @override
   String get dots => '...';
 }

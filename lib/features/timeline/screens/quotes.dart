@@ -83,15 +83,10 @@ class _QuoteState extends ConsumerState<Quote> {
   }
 
   Widget buildQuote(BuildContext context, Widget quote) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: quote,
-      ),
+    return AdaptiveGlassContainer(
+      padding: const EdgeInsets.all(8.0),
+      borderRadius: BorderRadius.circular(16.0),
+      child: quote,
     );
   }
 }

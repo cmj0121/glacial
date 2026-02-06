@@ -231,5 +231,6 @@
   "txt_notification_policy_accept": "接受",
   "txt_notification_policy_filter": "過濾",
   "txt_notification_policy_drop": "丟棄",
+  "txt_no_announcements": "此伺服器沒有公告",
   "dots": "..."
 }
