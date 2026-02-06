@@ -57,10 +57,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_drawer_directory => 'アカウント探索';
 
   @override
+  String get btn_drawer_announcement => 'お知らせ';
+
+  @override
   String get btn_drawer_preference => '設定';
 
   @override
   String get btn_drawer_logout => 'ログアウト';
+
+  @override
+  String get btn_dismiss => '既読にする';
 
   @override
   String get btn_trends_links => 'リンク';
@@ -137,7 +143,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_interaction_share => '共有';
 
   @override
-  String get btn_interaction_mute => 'ミュート';
+  String get btn_interaction_mute => '会話をミュート';
 
   @override
   String get btn_interaction_block => 'ブロック';
@@ -156,6 +162,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get btn_interaction_filter => 'フィルター';
+
+  @override
+  String get btn_interaction_pin => 'ピン留め';
 
   @override
   String get btn_interaction_policy => 'ポリシー';
@@ -247,6 +256,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String btn_relationship_report(Object acct) {
     return '$acctを報告';
   }
+
+  @override
+  String get btn_relationship_note => '個人メモ';
+
+  @override
+  String get desc_relationship_note => 'このアカウントについて個人メモを追加';
+
+  @override
+  String get btn_relationship_endorse => 'プロフィールで紹介';
+
+  @override
+  String get btn_relationship_unendorse => 'プロフィールから削除';
+
+  @override
+  String get btn_relationship_remove_follower => 'フォロワーを削除';
 
   @override
   String get btn_notification_mention => 'メンション';
@@ -418,6 +442,18 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_show_more => '詳細表示';
+
+  @override
+  String get btn_translate_show => '翻訳';
+
+  @override
+  String get btn_translate_hide => '原文を表示';
+
+  @override
+  String get txt_familiar_followers => '共通のフォロワー';
+
+  @override
+  String get txt_featured_tags => '注目のタグ';
 
   @override
   String get txt_no_result => '結果が見つかりません';
@@ -655,6 +691,33 @@ class AppLocalizationsJa extends AppLocalizations {
   String msg_follow_request(Object name) {
     return '$nameからフォローリクエスト';
   }
+
+  @override
+  String get txt_notification_policy => '通知ポリシー';
+
+  @override
+  String get txt_notification_policy_not_following => 'フォローしていない人';
+
+  @override
+  String get txt_notification_policy_not_followers => 'フォロワーでない人';
+
+  @override
+  String get txt_notification_policy_new_accounts => '新しいアカウント';
+
+  @override
+  String get txt_notification_policy_private_mentions => 'プライベートメンション';
+
+  @override
+  String get txt_notification_policy_limited_accounts => 'モデレート済みアカウント';
+
+  @override
+  String get txt_notification_policy_accept => '許可';
+
+  @override
+  String get txt_notification_policy_filter => 'フィルター';
+
+  @override
+  String get txt_notification_policy_drop => '破棄';
 
   @override
   String get dots => '...';

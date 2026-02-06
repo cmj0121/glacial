@@ -9,6 +9,7 @@ export 'post.dart';
 export 'report.dart';
 export 'status.dart';
 export 'timeline.dart';
+export 'translation.dart';
 export 'visibility.dart';
 export 'quotes.dart';
 

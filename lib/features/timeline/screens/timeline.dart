@@ -125,6 +125,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
   late final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
   Timer? timer;
+  Timer? _markerDebounce;
   String? maxId;
 
   List<StatusSchema> unreaded = [];
@@ -156,6 +157,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
   void dispose() {
     itemPositionsListener.itemPositions.removeListener(_onPositionChange);
     timer?.cancel();
+    _markerDebounce?.cancel();
     super.dispose();
   }
 
@@ -164,6 +166,21 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     final int? lastIndex = positions.isNotEmpty ? positions.last.index : null;
 
     if (lastIndex != null && lastIndex > statuses.length - 5) onLoad();
+
+    // Save read position for home timeline with debouncing.
+    if (widget.type == TimelineType.home && widget.status.isSignedIn) {
+      final int? firstIndex = positions.isNotEmpty ? positions.first.index : null;
+      if (firstIndex != null && firstIndex < statuses.length) {
+        _saveMarkerDebounced(statuses[firstIndex].id);
+      }
+    }
+  }
+
+  void _saveMarkerDebounced(String statusId) {
+    _markerDebounce?.cancel();
+    _markerDebounce = Timer(const Duration(seconds: 3), () {
+      widget.status.setMarker(id: statusId, type: TimelineMarkerType.home);
+    });
   }
 
   @override

@@ -83,8 +83,12 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
               onFollowingTap: () => controller.animateTo(AccountProfileType.following.index),
             );
           case AccountProfileType.followers:
-            return AccountList(loader: ({String? maxId}) =>
-              status?.fetchFollowers(account: widget.schema, maxId: maxId) ?? Future.value((<AccountSchema>[], null))
+            return AccountList(
+              loader: ({String? maxId}) =>
+                status?.fetchFollowers(account: widget.schema, maxId: maxId) ?? Future.value((<AccountSchema>[], null)),
+              onDismiss: isSelfProfile
+                ? (account) async => status?.removeFromFollowers(accountId: account.id)
+                : null,
             );
           case AccountProfileType.following:
             return AccountList(loader: ({String? maxId}) =>
@@ -147,6 +151,8 @@ class ProfilePage extends ConsumerWidget {
           buildBanner(context),
           const SizedBox(height: 16),
           buildAccountName(context, status),
+          if (schema.id != status.account?.id) FamiliarFollowers(schema: schema),
+          FeaturedTags(schema: schema),
           UserStatistics(
             schema: schema,
             onStatusesTap: onStatusesTap,
@@ -620,10 +626,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
     return Dismissible(
       key: UniqueKey(),
       direction: DismissDirection.startToEnd,
-      onDismissed: (_) {
+      confirmDismiss: (_) async {
         final List<FieldSchema> fields = List.from(schema.fields);
         fields.removeAt(index);
         onChanged(schema: schema.copyWith(fields: fields));
+        return false;
       },
       background: Container(
         alignment: Alignment.centerLeft,
@@ -765,6 +772,181 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
     if (mounted) {
       ref.read(accessStatusProvider.notifier).state = status?.copyWith(account: account);
     }
+  }
+}
+
+// Show the familiar followers (people you follow who also follow this account).
+class FamiliarFollowers extends ConsumerStatefulWidget {
+  final AccountSchema schema;
+  final double avatarSize;
+
+  const FamiliarFollowers({
+    super.key,
+    required this.schema,
+    this.avatarSize = 24,
+  });
+
+  @override
+  ConsumerState<FamiliarFollowers> createState() => _FamiliarFollowersState();
+}
+
+class _FamiliarFollowersState extends ConsumerState<FamiliarFollowers> {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+  List<AccountSchema> accounts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (accounts.isEmpty) return const SizedBox.shrink();
+
+    final String label = AppLocalizations.of(context)?.txt_familiar_followers ?? "Also followed by";
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Row(
+        children: [
+          ...accounts.take(5).map((a) => Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: AccountAvatar(schema: a, size: widget.avatarSize),
+          )),
+          Flexible(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: Theme.of(context).disabledColor,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> onLoad() async {
+    if (status?.isSignedIn != true) return;
+
+    final List<AccountSchema> result = await status?.fetchFamiliarFollowers(
+      accountId: widget.schema.id,
+    ) ?? [];
+
+    if (mounted) setState(() => accounts = result);
+  }
+}
+
+// Show the featured hashtags on a user's profile.
+class FeaturedTags extends ConsumerStatefulWidget {
+  final AccountSchema schema;
+
+  const FeaturedTags({super.key, required this.schema});
+
+  @override
+  ConsumerState<FeaturedTags> createState() => _FeaturedTagsState();
+}
+
+class _FeaturedTagsState extends ConsumerState<FeaturedTags> {
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+
+  List<FeaturedTagSchema> tags = [];
+
+  bool get isSelf => widget.schema.id == status?.account?.id;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (tags.isEmpty && !isSelf) return const SizedBox.shrink();
+
+    final String label = AppLocalizations.of(context)?.txt_featured_tags ?? "Featured tags";
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (tags.isNotEmpty) Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor),
+          ),
+          const SizedBox(height: 4),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              ...tags.map((tag) => InputChip(
+                label: Text('#${tag.name}'),
+                deleteIcon: isSelf ? const Icon(Icons.close, size: 16) : null,
+                onDeleted: isSelf ? () => onRemove(tag) : null,
+                onPressed: () => context.push(RoutePath.hashtag.path, extra: tag.name),
+              )),
+              if (isSelf) ActionChip(
+                avatar: const Icon(Icons.add, size: 16),
+                label: Text(label),
+                onPressed: onAdd,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> onLoad() async {
+    final List<FeaturedTagSchema> result = await status?.fetchAccountFeaturedTags(
+      accountId: widget.schema.id,
+    ) ?? [];
+
+    if (mounted) setState(() => tags = result);
+  }
+
+  Future<void> onAdd() async {
+    final TextEditingController controller = TextEditingController();
+    final String? name = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)?.txt_featured_tags ?? "Featured tags"),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            prefixText: '#',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(AppLocalizations.of(context)?.btn_close ?? "Close"),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            child: Text(AppLocalizations.of(context)?.btn_save ?? "Save"),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+
+    if (name != null && name.isNotEmpty && mounted) {
+      await status?.featureTag(name);
+      if (mounted) await onLoad();
+    }
+  }
+
+  Future<void> onRemove(FeaturedTagSchema tag) async {
+    setState(() => tags.removeWhere((t) => t.id == tag.id));
+    await status?.unfeatureTag(tag.id);
   }
 }
 

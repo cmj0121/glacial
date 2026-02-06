@@ -119,8 +119,8 @@ class GroupSchema {
   factory GroupSchema.fromJson(Map<String, dynamic> json) {
     return GroupSchema(
       key: json['group_key'] as String,
-      count: json['notifications_count'] as int,
-      id: json['most_recent_notification_id'] as int,
+      count: json['notifications_count'] as int? ?? 0,
+      id: json['most_recent_notification_id'] as int? ?? 0,
       type: NotificationType.fromString(json['type'] as String),
       accounts: (json['sample_account_ids'] as List<dynamic>).map((e) => e as String).toList(),
       statusID: json['status_id'] as String?,
@@ -205,19 +205,118 @@ class MarkersSchema {
   }
 
   factory MarkersSchema.fromJson(Map<String, dynamic> json) {
-    late final Map<TimelineMarkerType, MarkerSchema> markers;
+    final Map<TimelineMarkerType, MarkerSchema> markers = {};
 
-    markers = json.map((key, value) {
-      final TimelineMarkerType type = TimelineMarkerType.values.where((e) => e.name == key).first;
-      return MapEntry(
-        type,
-        MarkerSchema.fromJson(value as Map<String, dynamic>),
-      );
-    });
+    for (final entry in json.entries) {
+      final TimelineMarkerType? type = TimelineMarkerType.values
+          .where((e) => e.name == entry.key)
+          .firstOrNull;
+      if (type != null) {
+        markers[type] = MarkerSchema.fromJson(entry.value as Map<String, dynamic>);
+      }
+    }
 
     return MarkersSchema(
       markers: markers,
     );
+  }
+}
+
+// The notification filtering policy for the authenticated user.
+enum NotificationPolicyValue {
+  accept,  // Allow notifications from this category
+  filter,  // Filter notifications into a separate inbox
+  drop;    // Silently discard notifications from this category
+
+  factory NotificationPolicyValue.fromString(String str) {
+    return NotificationPolicyValue.values.firstWhere(
+      (e) => e.name == str,
+      orElse: () => NotificationPolicyValue.accept,
+    );
+  }
+
+  IconData get icon {
+    switch (this) {
+      case accept:
+        return Icons.check_circle_outline;
+      case filter:
+        return Icons.filter_alt_outlined;
+      case drop:
+        return Icons.block;
+    }
+  }
+
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case accept:
+        return AppLocalizations.of(context)?.txt_notification_policy_accept ?? "Accept";
+      case filter:
+        return AppLocalizations.of(context)?.txt_notification_policy_filter ?? "Filter";
+      case drop:
+        return AppLocalizations.of(context)?.txt_notification_policy_drop ?? "Drop";
+    }
+  }
+}
+
+class NotificationPolicySchema {
+  final NotificationPolicyValue forNotFollowing;
+  final NotificationPolicyValue forNotFollowers;
+  final NotificationPolicyValue forNewAccounts;
+  final NotificationPolicyValue forPrivateMentions;
+  final NotificationPolicyValue forLimitedAccounts;
+  final int pendingRequestsCount;
+  final int pendingNotificationsCount;
+
+  const NotificationPolicySchema({
+    required this.forNotFollowing,
+    required this.forNotFollowers,
+    required this.forNewAccounts,
+    required this.forPrivateMentions,
+    required this.forLimitedAccounts,
+    this.pendingRequestsCount = 0,
+    this.pendingNotificationsCount = 0,
+  });
+
+  factory NotificationPolicySchema.fromJson(Map<String, dynamic> json) {
+    final Map<String, dynamic> summary = json['summary'] as Map<String, dynamic>? ?? {};
+
+    return NotificationPolicySchema(
+      forNotFollowing: NotificationPolicyValue.fromString(json['for_not_following'] as String? ?? 'accept'),
+      forNotFollowers: NotificationPolicyValue.fromString(json['for_not_followers'] as String? ?? 'accept'),
+      forNewAccounts: NotificationPolicyValue.fromString(json['for_new_accounts'] as String? ?? 'accept'),
+      forPrivateMentions: NotificationPolicyValue.fromString(json['for_private_mentions'] as String? ?? 'accept'),
+      forLimitedAccounts: NotificationPolicyValue.fromString(json['for_limited_accounts'] as String? ?? 'accept'),
+      pendingRequestsCount: summary['pending_requests_count'] as int? ?? 0,
+      pendingNotificationsCount: summary['pending_notifications_count'] as int? ?? 0,
+    );
+  }
+
+  NotificationPolicySchema copyWith({
+    NotificationPolicyValue? forNotFollowing,
+    NotificationPolicyValue? forNotFollowers,
+    NotificationPolicyValue? forNewAccounts,
+    NotificationPolicyValue? forPrivateMentions,
+    NotificationPolicyValue? forLimitedAccounts,
+  }) {
+    return NotificationPolicySchema(
+      forNotFollowing: forNotFollowing ?? this.forNotFollowing,
+      forNotFollowers: forNotFollowers ?? this.forNotFollowers,
+      forNewAccounts: forNewAccounts ?? this.forNewAccounts,
+      forPrivateMentions: forPrivateMentions ?? this.forPrivateMentions,
+      forLimitedAccounts: forLimitedAccounts ?? this.forLimitedAccounts,
+      pendingRequestsCount: pendingRequestsCount,
+      pendingNotificationsCount: pendingNotificationsCount,
+    );
+  }
+
+  Map<String, String> toJson() {
+    return {
+      'for_not_following': forNotFollowing.name,
+      'for_not_followers': forNotFollowers.name,
+      'for_new_accounts': forNewAccounts.name,
+      'for_private_mentions': forPrivateMentions.name,
+      'for_limited_accounts': forLimitedAccounts.name,
+    };
   }
 }
 

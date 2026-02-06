@@ -57,10 +57,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_drawer_directory => '계정 탐색';
 
   @override
+  String get btn_drawer_announcement => '공지사항';
+
+  @override
   String get btn_drawer_preference => '설정';
 
   @override
   String get btn_drawer_logout => '로그아웃';
+
+  @override
+  String get btn_dismiss => '읽음 처리';
 
   @override
   String get btn_trends_links => '링크';
@@ -137,7 +143,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_interaction_share => '공유';
 
   @override
-  String get btn_interaction_mute => '뮤트';
+  String get btn_interaction_mute => '대화 뮤트';
 
   @override
   String get btn_interaction_block => '차단';
@@ -156,6 +162,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get btn_interaction_filter => '필터';
+
+  @override
+  String get btn_interaction_pin => '고정';
 
   @override
   String get btn_interaction_policy => '정책';
@@ -247,6 +256,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String btn_relationship_report(Object acct) {
     return '$acct 신고';
   }
+
+  @override
+  String get btn_relationship_note => '개인 메모';
+
+  @override
+  String get desc_relationship_note => '이 계정에 대한 개인 메모 추가';
+
+  @override
+  String get btn_relationship_endorse => '프로필에 추천';
+
+  @override
+  String get btn_relationship_unendorse => '프로필에서 제거';
+
+  @override
+  String get btn_relationship_remove_follower => '팔로워 삭제';
 
   @override
   String get btn_notification_mention => '멘션';
@@ -418,6 +442,18 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_show_more => '더보기';
+
+  @override
+  String get btn_translate_show => '번역';
+
+  @override
+  String get btn_translate_hide => '원문 보기';
+
+  @override
+  String get txt_familiar_followers => '함께 팔로우 중';
+
+  @override
+  String get txt_featured_tags => '추천 태그';
 
   @override
   String get txt_no_result => '결과 없음';
@@ -656,6 +692,33 @@ class AppLocalizationsKo extends AppLocalizations {
   String msg_follow_request(Object name) {
     return '$name로부터 팔로우 요청';
   }
+
+  @override
+  String get txt_notification_policy => '알림 정책';
+
+  @override
+  String get txt_notification_policy_not_following => '팔로우하지 않는 사람';
+
+  @override
+  String get txt_notification_policy_not_followers => '팔로워가 아닌 사람';
+
+  @override
+  String get txt_notification_policy_new_accounts => '새 계정';
+
+  @override
+  String get txt_notification_policy_private_mentions => '비공개 멘션';
+
+  @override
+  String get txt_notification_policy_limited_accounts => '제한된 계정';
+
+  @override
+  String get txt_notification_policy_accept => '수락';
+
+  @override
+  String get txt_notification_policy_filter => '필터';
+
+  @override
+  String get txt_notification_policy_drop => '삭제';
 
   @override
   String get dots => '...';

@@ -82,7 +82,10 @@ class _HistoryDrawerState extends ConsumerState<HistoryDrawer> {
             child: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.onError),
           ),
           direction: DismissDirection.startToEnd,
-          onDismissed: (direction) => onRemoveHistory(info),
+          confirmDismiss: (_) async {
+            onRemoveHistory(info);
+            return false;
+          },
           child: item,
         );
       },

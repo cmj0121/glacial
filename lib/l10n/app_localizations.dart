@@ -206,6 +206,12 @@ abstract class AppLocalizations {
   /// **'Explore Account'**
   String get btn_drawer_directory;
 
+  /// No description provided for @btn_drawer_announcement.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements'**
+  String get btn_drawer_announcement;
+
   /// No description provided for @btn_drawer_preference.
   ///
   /// In en, this message translates to:
@@ -217,6 +223,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logout'**
   String get btn_drawer_logout;
+
+  /// No description provided for @btn_dismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get btn_dismiss;
 
   /// No description provided for @btn_trends_links.
   ///
@@ -365,7 +377,7 @@ abstract class AppLocalizations {
   /// No description provided for @btn_interaction_mute.
   ///
   /// In en, this message translates to:
-  /// **'Mute'**
+  /// **'Mute conversation'**
   String get btn_interaction_mute;
 
   /// No description provided for @btn_interaction_block.
@@ -403,6 +415,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Filter'**
   String get btn_interaction_filter;
+
+  /// No description provided for @btn_interaction_pin.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin'**
+  String get btn_interaction_pin;
 
   /// No description provided for @btn_interaction_policy.
   ///
@@ -565,6 +583,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Report {acct}'**
   String btn_relationship_report(Object acct);
+
+  /// No description provided for @btn_relationship_note.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal note'**
+  String get btn_relationship_note;
+
+  /// No description provided for @desc_relationship_note.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a personal note about this account'**
+  String get desc_relationship_note;
+
+  /// No description provided for @btn_relationship_endorse.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature on profile'**
+  String get btn_relationship_endorse;
+
+  /// No description provided for @btn_relationship_unendorse.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfeature from profile'**
+  String get btn_relationship_unendorse;
+
+  /// No description provided for @btn_relationship_remove_follower.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove follower'**
+  String get btn_relationship_remove_follower;
 
   /// No description provided for @btn_notification_mention.
   ///
@@ -907,6 +955,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show More'**
   String get txt_show_more;
+
+  /// No description provided for @btn_translate_show.
+  ///
+  /// In en, this message translates to:
+  /// **'Translate'**
+  String get btn_translate_show;
+
+  /// No description provided for @btn_translate_hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Show original'**
+  String get btn_translate_hide;
+
+  /// No description provided for @txt_familiar_followers.
+  ///
+  /// In en, this message translates to:
+  /// **'Also followed by'**
+  String get txt_familiar_followers;
+
+  /// No description provided for @txt_featured_tags.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured tags'**
+  String get txt_featured_tags;
 
   /// No description provided for @txt_no_result.
   ///
@@ -1369,6 +1441,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Follow Request from {name}'**
   String msg_follow_request(Object name);
+
+  /// No description provided for @txt_notification_policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Policy'**
+  String get txt_notification_policy;
+
+  /// No description provided for @txt_notification_policy_not_following.
+  ///
+  /// In en, this message translates to:
+  /// **'People you don\'t follow'**
+  String get txt_notification_policy_not_following;
+
+  /// No description provided for @txt_notification_policy_not_followers.
+  ///
+  /// In en, this message translates to:
+  /// **'People not following you'**
+  String get txt_notification_policy_not_followers;
+
+  /// No description provided for @txt_notification_policy_new_accounts.
+  ///
+  /// In en, this message translates to:
+  /// **'New accounts'**
+  String get txt_notification_policy_new_accounts;
+
+  /// No description provided for @txt_notification_policy_private_mentions.
+  ///
+  /// In en, this message translates to:
+  /// **'Private mentions'**
+  String get txt_notification_policy_private_mentions;
+
+  /// No description provided for @txt_notification_policy_limited_accounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderated accounts'**
+  String get txt_notification_policy_limited_accounts;
+
+  /// No description provided for @txt_notification_policy_accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get txt_notification_policy_accept;
+
+  /// No description provided for @txt_notification_policy_filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get txt_notification_policy_filter;
+
+  /// No description provided for @txt_notification_policy_drop.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop'**
+  String get txt_notification_policy_drop;
 
   /// No description provided for @dots.
   ///

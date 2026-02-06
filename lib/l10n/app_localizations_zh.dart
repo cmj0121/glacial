@@ -57,10 +57,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_drawer_directory => '探索帳戶';
 
   @override
+  String get btn_drawer_announcement => '公告';
+
+  @override
   String get btn_drawer_preference => '偏好設定';
 
   @override
   String get btn_drawer_logout => '登出';
+
+  @override
+  String get btn_dismiss => '已讀';
 
   @override
   String get btn_trends_links => '連結';
@@ -137,7 +143,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_interaction_share => '分享';
 
   @override
-  String get btn_interaction_mute => '靜音';
+  String get btn_interaction_mute => '靜音對話';
 
   @override
   String get btn_interaction_block => '封鎖';
@@ -156,6 +162,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get btn_interaction_filter => '過濾';
+
+  @override
+  String get btn_interaction_pin => '置頂';
 
   @override
   String get btn_interaction_policy => '策略';
@@ -247,6 +256,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String btn_relationship_report(Object acct) {
     return '回報 $acct';
   }
+
+  @override
+  String get btn_relationship_note => '個人備註';
+
+  @override
+  String get desc_relationship_note => '為此帳號新增個人備註';
+
+  @override
+  String get btn_relationship_endorse => '在個人頁面推薦';
+
+  @override
+  String get btn_relationship_unendorse => '取消個人頁面推薦';
+
+  @override
+  String get btn_relationship_remove_follower => '移除追隨者';
 
   @override
   String get btn_notification_mention => '提及';
@@ -418,6 +442,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_show_more => '顯示更多';
+
+  @override
+  String get btn_translate_show => '翻譯';
+
+  @override
+  String get btn_translate_hide => '顯示原文';
+
+  @override
+  String get txt_familiar_followers => '你追蹤的人也追蹤了';
+
+  @override
+  String get txt_featured_tags => '精選標籤';
 
   @override
   String get txt_no_result => '未找到結果';
@@ -655,6 +691,33 @@ class AppLocalizationsZh extends AppLocalizations {
   String msg_follow_request(Object name) {
     return '來自 $name 的好友請求';
   }
+
+  @override
+  String get txt_notification_policy => '通知策略';
+
+  @override
+  String get txt_notification_policy_not_following => '你未追蹤的人';
+
+  @override
+  String get txt_notification_policy_not_followers => '未追蹤你的人';
+
+  @override
+  String get txt_notification_policy_new_accounts => '新帳號';
+
+  @override
+  String get txt_notification_policy_private_mentions => '私人提及';
+
+  @override
+  String get txt_notification_policy_limited_accounts => '受管制帳號';
+
+  @override
+  String get txt_notification_policy_accept => '接受';
+
+  @override
+  String get txt_notification_policy_filter => '過濾';
+
+  @override
+  String get txt_notification_policy_drop => '丟棄';
 
   @override
   String get dots => '...';

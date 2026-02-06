@@ -87,7 +87,10 @@ class _FiltersState extends ConsumerState<Filters> {
             child: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.onError),
           ),
           direction: DismissDirection.startToEnd,
-          onDismissed: (direction) => onDelete(schema: filter),
+          confirmDismiss: (_) async {
+            onDelete(schema: filter);
+            return false;
+          },
           child: tile,
         );
       },
@@ -408,8 +411,9 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
                 color: Theme.of(context).colorScheme.error,
                 child: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.onError),
               ),
-              onDismissed: (direction) async {
+              confirmDismiss: (_) async {
                 await status?.removeFilterStatus(status: s);
+                return false;
               },
               child: StatusLite(schema: schema),
             );

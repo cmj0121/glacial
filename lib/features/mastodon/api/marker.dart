@@ -3,7 +3,7 @@
 // ## Marker APIs
 //
 //   - [+] GET  /api/v1/markers
-//   - [ ] POST /api/v1/markers
+//   - [+] POST /api/v1/markers
 //
 // ref:
 //   - https://docs.joinmastodon.org/methods/markers/

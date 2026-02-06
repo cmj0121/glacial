@@ -7,7 +7,7 @@
 //
 // ## Directory APIs
 //
-//   - [ ] GET /api/v1/directory/accounts
+//   - [+] GET /api/v1/directory/accounts
 
 // ref:
 //   - https://docs.joinmastodon.org/methods/search/

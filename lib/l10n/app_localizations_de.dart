@@ -57,10 +57,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_drawer_directory => 'Account erkunden';
 
   @override
+  String get btn_drawer_announcement => 'Ankündigungen';
+
+  @override
   String get btn_drawer_preference => 'Einstellungen';
 
   @override
   String get btn_drawer_logout => 'Abmelden';
+
+  @override
+  String get btn_dismiss => 'Gelesen';
 
   @override
   String get btn_trends_links => 'Links';
@@ -137,7 +143,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_interaction_share => 'Teilen';
 
   @override
-  String get btn_interaction_mute => 'Stummschalten';
+  String get btn_interaction_mute => 'Unterhaltung stummschalten';
 
   @override
   String get btn_interaction_block => 'Blockieren';
@@ -156,6 +162,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get btn_interaction_filter => 'Filter';
+
+  @override
+  String get btn_interaction_pin => 'Anheften';
 
   @override
   String get btn_interaction_policy => 'Richtlinie';
@@ -248,6 +257,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String btn_relationship_report(Object acct) {
     return '$acct melden';
   }
+
+  @override
+  String get btn_relationship_note => 'Persönliche Notiz';
+
+  @override
+  String get desc_relationship_note =>
+      'Eine persönliche Notiz zu diesem Konto hinzufügen';
+
+  @override
+  String get btn_relationship_endorse => 'Im Profil hervorheben';
+
+  @override
+  String get btn_relationship_unendorse => 'Aus dem Profil entfernen';
+
+  @override
+  String get btn_relationship_remove_follower => 'Follower entfernen';
 
   @override
   String get btn_notification_mention => 'Erwähnt';
@@ -422,6 +447,18 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_show_more => 'Mehr anzeigen';
+
+  @override
+  String get btn_translate_show => 'Übersetzen';
+
+  @override
+  String get btn_translate_hide => 'Original anzeigen';
+
+  @override
+  String get txt_familiar_followers => 'Auch gefolgt von';
+
+  @override
+  String get txt_featured_tags => 'Hervorgehobene Tags';
 
   @override
   String get txt_no_result => 'Keine Ergebnisse gefunden';
@@ -689,6 +726,35 @@ class AppLocalizationsDe extends AppLocalizations {
   String msg_follow_request(Object name) {
     return 'Follow-Anfrage von $name';
   }
+
+  @override
+  String get txt_notification_policy => 'Benachrichtigungsrichtlinie';
+
+  @override
+  String get txt_notification_policy_not_following =>
+      'Personen, denen du nicht folgst';
+
+  @override
+  String get txt_notification_policy_not_followers =>
+      'Personen, die dir nicht folgen';
+
+  @override
+  String get txt_notification_policy_new_accounts => 'Neue Konten';
+
+  @override
+  String get txt_notification_policy_private_mentions => 'Private Erwähnungen';
+
+  @override
+  String get txt_notification_policy_limited_accounts => 'Moderierte Konten';
+
+  @override
+  String get txt_notification_policy_accept => 'Akzeptieren';
+
+  @override
+  String get txt_notification_policy_filter => 'Filtern';
+
+  @override
+  String get txt_notification_policy_drop => 'Verwerfen';
 
   @override
   String get dots => '...';

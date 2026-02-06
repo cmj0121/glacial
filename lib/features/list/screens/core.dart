@@ -177,8 +177,8 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
           child: Dismissible(
             key: UniqueKey(),
             direction: DismissDirection.startToEnd,
+            confirmDismiss: (_) async { context.pop(); return false; },
             child: showMembers ? buildMembers() : buildTimeline(),
-            onDismissed: (_) => context.pop(),
           ),
         ),
       ],

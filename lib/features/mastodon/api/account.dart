@@ -10,34 +10,34 @@
 //   - [+] GET   /api/v1/accounts/:id/statuses
 //   - [+] GET   /api/v1/accounts/:id/followers
 //   - [+] GET   /api/v1/accounts/:id/following
-//   - [ ] GET   /api/v1/accounts/:id/featured_tags
+//   - [+] GET   /api/v1/accounts/:id/featured_tags
 //   - [ ] GET   /api/v1/accounts/:id/lists
 //   - [+] POST  /api/v1/accounts/:id/follow
 //   - [+] POST  /api/v1/accounts/:id/unfollow
-//   - [ ] POST  /api/v1/accounts/:id/remove_from_followers
+//   - [+] POST  /api/v1/accounts/:id/remove_from_followers
 //   - [+] POST  /api/v1/accounts/:id/block
 //   - [+] POST  /api/v1/accounts/:id/unbloc
 //   - [+] POST  /api/v1/accounts/:id/mute
 //   - [+] POST  /api/v1/accounts/:id/unmute
 //   - [ ] POST  /api/v1/accounts/:id/pin                    (deprecated in 4.4.0)
 //   - [ ] POST  /api/v1/accounts/:id/unpin                  (deprecated in 4.4.0)
-//   - [ ] GET   /api/v1/accounts/:id/endorsements
-//   - [ ] POST  /api/v1/accounts/:id/endorse
-//   - [ ] POST  /api/v1/accounts/:id/unendorse
-//   - [ ] POST  /api/v1/accounts/:id/note
+//   - [+] GET   /api/v1/accounts/:id/endorsements
+//   - [+] POST  /api/v1/accounts/:id/endorse
+//   - [+] POST  /api/v1/accounts/:id/unendorse
+//   - [+] POST  /api/v1/accounts/:id/note
 //   - [+] GET   /api/v1/accounts/relationships
-//   - [ ] GET   /api/v1/accounts/familiar_followers
+//   - [+] GET   /api/v1/accounts/familiar_followers
 //   - [+] GET   /api/v1/accounts/search
 //   - [ ] GET   /api/v1/accounts/lookup
 //   - [ ] GET   /api/v1/accounts/:id/identity_proofs        (deprecated in 3.5.0)
 //
 // ## Mute APIs
 //
-//   - [ ] GET   /api/v1/mutes
+//   - [+] GET   /api/v1/mutes
 //
 // ## Block APIs
 //
-//   - [ ] GET   /api/v1/blocks
+//   - [+] GET   /api/v1/blocks
 //
 // ## Follow Requests APIs
 //
@@ -276,6 +276,21 @@ extension AccountsExtensions on AccessStatusSchema {
     return relationships;
   }
 
+  // Get familiar followers for the given account (people you follow who also follow them).
+  Future<List<AccountSchema>> fetchFamiliarFollowers({required String accountId}) async {
+    final String endpoint = '/api/v1/accounts/familiar_followers';
+    final Map<String, String> query = {"id[]": accountId};
+    final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+
+    if (json.isEmpty) return [];
+
+    final Map<String, dynamic> entry = json.first as Map<String, dynamic>;
+    final List<dynamic> accounts = entry['accounts'] as List<dynamic>? ?? [];
+
+    return accounts.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
   // Change the relationship of the account, such as follow, unfollow, block, or mute.
   Future<RelationshipSchema?> changeRelationship({required AccountSchema account, required RelationshipType type}) async {
     late final String endpoint;
@@ -312,6 +327,58 @@ extension AccountsExtensions on AccessStatusSchema {
 
     logger.i("complete change the relationship to ${relationship.type} for account: ${account.id}");
     return relationship;
+  }
+
+  // Set a personal note on a user's account. The note is visible only to you.
+  Future<RelationshipSchema?> setAccountNote({required String accountId, required String comment}) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/accounts/$accountId/note';
+    final Map<String, dynamic> body = {'comment': comment};
+    final String response = await postAPI(endpoint, body: body) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(response) as Map<String, dynamic>;
+
+    return RelationshipSchema.fromJson(json);
+  }
+
+  // Endorse (feature) an account on your profile.
+  Future<RelationshipSchema?> endorseAccount({required String accountId}) async {
+    checkSignedIn();
+
+    final String body = await postAPI('/api/v1/accounts/$accountId/endorse') ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+
+    return RelationshipSchema.fromJson(json);
+  }
+
+  // Unendorse (unfeature) an account from your profile.
+  Future<RelationshipSchema?> unendorseAccount({required String accountId}) async {
+    checkSignedIn();
+
+    final String body = await postAPI('/api/v1/accounts/$accountId/unendorse') ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+
+    return RelationshipSchema.fromJson(json);
+  }
+
+  // Get the featured tags of the given account.
+  Future<List<FeaturedTagSchema>> fetchAccountFeaturedTags({required String accountId}) async {
+    final String endpoint = '/api/v1/accounts/$accountId/featured_tags';
+    final String body = await getAPI(endpoint) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+
+    return json.map((e) => FeaturedTagSchema.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  // Remove the given account from your followers.
+  Future<RelationshipSchema?> removeFromFollowers({required String accountId}) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/accounts/$accountId/remove_from_followers';
+    final String body = await postAPI(endpoint) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+
+    return RelationshipSchema.fromJson(json);
   }
 
   // Search for matching accounts by username or display name.

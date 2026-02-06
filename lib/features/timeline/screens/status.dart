@@ -273,6 +273,7 @@ class StatusLite extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         HtmlDone(html: schema.content, emojis: emojis, onLinkTap: (url, attributes, _) => onLinkTap?.call(url)),
+        TranslateView(schema: schema, status: status, emojis: emojis, onLinkTap: onLinkTap),
         isNestedQuote ? const SizedBox.shrink() : Quote(schema: schema.quote),
         Poll(schema: schema.poll, onChanged: (poll) => onPollVote?.call(poll)),
         Attachments(schemas: schema.attachments),
@@ -387,6 +388,135 @@ class StatusLite extends ConsumerWidget {
         children: schema.tags.map((tag) => TagLite(schema: tag)).toList(),
       ),
     );
+  }
+}
+
+// The translate view that shows a "Translate" button when the status language
+// differs from the user's locale, and displays translated content inline.
+class TranslateView extends StatefulWidget {
+  final StatusSchema schema;
+  final AccessStatusSchema? status;
+  final List<EmojiSchema> emojis;
+  final ValueChanged<String?>? onLinkTap;
+
+  const TranslateView({
+    super.key,
+    required this.schema,
+    this.status,
+    this.emojis = const [],
+    this.onLinkTap,
+  });
+
+  @override
+  State<TranslateView> createState() => _TranslateViewState();
+}
+
+class _TranslateViewState extends State<TranslateView> {
+  TranslationSchema? translation;
+  bool isLoading = false;
+  bool isVisible = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_shouldShowTranslate) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildButton(context),
+        if (isVisible && translation != null) buildTranslation(),
+      ],
+    );
+  }
+
+  Widget buildButton(BuildContext context) {
+    final String label = isVisible
+        ? AppLocalizations.of(context)?.btn_translate_hide ?? "Show original"
+        : AppLocalizations.of(context)?.btn_translate_show ?? "Translate";
+    final bool translationEnabled = widget.status?.server?.config.translationEnabled ?? false;
+
+    return TextButton.icon(
+      onPressed: !translationEnabled || isLoading ? null : onToggle,
+      icon: isLoading
+          ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+          : const Icon(Icons.translate, size: 14),
+      label: Text(label, style: const TextStyle(fontSize: 12)),
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+    );
+  }
+
+  Widget buildTranslation() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.only(top: 4),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          HtmlDone(
+            html: translation!.content,
+            emojis: widget.emojis,
+            onLinkTap: (url, attributes, _) => widget.onLinkTap?.call(url),
+          ),
+          Text(
+            translation!.provider,
+            style: TextStyle(fontSize: 10, color: Theme.of(context).hintColor),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> onToggle() async {
+    if (isVisible) {
+      setState(() => isVisible = false);
+      return;
+    }
+
+    if (translation != null) {
+      setState(() => isVisible = true);
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final String targetLang = Localizations.localeOf(context).languageCode;
+      final TranslationSchema result = await widget.status!.translateStatus(
+        schema: widget.schema,
+        targetLanguage: targetLang,
+      );
+
+      if (mounted) {
+        setState(() {
+          translation = result;
+          isVisible = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      logger.e("failed to translate status: $e");
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  bool get _shouldShowTranslate {
+    if (widget.status?.isSignedIn != true) return false;
+    if (widget.schema.content.isEmpty) return false;
+
+    final String? statusLang = widget.schema.language;
+    if (statusLang == null || statusLang.isEmpty) return false;
+
+    final String userLang = Localizations.localeOf(context).languageCode;
+    return statusLang != userLang;
   }
 }
 
@@ -564,7 +694,7 @@ class _StatusContextState extends ConsumerState<StatusContext> {
         return Dismissible(
           key: ValueKey(widget.schema.id),
           direction: DismissDirection.startToEnd,
-          onDismissed: (_) => context.pop(),
+          confirmDismiss: (_) async { context.pop(); return false; },
           child: buildContent(ctx),
         );
       }
@@ -732,7 +862,7 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
       child: isDisposed ? const SizedBox() : Dismissible(
         key: ValueKey(widget.schema.id),
         direction: DismissDirection.startToEnd,
-        onDismissed: (_) => onDismiss(),
+        confirmDismiss: (_) async { onDismiss(); return false; },
         child: buildContent(),
       ),
     );

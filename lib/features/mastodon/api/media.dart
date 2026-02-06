@@ -10,7 +10,7 @@
 //
 // ## Custom Emoji APIs
 //
-//  - [ ] GET    /api/v1/custom_emojis
+//  - [+] GET    /api/v1/custom_emojis
 //
 // ref:
 //  - https://docs.joinmastodon.org/methods/media/

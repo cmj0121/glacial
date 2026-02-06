@@ -41,16 +41,19 @@ class StatusConfigSchema {
 class ServerConfigSchema {
   final StatusConfigSchema statuses;
   final PollConfigSchema polls;
+  final bool translationEnabled;
 
   const ServerConfigSchema({
     required this.statuses,
     required this.polls,
+    required this.translationEnabled,
   });
 
   factory ServerConfigSchema.fromJson(Map<String, dynamic> json) {
     return ServerConfigSchema(
       statuses: StatusConfigSchema.fromJson(json['statuses'] as Map<String, dynamic>),
       polls: PollConfigSchema.fromJson(json['polls'] as Map<String, dynamic>),
+      translationEnabled: (json['translation'] as Map<String, dynamic>?)?['enabled'] as bool? ?? false,
     );
   }
 }

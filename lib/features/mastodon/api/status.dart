@@ -7,7 +7,7 @@
 //    - [ ] GET    /api/v1/statuses
 //    - [+] DELETE /api/v1/statuses/:id
 //    - [+] GET    /api/v1/statuses/:id/context
-//    - [ ] POST   /api/v1/statuses/:id/translate
+//    - [+] POST   /api/v1/statuses/:id/translate
 //    - [+] GET    /api/v1/statuses/:id/reblogged_by
 //	  - [+] GET    /api/v1/statuses/:id/favourited_by
 //    - [+] POST   /api/v1/statuses/:id/favourite
@@ -16,27 +16,26 @@
 //    - [+] POST   /api/v1/statuses/:id/unreblog
 //    - [+] POST   /api/v1/statuses/:id/bookmark
 //    - [+] POST   /api/v1/statuses/:id/unbookmark
-//    - [ ] POST   /api/v1/statuses/:id/mute
-//    - [ ] POST   /api/v1/statuses/:id/unmute
-//    - [ ] POST   /api/v1/statuses/:id/pin
-//    - [ ] POST   /api/v1/statuses/:id/unpin
-//    - [ ] PUT    /api/v1/statuses/:id
+//    - [+] POST   /api/v1/statuses/:id/mute
+//    - [+] POST   /api/v1/statuses/:id/unmute
+//    - [+] POST   /api/v1/statuses/:id/pin
+//    - [+] POST   /api/v1/statuses/:id/unpin
+//    - [+] PUT    /api/v1/statuses/:id
 //    - [+] GET    /api/v1/statuses/:id/history
 //    - [ ] GET    /api/v1/statuses/:id/source
 //    - [-] GET    /api/v1/statuses/:id/card            (deprecated in 3.0.0)
 //
 // ## Scheduled Status APIs
 //
-//    - [ ] GET    /api/v1/scheduled_statuses
-//    - [ ] POST   /api/v1/scheduled_statuses
+//    - [+] GET    /api/v1/scheduled_statuses
 //    - [ ] GET    /api/v1/scheduled_statuses/:id
-//    - [ ] DELETE /api/v1/scheduled_statuses/:id
-//    - [ ] PUT    /api/v1/scheduled_statuses/:id
+//    - [+] DELETE /api/v1/scheduled_statuses/:id
+//    - [+] PUT    /api/v1/scheduled_statuses/:id
 //
 // ## Votes APIs
 //
-//    - [ ] GET    /api/v1/polls/:id
-//    - [ ] POST   /api/v1/polls/:id/votes
+//    - [+] GET    /api/v1/polls/:id
+//    - [+] POST   /api/v1/polls/:id/votes
 //
 // ref:
 //   - https://docs.joinmastodon.org/methods/statuses/
@@ -150,6 +149,12 @@ extension StatusExtensions on AccessStatusSchema {
         break;
       case StatusInteraction.bookmark:
         endpoint = isNegative ? '/api/v1/statuses/${status.id}/unbookmark' : '/api/v1/statuses/${status.id}/bookmark';
+        break;
+      case StatusInteraction.pin:
+        endpoint = isNegative ? '/api/v1/statuses/${status.id}/unpin' : '/api/v1/statuses/${status.id}/pin';
+        break;
+      case StatusInteraction.mute:
+        endpoint = isNegative ? '/api/v1/statuses/${status.id}/unmute' : '/api/v1/statuses/${status.id}/mute';
         break;
       default:
         throw ArgumentError('Unsupported status interaction: $action (negative: $isNegative)');
@@ -265,6 +270,20 @@ extension StatusExtensions on AccessStatusSchema {
 
     final String response = await putAPI(endpoint, body: body) ?? '{}';
     return StatusSchema.fromString(response);
+  }
+
+  // Translate the status content into the given target language.
+  Future<TranslationSchema> translateStatus({
+    required StatusSchema schema,
+    String? targetLanguage,
+  }) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/statuses/${schema.id}/translate';
+    final Map<String, dynamic>? body = targetLanguage != null ? {'lang': targetLanguage} : null;
+
+    final String response = await postAPI(endpoint, body: body) ?? '{}';
+    return TranslationSchema.fromString(response);
   }
 }
 

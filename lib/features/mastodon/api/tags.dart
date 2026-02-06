@@ -2,14 +2,19 @@
 //
 // ## Hashtags APIs
 //
-//   - [+] GET  /api/v1/tags/:name
-//   - [+] POST /api/v1/tags/:name/follow
-//   - [+] POST /api/v1/tags/:name/unfollow
-//   - [ ] POST /api/v1/tags/:id/feature
-//   - [ ] POST /api/v1/tags/:id/unfeature
+//   - [+] GET    /api/v1/tags/:name
+//   - [+] POST   /api/v1/tags/:name/follow
+//   - [+] POST   /api/v1/tags/:name/unfollow
+//
+// ## Featured Tags APIs
+//
+//   - [+] GET    /api/v1/featured_tags
+//   - [+] POST   /api/v1/featured_tags
+//   - [+] DELETE /api/v1/featured_tags/:id
 //
 // ref:
 //   - https://docs.joinmastodon.org/methods/tags/
+//   - https://docs.joinmastodon.org/methods/featured_tags/
 import 'dart:async';
 import 'dart:convert';
 
@@ -41,6 +46,34 @@ extension HashtagsExtensions on AccessStatusSchema {
     final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
 
     return HashtagSchema.fromJson(json);
+  }
+
+  // List all hashtags featured on your profile.
+  Future<List<FeaturedTagSchema>> fetchFeaturedTags() async {
+    checkSignedIn();
+
+    final String body = await getAPI('/api/v1/featured_tags') ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+
+    return json.map((e) => FeaturedTagSchema.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  // Promote a hashtag on your profile.
+  Future<FeaturedTagSchema> featureTag(String name) async {
+    checkSignedIn();
+
+    final Map<String, dynamic> body = {'name': name};
+    final String response = await postAPI('/api/v1/featured_tags', body: body) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(response) as Map<String, dynamic>;
+
+    return FeaturedTagSchema.fromJson(json);
+  }
+
+  // Stop promoting a hashtag on your profile.
+  Future<void> unfeatureTag(String id) async {
+    checkSignedIn();
+
+    await deleteAPI('/api/v1/featured_tags/$id');
   }
 }
 

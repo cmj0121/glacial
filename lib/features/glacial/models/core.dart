@@ -80,6 +80,7 @@ enum SidebarButtonType {
 enum DrawerButtonType {
   switchServer,
   directory,
+  announcement,
   preference,
   logout;
 
@@ -90,6 +91,8 @@ enum DrawerButtonType {
         return Icons.swap_horiz;
       case directory:
         return Icons.groups;
+      case announcement:
+        return Icons.campaign;
       case preference:
         return Icons.settings;
       case logout:
@@ -104,6 +107,8 @@ enum DrawerButtonType {
         return AppLocalizations.of(context)?.btn_drawer_switch_server ?? "Switch Server";
       case directory:
         return AppLocalizations.of(context)?.btn_drawer_directory ?? "Directory";
+      case announcement:
+        return AppLocalizations.of(context)?.btn_drawer_announcement ?? "Announcements";
       case preference:
         return AppLocalizations.of(context)?.btn_drawer_preference ?? "Preference";
       case logout:
@@ -117,6 +122,8 @@ enum DrawerButtonType {
         return RoutePath.explorer;
       case directory:
         return RoutePath.directory;
+      case announcement:
+        return RoutePath.timeline; // Announcement does not navigate, it opens a bottom sheet.
       case preference:
         return RoutePath.preference;
       case logout:

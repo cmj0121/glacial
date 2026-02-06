@@ -2,14 +2,17 @@
 //
 // ## Group Notifications APIs
 //
-//   - [+] GET  /api/v2/notifications
-//   - [ ] GET  /api/v2/notifications/:group_key
-//   - [ ] POST /api/v2/notifications/:group_key/dismiss
-//   - [ ] GET  /api/v2/notifications/:group_key/accounts
-//   - [ ] GET  /api/v2/notifications/unread_count
+//   - [+] GET   /api/v2/notifications
+//   - [ ] GET   /api/v2/notifications/:group_key
+//   - [+] POST  /api/v2/notifications/:group_key/dismiss
+//   - [ ] GET   /api/v2/notifications/:group_key/accounts
+//   - [+] GET   /api/v2/notifications/unread_count
+//   - [+] GET   /api/v2/notifications/policy
+//   - [+] PATCH /api/v2/notifications/policy
 //
 // ref:
 //   - https://docs.joinmastodon.org/methods/grouped_notifications/
+//   - https://docs.joinmastodon.org/methods/notifications/
 import 'dart:async';
 import 'dart:convert';
 
@@ -25,6 +28,14 @@ extension GroupNotificationExtensions on AccessStatusSchema {
     return GroupNotificationSchema.fromString(body);
   }
 
+  // Dismiss a single notification group by its group key.
+  Future<void> dismissNotificationGroup(String groupKey) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v2/notifications/$groupKey/dismiss';
+    await postAPI(endpoint);
+  }
+
   // Get the (capped) number of unread notification groups for the current user
   Future<int> getUnreadGroupCount() async {
     final String endpoint = '/api/v2/notifications/unread_count';
@@ -32,6 +43,26 @@ extension GroupNotificationExtensions on AccessStatusSchema {
     final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
 
     return json['count'] as int? ?? 0;
+  }
+
+  // Get the current notification filtering policy for the authenticated user.
+  Future<NotificationPolicySchema?> getNotificationPolicy() async {
+    checkSignedIn();
+
+    final String body = await getAPI('/api/v2/notifications/policy') ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+
+    return NotificationPolicySchema.fromJson(json);
+  }
+
+  // Update the notification filtering policy for the authenticated user.
+  Future<NotificationPolicySchema?> updateNotificationPolicy(NotificationPolicySchema policy) async {
+    checkSignedIn();
+
+    final String body = await patchAPI('/api/v2/notifications/policy', body: policy.toJson()) ?? '{}';
+    final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+
+    return NotificationPolicySchema.fromJson(json);
   }
 }
 
