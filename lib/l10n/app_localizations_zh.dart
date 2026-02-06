@@ -728,5 +728,32 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get txt_media_alt_text => '替代文字';
+
+  @override
+  String get txt_media_image_info => '圖片資訊';
+
+  @override
+  String get txt_media_no_exif => '無 EXIF 資料';
+
+  @override
+  String get txt_server_rules => '伺服器規則';
+
+  @override
+  String get txt_server_registration => '開放註冊';
+
+  @override
+  String get txt_about_app_version => '應用程式版本';
+
+  @override
+  String get txt_about_author => '作者';
+
+  @override
+  String get txt_about_repository => '程式碼庫';
+
+  @override
+  String get txt_about_copyright => '版權';
+
+  @override
   String get dots => '...';
 }

@@ -728,5 +728,32 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get txt_media_alt_text => '代替テキスト';
+
+  @override
+  String get txt_media_image_info => '画像情報';
+
+  @override
+  String get txt_media_no_exif => 'EXIF情報なし';
+
+  @override
+  String get txt_server_rules => 'サーバールール';
+
+  @override
+  String get txt_server_registration => '登録可能';
+
+  @override
+  String get txt_about_app_version => 'アプリバージョン';
+
+  @override
+  String get txt_about_author => '作者';
+
+  @override
+  String get txt_about_repository => 'リポジトリ';
+
+  @override
+  String get txt_about_copyright => '著作権';
+
+  @override
   String get dots => '...';
 }

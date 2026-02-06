@@ -135,7 +135,7 @@ class MastodonServer extends StatelessWidget {
             iconColor: Theme.of(context).colorScheme.primary,
             leading: const Icon(Icons.rule_outlined),
             title: Text(
-              'Server Rules',
+              AppLocalizations.of(context)?.txt_server_rules ?? 'Server Rules',
               style: style?.copyWith(
                 color: showRules ? Theme.of(context).colorScheme.primary : null,
               ),
@@ -187,9 +187,11 @@ class MastodonServer extends StatelessWidget {
         color: Colors.grey.shade400,
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Text(
-        "registration",
-        style: TextStyle(fontSize: badgeFontSize, color: Colors.black),
+      child: Builder(
+        builder: (context) => Text(
+          AppLocalizations.of(context)?.txt_server_registration ?? 'Registration',
+          style: TextStyle(fontSize: badgeFontSize, color: Colors.black),
+        ),
       ),
     );
   }

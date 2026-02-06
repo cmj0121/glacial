@@ -767,5 +767,32 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get txt_media_alt_text => 'Texto alternativo';
+
+  @override
+  String get txt_media_image_info => 'Info da imagem';
+
+  @override
+  String get txt_media_no_exif => 'Sem dados EXIF';
+
+  @override
+  String get txt_server_rules => 'Regras do servidor';
+
+  @override
+  String get txt_server_registration => 'Registro';
+
+  @override
+  String get txt_about_app_version => 'Versão do app';
+
+  @override
+  String get txt_about_author => 'Autor';
+
+  @override
+  String get txt_about_repository => 'Repositório';
+
+  @override
+  String get txt_about_copyright => 'Direitos autorais';
+
+  @override
   String get dots => '...';
 }

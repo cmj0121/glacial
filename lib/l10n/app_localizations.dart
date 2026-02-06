@@ -1508,6 +1508,60 @@ abstract class AppLocalizations {
   /// **'{count} votes'**
   String txt_poll_votes(int count);
 
+  /// Label for alternative text in media viewer
+  ///
+  /// In en, this message translates to:
+  /// **'Alt Text'**
+  String get txt_media_alt_text;
+
+  /// Label for image information section in media viewer
+  ///
+  /// In en, this message translates to:
+  /// **'Image Info'**
+  String get txt_media_image_info;
+
+  /// Message when no EXIF data is available for an image
+  ///
+  /// In en, this message translates to:
+  /// **'No EXIF data available'**
+  String get txt_media_no_exif;
+
+  /// Label for server rules section
+  ///
+  /// In en, this message translates to:
+  /// **'Server Rules'**
+  String get txt_server_rules;
+
+  /// Badge label indicating server allows registration
+  ///
+  /// In en, this message translates to:
+  /// **'Registration'**
+  String get txt_server_registration;
+
+  /// Label for app version in about screen
+  ///
+  /// In en, this message translates to:
+  /// **'App Version'**
+  String get txt_about_app_version;
+
+  /// Label for author in about screen
+  ///
+  /// In en, this message translates to:
+  /// **'Author'**
+  String get txt_about_author;
+
+  /// Label for repository in about screen
+  ///
+  /// In en, this message translates to:
+  /// **'Repository'**
+  String get txt_about_repository;
+
+  /// Label for copyright in about screen
+  ///
+  /// In en, this message translates to:
+  /// **'Copyright'**
+  String get txt_about_copyright;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

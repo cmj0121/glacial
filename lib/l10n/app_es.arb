@@ -233,5 +233,14 @@
   "txt_notification_policy_drop": "Descartar",
   "txt_no_announcements": "No hay anuncios de este servidor",
   "txt_poll_votes": "{count} votos",
+  "txt_media_alt_text": "Texto alternativo",
+  "txt_media_image_info": "Info de imagen",
+  "txt_media_no_exif": "Sin datos EXIF",
+  "txt_server_rules": "Reglas del servidor",
+  "txt_server_registration": "Registro",
+  "txt_about_app_version": "Versión de la app",
+  "txt_about_author": "Autor",
+  "txt_about_repository": "Repositorio",
+  "txt_about_copyright": "Copyright",
   "dots": "..."
 }

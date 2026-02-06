@@ -273,25 +273,25 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
       children: [
         ListTile(
           leading: Icon(Icons.numbers, size: iconSize),
-          title: Text("App Version"),
+          title: Text(AppLocalizations.of(context)?.txt_about_app_version ?? "App Version"),
           subtitle: Text('${info.version} (${info.buildNumber})', style: labelStyle),
           onTap: () => launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication),
         ),
         ListTile(
           leading: Icon(Icons.person, size: iconSize),
-          title: Text("Author"),
+          title: Text(AppLocalizations.of(context)?.txt_about_author ?? "Author"),
           subtitle: Text(author, style: labelStyle),
           onTap: () => launchUrl(Uri.parse(repo), mode: LaunchMode.externalApplication),
         ),
         ListTile(
           leading: Icon(Icons.code, size: iconSize),
-          title: Text("Repository"),
+          title: Text(AppLocalizations.of(context)?.txt_about_repository ?? "Repository"),
           subtitle: Text(repo, style: labelStyle),
           onTap: () => launchUrl(Uri.parse("$repo/${info.appName}"), mode: LaunchMode.externalApplication),
         ),
         ListTile(
           leading: Icon(Icons.copyright, size: iconSize),
-          title: Text("Copyright"),
+          title: Text(AppLocalizations.of(context)?.txt_about_copyright ?? "Copyright"),
           subtitle: Text("© $author", style: labelStyle),
           onTap: () => launchUrl(Uri.parse("$repo/${info.appName}?tab=License-1-ov-file"), mode: LaunchMode.externalApplication),
         ),

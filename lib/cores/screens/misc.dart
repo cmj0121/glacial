@@ -10,6 +10,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:glacial/cores/screens/animations.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/l10n/app_localizations.dart';
 
 // The placeholder for the app's Work-In-Progress screen
 class WIP extends StatelessWidget {
@@ -418,9 +419,9 @@ class _MediaGalleryState extends State<MediaGallery> {
           children: [
             if (currentSchema.description != null &&
                 currentSchema.description!.isNotEmpty) ...[
-              const Text(
-                'Alt Text',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)?.txt_media_alt_text ?? 'Alt Text',
+                style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -433,9 +434,9 @@ class _MediaGalleryState extends State<MediaGallery> {
               ),
               const SizedBox(height: 12),
             ],
-            const Text(
-              'Image Info',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)?.txt_media_image_info ?? 'Image Info',
+              style: const TextStyle(
                 color: Colors.white70,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -490,9 +491,9 @@ class _MediaGalleryState extends State<MediaGallery> {
     }
 
     if (items.isEmpty) {
-      return const Text(
-        'No EXIF data available',
-        style: TextStyle(color: Colors.white54, fontSize: 14),
+      return Text(
+        AppLocalizations.of(context)?.txt_media_no_exif ?? 'No EXIF data available',
+        style: const TextStyle(color: Colors.white54, fontSize: 14),
       );
     }
 

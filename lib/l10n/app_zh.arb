@@ -233,5 +233,14 @@
   "txt_notification_policy_drop": "丟棄",
   "txt_no_announcements": "此伺服器沒有公告",
   "txt_poll_votes": "{count} 票",
+  "txt_media_alt_text": "替代文字",
+  "txt_media_image_info": "圖片資訊",
+  "txt_media_no_exif": "無 EXIF 資料",
+  "txt_server_rules": "伺服器規則",
+  "txt_server_registration": "開放註冊",
+  "txt_about_app_version": "應用程式版本",
+  "txt_about_author": "作者",
+  "txt_about_repository": "程式碼庫",
+  "txt_about_copyright": "版權",
   "dots": "..."
 }

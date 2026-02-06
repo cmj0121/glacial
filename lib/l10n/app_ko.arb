@@ -233,5 +233,14 @@
   "txt_notification_policy_drop": "삭제",
   "txt_no_announcements": "이 서버에서 공지사항이 없습니다",
   "txt_poll_votes": "{count}표",
+  "txt_media_alt_text": "대체 텍스트",
+  "txt_media_image_info": "이미지 정보",
+  "txt_media_no_exif": "EXIF 데이터 없음",
+  "txt_server_rules": "서버 규칙",
+  "txt_server_registration": "가입 가능",
+  "txt_about_app_version": "앱 버전",
+  "txt_about_author": "작성자",
+  "txt_about_repository": "저장소",
+  "txt_about_copyright": "저작권",
   "dots": "..."
 }

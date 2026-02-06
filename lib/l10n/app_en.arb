@@ -240,5 +240,41 @@
       }
     }
   },
+  "txt_media_alt_text": "Alt Text",
+  "@txt_media_alt_text": {
+    "description": "Label for alternative text in media viewer"
+  },
+  "txt_media_image_info": "Image Info",
+  "@txt_media_image_info": {
+    "description": "Label for image information section in media viewer"
+  },
+  "txt_media_no_exif": "No EXIF data available",
+  "@txt_media_no_exif": {
+    "description": "Message when no EXIF data is available for an image"
+  },
+  "txt_server_rules": "Server Rules",
+  "@txt_server_rules": {
+    "description": "Label for server rules section"
+  },
+  "txt_server_registration": "Registration",
+  "@txt_server_registration": {
+    "description": "Badge label indicating server allows registration"
+  },
+  "txt_about_app_version": "App Version",
+  "@txt_about_app_version": {
+    "description": "Label for app version in about screen"
+  },
+  "txt_about_author": "Author",
+  "@txt_about_author": {
+    "description": "Label for author in about screen"
+  },
+  "txt_about_repository": "Repository",
+  "@txt_about_repository": {
+    "description": "Label for repository in about screen"
+  },
+  "txt_about_copyright": "Copyright",
+  "@txt_about_copyright": {
+    "description": "Label for copyright in about screen"
+  },
   "dots": "..."
 }
