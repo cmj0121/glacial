@@ -49,18 +49,18 @@ import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 // The cached status in-memory per server.
-final Map<String?, Map<String, StatusSchema>> statusCache = {};
+// Uses LRU eviction with max 1000 statuses per domain.
+final LRUCache<String, StatusSchema> statusCache = LRUCache(maxSizePerDomain: 1000);
 
 extension StatusExtensions on AccessStatusSchema {
   // Load the status from the in-memory cache by the given status ID.
   StatusSchema? getStatusFromCache(String statusID) {
-    return statusCache[domain]?[statusID];
+    return statusCache.get(domain, statusID);
   }
 
   // Save the status to the in-memory cache.
   void saveStatusToCache(StatusSchema status) {
-    statusCache.putIfAbsent(domain, () => {});
-    statusCache[domain]![status.id] = status;
+    statusCache.put(domain, status.id, status);
   }
 
   // Create a new status on the Mastodon server with the given content and media.

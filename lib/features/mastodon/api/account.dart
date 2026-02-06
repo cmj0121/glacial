@@ -11,7 +11,7 @@
 //   - [+] GET   /api/v1/accounts/:id/followers
 //   - [+] GET   /api/v1/accounts/:id/following
 //   - [+] GET   /api/v1/accounts/:id/featured_tags
-//   - [ ] GET   /api/v1/accounts/:id/lists
+//   - [+] GET   /api/v1/accounts/:id/lists
 //   - [+] POST  /api/v1/accounts/:id/follow
 //   - [+] POST  /api/v1/accounts/:id/unfollow
 //   - [+] POST  /api/v1/accounts/:id/remove_from_followers
@@ -28,8 +28,8 @@
 //   - [+] GET   /api/v1/accounts/relationships
 //   - [+] GET   /api/v1/accounts/familiar_followers
 //   - [+] GET   /api/v1/accounts/search
-//   - [ ] GET   /api/v1/accounts/lookup
-//   - [ ] GET   /api/v1/accounts/:id/identity_proofs        (deprecated in 3.5.0)
+//   - [+] GET   /api/v1/accounts/lookup
+//   - [-] GET   /api/v1/accounts/:id/identity_proofs        (deprecated in 3.5.0)
 //
 // ## Mute APIs
 //
@@ -57,7 +57,8 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
 // The in-memory account cache per Mastodon server, per account ID.
-final Map<String?, Map<String, AccountSchema>> _accountCache = {};
+// Uses LRU eviction with max 500 accounts per domain.
+final LRUCache<String, AccountSchema> _accountCache = LRUCache(maxSizePerDomain: 500);
 
 extension AccountsExtensions on AccessStatusSchema {
   // Update the account data schema in the Mastodon server by account ID.
@@ -133,13 +134,12 @@ extension AccountsExtensions on AccessStatusSchema {
       return;
     }
 
-    _accountCache[domain] ??= {};
-    _accountCache[domain]?[account.id] = account;
+    _accountCache.put(domain, account.id, account);
   }
 
   // Get the account data schema from the in-memory cache by account ID.
   AccountSchema? lookupAccount(String accountID) {
-    return _accountCache[domain]?[accountID];
+    return _accountCache.get(domain, accountID);
   }
 
   // Get the account data schema from the access token.
@@ -451,6 +451,39 @@ extension AccountsExtensions on AccessStatusSchema {
 
     logger.i("complete reject follow request for account: $accountID");
     return relationship;
+  }
+
+  // Lookup account by acct (username@domain or local username).
+  Future<AccountSchema?> lookupAccountByAcct(String acct) async {
+    if (acct.isEmpty) {
+      return null;
+    }
+
+    final String endpoint = '/api/v1/accounts/lookup';
+    final Map<String, String> query = {"acct": acct};
+
+    try {
+      final String body = await getAPI(endpoint, queryParameters: query) ?? '{}';
+      final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
+      final AccountSchema account = AccountSchema.fromJson(json);
+
+      cacheAccount(account);
+      return account;
+    } catch (e) {
+      logger.w("account lookup failed for acct: $acct, error: $e");
+      return null;
+    }
+  }
+
+  // Get lists containing this account.
+  Future<List<ListSchema>> fetchAccountLists({required String accountId}) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/accounts/$accountId/lists';
+    final String body = await getAPI(endpoint) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+
+    return json.map((e) => ListSchema.fromJson(e as Map<String, dynamic>)).toList();
   }
 }
 
