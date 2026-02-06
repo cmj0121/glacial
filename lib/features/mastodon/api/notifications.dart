@@ -3,9 +3,9 @@
 // ## Group Notifications APIs
 //
 //   - [+] GET   /api/v2/notifications
-//   - [ ] GET   /api/v2/notifications/:group_key
+//   - [+] GET   /api/v2/notifications/:group_key
 //   - [+] POST  /api/v2/notifications/:group_key/dismiss
-//   - [ ] GET   /api/v2/notifications/:group_key/accounts
+//   - [+] GET   /api/v2/notifications/:group_key/accounts
 //   - [+] GET   /api/v2/notifications/unread_count
 //   - [+] GET   /api/v2/notifications/policy
 //   - [+] PATCH /api/v2/notifications/policy
@@ -34,6 +34,27 @@ extension GroupNotificationExtensions on AccessStatusSchema {
 
     final String endpoint = '/api/v2/notifications/$groupKey/dismiss';
     await postAPI(endpoint);
+  }
+
+  // Get a single notification group by its group key.
+  Future<GroupNotificationSchema?> getNotificationGroup(String groupKey) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v2/notifications/$groupKey';
+    final String body = await getAPI(endpoint) ?? '{}';
+
+    return GroupNotificationSchema.fromString(body);
+  }
+
+  // Get accounts for a single notification group by its group key.
+  Future<List<AccountSchema>> getNotificationGroupAccounts(String groupKey) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v2/notifications/$groupKey/accounts';
+    final String body = await getAPI(endpoint) ?? '[]';
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+
+    return json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   // Get the (capped) number of unread notification groups for the current user
