@@ -1502,6 +1502,12 @@ abstract class AppLocalizations {
   /// **'No announcements from this server'**
   String get txt_no_announcements;
 
+  /// No description provided for @txt_poll_votes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} votes'**
+  String txt_poll_votes(int count);
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

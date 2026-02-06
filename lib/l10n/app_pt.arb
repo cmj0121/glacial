@@ -232,5 +232,6 @@
   "txt_notification_policy_filter": "Filtrar",
   "txt_notification_policy_drop": "Descartar",
   "txt_no_announcements": "Nenhum anúncio deste servidor",
+  "txt_poll_votes": "{count} votos",
   "dots": "..."
 }
