@@ -433,9 +433,10 @@ class _TranslateViewState extends State<TranslateView> {
     final String label = isVisible
         ? AppLocalizations.of(context)?.btn_translate_hide ?? "Show original"
         : AppLocalizations.of(context)?.btn_translate_show ?? "Translate";
+    final bool translationEnabled = widget.status?.server?.config.translationEnabled ?? false;
 
     return TextButton.icon(
-      onPressed: isLoading ? null : onToggle,
+      onPressed: !translationEnabled || isLoading ? null : onToggle,
       icon: isLoading
           ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
           : const Icon(Icons.translate, size: 14),
