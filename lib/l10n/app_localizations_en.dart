@@ -170,6 +170,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_interaction_policy => 'Policy';
 
   @override
+  String get btn_status_info => 'View interactions';
+
+  @override
+  String get btn_status_history => 'View edit history';
+
+  @override
   String get btn_profile_core => 'Profile';
 
   @override
@@ -573,6 +579,59 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get desc_preference_locale => 'The system locale would be used to';
+
+  @override
+  String get txt_preference_timeline => 'Timeline Settings';
+
+  @override
+  String get desc_preference_timeline =>
+      'Control what appears in your timeline';
+
+  @override
+  String get txt_preference_hide_replies => 'Hide Replies';
+
+  @override
+  String get desc_preference_hide_replies => 'Hide replies from your timeline';
+
+  @override
+  String get txt_preference_hide_reblogs => 'Hide Reblogs';
+
+  @override
+  String get desc_preference_hide_reblogs => 'Hide reblogs from your timeline';
+
+  @override
+  String get txt_preference_auto_play => 'Auto-play Videos';
+
+  @override
+  String get desc_preference_auto_play =>
+      'Automatically play videos in timeline';
+
+  @override
+  String get txt_preference_timeline_limit => 'Timeline Size';
+
+  @override
+  String get desc_preference_timeline_limit => 'Maximum posts to load at once';
+
+  @override
+  String get txt_preference_image_quality => 'Image Quality';
+
+  @override
+  String get txt_preference_image_low => 'Low (saves data)';
+
+  @override
+  String get txt_preference_image_medium => 'Medium';
+
+  @override
+  String get txt_preference_image_high => 'High (original)';
+
+  @override
+  String get txt_preference_appearance => 'Appearance';
+
+  @override
+  String get desc_preference_appearance => 'Customize how the app looks';
+
+  @override
+  String get txt_preference_font_scale => 'Font Size';
 
   @override
   String get desc_profile_bot =>

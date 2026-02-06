@@ -346,9 +346,11 @@ class StatusLite extends ConsumerWidget {
   // Build the post's reblog or favorite details.
   Widget buildLikes(BuildContext context) {
     final int count = schema.reblogsCount + schema.favouritesCount;
+    final String tooltip = AppLocalizations.of(context)?.btn_status_info ?? 'View interactions';
 
     return IconButton(
       icon: Icon(Icons.info_outline, size: iconSize),
+      tooltip: tooltip,
       padding: EdgeInsets.zero,
       onPressed: count == 0 ? null : () => context.push(RoutePath.statusInfo.path, extra: schema),
     );
@@ -356,8 +358,11 @@ class StatusLite extends ConsumerWidget {
 
   // Build the post's edit log, which shows the edit history of the post.
   Widget buildEditLog(BuildContext context) {
+    final String tooltip = AppLocalizations.of(context)?.btn_status_history ?? 'View edit history';
+
     return IconButton(
       icon: Icon(Icons.edit_outlined, size: iconSize),
+      tooltip: tooltip,
       padding: EdgeInsets.zero,
       onPressed: schema.editedAt == null ? null : () => context.push(RoutePath.statusHistory.path, extra: schema),
     );

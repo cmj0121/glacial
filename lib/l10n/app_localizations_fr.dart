@@ -170,6 +170,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get btn_interaction_policy => 'Politique';
 
   @override
+  String get btn_status_info => 'Voir les interactions';
+
+  @override
+  String get btn_status_history => 'Voir l\'historique des modifications';
+
+  @override
   String get btn_profile_core => 'Profil';
 
   @override
@@ -580,6 +586,62 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get desc_preference_locale => 'La langue du système sera utilisée';
+
+  @override
+  String get txt_preference_timeline => 'Paramètres du fil';
+
+  @override
+  String get desc_preference_timeline =>
+      'Contrôler ce qui apparaît dans votre fil';
+
+  @override
+  String get txt_preference_hide_replies => 'Masquer les réponses';
+
+  @override
+  String get desc_preference_hide_replies =>
+      'Masquer les réponses de votre fil';
+
+  @override
+  String get txt_preference_hide_reblogs => 'Masquer les reblogs';
+
+  @override
+  String get desc_preference_hide_reblogs => 'Masquer les reblogs de votre fil';
+
+  @override
+  String get txt_preference_auto_play => 'Lecture automatique des vidéos';
+
+  @override
+  String get desc_preference_auto_play =>
+      'Lire automatiquement les vidéos dans le fil';
+
+  @override
+  String get txt_preference_timeline_limit => 'Taille du fil';
+
+  @override
+  String get desc_preference_timeline_limit =>
+      'Nombre maximum de publications à charger à la fois';
+
+  @override
+  String get txt_preference_image_quality => 'Qualité d\'image';
+
+  @override
+  String get txt_preference_image_low => 'Basse (économise les données)';
+
+  @override
+  String get txt_preference_image_medium => 'Moyenne';
+
+  @override
+  String get txt_preference_image_high => 'Haute (originale)';
+
+  @override
+  String get txt_preference_appearance => 'Apparence';
+
+  @override
+  String get desc_preference_appearance =>
+      'Personnaliser l\'apparence de l\'application';
+
+  @override
+  String get txt_preference_font_scale => 'Taille de police';
 
   @override
   String get desc_profile_bot =>

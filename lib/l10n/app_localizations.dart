@@ -428,6 +428,18 @@ abstract class AppLocalizations {
   /// **'Policy'**
   String get btn_interaction_policy;
 
+  /// No description provided for @btn_status_info.
+  ///
+  /// In en, this message translates to:
+  /// **'View interactions'**
+  String get btn_status_info;
+
+  /// No description provided for @btn_status_history.
+  ///
+  /// In en, this message translates to:
+  /// **'View edit history'**
+  String get btn_status_history;
+
   /// No description provided for @btn_profile_core.
   ///
   /// In en, this message translates to:
@@ -1195,6 +1207,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The system locale would be used to'**
   String get desc_preference_locale;
+
+  /// No description provided for @txt_preference_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline Settings'**
+  String get txt_preference_timeline;
+
+  /// No description provided for @desc_preference_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Control what appears in your timeline'**
+  String get desc_preference_timeline;
+
+  /// No description provided for @txt_preference_hide_replies.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Replies'**
+  String get txt_preference_hide_replies;
+
+  /// No description provided for @desc_preference_hide_replies.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide replies from your timeline'**
+  String get desc_preference_hide_replies;
+
+  /// No description provided for @txt_preference_hide_reblogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Reblogs'**
+  String get txt_preference_hide_reblogs;
+
+  /// No description provided for @desc_preference_hide_reblogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide reblogs from your timeline'**
+  String get desc_preference_hide_reblogs;
+
+  /// No description provided for @txt_preference_auto_play.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-play Videos'**
+  String get txt_preference_auto_play;
+
+  /// No description provided for @desc_preference_auto_play.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically play videos in timeline'**
+  String get desc_preference_auto_play;
+
+  /// No description provided for @txt_preference_timeline_limit.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline Size'**
+  String get txt_preference_timeline_limit;
+
+  /// No description provided for @desc_preference_timeline_limit.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum posts to load at once'**
+  String get desc_preference_timeline_limit;
+
+  /// No description provided for @txt_preference_image_quality.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Quality'**
+  String get txt_preference_image_quality;
+
+  /// No description provided for @txt_preference_image_low.
+  ///
+  /// In en, this message translates to:
+  /// **'Low (saves data)'**
+  String get txt_preference_image_low;
+
+  /// No description provided for @txt_preference_image_medium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get txt_preference_image_medium;
+
+  /// No description provided for @txt_preference_image_high.
+  ///
+  /// In en, this message translates to:
+  /// **'High (original)'**
+  String get txt_preference_image_high;
+
+  /// No description provided for @txt_preference_appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get txt_preference_appearance;
+
+  /// No description provided for @desc_preference_appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize how the app looks'**
+  String get desc_preference_appearance;
+
+  /// No description provided for @txt_preference_font_scale.
+  ///
+  /// In en, this message translates to:
+  /// **'Font Size'**
+  String get txt_preference_font_scale;
 
   /// No description provided for @desc_profile_bot.
   ///

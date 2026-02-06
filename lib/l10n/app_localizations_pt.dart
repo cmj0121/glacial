@@ -170,6 +170,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_interaction_policy => 'Política';
 
   @override
+  String get btn_status_info => 'Ver interações';
+
+  @override
+  String get btn_status_history => 'Ver histórico de edições';
+
+  @override
   String get btn_profile_core => 'Perfil';
 
   @override
@@ -577,6 +583,63 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get desc_preference_locale => 'O locale do sistema será usado';
+
+  @override
+  String get txt_preference_timeline => 'Configurações da linha do tempo';
+
+  @override
+  String get desc_preference_timeline =>
+      'Controle o que aparece na sua linha do tempo';
+
+  @override
+  String get txt_preference_hide_replies => 'Ocultar respostas';
+
+  @override
+  String get desc_preference_hide_replies =>
+      'Ocultar respostas da sua linha do tempo';
+
+  @override
+  String get txt_preference_hide_reblogs => 'Ocultar reblogs';
+
+  @override
+  String get desc_preference_hide_reblogs =>
+      'Ocultar reblogs da sua linha do tempo';
+
+  @override
+  String get txt_preference_auto_play => 'Reprodução automática de vídeos';
+
+  @override
+  String get desc_preference_auto_play =>
+      'Reproduzir vídeos automaticamente na linha do tempo';
+
+  @override
+  String get txt_preference_timeline_limit => 'Tamanho da linha do tempo';
+
+  @override
+  String get desc_preference_timeline_limit =>
+      'Número máximo de posts para carregar de uma vez';
+
+  @override
+  String get txt_preference_image_quality => 'Qualidade de imagem';
+
+  @override
+  String get txt_preference_image_low => 'Baixa (economiza dados)';
+
+  @override
+  String get txt_preference_image_medium => 'Média';
+
+  @override
+  String get txt_preference_image_high => 'Alta (original)';
+
+  @override
+  String get txt_preference_appearance => 'Aparência';
+
+  @override
+  String get desc_preference_appearance =>
+      'Personalize a aparência do aplicativo';
+
+  @override
+  String get txt_preference_font_scale => 'Tamanho da fonte';
 
   @override
   String get desc_profile_bot =>
