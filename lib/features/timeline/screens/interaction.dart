@@ -167,11 +167,21 @@ class _InteractionState extends State<Interaction> {
   // Build the compact icon for the interaction that only show the icon and the
   // count of the interaction.
   Widget buildCompactIcon() {
-    return TextButton.icon(
-      label: count == null ? const SizedBox.shrink() : Text(count.toString()),
-      icon: Icon(icon, size: tabSize, color: color),
-      style: TextButton.styleFrom(foregroundColor: color),
-      onPressed: isAvailable ? onPressed : null,
+    final String tooltip = widget.action.tooltip(context);
+
+    return Semantics(
+      label: tooltip,
+      button: true,
+      enabled: isAvailable,
+      child: Tooltip(
+        message: tooltip,
+        child: TextButton.icon(
+          label: count == null ? const SizedBox.shrink() : Text(count.toString()),
+          icon: Icon(icon, size: tabSize, color: color),
+          style: TextButton.styleFrom(foregroundColor: color),
+          onPressed: isAvailable ? onPressed : null,
+        ),
+      ),
     );
   }
 

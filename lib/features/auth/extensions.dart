@@ -6,8 +6,24 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
+/// A cache entry with TTL support for OAuth state management.
+class _StateCacheEntry {
+  final String server;
+  final DateTime expiresAt;
+
+  _StateCacheEntry(this.server, {Duration ttl = const Duration(minutes: 10)})
+      : expiresAt = DateTime.now().add(ttl);
+
+  bool get isExpired => DateTime.now().isAfter(expiresAt);
+}
+
 // The OAuth sign-in in-memory state cache that hold the random state-server mapping.
-Map <String, String> stateCache = {};
+final Map<String, _StateCacheEntry> _stateCache = {};
+
+/// Clean up expired entries from the state cache.
+void _cleanupStateCache() {
+  _stateCache.removeWhere((_, entry) => entry.isExpired);
+}
 
 // Extend the Storage that can be used to access the Mastodon server by get/set servers.
 extension AuthExtension on Storage {
@@ -34,17 +50,18 @@ extension AuthExtension on Storage {
   }
 
   // Save the OAuth2Info to the storage based on the domain.
-  void saveOAuth2Info(String domain, OAuth2Info info) async {
+  Future<void> saveOAuth2Info(String domain, OAuth2Info info) async {
     final String? body = await getString(OAuth2Info.prefsOAuthInfoKey, secure: true);
     final Map<String, dynamic> json = jsonDecode(body ?? '{}');
 
     json[domain] = info.toJson();
-    setString(OAuth2Info.prefsOAuthInfoKey, jsonEncode(json), secure: true);
+    await setString(OAuth2Info.prefsOAuthInfoKey, jsonEncode(json), secure: true);
   }
 
-  // Save the state-server mapping to the storage.
+  // Save the state-server mapping to the cache with TTL.
   void saveStateServer(String state, String server) {
-    stateCache[state] = server;
+    _cleanupStateCache();
+    _stateCache[state] = _StateCacheEntry(server);
   }
 
   // Gain the access token from the redirect URI and state.
@@ -53,7 +70,12 @@ extension AuthExtension on Storage {
     final String? state = uri.queryParameters["state"];
 
     final Storage storage = Storage();
-    final String? server = stateCache[state];
+    _cleanupStateCache();
+    final _StateCacheEntry? entry = state != null ? _stateCache[state] : null;
+    final String? server = entry?.isExpired == false ? entry?.server : null;
+
+    // Remove the used state from cache
+    if (state != null) _stateCache.remove(state);
 
     if (server == null || code == null || server != expectedServer) {
       logger.w("unexpected expected: server=$server, code=$code");

@@ -208,6 +208,106 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
         ),
         // Build the locale settings and selector.
         buildLocaleSelector(schema: schema),
+
+        const SizedBox(height: 32),
+
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_timeline ?? "Timeline Settings"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_timeline ?? "Control what appears in your timeline.",
+            style: labelStyle,
+          ),
+        ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_hide_replies ?? "Hide Replies"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_hide_replies ?? "Hide replies from your timeline.",
+            style: labelStyle,
+          ),
+          value: schema.hideReplies,
+          secondary: Icon(schema.hideReplies ? Icons.speaker_notes_off : Icons.speaker_notes, size: iconSize),
+          onChanged: (bool value) {
+            Storage().savePreference(schema.copyWith(hideReplies: value), ref: ref);
+          },
+        ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_hide_reblogs ?? "Hide Reblogs"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_hide_reblogs ?? "Hide reblogs from your timeline.",
+            style: labelStyle,
+          ),
+          value: schema.hideReblogs,
+          secondary: Icon(schema.hideReblogs ? Icons.repeat_on : Icons.repeat, size: iconSize),
+          onChanged: (bool value) {
+            Storage().savePreference(schema.copyWith(hideReblogs: value), ref: ref);
+          },
+        ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_auto_play ?? "Auto-play Videos"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_auto_play ?? "Automatically play videos in timeline.",
+            style: labelStyle,
+          ),
+          value: schema.autoPlayVideo,
+          secondary: Icon(schema.autoPlayVideo ? Icons.play_circle : Icons.play_circle_outline, size: iconSize),
+          onChanged: (bool value) {
+            Storage().savePreference(schema.copyWith(autoPlayVideo: value), ref: ref);
+          },
+        ),
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_timeline_limit ?? "Timeline Size"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_timeline_limit ?? "Maximum posts to load at once.",
+            style: labelStyle,
+          ),
+          leading: Icon(Icons.format_list_numbered, size: iconSize),
+          trailing: Text(
+            schema.timelineLimit.toString(),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+          ),
+          onTap: () {
+            final List<int> limits = const [20, 40, 60, 80, 100];
+            final int index = limits.indexOf(schema.timelineLimit);
+            final int nextIndex = (index + 1) % limits.length;
+
+            Storage().savePreference(schema.copyWith(timelineLimit: limits[nextIndex]), ref: ref);
+          },
+        ),
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_image_quality ?? "Image Quality"),
+          subtitle: Text(schema.imageQuality.description(context), style: labelStyle),
+          leading: Icon(Icons.image, size: iconSize),
+          onTap: () {
+            final int index = ImageQualityType.values.indexOf(schema.imageQuality);
+            final int nextIndex = (index + 1) % ImageQualityType.values.length;
+
+            Storage().savePreference(schema.copyWith(imageQuality: ImageQualityType.values[nextIndex]), ref: ref);
+          },
+        ),
+
+        const SizedBox(height: 32),
+
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_appearance ?? "Appearance"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_appearance ?? "Customize how the app looks.",
+            style: labelStyle,
+          ),
+        ),
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_font_scale ?? "Font Size"),
+          subtitle: Slider(
+            value: schema.fontScale,
+            min: 0.8,
+            max: 1.4,
+            divisions: 6,
+            label: '${(schema.fontScale * 100).round()}%',
+            onChanged: (double value) {
+              Storage().savePreference(schema.copyWith(fontScale: value), ref: ref);
+            },
+          ),
+          leading: Icon(Icons.format_size, size: iconSize),
+        ),
       ],
     );
   }

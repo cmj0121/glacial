@@ -170,6 +170,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_interaction_policy => 'ポリシー';
 
   @override
+  String get btn_status_info => 'インタラクションを表示';
+
+  @override
+  String get btn_status_history => '編集履歴を表示';
+
+  @override
   String get btn_profile_core => 'プロフィール';
 
   @override
@@ -562,6 +568,57 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get desc_preference_locale => 'システムのロケールが使用されます';
+
+  @override
+  String get txt_preference_timeline => 'タイムライン設定';
+
+  @override
+  String get desc_preference_timeline => 'タイムラインに表示する内容を制御';
+
+  @override
+  String get txt_preference_hide_replies => '返信を非表示';
+
+  @override
+  String get desc_preference_hide_replies => 'タイムラインから返信を非表示にする';
+
+  @override
+  String get txt_preference_hide_reblogs => 'リブログを非表示';
+
+  @override
+  String get desc_preference_hide_reblogs => 'タイムラインからリブログを非表示にする';
+
+  @override
+  String get txt_preference_auto_play => '動画の自動再生';
+
+  @override
+  String get desc_preference_auto_play => 'タイムラインで動画を自動的に再生する';
+
+  @override
+  String get txt_preference_timeline_limit => 'タイムラインサイズ';
+
+  @override
+  String get desc_preference_timeline_limit => '一度に読み込む最大投稿数';
+
+  @override
+  String get txt_preference_image_quality => '画像品質';
+
+  @override
+  String get txt_preference_image_low => '低（データ節約）';
+
+  @override
+  String get txt_preference_image_medium => '中';
+
+  @override
+  String get txt_preference_image_high => '高（オリジナル）';
+
+  @override
+  String get txt_preference_appearance => '外観';
+
+  @override
+  String get desc_preference_appearance => 'アプリの見た目をカスタマイズ';
+
+  @override
+  String get txt_preference_font_scale => 'フォントサイズ';
 
   @override
   String get desc_profile_bot => '自動操作可能なアカウントで、人間による監視はされていません';

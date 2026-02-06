@@ -170,6 +170,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btn_interaction_policy => 'Richtlinie';
 
   @override
+  String get btn_status_info => 'Interaktionen anzeigen';
+
+  @override
+  String get btn_status_history => 'Bearbeitungsverlauf anzeigen';
+
+  @override
   String get btn_profile_core => 'Profil';
 
   @override
@@ -577,6 +583,62 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get desc_preference_locale => 'Die Systemsprache wird verwendet';
+
+  @override
+  String get txt_preference_timeline => 'Timeline-Einstellungen';
+
+  @override
+  String get desc_preference_timeline =>
+      'Steuern, was in deiner Timeline erscheint';
+
+  @override
+  String get txt_preference_hide_replies => 'Antworten ausblenden';
+
+  @override
+  String get desc_preference_hide_replies =>
+      'Antworten in deiner Timeline ausblenden';
+
+  @override
+  String get txt_preference_hide_reblogs => 'Reblogs ausblenden';
+
+  @override
+  String get desc_preference_hide_reblogs =>
+      'Reblogs in deiner Timeline ausblenden';
+
+  @override
+  String get txt_preference_auto_play => 'Videos automatisch abspielen';
+
+  @override
+  String get desc_preference_auto_play =>
+      'Videos in der Timeline automatisch abspielen';
+
+  @override
+  String get txt_preference_timeline_limit => 'Timeline-Größe';
+
+  @override
+  String get desc_preference_timeline_limit =>
+      'Maximale Anzahl der Beiträge auf einmal laden';
+
+  @override
+  String get txt_preference_image_quality => 'Bildqualität';
+
+  @override
+  String get txt_preference_image_low => 'Niedrig (spart Daten)';
+
+  @override
+  String get txt_preference_image_medium => 'Mittel';
+
+  @override
+  String get txt_preference_image_high => 'Hoch (Original)';
+
+  @override
+  String get txt_preference_appearance => 'Erscheinungsbild';
+
+  @override
+  String get desc_preference_appearance => 'Anpassen, wie die App aussieht';
+
+  @override
+  String get txt_preference_font_scale => 'Schriftgröße';
 
   @override
   String get desc_profile_bot =>

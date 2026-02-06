@@ -37,6 +37,25 @@ enum SystemPreferenceType {
   }
 }
 
+// The image quality preference type.
+enum ImageQualityType {
+  low,      // Low quality images for bandwidth saving
+  medium,   // Medium quality images (default)
+  high;     // High quality original images
+
+  // The description text for the image quality type, localized if possible.
+  String description(BuildContext context) {
+    switch (this) {
+      case low:
+        return AppLocalizations.of(context)?.txt_preference_image_low ?? "Low (saves data)";
+      case medium:
+        return AppLocalizations.of(context)?.txt_preference_image_medium ?? "Medium";
+      case high:
+        return AppLocalizations.of(context)?.txt_preference_image_high ?? "High (original)";
+    }
+  }
+}
+
 // The reply auto-tag behavior type.
 enum ReplyTagType {
   all,    // tag all the mentions in the reply.
@@ -94,6 +113,13 @@ class SystemPreferenceSchema {
   final ReplyTagType replyTag;
   final Locale? locale;
   final QuotePolicyType quotePolicy;
+  // New preference options
+  final double fontScale;           // Font size scale factor (0.8 - 1.4)
+  final bool hideReplies;           // Hide replies in timeline
+  final bool hideReblogs;           // Hide reblogs in timeline
+  final bool autoPlayVideo;         // Auto-play videos in timeline
+  final int timelineLimit;          // Max items to load in timeline (20-100)
+  final ImageQualityType imageQuality; // Image quality preference
 
   const SystemPreferenceSchema({
     this.server,
@@ -105,6 +131,12 @@ class SystemPreferenceSchema {
     this.replyTag = ReplyTagType.all,
     this.locale,
     this.quotePolicy = QuotePolicyType.public,
+    this.fontScale = 1.0,
+    this.hideReplies = false,
+    this.hideReblogs = false,
+    this.autoPlayVideo = true,
+    this.timelineLimit = 40,
+    this.imageQuality = ImageQualityType.medium,
   });
 
   // Convert the JSON string to a SystemPreferenceSchema object.
@@ -135,6 +167,15 @@ class SystemPreferenceSchema {
       quotePolicy: json["quote_approval_policy"] == null
           ? QuotePolicyType.public
           : QuotePolicyType.fromString(json["quote_approval_policy"] as String),
+      fontScale: (json["font_scale"] as num?)?.toDouble() ?? 1.0,
+      hideReplies: json["hide_replies"] as bool? ?? false,
+      hideReblogs: json["hide_reblogs"] as bool? ?? false,
+      autoPlayVideo: json["auto_play_video"] as bool? ?? true,
+      timelineLimit: json["timeline_limit"] as int? ?? 40,
+      imageQuality: ImageQualityType.values.firstWhere(
+        (q) => q.name == json["image_quality"],
+        orElse: () => ImageQualityType.medium,
+      ),
     );
   }
 
@@ -150,6 +191,12 @@ class SystemPreferenceSchema {
       "reply_tag": replyTag.name,
       "locale": locale?.toLanguageTag(),
       "quote_approval_policy": quotePolicy.name,
+      "font_scale": fontScale,
+      "hide_replies": hideReplies,
+      "hide_reblogs": hideReblogs,
+      "auto_play_video": autoPlayVideo,
+      "timeline_limit": timelineLimit,
+      "image_quality": imageQuality.name,
     };
   }
 
@@ -164,6 +211,12 @@ class SystemPreferenceSchema {
     ReplyTagType? replyTag,
     Locale? locale,
     QuotePolicyType? quotePolicy,
+    double? fontScale,
+    bool? hideReplies,
+    bool? hideReblogs,
+    bool? autoPlayVideo,
+    int? timelineLimit,
+    ImageQualityType? imageQuality,
   }) {
     return SystemPreferenceSchema(
       server: server ?? this.server,
@@ -175,6 +228,12 @@ class SystemPreferenceSchema {
       replyTag: replyTag ?? this.replyTag,
       locale: locale ?? this.locale,
       quotePolicy: quotePolicy ?? this.quotePolicy,
+      fontScale: fontScale ?? this.fontScale,
+      hideReplies: hideReplies ?? this.hideReplies,
+      hideReblogs: hideReblogs ?? this.hideReblogs,
+      autoPlayVideo: autoPlayVideo ?? this.autoPlayVideo,
+      timelineLimit: timelineLimit ?? this.timelineLimit,
+      imageQuality: imageQuality ?? this.imageQuality,
     );
   }
 }

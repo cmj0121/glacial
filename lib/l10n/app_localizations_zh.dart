@@ -170,6 +170,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_interaction_policy => '策略';
 
   @override
+  String get btn_status_info => '查看互动';
+
+  @override
+  String get btn_status_history => '查看编辑历史';
+
+  @override
   String get btn_profile_core => '使用者頁面';
 
   @override
@@ -562,6 +568,57 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_preference_locale => '在系統中使用的語系';
+
+  @override
+  String get txt_preference_timeline => '時間軸設定';
+
+  @override
+  String get desc_preference_timeline => '控制時間軸中顯示的內容';
+
+  @override
+  String get txt_preference_hide_replies => '隱藏回覆';
+
+  @override
+  String get desc_preference_hide_replies => '在時間軸中隱藏回覆';
+
+  @override
+  String get txt_preference_hide_reblogs => '隱藏轉發';
+
+  @override
+  String get desc_preference_hide_reblogs => '在時間軸中隱藏轉發';
+
+  @override
+  String get txt_preference_auto_play => '自動播放影片';
+
+  @override
+  String get desc_preference_auto_play => '在時間軸中自動播放影片';
+
+  @override
+  String get txt_preference_timeline_limit => '時間軸大小';
+
+  @override
+  String get desc_preference_timeline_limit => '一次載入的最大貼文數量';
+
+  @override
+  String get txt_preference_image_quality => '圖片品質';
+
+  @override
+  String get txt_preference_image_low => '低（節省流量）';
+
+  @override
+  String get txt_preference_image_medium => '中';
+
+  @override
+  String get txt_preference_image_high => '高（原始）';
+
+  @override
+  String get txt_preference_appearance => '外觀';
+
+  @override
+  String get desc_preference_appearance => '自訂應用程式的外觀';
+
+  @override
+  String get txt_preference_font_scale => '字體大小';
 
   @override
   String get desc_profile_bot => '該帳號可能會自動化操作且未受人為監控';

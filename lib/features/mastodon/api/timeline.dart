@@ -4,7 +4,7 @@
 //     - [+] GET /api/v1/timelines/public
 //     - [+] GET /api/v1/timelines/tag/:hashtag
 //     - [+] GET /api/v1/timelines/home
-//     - [ ] GET /api/v1/timelines/link?url=:url
+//     - [+] GET /api/v1/timelines/link?url=:url
 //     - [+] GET /api/v1/timelines/list/:list_id
 //     - [x] GET /api/v1/timelines/direct          (deprecated in 3.0.0)
 //
@@ -107,6 +107,35 @@ extension TimelineExtensions on AccessStatusSchema {
 
     logger.d("complete load the timeline of type: $type, count: ${status.length}");
     return (status, nextId);
+  }
+
+  // Fetch statuses that have been shared with a given link URL.
+  Future<(List<StatusSchema>, String?)> fetchLinkTimeline({
+    required String url,
+    String? maxId,
+    String? minId,
+  }) async {
+    final String endpoint = '/api/v1/timelines/link';
+    final Map<String, String> query = {
+      'url': url,
+      'max_id': maxId ?? '',
+      'min_id': minId ?? '',
+    };
+
+    final (body, nextId) = await getAPIEx(endpoint, queryParameters: query);
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<StatusSchema> statuses = json.map((e) => StatusSchema.fromJson(e)).where(
+      (s) => s.filterAction != FilterAction.hide,
+    ).toList();
+
+    for (final s in statuses) {
+      cacheAccount(s.account);
+      saveStatusToCache(s);
+      if (s.inReplyToAccountID != null) getAccount(s.inReplyToAccountID);
+    }
+
+    logger.d("complete load the link timeline for url: $url, count: ${statuses.length}");
+    return (statuses, nextId);
   }
 }
 

@@ -170,6 +170,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_interaction_policy => '정책';
 
   @override
+  String get btn_status_info => '상호작용 보기';
+
+  @override
+  String get btn_status_history => '수정 기록 보기';
+
+  @override
   String get btn_profile_core => '프로필';
 
   @override
@@ -562,6 +568,57 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get desc_preference_locale => '시스템 로케일 사용';
+
+  @override
+  String get txt_preference_timeline => '타임라인 설정';
+
+  @override
+  String get desc_preference_timeline => '타임라인에 표시되는 내용 제어';
+
+  @override
+  String get txt_preference_hide_replies => '답글 숨기기';
+
+  @override
+  String get desc_preference_hide_replies => '타임라인에서 답글 숨기기';
+
+  @override
+  String get txt_preference_hide_reblogs => '리블로그 숨기기';
+
+  @override
+  String get desc_preference_hide_reblogs => '타임라인에서 리블로그 숨기기';
+
+  @override
+  String get txt_preference_auto_play => '동영상 자동 재생';
+
+  @override
+  String get desc_preference_auto_play => '타임라인에서 동영상 자동 재생';
+
+  @override
+  String get txt_preference_timeline_limit => '타임라인 크기';
+
+  @override
+  String get desc_preference_timeline_limit => '한 번에 불러올 최대 게시물 수';
+
+  @override
+  String get txt_preference_image_quality => '이미지 품질';
+
+  @override
+  String get txt_preference_image_low => '낮음 (데이터 절약)';
+
+  @override
+  String get txt_preference_image_medium => '중간';
+
+  @override
+  String get txt_preference_image_high => '높음 (원본)';
+
+  @override
+  String get txt_preference_appearance => '외관';
+
+  @override
+  String get desc_preference_appearance => '앱의 모양 사용자 지정';
+
+  @override
+  String get txt_preference_font_scale => '글꼴 크기';
 
   @override
   String get desc_profile_bot => '자동으로 동작하는 계정, 인간의 감시는 없음';
