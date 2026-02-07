@@ -1,5 +1,5 @@
 PODS:
-  - app_badge_plus (1.2.3):
+  - app_badge_plus (1.2.6):
     - Flutter
   - app_links (6.4.1):
     - Flutter
@@ -96,7 +96,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
 
 SPEC CHECKSUMS:
-  app_badge_plus: 0e3470f993dd08094e16463f57a7e0db04c6b587
+  app_badge_plus: 32b6022e2a8585454d6c2a99aa65f8f31f06752a
   app_links: 3dbc685f76b1693c66a6d9dd1e9ab6f73d97dc0a
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_local_notifications: a5a732f069baa862e728d839dd2ebb904737effb
