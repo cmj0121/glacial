@@ -57,6 +57,37 @@ Widget createTestWidget({
   );
 }
 
+/// Wraps a widget with MaterialApp and ProviderScope without Scaffold.
+///
+/// Use this for widgets that have their own Scaffold (e.g., WIP, full-screen pages).
+Widget createTestWidgetRaw({
+  required Widget child,
+  AccessStatusSchema? accessStatus,
+  SystemPreferenceSchema? preference,
+  List<Override> overrides = const [],
+}) {
+  final List<Override> allOverrides = [
+    accessStatusProvider.overrideWith((ref) => accessStatus ?? MockAccessStatus.anonymous()),
+    if (preference != null) preferenceProvider.overrideWith((ref) => preference),
+    ...overrides,
+  ];
+
+  return ProviderScope(
+    overrides: allOverrides,
+    child: MaterialApp(
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('en'),
+      home: child,
+    ),
+  );
+}
+
 /// Wraps a widget with MaterialApp and ProviderScope, with authenticated user.
 Widget createAuthenticatedTestWidget({
   required Widget child,
