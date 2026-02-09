@@ -780,4 +780,154 @@ class MockNotificationPolicy {
   }
 }
 
+/// Factory for creating mock RelationshipSchema instances.
+class MockRelationship {
+  static RelationshipSchema create({
+    String id = '123',
+    bool following = false,
+    bool followedBy = false,
+    bool blocking = false,
+    bool blockedBy = false,
+    bool muting = false,
+    bool mutingNotifications = false,
+    bool requested = false,
+    bool requestedBy = false,
+    bool domainBlocking = false,
+    bool endorsed = false,
+    String note = '',
+    bool showingReblogs = true,
+    bool notifying = false,
+    List<String> languages = const [],
+  }) {
+    return RelationshipSchema(
+      id: id,
+      following: following,
+      followedBy: followedBy,
+      blocking: blocking,
+      blockedBy: blockedBy,
+      muting: muting,
+      mutingNotifications: mutingNotifications,
+      requested: requested,
+      requestedBy: requestedBy,
+      domainBlocking: domainBlocking,
+      endorsed: endorsed,
+      note: note,
+      showingReblogs: showingReblogs,
+      notifying: notifying,
+      languages: languages,
+    );
+  }
+
+  /// Creates a mutual-follow relationship.
+  static RelationshipSchema mutual() {
+    return create(following: true, followedBy: true);
+  }
+
+  /// Creates a stranger (no relationship).
+  static RelationshipSchema stranger() {
+    return create();
+  }
+}
+
+/// Factory for creating mock RoleSchema instances.
+class MockRole {
+  static RoleSchema create({
+    String id = 'role-1',
+    String name = 'Admin',
+    String color = '#ff0000',
+    String permissions = '1',
+    bool highlighted = true,
+  }) {
+    return RoleSchema(
+      id: id,
+      name: name,
+      color: color,
+      permissions: permissions,
+      highlighted: highlighted,
+    );
+  }
+}
+
+/// Factory for creating mock ReportSchema instances.
+class MockReport {
+  static ReportSchema create({
+    String id = 'report-1',
+    bool actionTaken = false,
+    DateTime? actionTakenAt,
+    ReportCategoryType category = ReportCategoryType.spam,
+    String comment = 'Spamming',
+    bool forwarded = false,
+    DateTime? createdAt,
+    List<String>? statusIDs,
+    List<String>? ruleIDs,
+    AccountSchema? targetAccount,
+  }) {
+    return ReportSchema(
+      id: id,
+      actionTaken: actionTaken,
+      actionTakenAt: actionTakenAt,
+      category: category,
+      comment: comment,
+      forwarded: forwarded,
+      createdAt: createdAt ?? DateTime(2024, 1, 1),
+      statusIDs: statusIDs,
+      ruleIDs: ruleIDs,
+      targetAccount: targetAccount ?? MockAccount.create(),
+    );
+  }
+}
+
+/// Factory for creating mock TranslationSchema instances.
+class MockTranslation {
+  static TranslationSchema create({
+    String content = '<p>Translated content</p>',
+    String spoilerText = '',
+    String language = 'en',
+    String detectedSourceLanguage = 'ja',
+    String provider = 'DeepL',
+  }) {
+    return TranslationSchema(
+      content: content,
+      spoilerText: spoilerText,
+      language: language,
+      detectedSourceLanguage: detectedSourceLanguage,
+      provider: provider,
+    );
+  }
+}
+
+/// Factory for creating mock FeaturedTagSchema instances.
+class MockFeaturedTag {
+  static FeaturedTagSchema create({
+    String id = 'ft-1',
+    String name = 'flutter',
+    String? url,
+    int statusesCount = 10,
+    String? lastStatusAt = '2024-06-15',
+  }) {
+    return FeaturedTagSchema(
+      id: id,
+      name: name,
+      url: url ?? 'https://example.com/tags/$name',
+      statusesCount: statusesCount,
+      lastStatusAt: lastStatusAt,
+    );
+  }
+}
+
+/// Factory for creating mock SearchResultSchema instances.
+class MockSearchResult {
+  static SearchResultSchema create({
+    List<AccountSchema>? accounts,
+    List<StatusSchema>? statuses,
+    List<HashtagSchema>? hashtags,
+  }) {
+    return SearchResultSchema(
+      accounts: accounts ?? [],
+      statuses: statuses ?? [],
+      hashtags: hashtags ?? [],
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:
