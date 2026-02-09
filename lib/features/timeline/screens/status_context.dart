@@ -59,14 +59,16 @@ class _StatusContextState extends ConsumerState<StatusContext> {
         // Find the index of the selected status after sorting
         final int selectedIndex = allStatuses.indexWhere((s) => s.id == widget.schema.id);
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          // scroll to the current status and center it on screen
-          itemScrollController.scrollTo(
-            index: selectedIndex,
-            duration: const Duration(milliseconds: 300),
-            alignment: 0.5, // center the selected status
-          );
-        });
+        // Scroll to selected status aligned to top (only if not first)
+        if (selectedIndex > 0) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            itemScrollController.scrollTo(
+              index: selectedIndex,
+              duration: const Duration(milliseconds: 300),
+              alignment: 0.0,
+            );
+          });
+        }
 
         return Dismissible(
           key: ValueKey(widget.schema.id),
