@@ -442,6 +442,56 @@ class MockServer {
   }
 }
 
+/// Factory for creating mock LinkSchema instances.
+class MockLink {
+  static LinkSchema create({
+    String url = 'https://example.com/article',
+    String title = 'Test Article Title',
+    String desc = 'Test description text',
+    String type = 'link',
+    String authName = 'Test Author',
+    String authUrl = 'https://example.com/author',
+    String providerName = 'Example',
+    String providerUrl = 'https://example.com',
+    String html = '',
+    int width = 400,
+    int height = 300,
+    String image = 'https://example.com/image.jpg',
+    String embedUrl = '',
+    List<HistorySchema>? history,
+  }) {
+    return LinkSchema(
+      url: url,
+      title: title,
+      desc: desc,
+      type: type,
+      authName: authName,
+      authUrl: authUrl,
+      providerName: providerName,
+      providerUrl: providerUrl,
+      html: html,
+      width: width,
+      height: height,
+      image: image,
+      embedUrl: embedUrl,
+      history: history ?? [],
+    );
+  }
+
+  /// Creates a link with empty author (no author URL).
+  static LinkSchema withoutAuthor({
+    String title = 'Test Article',
+    String desc = 'Test description',
+  }) {
+    return create(
+      title: title,
+      desc: desc,
+      authName: '',
+      authUrl: '',
+    );
+  }
+}
+
 /// Factory for creating mock TagSchema instances.
 class MockTag {
   static TagSchema create({
