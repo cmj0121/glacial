@@ -442,4 +442,62 @@ class MockServer {
   }
 }
 
+/// Factory for creating mock TagSchema instances.
+class MockTag {
+  static TagSchema create({
+    String name = 'testtag',
+    String? url,
+  }) {
+    return TagSchema(
+      name: name,
+      url: url ?? 'https://example.com/tags/$name',
+    );
+  }
+}
+
+/// Factory for creating mock HistorySchema instances.
+class MockHistory {
+  static HistorySchema create({
+    String day = '1',
+    String accounts = '10',
+    String uses = '25',
+  }) {
+    return HistorySchema(
+      day: day,
+      accounts: accounts,
+      uses: uses,
+    );
+  }
+
+  /// Creates a list of history entries for testing.
+  static List<HistorySchema> createList({int count = 7}) {
+    return List.generate(count, (index) {
+      return create(
+        day: '${index + 1}',
+        accounts: '${(index + 1) * 5}',
+        uses: '${(index + 1) * 10}',
+      );
+    });
+  }
+}
+
+/// Factory for creating mock HashtagSchema instances.
+class MockHashtag {
+  static HashtagSchema create({
+    String name = 'testhashtag',
+    String? url,
+    List<HistorySchema>? history,
+    bool? following,
+    bool? featuring,
+  }) {
+    return HashtagSchema(
+      name: name,
+      url: url ?? 'https://example.com/tags/$name',
+      history: history ?? MockHistory.createList(),
+      following: following,
+      featuring: featuring,
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:
