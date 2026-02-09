@@ -275,4 +275,108 @@ class MockStatusEdit {
   }
 }
 
+/// Factory for creating mock PollOptionSchema instances.
+class MockPollOption {
+  static PollOptionSchema create({
+    String title = 'Option',
+    int? votesCount,
+  }) {
+    return PollOptionSchema(
+      title: title,
+      votesCount: votesCount,
+    );
+  }
+}
+
+/// Factory for creating mock PollSchema instances.
+class MockPoll {
+  static PollSchema create({
+    String id = 'poll-123',
+    DateTime? expiresAt,
+    bool expired = false,
+    bool multiple = false,
+    int votesCount = 0,
+    int? votersCount,
+    List<PollOptionSchema>? options,
+    bool? voted,
+    List<int>? ownVotes,
+  }) {
+    return PollSchema(
+      id: id,
+      expiresAt: expiresAt ?? DateTime.now().add(const Duration(days: 1)),
+      expired: expired,
+      multiple: multiple,
+      votesCount: votesCount,
+      votersCount: votersCount,
+      options: options ?? [
+        MockPollOption.create(title: 'Option A'),
+        MockPollOption.create(title: 'Option B'),
+      ],
+      voted: voted,
+      ownVotes: ownVotes,
+    );
+  }
+
+  /// Creates an active poll that can be voted on.
+  static PollSchema createActive({
+    bool multiple = false,
+    List<PollOptionSchema>? options,
+  }) {
+    return create(
+      expired: false,
+      voted: false,
+      multiple: multiple,
+      options: options,
+    );
+  }
+
+  /// Creates an expired poll.
+  static PollSchema createExpired({
+    int votesCount = 10,
+    List<PollOptionSchema>? options,
+  }) {
+    return create(
+      expiresAt: DateTime.now().subtract(const Duration(days: 1)),
+      expired: true,
+      voted: true,
+      votesCount: votesCount,
+      options: options ?? [
+        MockPollOption.create(title: 'Option A', votesCount: 6),
+        MockPollOption.create(title: 'Option B', votesCount: 4),
+      ],
+    );
+  }
+
+  /// Creates a poll that has been voted on.
+  static PollSchema createVoted({
+    List<int> ownVotes = const [0],
+    int votesCount = 5,
+  }) {
+    return create(
+      voted: true,
+      ownVotes: ownVotes,
+      votesCount: votesCount,
+      options: [
+        MockPollOption.create(title: 'Option A', votesCount: 3),
+        MockPollOption.create(title: 'Option B', votesCount: 2),
+      ],
+    );
+  }
+
+  /// Creates a multiple-choice poll.
+  static PollSchema createMultiple({
+    List<PollOptionSchema>? options,
+  }) {
+    return create(
+      multiple: true,
+      voted: false,
+      options: options ?? [
+        MockPollOption.create(title: 'Choice 1'),
+        MockPollOption.create(title: 'Choice 2'),
+        MockPollOption.create(title: 'Choice 3'),
+      ],
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:
