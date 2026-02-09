@@ -1,6 +1,7 @@
 // Thread view widget showing status context (ancestors + descendants).
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -22,6 +23,7 @@ class StatusContext extends ConsumerStatefulWidget {
 }
 
 class _StatusContextState extends ConsumerState<StatusContext> {
+  final ItemScrollController itemScrollController = ItemScrollController();
   late final Future<StatusContextSchema?> _contextFuture;
 
   @override
@@ -57,6 +59,17 @@ class _StatusContextState extends ConsumerState<StatusContext> {
         // Find the index of the selected status after sorting
         final int selectedIndex = allStatuses.indexWhere((s) => s.id == widget.schema.id);
 
+        // Auto-scroll to selected status aligned to top
+        if (selectedIndex > 0) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            itemScrollController.scrollTo(
+              index: selectedIndex,
+              duration: const Duration(milliseconds: 300),
+              alignment: 0.0,
+            );
+          });
+        }
+
         return Dismissible(
           key: ValueKey(widget.schema.id),
           direction: DismissDirection.startToEnd,
@@ -68,26 +81,23 @@ class _StatusContextState extends ConsumerState<StatusContext> {
   }
 
   Widget buildContent(List<StatusSchema> statuses, int selectedIndex) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: statuses.length,
-        itemBuilder: (context, index) {
-          final StatusSchema status = statuses[index];
-          final bool isSelected = index == selectedIndex;
+    return ScrollablePositionedList.builder(
+      itemScrollController: itemScrollController,
+      itemCount: statuses.length,
+      itemBuilder: (context, index) {
+        final StatusSchema status = statuses[index];
+        final bool isSelected = index == selectedIndex;
 
-          return Container(
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
-            ),
-            child: Status(
-              schema: status,
-              indent: isSelected ? 0 : 1,
-            ),
-          );
-        },
-      ),
+        return Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+          ),
+          child: Status(
+            schema: status,
+            indent: isSelected ? 0 : 1,
+          ),
+        );
+      },
     );
   }
 }
