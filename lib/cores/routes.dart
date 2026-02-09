@@ -32,6 +32,9 @@ enum RoutePath {
   postQuote,         // The post page of the app to create a quote post.
   edit,              // The edit page of the app to edit an existing post.
   directory,         // The directory page of the app to expore the accounts in the Mastodon server.
+  suggestions,       // The suggestions page of the app to show suggested accounts.
+  domainBlocks,      // The domain blocks page of the app to manage blocked domains.
+  endorsedAccounts,  // The endorsed accounts page of the app to show featured profiles.
   wip;               // The work-in-progress page of the app.
 
   // Get the string path for the route.
@@ -93,6 +96,12 @@ enum RoutePath {
         return '/home/edit';
       case RoutePath.directory:
         return '/home/directory';
+      case RoutePath.suggestions:
+        return '/home/suggestions';
+      case RoutePath.domainBlocks:
+        return '/home/domain_blocks';
+      case RoutePath.endorsedAccounts:
+        return '/home/endorsed';
       case RoutePath.wip:
         return '/wip';
     }

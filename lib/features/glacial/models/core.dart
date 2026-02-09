@@ -88,6 +88,9 @@ enum DrawerButtonType {
   switchServer,
   directory,
   announcement,
+  suggestions,
+  domainBlocks,
+  endorsedAccounts,
   mutedAccounts,
   blockedAccounts,
   preference,
@@ -102,6 +105,12 @@ enum DrawerButtonType {
         return Icons.groups;
       case announcement:
         return Icons.campaign;
+      case suggestions:
+        return Icons.person_add;
+      case domainBlocks:
+        return Icons.dns;
+      case endorsedAccounts:
+        return Icons.star;
       case mutedAccounts:
         return Icons.volume_off;
       case blockedAccounts:
@@ -122,6 +131,12 @@ enum DrawerButtonType {
         return AppLocalizations.of(context)?.btn_drawer_directory ?? "Directory";
       case announcement:
         return AppLocalizations.of(context)?.btn_drawer_announcement ?? "Announcements";
+      case suggestions:
+        return AppLocalizations.of(context)?.btn_drawer_suggestions ?? "Suggestions";
+      case domainBlocks:
+        return AppLocalizations.of(context)?.btn_drawer_domain_blocks ?? "Blocked Domains";
+      case endorsedAccounts:
+        return AppLocalizations.of(context)?.btn_drawer_endorsed ?? "Featured Profiles";
       case mutedAccounts:
         return AppLocalizations.of(context)?.btn_profile_mute ?? "Muted Users";
       case blockedAccounts:
@@ -141,6 +156,12 @@ enum DrawerButtonType {
         return RoutePath.directory;
       case announcement:
         return RoutePath.timeline; // Announcement does not navigate, it opens a bottom sheet.
+      case suggestions:
+        return RoutePath.suggestions;
+      case domainBlocks:
+        return RoutePath.domainBlocks;
+      case endorsedAccounts:
+        return RoutePath.endorsedAccounts;
       case mutedAccounts:
         return RoutePath.mutedAccounts;
       case blockedAccounts:

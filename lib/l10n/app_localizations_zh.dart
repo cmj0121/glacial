@@ -821,5 +821,17 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_conversation_unread => '未讀';
 
   @override
+  String get btn_drawer_suggestions => '推薦帳號';
+
+  @override
+  String get btn_drawer_domain_blocks => '已封鎖網域';
+
+  @override
+  String get btn_drawer_endorsed => '推薦用戶';
+
+  @override
+  String get txt_no_domain_blocks => '沒有已封鎖的網域';
+
+  @override
   String get dots => '...';
 }

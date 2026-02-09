@@ -1694,6 +1694,30 @@ abstract class AppLocalizations {
   /// **'Unread'**
   String get txt_conversation_unread;
 
+  /// No description provided for @btn_drawer_suggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions'**
+  String get btn_drawer_suggestions;
+
+  /// No description provided for @btn_drawer_domain_blocks.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked Domains'**
+  String get btn_drawer_domain_blocks;
+
+  /// No description provided for @btn_drawer_endorsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Profiles'**
+  String get btn_drawer_endorsed;
+
+  /// No description provided for @txt_no_domain_blocks.
+  ///
+  /// In en, this message translates to:
+  /// **'No blocked domains'**
+  String get txt_no_domain_blocks;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

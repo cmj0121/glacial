@@ -264,5 +264,9 @@
   "btn_sidebar_conversations": "会話",
   "txt_no_conversations": "会話はありません",
   "txt_conversation_unread": "未読",
+  "btn_drawer_suggestions": "おすすめ",
+  "btn_drawer_domain_blocks": "ブロック中のドメイン",
+  "btn_drawer_endorsed": "おすすめプロフィール",
+  "txt_no_domain_blocks": "ブロックされたドメインはありません",
   "dots": "..."
 }
