@@ -610,4 +610,174 @@ class MockConversation {
   }
 }
 
+/// Factory for creating mock AttachmentSchema instances.
+class MockAttachment {
+  static AttachmentSchema create({
+    String id = 'att-1',
+    MediaType type = MediaType.image,
+    String url = 'https://example.com/media/image.png',
+    String? previewUrl = 'https://example.com/media/preview.png',
+    String? remoteUrl,
+    String? description = 'A test image',
+    String? blurhash = 'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
+  }) {
+    return AttachmentSchema(
+      id: id,
+      type: type,
+      url: url,
+      previewUrl: previewUrl,
+      remoteUrl: remoteUrl,
+      description: description,
+      blurhash: blurhash,
+    );
+  }
+}
+
+/// Factory for creating mock EmojiSchema instances.
+class MockEmoji {
+  static EmojiSchema create({
+    String shortcode = 'blobcat',
+    String url = 'https://example.com/emoji/blobcat.png',
+    String? staticUrl,
+    bool visible = true,
+    String? category,
+  }) {
+    return EmojiSchema(
+      shortcode: shortcode,
+      url: url,
+      staticUrl: staticUrl ?? url,
+      visible: visible,
+      category: category,
+    );
+  }
+}
+
+/// Factory for creating mock MentionSchema instances.
+class MockMention {
+  static MentionSchema create({
+    String id = 'mention-1',
+    String username = 'mentioned',
+    String? url,
+    String? acct,
+  }) {
+    return MentionSchema(
+      id: id,
+      username: username,
+      url: url ?? 'https://example.com/@$username',
+      acct: acct ?? username,
+    );
+  }
+}
+
+/// Factory for creating mock OAuth2Info instances.
+class MockOAuth2Info {
+  static OAuth2Info create({
+    String id = 'oauth-123',
+    String name = 'Glacial',
+    String? website = 'https://glacial.app',
+    List<String> scopes = const ['read', 'write', 'follow', 'push'],
+    String clientId = 'client_id_abc',
+    String clientSecret = 'client_secret_xyz',
+    String redirectUri = 'glacial://auth',
+    List<String>? redirectUris,
+  }) {
+    return OAuth2Info(
+      id: id,
+      name: name,
+      website: website,
+      scopes: scopes,
+      clientId: clientId,
+      clientSecret: clientSecret,
+      redirectUri: redirectUri,
+      redirectUris: redirectUris ?? [redirectUri],
+    );
+  }
+}
+
+/// Factory for creating mock AnnouncementSchema instances.
+class MockAnnouncement {
+  static AnnouncementSchema create({
+    String id = 'ann-1',
+    String content = '<p>Server maintenance tonight.</p>',
+    String? startsAt,
+    String? endsAt,
+    bool allDay = false,
+    String publishedAt = '2024-01-15T10:00:00.000Z',
+    String? updatedAt,
+    bool read = false,
+    List<ReactionSchema>? reactions,
+  }) {
+    return AnnouncementSchema(
+      id: id,
+      content: content,
+      startsAt: startsAt,
+      endsAt: endsAt,
+      allDay: allDay,
+      publishedAt: publishedAt,
+      updatedAt: updatedAt,
+      read: read,
+      reactions: reactions ?? [],
+    );
+  }
+}
+
+/// Factory for creating mock ReactionSchema instances.
+class MockReaction {
+  static ReactionSchema create({
+    String name = '👍',
+    int count = 1,
+    bool me = false,
+    String? url,
+    String? staticUrl,
+  }) {
+    return ReactionSchema(
+      name: name,
+      count: count,
+      me: me,
+      url: url,
+      staticUrl: staticUrl,
+    );
+  }
+}
+
+/// Factory for creating mock ListSchema instances.
+class MockListSchema {
+  static ListSchema create({
+    String id = 'list-1',
+    String title = 'My List',
+    ReplyPolicyType replyPolicy = ReplyPolicyType.list,
+    bool exclusive = false,
+  }) {
+    return ListSchema(
+      id: id,
+      title: title,
+      replyPolicy: replyPolicy,
+      exclusive: exclusive,
+    );
+  }
+}
+
+/// Factory for creating mock NotificationPolicySchema instances.
+class MockNotificationPolicy {
+  static NotificationPolicySchema create({
+    NotificationPolicyValue forNotFollowing = NotificationPolicyValue.accept,
+    NotificationPolicyValue forNotFollowers = NotificationPolicyValue.accept,
+    NotificationPolicyValue forNewAccounts = NotificationPolicyValue.filter,
+    NotificationPolicyValue forPrivateMentions = NotificationPolicyValue.drop,
+    NotificationPolicyValue forLimitedAccounts = NotificationPolicyValue.accept,
+    int pendingRequestsCount = 0,
+    int pendingNotificationsCount = 0,
+  }) {
+    return NotificationPolicySchema(
+      forNotFollowing: forNotFollowing,
+      forNotFollowers: forNotFollowers,
+      forNewAccounts: forNewAccounts,
+      forPrivateMentions: forPrivateMentions,
+      forLimitedAccounts: forLimitedAccounts,
+      pendingRequestsCount: pendingRequestsCount,
+      pendingNotificationsCount: pendingNotificationsCount,
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:
