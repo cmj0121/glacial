@@ -74,8 +74,8 @@ void main() {
   });
 
   group('DrawerButtonType', () {
-    test('has 7 values', () {
-      expect(DrawerButtonType.values.length, 7);
+    test('has 10 values', () {
+      expect(DrawerButtonType.values.length, 10);
     });
 
     test('returns correct icons', () {
@@ -84,6 +84,9 @@ void main() {
       expect(DrawerButtonType.announcement.icon(), Icons.campaign);
       expect(DrawerButtonType.mutedAccounts.icon(), Icons.volume_off);
       expect(DrawerButtonType.blockedAccounts.icon(), Icons.block);
+      expect(DrawerButtonType.suggestions.icon(), Icons.person_add);
+      expect(DrawerButtonType.domainBlocks.icon(), Icons.dns);
+      expect(DrawerButtonType.endorsedAccounts.icon(), Icons.star);
       expect(DrawerButtonType.preference.icon(), Icons.settings);
       expect(DrawerButtonType.logout.icon(), Icons.logout);
     });
@@ -94,6 +97,9 @@ void main() {
       expect(DrawerButtonType.announcement.route, RoutePath.timeline);
       expect(DrawerButtonType.mutedAccounts.route, RoutePath.mutedAccounts);
       expect(DrawerButtonType.blockedAccounts.route, RoutePath.blockedAccounts);
+      expect(DrawerButtonType.suggestions.route, RoutePath.suggestions);
+      expect(DrawerButtonType.domainBlocks.route, RoutePath.domainBlocks);
+      expect(DrawerButtonType.endorsedAccounts.route, RoutePath.endorsedAccounts);
       expect(DrawerButtonType.preference.route, RoutePath.preference);
       expect(DrawerButtonType.logout.route, RoutePath.timeline);
     });

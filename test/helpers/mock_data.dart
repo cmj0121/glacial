@@ -915,6 +915,21 @@ class MockFeaturedTag {
   }
 }
 
+/// Factory for creating mock SuggestionSchema instances.
+class MockSuggestion {
+  static SuggestionSchema create({
+    SuggestionSourceType source = SuggestionSourceType.staff,
+    List<String>? sources,
+    AccountSchema? account,
+  }) {
+    return SuggestionSchema(
+      source: source,
+      sources: sources ?? [source.name],
+      account: account ?? MockAccount.create(),
+    );
+  }
+}
+
 /// Factory for creating mock SearchResultSchema instances.
 class MockSearchResult {
   static SearchResultSchema create({
