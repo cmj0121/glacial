@@ -2,6 +2,7 @@
 
 export 'account/screens/core.dart';
 export 'admin/screens/core.dart';
+export 'conversations/screens/core.dart';
 export 'auth/screens/core.dart';
 export 'filters/screens/core.dart';
 export 'glacial/screens/core.dart';

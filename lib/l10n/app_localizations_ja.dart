@@ -812,5 +812,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_about_copyright => '著作権';
 
   @override
+  String get btn_sidebar_conversations => '会話';
+
+  @override
+  String get txt_no_conversations => '会話はありません';
+
+  @override
+  String get txt_conversation_unread => '未読';
+
+  @override
   String get dots => '...';
 }

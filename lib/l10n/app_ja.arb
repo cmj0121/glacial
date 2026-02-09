@@ -261,5 +261,8 @@
   "txt_about_author": "作者",
   "txt_about_repository": "リポジトリ",
   "txt_about_copyright": "著作権",
+  "btn_sidebar_conversations": "会話",
+  "txt_no_conversations": "会話はありません",
+  "txt_conversation_unread": "未読",
   "dots": "..."
 }

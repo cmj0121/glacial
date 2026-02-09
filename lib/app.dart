@@ -231,6 +231,10 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (_, _) => const AdminTab(),
         ),
         GoRoute(
+          path: RoutePath.conversations.path,
+          builder: (_, _) => const ConversationTab(),
+        ),
+        GoRoute(
           path: RoutePath.followRequests.path,
           builder: (BuildContext context, GoRouterState state) => const FollowRequests(),
         ),

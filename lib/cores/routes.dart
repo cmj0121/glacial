@@ -15,6 +15,7 @@ enum RoutePath {
   listItem,          // The list item page of the app to show the list details.
   trends,            // The trends page of the app.
   notifications,     // The notifications page of the app.
+  conversations,     // The conversations page of the app to show the direct messages.
   admin,             // The admin page of the app.
   search,            // The search page of the app.
   hashtag,           // The hashtag page of the app.
@@ -56,6 +57,8 @@ enum RoutePath {
         return '/home/trends';
       case RoutePath.notifications:
         return '/home/notifications';
+      case RoutePath.conversations:
+        return '/home/conversations';
       case RoutePath.admin:
         return '/home/admin';
       case RoutePath.search:
