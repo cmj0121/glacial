@@ -9,8 +9,6 @@ enum RoutePath {
   media,             // The media viewer page of the app to view the media content.
   preference,        // The preference settings page of the app.
   followRequests,   // The follow requests page of the app.
-  mutedAccounts,     // The muted accounts management page.
-  blockedAccounts,   // The blocked accounts management page.
   // The home page of the Glacial, showing the timeline, trends, notifications, and other features.
   timeline,          // The timeline page of the app.
   list,              // The list page of the app to show the pinned lists.
@@ -33,7 +31,6 @@ enum RoutePath {
   edit,              // The edit page of the app to edit an existing post.
   directory,         // The directory page of the app to expore the accounts in the Mastodon server.
   suggestions,       // The suggestions page of the app to show suggested accounts.
-  domainBlocks,      // The domain blocks page of the app to manage blocked domains.
   endorsedAccounts,  // The endorsed accounts page of the app to show featured profiles.
   wip;               // The work-in-progress page of the app.
 
@@ -50,10 +47,6 @@ enum RoutePath {
         return '/preference';
       case RoutePath.followRequests:
         return '/follow_requests';
-      case RoutePath.mutedAccounts:
-        return '/home/muted';
-      case RoutePath.blockedAccounts:
-        return '/home/blocked';
       case RoutePath.media:
         return '/media';
       case RoutePath.timeline:
@@ -98,8 +91,6 @@ enum RoutePath {
         return '/home/directory';
       case RoutePath.suggestions:
         return '/home/suggestions';
-      case RoutePath.domainBlocks:
-        return '/home/domain_blocks';
       case RoutePath.endorsedAccounts:
         return '/home/endorsed';
       case RoutePath.wip:

@@ -236,10 +236,7 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
     final List<DrawerButtonType> actions = DrawerButtonType.values.where((action) {
       switch (action) {
         case DrawerButtonType.suggestions:
-        case DrawerButtonType.domainBlocks:
         case DrawerButtonType.endorsedAccounts:
-        case DrawerButtonType.mutedAccounts:
-        case DrawerButtonType.blockedAccounts:
           return isSignedIn;
         default:
           return true;

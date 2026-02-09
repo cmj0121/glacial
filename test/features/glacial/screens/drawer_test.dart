@@ -77,7 +77,7 @@ void main() {
     });
 
     group('signed-in user', () {
-      testWidgets('shows muted accounts option', (tester) async {
+      testWidgets('shows suggestions option', (tester) async {
         setTallViewport(tester);
         await tester.pumpWidget(createTestWidgetRaw(
           accessStatus: MockAccessStatus.authenticated(),
@@ -85,10 +85,10 @@ void main() {
         ));
         await openDrawer(tester);
 
-        expect(find.byIcon(Icons.volume_off), findsOneWidget);
+        expect(find.byIcon(Icons.person_add), findsOneWidget);
       });
 
-      testWidgets('shows blocked accounts option', (tester) async {
+      testWidgets('shows endorsed accounts option', (tester) async {
         setTallViewport(tester);
         await tester.pumpWidget(createTestWidgetRaw(
           accessStatus: MockAccessStatus.authenticated(),
@@ -96,7 +96,7 @@ void main() {
         ));
         await openDrawer(tester);
 
-        expect(find.byIcon(Icons.block), findsOneWidget);
+        expect(find.byIcon(Icons.star), findsOneWidget);
       });
 
       testWidgets('shows logout option', (tester) async {
@@ -121,8 +121,8 @@ void main() {
         expect(find.byIcon(Icons.swap_horiz), findsOneWidget);
         expect(find.byIcon(Icons.groups), findsOneWidget);
         expect(find.byIcon(Icons.campaign), findsOneWidget);
-        expect(find.byIcon(Icons.volume_off), findsOneWidget);
-        expect(find.byIcon(Icons.block), findsOneWidget);
+        expect(find.byIcon(Icons.person_add), findsOneWidget);
+        expect(find.byIcon(Icons.star), findsOneWidget);
         expect(find.byIcon(Icons.settings), findsOneWidget);
         expect(find.byIcon(Icons.logout), findsOneWidget);
       });
@@ -141,24 +141,24 @@ void main() {
     });
 
     group('anonymous user', () {
-      testWidgets('hides muted accounts option', (tester) async {
+      testWidgets('hides suggestions option', (tester) async {
         setTallViewport(tester);
         await tester.pumpWidget(createTestWidgetRaw(
           child: const Scaffold(drawer: GlacialDrawer()),
         ));
         await openDrawer(tester);
 
-        expect(find.byIcon(Icons.volume_off), findsNothing);
+        expect(find.byIcon(Icons.person_add), findsNothing);
       });
 
-      testWidgets('hides blocked accounts option', (tester) async {
+      testWidgets('hides endorsed accounts option', (tester) async {
         setTallViewport(tester);
         await tester.pumpWidget(createTestWidgetRaw(
           child: const Scaffold(drawer: GlacialDrawer()),
         ));
         await openDrawer(tester);
 
-        expect(find.byIcon(Icons.block), findsNothing);
+        expect(find.byIcon(Icons.star), findsNothing);
       });
 
       testWidgets('hides logout option when anonymous', (tester) async {
@@ -183,9 +183,9 @@ void main() {
         expect(find.byIcon(Icons.groups), findsOneWidget);
         expect(find.byIcon(Icons.campaign), findsOneWidget);
         expect(find.byIcon(Icons.settings), findsOneWidget);
-        // mutedAccounts, blockedAccounts, logout are hidden
-        expect(find.byIcon(Icons.volume_off), findsNothing);
-        expect(find.byIcon(Icons.block), findsNothing);
+        // suggestions, endorsedAccounts, logout are hidden when anonymous
+        expect(find.byIcon(Icons.person_add), findsNothing);
+        expect(find.byIcon(Icons.star), findsNothing);
         expect(find.byIcon(Icons.logout), findsNothing);
       });
     });

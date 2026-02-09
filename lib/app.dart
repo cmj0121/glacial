@@ -154,20 +154,8 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             title = Text(AppLocalizations.of(context)?.btn_drawer_directory ?? "Directory");
             backable = true;
             break;
-          case RoutePath.mutedAccounts:
-            title = Text(AppLocalizations.of(context)?.btn_profile_mute ?? "Muted Users");
-            backable = true;
-            break;
-          case RoutePath.blockedAccounts:
-            title = Text(AppLocalizations.of(context)?.btn_profile_block ?? "Blocked Users");
-            backable = true;
-            break;
           case RoutePath.suggestions:
             title = Text(AppLocalizations.of(context)?.btn_drawer_suggestions ?? "Suggestions");
-            backable = true;
-            break;
-          case RoutePath.domainBlocks:
-            title = Text(AppLocalizations.of(context)?.btn_drawer_domain_blocks ?? "Blocked Domains");
             backable = true;
             break;
           case RoutePath.endorsedAccounts:
@@ -260,38 +248,8 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (BuildContext context, GoRouterState state) => const FollowRequests(),
         ),
         GoRoute(
-          path: RoutePath.mutedAccounts.path,
-          builder: (_, _) {
-            final AccessStatusSchema? status = ref.read(accessStatusProvider);
-            return AccountList(
-              loader: status?.fetchMutedAccounts,
-              onDismiss: (account) async => status?.changeRelationship(
-                account: account,
-                type: RelationshipType.unmute,
-              ),
-            );
-          },
-        ),
-        GoRoute(
-          path: RoutePath.blockedAccounts.path,
-          builder: (_, _) {
-            final AccessStatusSchema? status = ref.read(accessStatusProvider);
-            return AccountList(
-              loader: status?.fetchBlockedAccounts,
-              onDismiss: (account) async => status?.changeRelationship(
-                account: account,
-                type: RelationshipType.unblock,
-              ),
-            );
-          },
-        ),
-        GoRoute(
           path: RoutePath.suggestions.path,
           builder: (_, _) => const SuggestionList(),
-        ),
-        GoRoute(
-          path: RoutePath.domainBlocks.path,
-          builder: (_, _) => const DomainBlockList(),
         ),
         GoRoute(
           path: RoutePath.endorsedAccounts.path,
