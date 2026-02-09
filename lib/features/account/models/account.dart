@@ -124,7 +124,8 @@ enum AccountProfileType {
   hashtag,       // The hashtag timeline for the current server.
   filter,        // The created and managed filters.
   mute,          // The muted accounts for the logged in user.
-  block;         // The blocked accounts for the logged in user.
+  block,         // The blocked accounts for the logged in user.
+  domainBlock;   // The blocked domains for the logged in user.
 
   // The tooltip text for the profile type, localized if possible.
   String tooltip(BuildContext context) {
@@ -149,6 +150,8 @@ enum AccountProfileType {
         return AppLocalizations.of(context)?.btn_profile_mute ?? "Muted Accounts";
       case block:
         return AppLocalizations.of(context)?.btn_profile_block ?? "Blocked Accounts";
+      case domainBlock:
+        return AppLocalizations.of(context)?.btn_drawer_domain_blocks ?? "Blocked Domains";
     }
   }
 
@@ -175,6 +178,8 @@ enum AccountProfileType {
         return active ? Icons.volume_off : Icons.volume_off_outlined;
       case block:
         return active ? Icons.block : Icons.block_outlined;
+      case domainBlock:
+        return active ? Icons.dns : Icons.dns_outlined;
     }
   }
 

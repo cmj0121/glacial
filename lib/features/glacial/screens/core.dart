@@ -234,10 +234,13 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
     final AccessStatusSchema? status = ref.watch(accessStatusProvider);
     final bool isSignedIn = status?.accessToken?.isNotEmpty == true;
     final List<DrawerButtonType> actions = DrawerButtonType.values.where((action) {
-      if (action == DrawerButtonType.mutedAccounts || action == DrawerButtonType.blockedAccounts) {
-        return isSignedIn;
+      switch (action) {
+        case DrawerButtonType.suggestions:
+        case DrawerButtonType.endorsedAccounts:
+          return isSignedIn;
+        default:
+          return true;
       }
-      return true;
     }).toList();
     final int logoutIndex = actions.indexWhere((action) => action == DrawerButtonType.logout);
     final List<Widget> children = actions.map((action) {

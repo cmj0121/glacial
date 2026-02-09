@@ -39,6 +39,16 @@
 //
 //   - [+] GET   /api/v1/blocks
 //
+// ## Domain Block APIs
+//
+//   - [+] GET    /api/v1/domain_blocks
+//   - [+] POST   /api/v1/domain_blocks
+//   - [+] DELETE  /api/v1/domain_blocks
+//
+// ## Endorsements APIs
+//
+//   - [+] GET   /api/v1/endorsements
+//
 // ## Follow Requests APIs
 //
 //   - [+] GET   /api/v1/follow_requests
@@ -476,6 +486,53 @@ extension AccountsExtensions on AccessStatusSchema {
       logger.w("account lookup failed for acct: $acct, error: $e");
       return null;
     }
+  }
+
+  // Get the list of blocked domains.
+  Future<(List<String>, String?)> fetchDomainBlocks({String? maxId}) async {
+    checkSignedIn();
+
+    final Map<String, String> query = {"max_id": maxId ?? ""};
+    final String endpoint = '/api/v1/domain_blocks';
+    final (body, nextId) = await getAPIEx(endpoint, queryParameters: query);
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<String> domains = json.map((e) => e as String).toList();
+
+    logger.d("complete load the blocked domains: ${domains.length}");
+    return (domains, nextId);
+  }
+
+  // Block a domain.
+  Future<void> blockDomain(String domain) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/domain_blocks';
+    await postAPI(endpoint, body: {'domain': domain});
+  }
+
+  // Unblock a domain.
+  Future<void> unblockDomain(String domain) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/domain_blocks';
+    await deleteAPI(endpoint, body: {'domain': domain});
+  }
+
+  // Get the list of endorsed (featured) accounts.
+  Future<(List<AccountSchema>, String?)> fetchEndorsedAccounts({String? maxId}) async {
+    checkSignedIn();
+
+    final Map<String, String> query = {"max_id": maxId ?? ""};
+    final String endpoint = '/api/v1/endorsements';
+    final (body, nextId) = await getAPIEx(endpoint, queryParameters: query);
+    final List<dynamic> json = jsonDecode(body) as List<dynamic>;
+    final List<AccountSchema> accounts = json.map((e) => AccountSchema.fromJson(e as Map<String, dynamic>)).toList();
+
+    logger.d("complete load the endorsed accounts: ${accounts.length}");
+    for (final a in accounts) {
+      cacheAccount(a);
+    }
+    return (accounts, nextId);
   }
 
   // Get lists containing this account.

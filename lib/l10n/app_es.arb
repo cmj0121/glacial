@@ -264,5 +264,9 @@
   "btn_sidebar_conversations": "Conversaciones",
   "txt_no_conversations": "Sin conversaciones",
   "txt_conversation_unread": "No leído",
+  "btn_drawer_suggestions": "Sugerencias",
+  "btn_drawer_domain_blocks": "Dominios bloqueados",
+  "btn_drawer_endorsed": "Perfiles destacados",
+  "txt_no_domain_blocks": "Sin dominios bloqueados",
   "dots": "..."
 }

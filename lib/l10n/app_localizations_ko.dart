@@ -822,5 +822,17 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_conversation_unread => '읽지 않음';
 
   @override
+  String get btn_drawer_suggestions => '추천';
+
+  @override
+  String get btn_drawer_domain_blocks => '차단된 도메인';
+
+  @override
+  String get btn_drawer_endorsed => '추천 프로필';
+
+  @override
+  String get txt_no_domain_blocks => '차단된 도메인이 없습니다';
+
+  @override
   String get dots => '...';
 }

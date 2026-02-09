@@ -298,5 +298,9 @@
   "btn_sidebar_conversations": "Conversations",
   "txt_no_conversations": "No conversations",
   "txt_conversation_unread": "Unread",
+  "btn_drawer_suggestions": "Suggestions",
+  "btn_drawer_domain_blocks": "Blocked Domains",
+  "btn_drawer_endorsed": "Featured Profiles",
+  "txt_no_domain_blocks": "No blocked domains",
   "dots": "..."
 }

@@ -154,12 +154,12 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             title = Text(AppLocalizations.of(context)?.btn_drawer_directory ?? "Directory");
             backable = true;
             break;
-          case RoutePath.mutedAccounts:
-            title = Text(AppLocalizations.of(context)?.btn_profile_mute ?? "Muted Users");
+          case RoutePath.suggestions:
+            title = Text(AppLocalizations.of(context)?.btn_drawer_suggestions ?? "Suggestions");
             backable = true;
             break;
-          case RoutePath.blockedAccounts:
-            title = Text(AppLocalizations.of(context)?.btn_profile_block ?? "Blocked Users");
+          case RoutePath.endorsedAccounts:
+            title = Text(AppLocalizations.of(context)?.btn_drawer_endorsed ?? "Featured Profiles");
             backable = true;
             break;
           case RoutePath.search:
@@ -248,28 +248,16 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (BuildContext context, GoRouterState state) => const FollowRequests(),
         ),
         GoRoute(
-          path: RoutePath.mutedAccounts.path,
-          builder: (_, _) {
-            final AccessStatusSchema? status = ref.read(accessStatusProvider);
-            return AccountList(
-              loader: status?.fetchMutedAccounts,
-              onDismiss: (account) async => status?.changeRelationship(
-                account: account,
-                type: RelationshipType.unmute,
-              ),
-            );
-          },
+          path: RoutePath.suggestions.path,
+          builder: (_, _) => const SuggestionList(),
         ),
         GoRoute(
-          path: RoutePath.blockedAccounts.path,
+          path: RoutePath.endorsedAccounts.path,
           builder: (_, _) {
             final AccessStatusSchema? status = ref.read(accessStatusProvider);
             return AccountList(
-              loader: status?.fetchBlockedAccounts,
-              onDismiss: (account) async => status?.changeRelationship(
-                account: account,
-                type: RelationshipType.unblock,
-              ),
+              loader: status?.fetchEndorsedAccounts,
+              onDismiss: (account) async => status?.unendorseAccount(accountId: account.id),
             );
           },
         ),

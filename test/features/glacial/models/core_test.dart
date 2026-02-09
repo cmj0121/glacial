@@ -82,8 +82,8 @@ void main() {
       expect(DrawerButtonType.switchServer.icon(), Icons.swap_horiz);
       expect(DrawerButtonType.directory.icon(), Icons.groups);
       expect(DrawerButtonType.announcement.icon(), Icons.campaign);
-      expect(DrawerButtonType.mutedAccounts.icon(), Icons.volume_off);
-      expect(DrawerButtonType.blockedAccounts.icon(), Icons.block);
+      expect(DrawerButtonType.suggestions.icon(), Icons.person_add);
+      expect(DrawerButtonType.endorsedAccounts.icon(), Icons.star);
       expect(DrawerButtonType.preference.icon(), Icons.settings);
       expect(DrawerButtonType.logout.icon(), Icons.logout);
     });
@@ -92,8 +92,8 @@ void main() {
       expect(DrawerButtonType.switchServer.route, RoutePath.explorer);
       expect(DrawerButtonType.directory.route, RoutePath.directory);
       expect(DrawerButtonType.announcement.route, RoutePath.timeline);
-      expect(DrawerButtonType.mutedAccounts.route, RoutePath.mutedAccounts);
-      expect(DrawerButtonType.blockedAccounts.route, RoutePath.blockedAccounts);
+      expect(DrawerButtonType.suggestions.route, RoutePath.suggestions);
+      expect(DrawerButtonType.endorsedAccounts.route, RoutePath.endorsedAccounts);
       expect(DrawerButtonType.preference.route, RoutePath.preference);
       expect(DrawerButtonType.logout.route, RoutePath.timeline);
     });
@@ -112,34 +112,6 @@ void main() {
         final String tooltip = type.tooltip(capturedContext);
         expect(tooltip.isNotEmpty, true, reason: '${type.name} should have a non-empty tooltip');
       }
-    });
-
-    testWidgets('mutedAccounts tooltip uses mute label', (tester) async {
-      late BuildContext capturedContext;
-
-      await tester.pumpWidget(createTestWidget(
-        child: Builder(builder: (context) {
-          capturedContext = context;
-          return const SizedBox.shrink();
-        }),
-      ));
-
-      final String tooltip = DrawerButtonType.mutedAccounts.tooltip(capturedContext);
-      expect(tooltip, contains('Mute'));
-    });
-
-    testWidgets('blockedAccounts tooltip uses block label', (tester) async {
-      late BuildContext capturedContext;
-
-      await tester.pumpWidget(createTestWidget(
-        child: Builder(builder: (context) {
-          capturedContext = context;
-          return const SizedBox.shrink();
-        }),
-      ));
-
-      final String tooltip = DrawerButtonType.blockedAccounts.tooltip(capturedContext);
-      expect(tooltip, contains('Block'));
     });
   });
 }

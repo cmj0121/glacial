@@ -264,5 +264,9 @@
   "btn_sidebar_conversations": "私訊",
   "txt_no_conversations": "沒有私訊",
   "txt_conversation_unread": "未讀",
+  "btn_drawer_suggestions": "推薦帳號",
+  "btn_drawer_domain_blocks": "已封鎖網域",
+  "btn_drawer_endorsed": "推薦用戶",
+  "txt_no_domain_blocks": "沒有已封鎖的網域",
   "dots": "..."
 }

@@ -821,5 +821,17 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_conversation_unread => '未読';
 
   @override
+  String get btn_drawer_suggestions => 'おすすめ';
+
+  @override
+  String get btn_drawer_domain_blocks => 'ブロック中のドメイン';
+
+  @override
+  String get btn_drawer_endorsed => 'おすすめプロフィール';
+
+  @override
+  String get txt_no_domain_blocks => 'ブロックされたドメインはありません';
+
+  @override
   String get dots => '...';
 }

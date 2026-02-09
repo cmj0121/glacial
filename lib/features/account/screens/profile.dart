@@ -112,6 +112,8 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
                   ? (account) async => status?.changeRelationship(account: account, type: RelationshipType.unblock)
                   : null,
             );
+          case AccountProfileType.domainBlock:
+            return const DomainBlockList();
         }
       }
     );
