@@ -235,4 +235,44 @@ class MockAccessStatus {
   }
 }
 
+/// Factory for creating mock StatusEditSchema instances.
+class MockStatusEdit {
+  static StatusEditSchema create({
+    String content = '<p>Edited content.</p>',
+    String spoiler = '',
+    bool sensitive = false,
+    DateTime? createdAt,
+    AccountSchema? account,
+    PollSchema? poll,
+    List<AttachmentSchema> attachments = const [],
+    List<EmojiSchema> emojis = const [],
+  }) {
+    return StatusEditSchema(
+      content: content,
+      spoiler: spoiler,
+      sensitive: sensitive,
+      createdAt: createdAt ?? DateTime(2023, 1, 1, 12, 0),
+      account: account ?? MockAccount.create(),
+      poll: poll,
+      attachments: attachments,
+      emojis: emojis,
+    );
+  }
+
+  /// Creates a list of edits representing a status history.
+  static List<StatusEditSchema> createHistory({
+    int count = 3,
+    AccountSchema? account,
+  }) {
+    final acc = account ?? MockAccount.create();
+    return List.generate(count, (index) {
+      return create(
+        content: '<p>Edit version ${index + 1}.</p>',
+        createdAt: DateTime(2023, 1, 1, 12 + index, 0),
+        account: acc,
+      );
+    });
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:
