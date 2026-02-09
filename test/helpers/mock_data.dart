@@ -162,6 +162,45 @@ class MockStatus {
   }
 }
 
+/// Factory for creating mock PreviewCardSchema instances.
+class MockPreviewCard {
+  static PreviewCardSchema create({
+    String url = 'https://example.com/article',
+    String title = 'Test Article Title',
+    String description = 'This is a test article description.',
+    PreviewCardType type = PreviewCardType.link,
+    String html = '',
+    int width = 200,
+    int height = 100,
+    String? image = 'https://example.com/preview.png',
+  }) {
+    return PreviewCardSchema(
+      url: url,
+      title: title,
+      description: description,
+      type: type,
+      html: html,
+      width: width,
+      height: height,
+      image: image,
+    );
+  }
+
+  /// Creates a preview card without image.
+  static PreviewCardSchema createWithoutImage({
+    String url = 'https://example.com/article',
+    String title = 'Test Article',
+    String description = 'Description without image.',
+  }) {
+    return create(
+      url: url,
+      title: title,
+      description: description,
+      image: null,
+    );
+  }
+}
+
 /// Factory for creating mock AccessStatusSchema instances.
 class MockAccessStatus {
   static AccessStatusSchema create({
