@@ -99,9 +99,19 @@ class _AccountProfileState extends ConsumerState<AccountProfile> with SingleTick
           case AccountProfileType.filter:
             return Filters(key: UniqueKey());
           case AccountProfileType.mute:
-            return AccountList(loader: status?.fetchMutedAccounts);
+            return AccountList(
+              loader: status?.fetchMutedAccounts,
+              onDismiss: isSelfProfile
+                  ? (account) async => status?.changeRelationship(account: account, type: RelationshipType.unmute)
+                  : null,
+            );
           case AccountProfileType.block:
-            return AccountList(loader: status?.fetchBlockedAccounts);
+            return AccountList(
+              loader: status?.fetchBlockedAccounts,
+              onDismiss: isSelfProfile
+                  ? (account) async => status?.changeRelationship(account: account, type: RelationshipType.unblock)
+                  : null,
+            );
         }
       }
     );

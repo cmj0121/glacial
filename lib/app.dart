@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -153,6 +154,14 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             title = Text(AppLocalizations.of(context)?.btn_drawer_directory ?? "Directory");
             backable = true;
             break;
+          case RoutePath.mutedAccounts:
+            title = Text(AppLocalizations.of(context)?.btn_profile_mute ?? "Muted Users");
+            backable = true;
+            break;
+          case RoutePath.blockedAccounts:
+            title = Text(AppLocalizations.of(context)?.btn_profile_block ?? "Blocked Users");
+            backable = true;
+            break;
           case RoutePath.search:
             final String keyword = state.extra as String;
 
@@ -237,6 +246,32 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         GoRoute(
           path: RoutePath.followRequests.path,
           builder: (BuildContext context, GoRouterState state) => const FollowRequests(),
+        ),
+        GoRoute(
+          path: RoutePath.mutedAccounts.path,
+          builder: (_, _) {
+            final AccessStatusSchema? status = ref.read(accessStatusProvider);
+            return AccountList(
+              loader: status?.fetchMutedAccounts,
+              onDismiss: (account) async => status?.changeRelationship(
+                account: account,
+                type: RelationshipType.unmute,
+              ),
+            );
+          },
+        ),
+        GoRoute(
+          path: RoutePath.blockedAccounts.path,
+          builder: (_, _) {
+            final AccessStatusSchema? status = ref.read(accessStatusProvider);
+            return AccountList(
+              loader: status?.fetchBlockedAccounts,
+              onDismiss: (account) async => status?.changeRelationship(
+                account: account,
+                type: RelationshipType.unblock,
+              ),
+            );
+          },
         ),
 
         // The backable sub-routes that can be used to navigate to the and pop-back.
