@@ -191,7 +191,6 @@ enum AccountProfileType {
       case AccountProfileType.pin:
       case AccountProfileType.followers:
       case AccountProfileType.following:
-      case AccountProfileType.filter:
         return true;
       default:
         return false;

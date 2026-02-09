@@ -1694,12 +1694,6 @@ abstract class AppLocalizations {
   /// **'Unread'**
   String get txt_conversation_unread;
 
-  /// No description provided for @btn_drawer_suggestions.
-  ///
-  /// In en, this message translates to:
-  /// **'Suggestions'**
-  String get btn_drawer_suggestions;
-
   /// No description provided for @btn_drawer_domain_blocks.
   ///
   /// In en, this message translates to:

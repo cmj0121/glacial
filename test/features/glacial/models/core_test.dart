@@ -74,16 +74,14 @@ void main() {
   });
 
   group('DrawerButtonType', () {
-    test('has 7 values', () {
-      expect(DrawerButtonType.values.length, 7);
+    test('has 5 values', () {
+      expect(DrawerButtonType.values.length, 5);
     });
 
     test('returns correct icons', () {
       expect(DrawerButtonType.switchServer.icon(), Icons.swap_horiz);
       expect(DrawerButtonType.directory.icon(), Icons.groups);
       expect(DrawerButtonType.announcement.icon(), Icons.campaign);
-      expect(DrawerButtonType.suggestions.icon(), Icons.person_add);
-      expect(DrawerButtonType.endorsedAccounts.icon(), Icons.star);
       expect(DrawerButtonType.preference.icon(), Icons.settings);
       expect(DrawerButtonType.logout.icon(), Icons.logout);
     });
@@ -92,8 +90,6 @@ void main() {
       expect(DrawerButtonType.switchServer.route, RoutePath.explorer);
       expect(DrawerButtonType.directory.route, RoutePath.directory);
       expect(DrawerButtonType.announcement.route, RoutePath.timeline);
-      expect(DrawerButtonType.suggestions.route, RoutePath.suggestions);
-      expect(DrawerButtonType.endorsedAccounts.route, RoutePath.endorsedAccounts);
       expect(DrawerButtonType.preference.route, RoutePath.preference);
       expect(DrawerButtonType.logout.route, RoutePath.timeline);
     });

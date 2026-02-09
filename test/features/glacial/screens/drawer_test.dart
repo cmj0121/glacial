@@ -77,28 +77,6 @@ void main() {
     });
 
     group('signed-in user', () {
-      testWidgets('shows suggestions option', (tester) async {
-        setTallViewport(tester);
-        await tester.pumpWidget(createTestWidgetRaw(
-          accessStatus: MockAccessStatus.authenticated(),
-          child: const Scaffold(drawer: GlacialDrawer()),
-        ));
-        await openDrawer(tester);
-
-        expect(find.byIcon(Icons.person_add), findsOneWidget);
-      });
-
-      testWidgets('shows endorsed accounts option', (tester) async {
-        setTallViewport(tester);
-        await tester.pumpWidget(createTestWidgetRaw(
-          accessStatus: MockAccessStatus.authenticated(),
-          child: const Scaffold(drawer: GlacialDrawer()),
-        ));
-        await openDrawer(tester);
-
-        expect(find.byIcon(Icons.star), findsOneWidget);
-      });
-
       testWidgets('shows logout option', (tester) async {
         setTallViewport(tester);
         await tester.pumpWidget(createTestWidgetRaw(
@@ -110,7 +88,7 @@ void main() {
         expect(find.byIcon(Icons.logout), findsOneWidget);
       });
 
-      testWidgets('shows all 7 drawer actions when signed in', (tester) async {
+      testWidgets('shows all 5 drawer actions when signed in', (tester) async {
         setTallViewport(tester);
         await tester.pumpWidget(createTestWidgetRaw(
           accessStatus: MockAccessStatus.authenticated(),
@@ -121,8 +99,6 @@ void main() {
         expect(find.byIcon(Icons.swap_horiz), findsOneWidget);
         expect(find.byIcon(Icons.groups), findsOneWidget);
         expect(find.byIcon(Icons.campaign), findsOneWidget);
-        expect(find.byIcon(Icons.person_add), findsOneWidget);
-        expect(find.byIcon(Icons.star), findsOneWidget);
         expect(find.byIcon(Icons.settings), findsOneWidget);
         expect(find.byIcon(Icons.logout), findsOneWidget);
       });
@@ -135,32 +111,12 @@ void main() {
         ));
         await openDrawer(tester);
 
-        // Each drawer action is a ListTile; at least 7 (one per action)
-        expect(find.byType(ListTile), findsAtLeastNWidgets(7));
+        // Each drawer action is a ListTile; at least 5 (one per action)
+        expect(find.byType(ListTile), findsAtLeastNWidgets(5));
       });
     });
 
     group('anonymous user', () {
-      testWidgets('hides suggestions option', (tester) async {
-        setTallViewport(tester);
-        await tester.pumpWidget(createTestWidgetRaw(
-          child: const Scaffold(drawer: GlacialDrawer()),
-        ));
-        await openDrawer(tester);
-
-        expect(find.byIcon(Icons.person_add), findsNothing);
-      });
-
-      testWidgets('hides endorsed accounts option', (tester) async {
-        setTallViewport(tester);
-        await tester.pumpWidget(createTestWidgetRaw(
-          child: const Scaffold(drawer: GlacialDrawer()),
-        ));
-        await openDrawer(tester);
-
-        expect(find.byIcon(Icons.star), findsNothing);
-      });
-
       testWidgets('hides logout option when anonymous', (tester) async {
         setTallViewport(tester);
         await tester.pumpWidget(createTestWidgetRaw(
@@ -171,7 +127,7 @@ void main() {
         expect(find.byIcon(Icons.logout), findsNothing);
       });
 
-      testWidgets('shows only common drawer actions when anonymous', (tester) async {
+      testWidgets('shows common drawer actions when anonymous', (tester) async {
         setTallViewport(tester);
         await tester.pumpWidget(createTestWidgetRaw(
           child: const Scaffold(drawer: GlacialDrawer()),
@@ -183,9 +139,7 @@ void main() {
         expect(find.byIcon(Icons.groups), findsOneWidget);
         expect(find.byIcon(Icons.campaign), findsOneWidget);
         expect(find.byIcon(Icons.settings), findsOneWidget);
-        // suggestions, endorsedAccounts, logout are hidden when anonymous
-        expect(find.byIcon(Icons.person_add), findsNothing);
-        expect(find.byIcon(Icons.star), findsNothing);
+        // logout is hidden when anonymous
         expect(find.byIcon(Icons.logout), findsNothing);
       });
     });

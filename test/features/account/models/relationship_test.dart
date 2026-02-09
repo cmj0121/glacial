@@ -378,7 +378,7 @@ void main() {
       expect(AccountProfileType.pin.selfProfile, true);
       expect(AccountProfileType.followers.selfProfile, true);
       expect(AccountProfileType.following.selfProfile, true);
-      expect(AccountProfileType.filter.selfProfile, true);
+      expect(AccountProfileType.filter.selfProfile, false);
       expect(AccountProfileType.schedule.selfProfile, false);
       expect(AccountProfileType.hashtag.selfProfile, false);
       expect(AccountProfileType.mute.selfProfile, false);

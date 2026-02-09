@@ -5,7 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 
 import 'package:glacial/core.dart';
-import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -154,14 +153,6 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             title = Text(AppLocalizations.of(context)?.btn_drawer_directory ?? "Directory");
             backable = true;
             break;
-          case RoutePath.suggestions:
-            title = Text(AppLocalizations.of(context)?.btn_drawer_suggestions ?? "Suggestions");
-            backable = true;
-            break;
-          case RoutePath.endorsedAccounts:
-            title = Text(AppLocalizations.of(context)?.btn_drawer_endorsed ?? "Featured Profiles");
-            backable = true;
-            break;
           case RoutePath.search:
             final String keyword = state.extra as String;
 
@@ -247,21 +238,6 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           path: RoutePath.followRequests.path,
           builder: (BuildContext context, GoRouterState state) => const FollowRequests(),
         ),
-        GoRoute(
-          path: RoutePath.suggestions.path,
-          builder: (_, _) => const SuggestionList(),
-        ),
-        GoRoute(
-          path: RoutePath.endorsedAccounts.path,
-          builder: (_, _) {
-            final AccessStatusSchema? status = ref.read(accessStatusProvider);
-            return AccountList(
-              loader: status?.fetchEndorsedAccounts,
-              onDismiss: (account) async => status?.unendorseAccount(accountId: account.id),
-            );
-          },
-        ),
-
         // The backable sub-routes that can be used to navigate to the and pop-back.
         GoRoute(
           path: RoutePath.post.path,
@@ -348,7 +324,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         ),
         GoRoute(
           path: RoutePath.directory.path,
-          builder: (BuildContext context, GoRouterState state) => const DirectoryAccount(),
+          builder: (BuildContext context, GoRouterState state) => const DirectoryTab(),
         ),
         GoRoute(
           path: RoutePath.listItem.path,

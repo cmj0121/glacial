@@ -863,9 +863,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_conversation_unread => 'Ungelesen';
 
   @override
-  String get btn_drawer_suggestions => 'Vorschläge';
-
-  @override
   String get btn_drawer_domain_blocks => 'Blockierte Domains';
 
   @override

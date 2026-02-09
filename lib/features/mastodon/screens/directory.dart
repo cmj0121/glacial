@@ -1,4 +1,4 @@
-// The Public page to list accounts visible in the directory.
+// The Public page to list accounts visible in the directory and endorsements.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,16 +7,121 @@ import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
-// The public page to list accounts visible in the directory, which is public
-// and can be accessed by anyone.
-class DirectoryAccount extends ConsumerStatefulWidget {
-  const DirectoryAccount({super.key});
+// The type of directory tab to display.
+enum DirectoryType {
+  directory,
+  endorsements;
 
-  @override
-  ConsumerState<DirectoryAccount> createState() => _DirectoryAccountState();
+  // Feature toggle: set to true to enable the endorsements tab.
+  static const bool enableEndorsements = false;
+
+  bool get enabled {
+    switch (this) {
+      case DirectoryType.directory:
+        return true;
+      case DirectoryType.endorsements:
+        return enableEndorsements;
+    }
+  }
+
+  String tooltip(BuildContext context) {
+    switch (this) {
+      case DirectoryType.directory:
+        return AppLocalizations.of(context)?.btn_drawer_directory ?? "Directory";
+      case DirectoryType.endorsements:
+        return AppLocalizations.of(context)?.btn_drawer_endorsed ?? "Featured Profiles";
+    }
+  }
+
+  IconData icon({bool active = false}) {
+    switch (this) {
+      case DirectoryType.directory:
+        return active ? Icons.groups : Icons.groups_outlined;
+      case DirectoryType.endorsements:
+        return active ? Icons.star : Icons.star_outline;
+    }
+  }
 }
 
-class _DirectoryAccountState extends ConsumerState<DirectoryAccount> with PaginatedListMixin {
+// The tabbed container for directory and endorsements.
+class DirectoryTab extends ConsumerStatefulWidget {
+  const DirectoryTab({super.key});
+
+  @override
+  ConsumerState<DirectoryTab> createState() => _DirectoryTabState();
+}
+
+class _DirectoryTabState extends ConsumerState<DirectoryTab> with SingleTickerProviderStateMixin {
+  late final List<DirectoryType> tabs = DirectoryType.values.where((t) => t.enabled).toList();
+  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
+  late final TabController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TabController(
+      length: tabs.length,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (tabs.length == 1) {
+      return buildTab(tabs.first);
+    }
+
+    final bool isSignedIn = status?.accessToken?.isNotEmpty == true;
+
+    return SwipeTabView(
+      tabController: controller,
+      itemCount: tabs.length,
+      tabBuilder: (context, index) {
+        final DirectoryType type = tabs[index];
+        final bool isSelected = controller.index == index;
+        final bool isActivate = type != DirectoryType.endorsements || isSignedIn;
+        final Color color = isActivate ?
+            isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface :
+            Theme.of(context).disabledColor;
+
+        return Tooltip(
+          message: type.tooltip(context),
+          child: Icon(type.icon(active: isSelected), color: color, size: tabSize),
+        );
+      },
+      itemBuilder: (context, index) => buildTab(tabs[index]),
+      onTabTappable: (index) => tabs[index] != DirectoryType.endorsements || isSignedIn,
+    );
+  }
+
+  Widget buildTab(DirectoryType type) {
+    switch (type) {
+      case DirectoryType.directory:
+        return const _DirectoryList();
+      case DirectoryType.endorsements:
+        return AccountList(
+          loader: status?.fetchEndorsedAccounts,
+          onDismiss: (account) async => status?.unendorseAccount(accountId: account.id),
+        );
+    }
+  }
+}
+
+// The paginated list of directory accounts.
+class _DirectoryList extends ConsumerStatefulWidget {
+  const _DirectoryList();
+
+  @override
+  ConsumerState<_DirectoryList> createState() => _DirectoryListState();
+}
+
+class _DirectoryListState extends ConsumerState<_DirectoryList> with PaginatedListMixin {
   final double loadingThreshold = 180;
 
   late final ScrollController controller = ScrollController();

@@ -264,7 +264,6 @@
   "btn_sidebar_conversations": "대화",
   "txt_no_conversations": "대화가 없습니다",
   "txt_conversation_unread": "읽지 않음",
-  "btn_drawer_suggestions": "추천",
   "btn_drawer_domain_blocks": "차단된 도메인",
   "btn_drawer_endorsed": "추천 프로필",
   "txt_no_domain_blocks": "차단된 도메인이 없습니다",
