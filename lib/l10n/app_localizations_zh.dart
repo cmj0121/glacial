@@ -812,5 +812,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_about_copyright => '版權';
 
   @override
+  String get btn_sidebar_conversations => '私訊';
+
+  @override
+  String get txt_no_conversations => '沒有私訊';
+
+  @override
+  String get txt_conversation_unread => '未讀';
+
+  @override
   String get dots => '...';
 }

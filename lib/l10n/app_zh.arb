@@ -261,5 +261,8 @@
   "txt_about_author": "作者",
   "txt_about_repository": "程式碼庫",
   "txt_about_copyright": "版權",
+  "btn_sidebar_conversations": "私訊",
+  "txt_no_conversations": "沒有私訊",
+  "txt_conversation_unread": "未讀",
   "dots": "..."
 }

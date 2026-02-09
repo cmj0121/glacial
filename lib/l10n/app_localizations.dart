@@ -1676,6 +1676,24 @@ abstract class AppLocalizations {
   /// **'Copyright'**
   String get txt_about_copyright;
 
+  /// No description provided for @btn_sidebar_conversations.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversations'**
+  String get btn_sidebar_conversations;
+
+  /// No description provided for @txt_no_conversations.
+  ///
+  /// In en, this message translates to:
+  /// **'No conversations'**
+  String get txt_no_conversations;
+
+  /// No description provided for @txt_conversation_unread.
+  ///
+  /// In en, this message translates to:
+  /// **'Unread'**
+  String get txt_conversation_unread;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

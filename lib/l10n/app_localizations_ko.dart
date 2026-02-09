@@ -813,5 +813,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_about_copyright => '저작권';
 
   @override
+  String get btn_sidebar_conversations => '대화';
+
+  @override
+  String get txt_no_conversations => '대화가 없습니다';
+
+  @override
+  String get txt_conversation_unread => '읽지 않음';
+
+  @override
   String get dots => '...';
 }

@@ -857,5 +857,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_about_copyright => 'Direitos autorais';
 
   @override
+  String get btn_sidebar_conversations => 'Conversas';
+
+  @override
+  String get txt_no_conversations => 'Sem conversas';
+
+  @override
+  String get txt_conversation_unread => 'Não lido';
+
+  @override
   String get dots => '...';
 }

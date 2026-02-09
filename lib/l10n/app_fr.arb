@@ -261,5 +261,8 @@
   "txt_about_author": "Auteur",
   "txt_about_repository": "Dépôt",
   "txt_about_copyright": "Droits d'auteur",
+  "btn_sidebar_conversations": "Conversations",
+  "txt_no_conversations": "Aucune conversation",
+  "txt_conversation_unread": "Non lu",
   "dots": "..."
 }

@@ -295,5 +295,8 @@
   "@txt_about_copyright": {
     "description": "Label for copyright in about screen"
   },
+  "btn_sidebar_conversations": "Conversations",
+  "txt_no_conversations": "No conversations",
+  "txt_conversation_unread": "Unread",
   "dots": "..."
 }
