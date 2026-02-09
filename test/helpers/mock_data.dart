@@ -379,4 +379,67 @@ class MockPoll {
   }
 }
 
+/// Factory for creating mock ServerConfigSchema instances.
+class MockServerConfig {
+  static ServerConfigSchema create({
+    bool translationEnabled = false,
+    StatusConfigSchema? statuses,
+    PollConfigSchema? polls,
+  }) {
+    return ServerConfigSchema(
+      translationEnabled: translationEnabled,
+      statuses: statuses ?? const StatusConfigSchema(
+        charReserved: 23,
+        maxCharacters: 500,
+        maxAttachments: 4,
+      ),
+      polls: polls ?? const PollConfigSchema(
+        maxOptions: 4,
+        maxCharacters: 50,
+        minExpiresIn: 300,
+        maxExpiresIn: 2592000,
+      ),
+    );
+  }
+}
+
+/// Factory for creating mock ServerSchema instances.
+class MockServer {
+  static ServerSchema create({
+    String domain = 'example.com',
+    String title = 'Test Server',
+    String desc = 'A test Mastodon server.',
+    String version = '4.2.0',
+    String thumbnail = 'https://example.com/thumbnail.png',
+    bool translationEnabled = false,
+    List<String> languages = const ['en'],
+  }) {
+    return ServerSchema(
+      domain: domain,
+      title: title,
+      desc: desc,
+      version: version,
+      thumbnail: thumbnail,
+      usage: const ServerUsageSchema(userActiveMonthly: 1000),
+      config: MockServerConfig.create(translationEnabled: translationEnabled),
+      registration: const RegisterConfigSchema(
+        enabled: true,
+        approvalRequired: false,
+      ),
+      contact: ContactSchema(email: 'admin@$domain'),
+      languages: languages,
+    );
+  }
+
+  /// Creates a server with translation enabled.
+  static ServerSchema withTranslation({
+    String domain = 'example.com',
+  }) {
+    return create(
+      domain: domain,
+      translationEnabled: true,
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:
