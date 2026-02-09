@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:glacial/core.dart';
 
 /// Default icon size for visibility widgets.
-const double iconSize = 16.0;
+const double _iconSize = 16.0;
 
 /// Widget that blurs sensitive content until user taps to reveal.
 class SensitiveView extends StatefulWidget {
@@ -51,7 +51,7 @@ class _SensitiveViewState extends State<SensitiveView> {
         child: Container(
           color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.95),
           alignment: Alignment.center,
-          child: Icon(Icons.visibility_off_outlined, size: iconSize, color: Theme.of(context).disabledColor),
+          child: Icon(Icons.visibility_off_outlined, size: _iconSize, color: Theme.of(context).disabledColor),
         ),
       ),
     );
