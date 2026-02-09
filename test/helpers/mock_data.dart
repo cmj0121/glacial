@@ -550,4 +550,64 @@ class MockHashtag {
   }
 }
 
+/// Factory for creating mock ConversationSchema instances.
+class MockConversation {
+  static ConversationSchema create({
+    String id = 'conv-1',
+    List<AccountSchema>? accounts,
+    StatusSchema? lastStatus,
+    bool unread = false,
+  }) {
+    return ConversationSchema(
+      id: id,
+      accounts: accounts ?? [MockAccount.create()],
+      lastStatus: lastStatus,
+      unread: unread,
+    );
+  }
+
+  /// Creates a conversation with unread messages.
+  static ConversationSchema createUnread({
+    String id = 'conv-unread',
+    List<AccountSchema>? accounts,
+    StatusSchema? lastStatus,
+  }) {
+    return create(
+      id: id,
+      accounts: accounts,
+      lastStatus: lastStatus ?? MockStatus.create(
+        content: '<p>Unread message</p>',
+        visibility: VisibilityType.direct,
+      ),
+      unread: true,
+    );
+  }
+
+  /// Creates a conversation with multiple participants.
+  static ConversationSchema createGroup({
+    String id = 'conv-group',
+    int participantCount = 3,
+    bool unread = false,
+  }) {
+    final List<AccountSchema> accounts = List.generate(
+      participantCount,
+      (i) => MockAccount.create(
+        id: '${100 + i}',
+        username: 'user$i',
+        displayName: 'User $i',
+      ),
+    );
+
+    return create(
+      id: id,
+      accounts: accounts,
+      lastStatus: MockStatus.create(
+        content: '<p>Group message</p>',
+        visibility: VisibilityType.direct,
+      ),
+      unread: unread,
+    );
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:
