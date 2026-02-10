@@ -831,5 +831,89 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_no_domain_blocks => '차단된 도메인이 없습니다';
 
   @override
+  String get btn_admin_reports => '신고';
+
+  @override
+  String get btn_admin_accounts => '계정';
+
+  @override
+  String get btn_admin_approve => '승인';
+
+  @override
+  String get btn_admin_reject => '거부';
+
+  @override
+  String get btn_admin_suspend => '정지';
+
+  @override
+  String get btn_admin_silence => '제한';
+
+  @override
+  String get btn_admin_enable => '활성화';
+
+  @override
+  String get btn_admin_unsilence => '제한 해제';
+
+  @override
+  String get btn_admin_unsuspend => '정지 해제';
+
+  @override
+  String get btn_admin_unsensitive => '민감 해제';
+
+  @override
+  String get btn_admin_assign => '나에게 할당';
+
+  @override
+  String get btn_admin_unassign => '할당 해제';
+
+  @override
+  String get btn_admin_resolve => '해결';
+
+  @override
+  String get btn_admin_reopen => '재개';
+
+  @override
+  String get txt_admin_no_permission => '관리자 권한이 필요합니다';
+
+  @override
+  String get txt_admin_no_reports => '신고 없음';
+
+  @override
+  String get txt_admin_no_accounts => '계정을 찾을 수 없습니다';
+
+  @override
+  String get txt_admin_report_resolved => '해결됨';
+
+  @override
+  String get txt_admin_report_unresolved => '미해결';
+
+  @override
+  String get txt_admin_account_active => '활성';
+
+  @override
+  String get txt_admin_account_pending => '대기 중';
+
+  @override
+  String get txt_admin_account_disabled => '비활성';
+
+  @override
+  String get txt_admin_account_silenced => '제한됨';
+
+  @override
+  String get txt_admin_account_suspended => '정지됨';
+
+  @override
+  String get txt_admin_confirm_action => '작업 확인';
+
+  @override
+  String get desc_admin_confirm_action => '이 작업은 쉽게 되돌릴 수 없습니다. 계속하시겠습니까?';
+
+  @override
+  String get txt_admin_report_by => '신고자';
+
+  @override
+  String get txt_admin_assigned_to => '담당자';
+
+  @override
   String get dots => '...';
 }

@@ -172,6 +172,11 @@ class RoleSchema {
   // Check the user has the admin-related permission.
   int get bits => int.parse(permissions);
   bool get hasPrivilege => bits > 0;
+
+  // Check if the role has a specific permission.
+  bool hasPermission(PermissionBitmap permission) {
+    return bits & PermissionBitmap.administrator.bit != 0 || bits & permission.bit != 0;
+  }
 }
 
 // The relationship between accounts, such as following / blocking / muting / etc

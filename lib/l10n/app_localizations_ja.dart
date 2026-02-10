@@ -830,5 +830,89 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_no_domain_blocks => 'ブロックされたドメインはありません';
 
   @override
+  String get btn_admin_reports => '通報';
+
+  @override
+  String get btn_admin_accounts => 'アカウント';
+
+  @override
+  String get btn_admin_approve => '承認';
+
+  @override
+  String get btn_admin_reject => '却下';
+
+  @override
+  String get btn_admin_suspend => '凍結';
+
+  @override
+  String get btn_admin_silence => 'サイレンス';
+
+  @override
+  String get btn_admin_enable => '有効化';
+
+  @override
+  String get btn_admin_unsilence => 'サイレンス解除';
+
+  @override
+  String get btn_admin_unsuspend => '凍結解除';
+
+  @override
+  String get btn_admin_unsensitive => '閲覧注意解除';
+
+  @override
+  String get btn_admin_assign => '自分に割り当て';
+
+  @override
+  String get btn_admin_unassign => '割り当て解除';
+
+  @override
+  String get btn_admin_resolve => '解決';
+
+  @override
+  String get btn_admin_reopen => '再開';
+
+  @override
+  String get txt_admin_no_permission => '管理者権限が必要です';
+
+  @override
+  String get txt_admin_no_reports => '通報はありません';
+
+  @override
+  String get txt_admin_no_accounts => 'アカウントが見つかりません';
+
+  @override
+  String get txt_admin_report_resolved => '解決済み';
+
+  @override
+  String get txt_admin_report_unresolved => '未解決';
+
+  @override
+  String get txt_admin_account_active => '有効';
+
+  @override
+  String get txt_admin_account_pending => '保留中';
+
+  @override
+  String get txt_admin_account_disabled => '無効';
+
+  @override
+  String get txt_admin_account_silenced => 'サイレンス中';
+
+  @override
+  String get txt_admin_account_suspended => '凍結中';
+
+  @override
+  String get txt_admin_confirm_action => '操作の確認';
+
+  @override
+  String get desc_admin_confirm_action => 'この操作は簡単に元に戻せません。本当に実行しますか？';
+
+  @override
+  String get txt_admin_report_by => '通報者';
+
+  @override
+  String get txt_admin_assigned_to => '担当者';
+
+  @override
   String get dots => '...';
 }

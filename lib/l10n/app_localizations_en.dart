@@ -862,5 +862,90 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_no_domain_blocks => 'No blocked domains';
 
   @override
+  String get btn_admin_reports => 'Reports';
+
+  @override
+  String get btn_admin_accounts => 'Accounts';
+
+  @override
+  String get btn_admin_approve => 'Approve';
+
+  @override
+  String get btn_admin_reject => 'Reject';
+
+  @override
+  String get btn_admin_suspend => 'Suspend';
+
+  @override
+  String get btn_admin_silence => 'Silence';
+
+  @override
+  String get btn_admin_enable => 'Enable';
+
+  @override
+  String get btn_admin_unsilence => 'Unsilence';
+
+  @override
+  String get btn_admin_unsuspend => 'Unsuspend';
+
+  @override
+  String get btn_admin_unsensitive => 'Unsensitive';
+
+  @override
+  String get btn_admin_assign => 'Assign to me';
+
+  @override
+  String get btn_admin_unassign => 'Unassign';
+
+  @override
+  String get btn_admin_resolve => 'Resolve';
+
+  @override
+  String get btn_admin_reopen => 'Reopen';
+
+  @override
+  String get txt_admin_no_permission => 'Admin access required';
+
+  @override
+  String get txt_admin_no_reports => 'No reports';
+
+  @override
+  String get txt_admin_no_accounts => 'No accounts found';
+
+  @override
+  String get txt_admin_report_resolved => 'Resolved';
+
+  @override
+  String get txt_admin_report_unresolved => 'Unresolved';
+
+  @override
+  String get txt_admin_account_active => 'Active';
+
+  @override
+  String get txt_admin_account_pending => 'Pending';
+
+  @override
+  String get txt_admin_account_disabled => 'Disabled';
+
+  @override
+  String get txt_admin_account_silenced => 'Silenced';
+
+  @override
+  String get txt_admin_account_suspended => 'Suspended';
+
+  @override
+  String get txt_admin_confirm_action => 'Confirm Action';
+
+  @override
+  String get desc_admin_confirm_action =>
+      'This action cannot be easily undone. Are you sure?';
+
+  @override
+  String get txt_admin_report_by => 'Reported by';
+
+  @override
+  String get txt_admin_assigned_to => 'Assigned to';
+
+  @override
   String get dots => '...';
 }

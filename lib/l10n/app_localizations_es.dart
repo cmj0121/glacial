@@ -875,5 +875,90 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_no_domain_blocks => 'Sin dominios bloqueados';
 
   @override
+  String get btn_admin_reports => 'Informes';
+
+  @override
+  String get btn_admin_accounts => 'Cuentas';
+
+  @override
+  String get btn_admin_approve => 'Aprobar';
+
+  @override
+  String get btn_admin_reject => 'Rechazar';
+
+  @override
+  String get btn_admin_suspend => 'Suspender';
+
+  @override
+  String get btn_admin_silence => 'Silenciar';
+
+  @override
+  String get btn_admin_enable => 'Habilitar';
+
+  @override
+  String get btn_admin_unsilence => 'Quitar silencio';
+
+  @override
+  String get btn_admin_unsuspend => 'Quitar suspensión';
+
+  @override
+  String get btn_admin_unsensitive => 'Desmarcar sensible';
+
+  @override
+  String get btn_admin_assign => 'Asignarme';
+
+  @override
+  String get btn_admin_unassign => 'Desasignar';
+
+  @override
+  String get btn_admin_resolve => 'Resolver';
+
+  @override
+  String get btn_admin_reopen => 'Reabrir';
+
+  @override
+  String get txt_admin_no_permission => 'Se requiere acceso de administrador';
+
+  @override
+  String get txt_admin_no_reports => 'Sin informes';
+
+  @override
+  String get txt_admin_no_accounts => 'No se encontraron cuentas';
+
+  @override
+  String get txt_admin_report_resolved => 'Resuelto';
+
+  @override
+  String get txt_admin_report_unresolved => 'Sin resolver';
+
+  @override
+  String get txt_admin_account_active => 'Activo';
+
+  @override
+  String get txt_admin_account_pending => 'Pendiente';
+
+  @override
+  String get txt_admin_account_disabled => 'Desactivado';
+
+  @override
+  String get txt_admin_account_silenced => 'Silenciado';
+
+  @override
+  String get txt_admin_account_suspended => 'Suspendido';
+
+  @override
+  String get txt_admin_confirm_action => 'Confirmar acción';
+
+  @override
+  String get desc_admin_confirm_action =>
+      'Esta acción no se puede deshacer fácilmente. ¿Estás seguro?';
+
+  @override
+  String get txt_admin_report_by => 'Reportado por';
+
+  @override
+  String get txt_admin_assigned_to => 'Asignado a';
+
+  @override
   String get dots => '...';
 }

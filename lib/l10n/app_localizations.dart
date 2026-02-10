@@ -1712,6 +1712,174 @@ abstract class AppLocalizations {
   /// **'No blocked domains'**
   String get txt_no_domain_blocks;
 
+  /// No description provided for @btn_admin_reports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get btn_admin_reports;
+
+  /// No description provided for @btn_admin_accounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts'**
+  String get btn_admin_accounts;
+
+  /// No description provided for @btn_admin_approve.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get btn_admin_approve;
+
+  /// No description provided for @btn_admin_reject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get btn_admin_reject;
+
+  /// No description provided for @btn_admin_suspend.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspend'**
+  String get btn_admin_suspend;
+
+  /// No description provided for @btn_admin_silence.
+  ///
+  /// In en, this message translates to:
+  /// **'Silence'**
+  String get btn_admin_silence;
+
+  /// No description provided for @btn_admin_enable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get btn_admin_enable;
+
+  /// No description provided for @btn_admin_unsilence.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsilence'**
+  String get btn_admin_unsilence;
+
+  /// No description provided for @btn_admin_unsuspend.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsuspend'**
+  String get btn_admin_unsuspend;
+
+  /// No description provided for @btn_admin_unsensitive.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsensitive'**
+  String get btn_admin_unsensitive;
+
+  /// No description provided for @btn_admin_assign.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign to me'**
+  String get btn_admin_assign;
+
+  /// No description provided for @btn_admin_unassign.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassign'**
+  String get btn_admin_unassign;
+
+  /// No description provided for @btn_admin_resolve.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve'**
+  String get btn_admin_resolve;
+
+  /// No description provided for @btn_admin_reopen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen'**
+  String get btn_admin_reopen;
+
+  /// No description provided for @txt_admin_no_permission.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin access required'**
+  String get txt_admin_no_permission;
+
+  /// No description provided for @txt_admin_no_reports.
+  ///
+  /// In en, this message translates to:
+  /// **'No reports'**
+  String get txt_admin_no_reports;
+
+  /// No description provided for @txt_admin_no_accounts.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts found'**
+  String get txt_admin_no_accounts;
+
+  /// No description provided for @txt_admin_report_resolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get txt_admin_report_resolved;
+
+  /// No description provided for @txt_admin_report_unresolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Unresolved'**
+  String get txt_admin_report_unresolved;
+
+  /// No description provided for @txt_admin_account_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get txt_admin_account_active;
+
+  /// No description provided for @txt_admin_account_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get txt_admin_account_pending;
+
+  /// No description provided for @txt_admin_account_disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get txt_admin_account_disabled;
+
+  /// No description provided for @txt_admin_account_silenced.
+  ///
+  /// In en, this message translates to:
+  /// **'Silenced'**
+  String get txt_admin_account_silenced;
+
+  /// No description provided for @txt_admin_account_suspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended'**
+  String get txt_admin_account_suspended;
+
+  /// No description provided for @txt_admin_confirm_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Action'**
+  String get txt_admin_confirm_action;
+
+  /// No description provided for @desc_admin_confirm_action.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be easily undone. Are you sure?'**
+  String get desc_admin_confirm_action;
+
+  /// No description provided for @txt_admin_report_by.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported by'**
+  String get txt_admin_report_by;
+
+  /// No description provided for @txt_admin_assigned_to.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned to'**
+  String get txt_admin_assigned_to;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

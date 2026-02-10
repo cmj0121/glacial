@@ -930,6 +930,140 @@ class MockSuggestion {
   }
 }
 
+/// Factory for creating mock AdminAccountSchema instances.
+class MockAdminAccount {
+  static AdminAccountSchema create({
+    String id = 'admin-acc-1',
+    String username = 'testuser',
+    String? domain,
+    DateTime? createdAt,
+    String email = 'test@example.com',
+    String? ip = '192.168.1.1',
+    String? locale = 'en',
+    String? inviteRequest,
+    RoleSchema? role,
+    bool confirmed = true,
+    bool approved = true,
+    bool disabled = false,
+    bool silenced = false,
+    bool suspended = false,
+    AccountSchema? account,
+    List<AdminIpSchema> ips = const [],
+  }) {
+    return AdminAccountSchema(
+      id: id,
+      username: username,
+      domain: domain,
+      createdAt: createdAt ?? DateTime(2024, 1, 1),
+      email: email,
+      ip: ip,
+      locale: locale,
+      inviteRequest: inviteRequest,
+      role: role,
+      confirmed: confirmed,
+      approved: approved,
+      disabled: disabled,
+      silenced: silenced,
+      suspended: suspended,
+      account: account ?? MockAccount.create(username: username),
+      ips: ips,
+    );
+  }
+
+  /// Creates a pending admin account.
+  static AdminAccountSchema pending({String id = 'admin-pending'}) {
+    return create(id: id, approved: false, confirmed: false);
+  }
+
+  /// Creates a suspended admin account.
+  static AdminAccountSchema createSuspended({String id = 'admin-suspended'}) {
+    return create(id: id, suspended: true);
+  }
+
+  /// Creates a silenced admin account.
+  static AdminAccountSchema createSilenced({String id = 'admin-silenced'}) {
+    return create(id: id, silenced: true);
+  }
+
+  /// Creates a disabled admin account.
+  static AdminAccountSchema createDisabled({String id = 'admin-disabled'}) {
+    return create(id: id, disabled: true);
+  }
+
+  /// Creates a remote admin account.
+  static AdminAccountSchema remote({String id = 'admin-remote', String domain = 'remote.social'}) {
+    return create(id: id, domain: domain, username: 'remoteuser');
+  }
+}
+
+/// Factory for creating mock AdminReportSchema instances.
+class MockAdminReport {
+  static AdminReportSchema create({
+    String id = 'report-1',
+    bool actionTaken = false,
+    DateTime? actionTakenAt,
+    ReportCategoryType category = ReportCategoryType.spam,
+    String comment = 'This is spam content',
+    bool forwarded = false,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    AccountSchema? account,
+    AccountSchema? targetAccount,
+    AccountSchema? assignedAccount,
+    AccountSchema? actionTakenByAccount,
+    List<StatusSchema> statuses = const [],
+    List<RuleSchema> rules = const [],
+  }) {
+    return AdminReportSchema(
+      id: id,
+      actionTaken: actionTaken,
+      actionTakenAt: actionTakenAt,
+      category: category,
+      comment: comment,
+      forwarded: forwarded,
+      createdAt: createdAt ?? DateTime(2024, 1, 15),
+      updatedAt: updatedAt,
+      account: account ?? MockAccount.create(id: 'reporter', username: 'reporter'),
+      targetAccount: targetAccount ?? MockAccount.create(id: 'target', username: 'spammer'),
+      assignedAccount: assignedAccount,
+      actionTakenByAccount: actionTakenByAccount,
+      statuses: statuses,
+      rules: rules,
+    );
+  }
+
+  /// Creates a resolved report.
+  static AdminReportSchema resolved({String id = 'report-resolved'}) {
+    return create(
+      id: id,
+      actionTaken: true,
+      actionTakenAt: DateTime(2024, 1, 16),
+      actionTakenByAccount: MockAccount.create(id: 'mod', username: 'moderator'),
+    );
+  }
+
+  /// Creates a report assigned to a moderator.
+  static AdminReportSchema assigned({String id = 'report-assigned'}) {
+    return create(
+      id: id,
+      assignedAccount: MockAccount.create(id: 'mod', username: 'moderator'),
+    );
+  }
+
+  /// Creates a report with attached statuses and rules.
+  static AdminReportSchema withDetails({String id = 'report-detail'}) {
+    return create(
+      id: id,
+      category: ReportCategoryType.violation,
+      comment: 'Violating community guidelines',
+      statuses: [MockStatus.create()],
+      rules: const [
+        RuleSchema(id: 'rule-1', text: 'Be respectful', hint: 'Treat others with dignity'),
+      ],
+    );
+  }
+}
+
 /// Factory for creating mock SearchResultSchema instances.
 class MockSearchResult {
   static SearchResultSchema create({

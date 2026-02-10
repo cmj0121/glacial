@@ -9,6 +9,7 @@ import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
 export 'api/account.dart';
+export 'api/admin.dart';
 export 'api/announcements.dart';
 export 'api/conversations.dart';
 export 'api/auth.dart';
