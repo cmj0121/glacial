@@ -914,5 +914,50 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_admin_assigned_to => '受理人';
 
   @override
+  String get btn_register => '建立帳號';
+
+  @override
+  String get txt_register_title => '建立帳號';
+
+  @override
+  String get txt_username => '使用者名稱';
+
+  @override
+  String get txt_email => '電子信箱';
+
+  @override
+  String get txt_password => '密碼';
+
+  @override
+  String get txt_confirm_password => '確認密碼';
+
+  @override
+  String get txt_agreement => '我同意伺服器規則與服務條款';
+
+  @override
+  String get txt_reason => '加入原因';
+
+  @override
+  String get txt_registration_success => '請檢查您的電子信箱以確認帳號';
+
+  @override
+  String get err_registration_failed => '註冊失敗';
+
+  @override
+  String get err_field_required => '此欄位為必填';
+
+  @override
+  String get err_invalid_email => '無效的電子信箱地址';
+
+  @override
+  String get err_password_too_short => '密碼必須至少 8 個字元';
+
+  @override
+  String get err_password_mismatch => '密碼不一致';
+
+  @override
+  String get err_agreement_required => '您必須同意條款';
+
+  @override
   String get dots => '...';
 }

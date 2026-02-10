@@ -1880,6 +1880,96 @@ abstract class AppLocalizations {
   /// **'Assigned to'**
   String get txt_admin_assigned_to;
 
+  /// No description provided for @btn_register.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get btn_register;
+
+  /// No description provided for @txt_register_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get txt_register_title;
+
+  /// No description provided for @txt_username.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get txt_username;
+
+  /// No description provided for @txt_email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get txt_email;
+
+  /// No description provided for @txt_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get txt_password;
+
+  /// No description provided for @txt_confirm_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get txt_confirm_password;
+
+  /// No description provided for @txt_agreement.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the server rules and terms of service'**
+  String get txt_agreement;
+
+  /// No description provided for @txt_reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for joining'**
+  String get txt_reason;
+
+  /// No description provided for @txt_registration_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email to confirm your account'**
+  String get txt_registration_success;
+
+  /// No description provided for @err_registration_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration failed'**
+  String get err_registration_failed;
+
+  /// No description provided for @err_field_required.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get err_field_required;
+
+  /// No description provided for @err_invalid_email.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address'**
+  String get err_invalid_email;
+
+  /// No description provided for @err_password_too_short.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get err_password_too_short;
+
+  /// No description provided for @err_password_mismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get err_password_mismatch;
+
+  /// No description provided for @err_agreement_required.
+  ///
+  /// In en, this message translates to:
+  /// **'You must agree to the terms'**
+  String get err_agreement_required;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

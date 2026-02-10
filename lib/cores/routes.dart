@@ -32,6 +32,7 @@ enum RoutePath {
   directory,         // The directory page of the app to expore the accounts in the Mastodon server.
   adminReport,       // The admin report detail page.
   adminAccount,      // The admin account detail page.
+  register,          // The account registration page.
   wip;               // The work-in-progress page of the app.
 
   // Get the string path for the route.
@@ -93,6 +94,8 @@ enum RoutePath {
         return '/home/admin/report';
       case RoutePath.adminAccount:
         return '/home/admin/account';
+      case RoutePath.register:
+        return '/home/register';
       case RoutePath.wip:
         return '/wip';
     }

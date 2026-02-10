@@ -961,5 +961,53 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_admin_assigned_to => 'Assigné à';
 
   @override
+  String get btn_register => 'Créer un compte';
+
+  @override
+  String get txt_register_title => 'Créer un compte';
+
+  @override
+  String get txt_username => 'Nom d\'utilisateur';
+
+  @override
+  String get txt_email => 'E-mail';
+
+  @override
+  String get txt_password => 'Mot de passe';
+
+  @override
+  String get txt_confirm_password => 'Confirmer le mot de passe';
+
+  @override
+  String get txt_agreement =>
+      'J\'accepte les règles du serveur et les conditions d\'utilisation';
+
+  @override
+  String get txt_reason => 'Raison de l\'inscription';
+
+  @override
+  String get txt_registration_success =>
+      'Vérifiez votre e-mail pour confirmer votre compte';
+
+  @override
+  String get err_registration_failed => 'Échec de l\'inscription';
+
+  @override
+  String get err_field_required => 'Ce champ est obligatoire';
+
+  @override
+  String get err_invalid_email => 'Adresse e-mail invalide';
+
+  @override
+  String get err_password_too_short =>
+      'Le mot de passe doit contenir au moins 8 caractères';
+
+  @override
+  String get err_password_mismatch => 'Les mots de passe ne correspondent pas';
+
+  @override
+  String get err_agreement_required => 'Vous devez accepter les conditions';
+
+  @override
   String get dots => '...';
 }

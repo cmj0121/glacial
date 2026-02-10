@@ -2,7 +2,7 @@
 //
 // ## Account APIs
 //
-//   - [ ] POST  /api/v1/accounts
+//   - [+] POST  /api/v1/accounts
 //   - [+] GET   /api/v1/accounts/verify_credentials
 //   - [+] PATCH /api/v1/accounts/update_credentials
 //   - [+] GET   /api/v1/accounts/:id
@@ -544,6 +544,47 @@ extension AccountsExtensions on AccessStatusSchema {
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
 
     return json.map((e) => ListSchema.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  // Register a new account on the specified domain.
+  // Requires an app-level token (client_credentials), not a user token.
+  // Returns the user access token on success, null on failure.
+  Future<String?> registerAccount({
+    required String domain,
+    required String appToken,
+    required String username,
+    required String email,
+    required String password,
+    required String locale,
+    String? reason,
+  }) async {
+    final Uri uri = UriEx.handle(domain, '/api/v1/accounts');
+    final Map<String, dynamic> body = {
+      'username': username,
+      'email': email,
+      'password': password,
+      'agreement': true,
+      'locale': locale,
+      if (reason != null && reason.isNotEmpty) 'reason': reason,
+    };
+
+    final response = await post(uri, body: jsonEncode(body), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $appToken',
+    });
+
+    if (response.statusCode != 200) {
+      logger.w("registration failed on $domain: ${response.statusCode} ${response.body}");
+      final Map<String, dynamic> error = jsonDecode(response.body) as Map<String, dynamic>;
+      final String message = error['error'] as String? ?? 'Registration failed';
+      throw Exception(message);
+    }
+
+    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+    final String? accessToken = json['access_token'] as String?;
+
+    logger.i("registration successful on $domain, token received: ${accessToken != null}");
+    return accessToken;
   }
 }
 

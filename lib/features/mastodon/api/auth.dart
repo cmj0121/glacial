@@ -65,6 +65,34 @@ extension AuthExtensions on AccessStatusSchema {
     return accessToken;
   }
 
+  // Obtain an app-level token using client_credentials grant.
+  // Used for registration (POST /api/v1/accounts) which requires an app token, not a user token.
+  Future<String?> getAppToken({required String domain}) async {
+    final Storage storage = Storage();
+    final OAuth2Info info = await storage.getOAuth2Info(domain);
+
+    final Map<String, dynamic> body = {
+      "client_id": info.clientId,
+      "client_secret": info.clientSecret,
+      "grant_type": "client_credentials",
+      "redirect_uri": info.redirectUri,
+      "scope": info.scopes.join(" "),
+    };
+
+    final Uri uri = UriEx.handle(domain, "/oauth/token");
+    final response = await post(uri, body: jsonEncode(body), headers: {
+      "Content-Type": "application/json",
+    });
+
+    if (response.statusCode != 200) {
+      logger.w("failed to get app token from $domain: ${response.statusCode} ${response.body}");
+      return null;
+    }
+
+    final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
+    return json['access_token'] as String?;
+  }
+
   // Revoke an access token to make it no longer valid for use.
   Future<void> revokeAccessToken({String? domain, String? token}) async {
     if (domain == null || domain.isEmpty) {
