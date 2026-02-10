@@ -10,7 +10,10 @@ export 'cores/storage.dart';
 export 'cores/screens/accessibility.dart';
 export 'cores/screens/animations.dart';
 export 'cores/screens/glass.dart';
+export 'cores/screens/content.dart';
+export 'cores/screens/media.dart';
 export 'cores/screens/misc.dart';
+export 'cores/screens/pagination.dart';
 export 'cores/screens/view.dart';
 export 'l10n/app_localizations.dart';
 
