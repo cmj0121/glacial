@@ -1970,6 +1970,30 @@ abstract class AppLocalizations {
   /// **'You must agree to the terms'**
   String get err_agreement_required;
 
+  /// No description provided for @txt_admin_account_confirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get txt_admin_account_confirmed;
+
+  /// No description provided for @txt_admin_account_unconfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unconfirmed'**
+  String get txt_admin_account_unconfirmed;
+
+  /// No description provided for @txt_admin_account_approved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get txt_admin_account_approved;
+
+  /// No description provided for @txt_admin_account_not_approved.
+  ///
+  /// In en, this message translates to:
+  /// **'Not approved'**
+  String get txt_admin_account_not_approved;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

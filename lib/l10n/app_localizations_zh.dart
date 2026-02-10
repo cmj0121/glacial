@@ -959,5 +959,17 @@ class AppLocalizationsZh extends AppLocalizations {
   String get err_agreement_required => '您必須同意條款';
 
   @override
+  String get txt_admin_account_confirmed => '已确认';
+
+  @override
+  String get txt_admin_account_unconfirmed => '未确认';
+
+  @override
+  String get txt_admin_account_approved => '已批准';
+
+  @override
+  String get txt_admin_account_not_approved => '未批准';
+
+  @override
   String get dots => '...';
 }

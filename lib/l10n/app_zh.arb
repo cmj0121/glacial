@@ -310,5 +310,9 @@
   "err_password_too_short": "密碼必須至少 8 個字元",
   "err_password_mismatch": "密碼不一致",
   "err_agreement_required": "您必須同意條款",
+  "txt_admin_account_confirmed": "已确认",
+  "txt_admin_account_unconfirmed": "未确认",
+  "txt_admin_account_approved": "已批准",
+  "txt_admin_account_not_approved": "未批准",
   "dots": "..."
 }

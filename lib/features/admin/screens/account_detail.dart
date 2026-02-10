@@ -58,8 +58,12 @@ class _AdminAccountDetailState extends ConsumerState<AdminAccountDetail> {
         if (adminAccount.locale != null)
           _detailRow(Icons.language, adminAccount.locale!),
         _detailRow(Icons.calendar_today, adminAccount.createdAt.toIso8601String().split('T').first),
-        _detailRow(Icons.check_circle, adminAccount.confirmed ? 'Confirmed' : 'Unconfirmed'),
-        _detailRow(Icons.verified, adminAccount.approved ? 'Approved' : 'Not approved'),
+        _detailRow(Icons.check_circle, adminAccount.confirmed
+            ? AppLocalizations.of(context)?.txt_admin_account_confirmed ?? 'Confirmed'
+            : AppLocalizations.of(context)?.txt_admin_account_unconfirmed ?? 'Unconfirmed'),
+        _detailRow(Icons.verified, adminAccount.approved
+            ? AppLocalizations.of(context)?.txt_admin_account_approved ?? 'Approved'
+            : AppLocalizations.of(context)?.txt_admin_account_not_approved ?? 'Not approved'),
         if (adminAccount.role != null)
           _detailRow(Icons.badge, adminAccount.role!.name),
       ],
