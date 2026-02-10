@@ -1,15 +1,9 @@
-// The Admin page that contains the administrative tools for the current selected Mastodon server.
-import 'package:flutter/material.dart';
+// The Admin screens for moderation dashboard.
 
-import 'package:glacial/core.dart';
-
-class AdminTab extends StatelessWidget {
-  const AdminTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const WIP();
-  }
-}
+export 'account_detail.dart';
+export 'account_list.dart';
+export 'admin.dart';
+export 'report_detail.dart';
+export 'report_list.dart';
 
 // vim: set ts=2 sw=2 sts=2 et:

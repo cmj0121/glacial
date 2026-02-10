@@ -147,6 +147,8 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           case RoutePath.editProfile:
           case RoutePath.statusInfo:
           case RoutePath.statusHistory:
+          case RoutePath.adminReport:
+          case RoutePath.adminAccount:
             backable = true;
             break;
           case RoutePath.directory:
@@ -345,6 +347,20 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (BuildContext context, GoRouterState state) {
             final FiltersSchema schema = state.extra as FiltersSchema;
             return FiltersForm(title: schema.title, schema: schema);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.adminReport.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final AdminReportSchema report = state.extra as AdminReportSchema;
+            return AdminReportDetail(schema: report);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.adminAccount.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final AdminAccountSchema account = state.extra as AdminAccountSchema;
+            return AdminAccountDetail(schema: account);
           },
         ),
       ],

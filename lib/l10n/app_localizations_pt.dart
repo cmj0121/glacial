@@ -875,5 +875,90 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_no_domain_blocks => 'Nenhum domínio bloqueado';
 
   @override
+  String get btn_admin_reports => 'Denúncias';
+
+  @override
+  String get btn_admin_accounts => 'Contas';
+
+  @override
+  String get btn_admin_approve => 'Aprovar';
+
+  @override
+  String get btn_admin_reject => 'Rejeitar';
+
+  @override
+  String get btn_admin_suspend => 'Suspender';
+
+  @override
+  String get btn_admin_silence => 'Silenciar';
+
+  @override
+  String get btn_admin_enable => 'Ativar';
+
+  @override
+  String get btn_admin_unsilence => 'Remover silêncio';
+
+  @override
+  String get btn_admin_unsuspend => 'Remover suspensão';
+
+  @override
+  String get btn_admin_unsensitive => 'Remover sensível';
+
+  @override
+  String get btn_admin_assign => 'Atribuir a mim';
+
+  @override
+  String get btn_admin_unassign => 'Desatribuir';
+
+  @override
+  String get btn_admin_resolve => 'Resolver';
+
+  @override
+  String get btn_admin_reopen => 'Reabrir';
+
+  @override
+  String get txt_admin_no_permission => 'Acesso de administrador necessário';
+
+  @override
+  String get txt_admin_no_reports => 'Sem denúncias';
+
+  @override
+  String get txt_admin_no_accounts => 'Nenhuma conta encontrada';
+
+  @override
+  String get txt_admin_report_resolved => 'Resolvido';
+
+  @override
+  String get txt_admin_report_unresolved => 'Não resolvido';
+
+  @override
+  String get txt_admin_account_active => 'Ativo';
+
+  @override
+  String get txt_admin_account_pending => 'Pendente';
+
+  @override
+  String get txt_admin_account_disabled => 'Desativado';
+
+  @override
+  String get txt_admin_account_silenced => 'Silenciado';
+
+  @override
+  String get txt_admin_account_suspended => 'Suspenso';
+
+  @override
+  String get txt_admin_confirm_action => 'Confirmar ação';
+
+  @override
+  String get desc_admin_confirm_action =>
+      'Esta ação não pode ser facilmente desfeita. Tem certeza?';
+
+  @override
+  String get txt_admin_report_by => 'Denunciado por';
+
+  @override
+  String get txt_admin_assigned_to => 'Atribuído a';
+
+  @override
   String get dots => '...';
 }

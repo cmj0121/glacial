@@ -1,6 +1,7 @@
 // The global export of feature models
 
 export 'account/models/core.dart';
+export 'admin/models/core.dart';
 export 'auth/models/core.dart';
 export 'conversations/models/core.dart';
 export 'filters/models/core.dart';
