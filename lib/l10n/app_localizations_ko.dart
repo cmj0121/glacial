@@ -915,5 +915,50 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_admin_assigned_to => '담당자';
 
   @override
+  String get btn_register => '계정 만들기';
+
+  @override
+  String get txt_register_title => '계정 만들기';
+
+  @override
+  String get txt_username => '사용자 이름';
+
+  @override
+  String get txt_email => '이메일';
+
+  @override
+  String get txt_password => '비밀번호';
+
+  @override
+  String get txt_confirm_password => '비밀번호 확인';
+
+  @override
+  String get txt_agreement => '서버 규칙 및 서비스 약관에 동의합니다';
+
+  @override
+  String get txt_reason => '가입 사유';
+
+  @override
+  String get txt_registration_success => '이메일을 확인하여 계정을 인증하세요';
+
+  @override
+  String get err_registration_failed => '등록에 실패했습니다';
+
+  @override
+  String get err_field_required => '이 항목은 필수입니다';
+
+  @override
+  String get err_invalid_email => '유효하지 않은 이메일 주소';
+
+  @override
+  String get err_password_too_short => '비밀번호는 8자 이상이어야 합니다';
+
+  @override
+  String get err_password_mismatch => '비밀번호가 일치하지 않습니다';
+
+  @override
+  String get err_agreement_required => '약관에 동의해야 합니다';
+
+  @override
   String get dots => '...';
 }

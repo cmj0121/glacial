@@ -914,5 +914,50 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_admin_assigned_to => '担当者';
 
   @override
+  String get btn_register => 'アカウント作成';
+
+  @override
+  String get txt_register_title => 'アカウント作成';
+
+  @override
+  String get txt_username => 'ユーザー名';
+
+  @override
+  String get txt_email => 'メールアドレス';
+
+  @override
+  String get txt_password => 'パスワード';
+
+  @override
+  String get txt_confirm_password => 'パスワード確認';
+
+  @override
+  String get txt_agreement => 'サーバーのルールと利用規約に同意します';
+
+  @override
+  String get txt_reason => '参加理由';
+
+  @override
+  String get txt_registration_success => 'メールを確認してアカウントを有効にしてください';
+
+  @override
+  String get err_registration_failed => '登録に失敗しました';
+
+  @override
+  String get err_field_required => 'この項目は必須です';
+
+  @override
+  String get err_invalid_email => '無効なメールアドレス';
+
+  @override
+  String get err_password_too_short => 'パスワードは8文字以上必要です';
+
+  @override
+  String get err_password_mismatch => 'パスワードが一致しません';
+
+  @override
+  String get err_agreement_required => '規約に同意する必要があります';
+
+  @override
   String get dots => '...';
 }

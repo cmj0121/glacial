@@ -960,5 +960,53 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_admin_assigned_to => 'Atribuído a';
 
   @override
+  String get btn_register => 'Criar conta';
+
+  @override
+  String get txt_register_title => 'Criar conta';
+
+  @override
+  String get txt_username => 'Nome de usuário';
+
+  @override
+  String get txt_email => 'E-mail';
+
+  @override
+  String get txt_password => 'Senha';
+
+  @override
+  String get txt_confirm_password => 'Confirmar senha';
+
+  @override
+  String get txt_agreement =>
+      'Concordo com as regras do servidor e termos de serviço';
+
+  @override
+  String get txt_reason => 'Motivo para ingressar';
+
+  @override
+  String get txt_registration_success =>
+      'Verifique seu e-mail para confirmar sua conta';
+
+  @override
+  String get err_registration_failed => 'Falha no registro';
+
+  @override
+  String get err_field_required => 'Este campo é obrigatório';
+
+  @override
+  String get err_invalid_email => 'Endereço de e-mail inválido';
+
+  @override
+  String get err_password_too_short =>
+      'A senha deve ter pelo menos 8 caracteres';
+
+  @override
+  String get err_password_mismatch => 'As senhas não coincidem';
+
+  @override
+  String get err_agreement_required => 'Você deve concordar com os termos';
+
+  @override
   String get dots => '...';
 }

@@ -121,10 +121,17 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           },
         ),
       ],
-      // The fallback page, show the WIP screen if the route is not found
+      // The fallback page, show the error screen if the route is not found
       errorBuilder: (BuildContext context, GoRouterState state) {
-        logger.w("the route ${state.uri} does not implement yet ...");
-        return const WIP();
+        logger.w("the route ${state.uri} does not exist");
+        return Scaffold(
+          body: SafeArea(
+            child: NoResult(
+              icon: Icons.explore_off_outlined,
+              message: state.uri.toString(),
+            ),
+          ),
+        );
       }
     );
   }
@@ -149,6 +156,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           case RoutePath.statusHistory:
           case RoutePath.adminReport:
           case RoutePath.adminAccount:
+          case RoutePath.register:
             backable = true;
             break;
           case RoutePath.directory:
@@ -361,6 +369,12 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (BuildContext context, GoRouterState state) {
             final AdminAccountSchema account = state.extra as AdminAccountSchema;
             return AdminAccountDetail(schema: account);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.register.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return const RegisterPage();
           },
         ),
       ],
