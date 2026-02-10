@@ -1009,5 +1009,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get err_agreement_required => 'Vous devez accepter les conditions';
 
   @override
+  String get txt_admin_account_confirmed => 'Confirmé';
+
+  @override
+  String get txt_admin_account_unconfirmed => 'Non confirmé';
+
+  @override
+  String get txt_admin_account_approved => 'Approuvé';
+
+  @override
+  String get txt_admin_account_not_approved => 'Non approuvé';
+
+  @override
   String get dots => '...';
 }

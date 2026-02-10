@@ -960,5 +960,17 @@ class AppLocalizationsKo extends AppLocalizations {
   String get err_agreement_required => '약관에 동의해야 합니다';
 
   @override
+  String get txt_admin_account_confirmed => '확인됨';
+
+  @override
+  String get txt_admin_account_unconfirmed => '미확인';
+
+  @override
+  String get txt_admin_account_approved => '승인됨';
+
+  @override
+  String get txt_admin_account_not_approved => '미승인';
+
+  @override
   String get dots => '...';
 }

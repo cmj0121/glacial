@@ -1005,5 +1005,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get err_agreement_required => 'Sie müssen den Bedingungen zustimmen';
 
   @override
+  String get txt_admin_account_confirmed => 'Bestätigt';
+
+  @override
+  String get txt_admin_account_unconfirmed => 'Unbestätigt';
+
+  @override
+  String get txt_admin_account_approved => 'Genehmigt';
+
+  @override
+  String get txt_admin_account_not_approved => 'Nicht genehmigt';
+
+  @override
   String get dots => '...';
 }

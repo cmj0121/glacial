@@ -310,5 +310,9 @@
   "err_password_too_short": "Le mot de passe doit contenir au moins 8 caractères",
   "err_password_mismatch": "Les mots de passe ne correspondent pas",
   "err_agreement_required": "Vous devez accepter les conditions",
+  "txt_admin_account_confirmed": "Confirmé",
+  "txt_admin_account_unconfirmed": "Non confirmé",
+  "txt_admin_account_approved": "Approuvé",
+  "txt_admin_account_not_approved": "Non approuvé",
   "dots": "..."
 }

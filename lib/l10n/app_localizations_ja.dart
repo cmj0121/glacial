@@ -959,5 +959,17 @@ class AppLocalizationsJa extends AppLocalizations {
   String get err_agreement_required => '規約に同意する必要があります';
 
   @override
+  String get txt_admin_account_confirmed => '確認済み';
+
+  @override
+  String get txt_admin_account_unconfirmed => '未確認';
+
+  @override
+  String get txt_admin_account_approved => '承認済み';
+
+  @override
+  String get txt_admin_account_not_approved => '未承認';
+
+  @override
   String get dots => '...';
 }

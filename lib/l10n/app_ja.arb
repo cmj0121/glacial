@@ -310,5 +310,9 @@
   "err_password_too_short": "パスワードは8文字以上必要です",
   "err_password_mismatch": "パスワードが一致しません",
   "err_agreement_required": "規約に同意する必要があります",
+  "txt_admin_account_confirmed": "確認済み",
+  "txt_admin_account_unconfirmed": "未確認",
+  "txt_admin_account_approved": "承認済み",
+  "txt_admin_account_not_approved": "未承認",
   "dots": "..."
 }

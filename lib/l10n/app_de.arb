@@ -310,5 +310,9 @@
   "err_password_too_short": "Passwort muss mindestens 8 Zeichen lang sein",
   "err_password_mismatch": "Passwörter stimmen nicht überein",
   "err_agreement_required": "Sie müssen den Bedingungen zustimmen",
+  "txt_admin_account_confirmed": "Bestätigt",
+  "txt_admin_account_unconfirmed": "Unbestätigt",
+  "txt_admin_account_approved": "Genehmigt",
+  "txt_admin_account_not_approved": "Nicht genehmigt",
   "dots": "..."
 }

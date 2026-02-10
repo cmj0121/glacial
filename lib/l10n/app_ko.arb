@@ -310,5 +310,9 @@
   "err_password_too_short": "비밀번호는 8자 이상이어야 합니다",
   "err_password_mismatch": "비밀번호가 일치하지 않습니다",
   "err_agreement_required": "약관에 동의해야 합니다",
+  "txt_admin_account_confirmed": "확인됨",
+  "txt_admin_account_unconfirmed": "미확인",
+  "txt_admin_account_approved": "승인됨",
+  "txt_admin_account_not_approved": "미승인",
   "dots": "..."
 }

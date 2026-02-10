@@ -310,5 +310,9 @@
   "err_password_too_short": "La contraseña debe tener al menos 8 caracteres",
   "err_password_mismatch": "Las contraseñas no coinciden",
   "err_agreement_required": "Debes aceptar los términos",
+  "txt_admin_account_confirmed": "Confirmado",
+  "txt_admin_account_unconfirmed": "No confirmado",
+  "txt_admin_account_approved": "Aprobado",
+  "txt_admin_account_not_approved": "No aprobado",
   "dots": "..."
 }

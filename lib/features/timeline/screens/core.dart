@@ -1,6 +1,7 @@
 // The Timeline widget in the current selected Mastodon server.
 
 export 'application.dart';
+export 'auto_complete.dart';
 export 'attachment.dart';
 export 'interaction.dart';
 export 'poll.dart';
