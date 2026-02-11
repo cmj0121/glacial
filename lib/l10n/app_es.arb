@@ -263,6 +263,7 @@
   "txt_about_copyright": "Copyright",
   "btn_sidebar_conversations": "Conversaciones",
   "txt_no_conversations": "Sin conversaciones",
+  "txt_no_notifications": "Aún no hay notificaciones",
   "txt_conversation_unread": "No leído",
   "btn_drawer_domain_blocks": "Dominios bloqueados",
   "btn_drawer_endorsed": "Perfiles destacados",

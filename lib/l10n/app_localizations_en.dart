@@ -850,6 +850,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_no_conversations => 'No conversations';
 
   @override
+  String get txt_no_notifications => 'No notifications yet';
+
+  @override
   String get txt_conversation_unread => 'Unread';
 
   @override

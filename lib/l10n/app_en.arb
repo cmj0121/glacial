@@ -297,6 +297,7 @@
   },
   "btn_sidebar_conversations": "Conversations",
   "txt_no_conversations": "No conversations",
+  "txt_no_notifications": "No notifications yet",
   "txt_conversation_unread": "Unread",
   "btn_drawer_domain_blocks": "Blocked Domains",
   "btn_drawer_endorsed": "Featured Profiles",

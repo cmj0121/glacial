@@ -819,6 +819,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_no_conversations => '대화가 없습니다';
 
   @override
+  String get txt_no_notifications => '아직 알림이 없습니다';
+
+  @override
   String get txt_conversation_unread => '읽지 않음';
 
   @override

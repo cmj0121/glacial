@@ -263,6 +263,7 @@
   "txt_about_copyright": "版權",
   "btn_sidebar_conversations": "私訊",
   "txt_no_conversations": "沒有私訊",
+  "txt_no_notifications": "還沒有通知",
   "txt_conversation_unread": "未讀",
   "btn_drawer_domain_blocks": "已封鎖網域",
   "btn_drawer_endorsed": "推薦用戶",

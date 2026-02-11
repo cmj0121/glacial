@@ -863,6 +863,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_no_conversations => 'Sem conversas';
 
   @override
+  String get txt_no_notifications => 'Ainda sem notificações';
+
+  @override
   String get txt_conversation_unread => 'Não lido';
 
   @override

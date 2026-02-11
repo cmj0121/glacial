@@ -263,6 +263,7 @@
   "txt_about_copyright": "著作権",
   "btn_sidebar_conversations": "会話",
   "txt_no_conversations": "会話はありません",
+  "txt_no_notifications": "通知はまだありません",
   "txt_conversation_unread": "未読",
   "btn_drawer_domain_blocks": "ブロック中のドメイン",
   "btn_drawer_endorsed": "おすすめプロフィール",

@@ -1688,6 +1688,12 @@ abstract class AppLocalizations {
   /// **'No conversations'**
   String get txt_no_conversations;
 
+  /// No description provided for @txt_no_notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get txt_no_notifications;
+
   /// No description provided for @txt_conversation_unread.
   ///
   /// In en, this message translates to:

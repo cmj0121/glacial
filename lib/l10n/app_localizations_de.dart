@@ -860,6 +860,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_no_conversations => 'Keine Konversationen';
 
   @override
+  String get txt_no_notifications => 'Noch keine Benachrichtigungen';
+
+  @override
   String get txt_conversation_unread => 'Ungelesen';
 
   @override
