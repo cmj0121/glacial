@@ -7,6 +7,7 @@ export 'cores/misc.dart';
 export 'cores/platform.dart';
 export 'cores/routes.dart';
 export 'cores/storage.dart';
+export 'cores/streaming.dart';
 export 'cores/screens/accessibility.dart';
 export 'cores/screens/animations.dart';
 export 'cores/screens/glass.dart';
