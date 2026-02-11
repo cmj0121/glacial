@@ -316,5 +316,6 @@
   "txt_admin_account_not_approved": "미승인",
   "txt_work_in_progress": "진행 중",
   "txt_default_server_name": "Glacial 서버",
+  "txt_hashtag_usage": "최근 며칠간 {uses}회 사용",
   "dots": "..."
 }

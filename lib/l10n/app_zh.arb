@@ -316,5 +316,6 @@
   "txt_admin_account_not_approved": "未批准",
   "txt_work_in_progress": "进行中",
   "txt_default_server_name": "Glacial 服务器",
+  "txt_hashtag_usage": "过去几天使用了{uses}次",
   "dots": "..."
 }

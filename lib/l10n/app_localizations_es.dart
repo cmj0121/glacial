@@ -1026,5 +1026,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_default_server_name => 'Servidor Glacial';
 
   @override
+  String txt_hashtag_usage(int uses) {
+    return '$uses usado en los últimos días';
+  }
+
+  @override
   String get dots => '...';
 }
