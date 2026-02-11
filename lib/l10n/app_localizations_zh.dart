@@ -170,10 +170,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_interaction_policy => '策略';
 
   @override
-  String get btn_status_info => '查看互动';
+  String get btn_status_info => '查看互動';
 
   @override
-  String get btn_status_history => '查看编辑历史';
+  String get btn_status_history => '查看編輯歷史';
 
   @override
   String get btn_profile_core => '使用者頁面';
@@ -962,10 +962,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get err_agreement_required => '您必須同意條款';
 
   @override
-  String get txt_admin_account_confirmed => '已确认';
+  String get txt_admin_account_confirmed => '已確認';
 
   @override
-  String get txt_admin_account_unconfirmed => '未确认';
+  String get txt_admin_account_unconfirmed => '未確認';
 
   @override
   String get txt_admin_account_approved => '已批准';
@@ -974,14 +974,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_admin_account_not_approved => '未批准';
 
   @override
-  String get txt_work_in_progress => '进行中';
+  String get txt_work_in_progress => '進行中';
 
   @override
-  String get txt_default_server_name => 'Glacial 服务器';
+  String get txt_default_server_name => 'Glacial 伺服器';
 
   @override
   String txt_hashtag_usage(int uses) {
-    return '过去几天使用了$uses次';
+    return '過去幾天使用了$uses次';
   }
 
   @override
