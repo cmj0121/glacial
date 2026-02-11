@@ -274,7 +274,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           path: RoutePath.status.path,
           builder: (BuildContext context, GoRouterState state) {
             final StatusSchema status = state.extra as StatusSchema;
-            return StatusContext(schema: status);
+            return StatusContext(key: ValueKey(status.id), schema: status);
           },
         ),
         GoRoute(
