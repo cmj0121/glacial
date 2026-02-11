@@ -972,5 +972,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_admin_account_not_approved => '미승인';
 
   @override
+  String get txt_work_in_progress => '진행 중';
+
+  @override
+  String get txt_default_server_name => 'Glacial 서버';
+
+  @override
   String get dots => '...';
 }

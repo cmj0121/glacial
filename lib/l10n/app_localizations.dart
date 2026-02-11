@@ -1994,6 +1994,18 @@ abstract class AppLocalizations {
   /// **'Not approved'**
   String get txt_admin_account_not_approved;
 
+  /// No description provided for @txt_work_in_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Work in Progress'**
+  String get txt_work_in_progress;
+
+  /// No description provided for @txt_default_server_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Glacial Server'**
+  String get txt_default_server_name;
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:

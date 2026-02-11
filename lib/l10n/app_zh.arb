@@ -314,5 +314,7 @@
   "txt_admin_account_unconfirmed": "未确认",
   "txt_admin_account_approved": "已批准",
   "txt_admin_account_not_approved": "未批准",
+  "txt_work_in_progress": "进行中",
+  "txt_default_server_name": "Glacial 服务器",
   "dots": "..."
 }

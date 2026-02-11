@@ -1006,5 +1006,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_admin_account_not_approved => 'Not approved';
 
   @override
+  String get txt_work_in_progress => 'Work in Progress';
+
+  @override
+  String get txt_default_server_name => 'Glacial Server';
+
+  @override
   String get dots => '...';
 }

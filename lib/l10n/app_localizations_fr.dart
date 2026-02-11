@@ -1021,5 +1021,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_admin_account_not_approved => 'Non approuvé';
 
   @override
+  String get txt_work_in_progress => 'En cours';
+
+  @override
+  String get txt_default_server_name => 'Serveur Glacial';
+
+  @override
   String get dots => '...';
 }

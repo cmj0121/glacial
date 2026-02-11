@@ -971,5 +971,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_admin_account_not_approved => '未批准';
 
   @override
+  String get txt_work_in_progress => '进行中';
+
+  @override
+  String get txt_default_server_name => 'Glacial 服务器';
+
+  @override
   String get dots => '...';
 }

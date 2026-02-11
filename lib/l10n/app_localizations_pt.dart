@@ -1020,5 +1020,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_admin_account_not_approved => 'Não aprovado';
 
   @override
+  String get txt_work_in_progress => 'Em andamento';
+
+  @override
+  String get txt_default_server_name => 'Servidor Glacial';
+
+  @override
   String get dots => '...';
 }

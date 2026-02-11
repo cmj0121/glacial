@@ -348,5 +348,7 @@
   "txt_admin_account_unconfirmed": "Unconfirmed",
   "txt_admin_account_approved": "Approved",
   "txt_admin_account_not_approved": "Not approved",
+  "txt_work_in_progress": "Work in Progress",
+  "txt_default_server_name": "Glacial Server",
   "dots": "..."
 }
