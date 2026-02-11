@@ -131,7 +131,10 @@ class StatusLite extends ConsumerWidget {
             buildMeta(context, isSelfPost: isSelfPost),
           ],
         ),
-        buildTimeInfo(context),
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: buildTimeInfo(context),
+        ),
       ],
     );
   }
