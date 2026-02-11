@@ -134,7 +134,7 @@ class StatusLite extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        buildTimeInfo(),
+        buildTimeInfo(context),
         buildEditLog(context),
         isSelfPost ? buildQuote(context) : const SizedBox.shrink(),
         StatusVisibility(type: schema.visibility, size: iconSize),
@@ -146,7 +146,7 @@ class StatusLite extends ConsumerWidget {
     );
   }
 
-  Widget buildTimeInfo() {
+  Widget buildTimeInfo(BuildContext context) {
     if (schema.scheduledAt != null) {
       return Tooltip(
         message: schema.scheduledAt!.toLocal().toString(),
@@ -154,7 +154,7 @@ class StatusLite extends ConsumerWidget {
       );
     }
 
-    final String duration = timeago.format(schema.createdAt, locale: 'en_short');
+    final String duration = timeago.format(schema.createdAt, locale: timeagoLocale(context));
 
     return Tooltip(
       message: schema.createdAt.toLocal().toString(),
