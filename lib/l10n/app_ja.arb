@@ -316,5 +316,6 @@
   "txt_admin_account_not_approved": "未承認",
   "txt_work_in_progress": "作業中",
   "txt_default_server_name": "Glacialサーバー",
+  "txt_hashtag_usage": "過去数日間で{uses}回使用",
   "dots": "..."
 }

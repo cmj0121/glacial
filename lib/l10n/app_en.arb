@@ -350,5 +350,13 @@
   "txt_admin_account_not_approved": "Not approved",
   "txt_work_in_progress": "Work in Progress",
   "txt_default_server_name": "Glacial Server",
+  "txt_hashtag_usage": "{uses} used in the past days",
+  "@txt_hashtag_usage": {
+    "placeholders": {
+      "uses": {
+        "type": "int"
+      }
+    }
+  },
   "dots": "..."
 }

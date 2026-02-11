@@ -316,5 +316,6 @@
   "txt_admin_account_not_approved": "Não aprovado",
   "txt_work_in_progress": "Em andamento",
   "txt_default_server_name": "Servidor Glacial",
+  "txt_hashtag_usage": "{uses} usado nos últimos dias",
   "dots": "..."
 }

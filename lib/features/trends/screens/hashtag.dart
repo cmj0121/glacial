@@ -56,7 +56,7 @@ class Hashtag extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          '$uses used in the past days',
+          AppLocalizations.of(context)?.txt_hashtag_usage(uses) ?? '$uses used in the past days',
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ]

@@ -977,5 +977,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_default_server_name => 'Glacialサーバー';
 
   @override
+  String txt_hashtag_usage(int uses) {
+    return '過去数日間で$uses回使用';
+  }
+
+  @override
   String get dots => '...';
 }

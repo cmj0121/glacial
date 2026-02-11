@@ -978,5 +978,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_default_server_name => 'Glacial 서버';
 
   @override
+  String txt_hashtag_usage(int uses) {
+    return '최근 며칠간 $uses회 사용';
+  }
+
+  @override
   String get dots => '...';
 }

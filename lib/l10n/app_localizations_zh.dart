@@ -977,5 +977,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_default_server_name => 'Glacial 服务器';
 
   @override
+  String txt_hashtag_usage(int uses) {
+    return '过去几天使用了$uses次';
+  }
+
+  @override
   String get dots => '...';
 }

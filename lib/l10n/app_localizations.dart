@@ -2006,6 +2006,12 @@ abstract class AppLocalizations {
   /// **'Glacial Server'**
   String get txt_default_server_name;
 
+  /// No description provided for @txt_hashtag_usage.
+  ///
+  /// In en, this message translates to:
+  /// **'{uses} used in the past days'**
+  String txt_hashtag_usage(int uses);
+
   /// No description provided for @dots.
   ///
   /// In en, this message translates to:
