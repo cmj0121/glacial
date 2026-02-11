@@ -43,6 +43,9 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
   Timer? _markerDebounce;
   String? maxId;
 
+  StreamSubscription<StreamingEvent>? _streamSubscription;
+  VoidCallback? _streamingUnsubscribe;
+
   List<StatusSchema> unreaded = [];
   List<StatusSchema> statuses = [];
 
@@ -65,12 +68,67 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
       }
 
       onLoad();
+      _initStreaming();
     });
+  }
+
+  void _initStreaming() {
+    final StreamType? streamType = streamTypeForTimeline(widget.type);
+    if (streamType == null || widget.status.domain == null) return;
+
+    final service = getStreamingService(
+      widget.status.domain!,
+      accessToken: widget.status.accessToken,
+    );
+
+    _streamingUnsubscribe = service.subscribe(
+      streamType,
+      tag: widget.hashtag,
+      listId: widget.listId,
+    );
+
+    _streamSubscription = service.events.listen(_onStreamingEvent);
+  }
+
+  void _onStreamingEvent(StreamingEvent event) {
+    if (!mounted) return;
+
+    switch (event.type) {
+      case StreamingEventType.update:
+        final StatusSchema? status = event.status;
+        if (status == null) return;
+        final existingIds = {...statuses.map((s) => s.id), ...unreaded.map((s) => s.id)};
+        if (existingIds.contains(status.id)) return;
+        setState(() => unreaded.insert(0, status));
+
+      case StreamingEventType.delete:
+        final String? id = event.deletedStatusId;
+        if (id == null) return;
+        setState(() {
+          statuses.removeWhere((s) => s.id == id);
+          unreaded.removeWhere((s) => s.id == id);
+        });
+
+      case StreamingEventType.statusUpdate:
+        final StatusSchema? status = event.status;
+        if (status == null) return;
+        setState(() {
+          final int idx = statuses.indexWhere((s) => s.id == status.id);
+          if (idx >= 0) statuses[idx] = status;
+          final int uidx = unreaded.indexWhere((s) => s.id == status.id);
+          if (uidx >= 0) unreaded[uidx] = status;
+        });
+
+      default:
+        break;
+    }
   }
 
   @override
   void dispose() {
     itemPositionsListener.itemPositions.removeListener(_onPositionChange);
+    _streamSubscription?.cancel();
+    _streamingUnsubscribe?.call();
     timer?.cancel();
     _markerDebounce?.cancel();
     super.dispose();
