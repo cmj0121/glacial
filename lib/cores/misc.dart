@@ -84,6 +84,23 @@ Future<void> sendLocalNotification(String title, String body, {int? uid, int? ba
   AppBadgePlus.updateBadge(badgeNumber ?? 0);
 }
 
+// Get the timeago short locale string for the current context.
+// Maps Flutter locale to the registered timeago short locale key.
+String timeagoLocale(BuildContext context) {
+  final String code = Localizations.localeOf(context).languageCode;
+  const Map<String, String> localeMap = {
+    'en': 'en_short',
+    'de': 'de_short',
+    'es': 'es_short',
+    'fr': 'fr_short',
+    'ja': 'ja',
+    'ko': 'ko',
+    'pt': 'pt_br_short',
+    'zh': 'zh',
+  };
+  return localeMap[code] ?? 'en_short';
+}
+
 // Canonicalize the HTML content into the plain text content.
 String canonicalizeHtml(String html) {
   // Remove HTML tags and decode HTML entities.

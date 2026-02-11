@@ -7,6 +7,8 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import 'package:timeago/timeago.dart' as timeago;
+
 import 'package:glacial/app.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -71,6 +73,18 @@ Future<void> init() async {
   await dotenv.load(fileName: ".env");
   await Info.init();
   await Storage.init();
+
+  // Register timeago locales for all supported languages
+  timeago.setLocaleMessages('de', timeago.DeMessages());
+  timeago.setLocaleMessages('de_short', timeago.DeShortMessages());
+  timeago.setLocaleMessages('es', timeago.EsMessages());
+  timeago.setLocaleMessages('es_short', timeago.EsShortMessages());
+  timeago.setLocaleMessages('fr', timeago.FrMessages());
+  timeago.setLocaleMessages('fr_short', timeago.FrShortMessages());
+  timeago.setLocaleMessages('ja', timeago.JaMessages());
+  timeago.setLocaleMessages('ko', timeago.KoMessages());
+  timeago.setLocaleMessages('pt_br_short', timeago.PtBrShortMessages());
+  timeago.setLocaleMessages('zh', timeago.ZhMessages());
 
   // Log platform detection for Liquid Glass support
   if (useLiquidGlass) {

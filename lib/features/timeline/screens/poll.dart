@@ -130,7 +130,7 @@ class _PollState extends ConsumerState<Poll> {
   Widget buildActions(PollSchema schema) {
     final bool showVoteBtn = canVote && choices.isNotEmpty;
     final Duration expiresIn = schema.expiresAt?.difference(DateTime.now()) ?? Duration.zero;
-    final String remainingTime = timeago.format(DateTime.now().subtract(expiresIn), locale: 'en_short');
+    final String remainingTime = timeago.format(DateTime.now().subtract(expiresIn), locale: timeagoLocale(context));
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -322,7 +322,7 @@ class _PollFormState extends ConsumerState<PollForm> {
         icon: const SizedBox.shrink(),
         items: durations.map((duration) {
           final DateTime expiration = now.subtract(duration);
-          final String text = timeago.format(expiration, locale: 'en_short').replaceFirst("~", "");
+          final String text = timeago.format(expiration, locale: timeagoLocale(context)).replaceFirst("~", "");
 
           return DropdownMenuItem<Duration>(
             value: duration,
