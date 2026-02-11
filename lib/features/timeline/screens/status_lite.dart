@@ -120,12 +120,18 @@ class StatusLite extends ConsumerWidget {
   }
 
   Widget buildHeader(BuildContext context, {bool isSelfPost = false}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
-        const Spacer(),
-        buildMeta(context, isSelfPost: isSelfPost),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
+            const Spacer(),
+            buildMeta(context, isSelfPost: isSelfPost),
+          ],
+        ),
+        buildTimeInfo(context),
       ],
     );
   }
@@ -134,7 +140,6 @@ class StatusLite extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        buildTimeInfo(context),
         buildEditLog(context),
         isSelfPost ? buildQuote(context) : const SizedBox.shrink(),
         StatusVisibility(type: schema.visibility, size: iconSize),
