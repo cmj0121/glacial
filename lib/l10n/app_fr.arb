@@ -314,5 +314,7 @@
   "txt_admin_account_unconfirmed": "Non confirmé",
   "txt_admin_account_approved": "Approuvé",
   "txt_admin_account_not_approved": "Non approuvé",
+  "txt_work_in_progress": "En cours",
+  "txt_default_server_name": "Serveur Glacial",
   "dots": "..."
 }

@@ -1,6 +1,8 @@
 // The miscellaneous widget library of the app.
 import 'package:flutter/material.dart';
 
+import 'package:glacial/l10n/app_localizations.dart';
+
 // The placeholder for the app's Work-In-Progress screen
 class WIP extends StatelessWidget {
   final String? title;
@@ -17,7 +19,7 @@ class WIP extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Center(
-          child: Text(title ?? "Work in Progress", style: titleStyle),
+          child: Text(title ?? AppLocalizations.of(context)?.txt_work_in_progress ?? "Work in Progress", style: titleStyle),
         ),
       ),
     );

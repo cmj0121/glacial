@@ -971,5 +971,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_admin_account_not_approved => '未承認';
 
   @override
+  String get txt_work_in_progress => '作業中';
+
+  @override
+  String get txt_default_server_name => 'Glacialサーバー';
+
+  @override
   String get dots => '...';
 }

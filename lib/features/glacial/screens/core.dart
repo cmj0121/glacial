@@ -255,7 +255,7 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
               DrawerHeader(
                 child: Column(
                   children: [
-                    Text(status?.domain ?? 'Glacial Server'),
+                    Text(status?.domain ?? AppLocalizations.of(context)?.txt_default_server_name ?? 'Glacial Server'),
                     const SizedBox(height: 8),
                     status?.server?.thumbnail == null ?
                       const SizedBox.shrink() :

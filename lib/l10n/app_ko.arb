@@ -314,5 +314,7 @@
   "txt_admin_account_unconfirmed": "미확인",
   "txt_admin_account_approved": "승인됨",
   "txt_admin_account_not_approved": "미승인",
+  "txt_work_in_progress": "진행 중",
+  "txt_default_server_name": "Glacial 서버",
   "dots": "..."
 }
