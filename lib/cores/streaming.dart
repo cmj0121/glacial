@@ -246,19 +246,20 @@ class StreamingService {
   }
 }
 
-// Global service registry, keyed by domain.
+// Global service registry, keyed by composite key (domain@accountId) or domain.
 final Map<String, StreamingService> _services = {};
 
-StreamingService getStreamingService(String domain, {String? accessToken, ChannelFactory? channelFactory}) {
-  return _services.putIfAbsent(domain, () => StreamingService(
+StreamingService getStreamingService(String domain, {String? accountId, String? accessToken, ChannelFactory? channelFactory}) {
+  final String key = accountId != null ? '$domain@$accountId' : domain;
+  return _services.putIfAbsent(key, () => StreamingService(
     domain: domain,
     accessToken: accessToken,
     channelFactory: channelFactory,
   ));
 }
 
-void disposeStreamingService(String domain) {
-  _services.remove(domain)?.dispose();
+void disposeStreamingService(String key) {
+  _services.remove(key)?.dispose();
 }
 
 void pauseAllStreaming() {

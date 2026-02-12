@@ -78,6 +78,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
     final service = getStreamingService(
       widget.status.domain!,
+      accountId: widget.status.account?.id,
       accessToken: widget.status.accessToken,
     );
 
