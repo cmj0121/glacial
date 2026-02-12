@@ -246,32 +246,9 @@ void main() {
     });
   });
 
-  group('SignIn with registration', () {
-    testWidgets('shows Create Account button when registration enabled', (tester) async {
+  group('SignIn without registration button', () {
+    testWidgets('does not show Create Account button even when registration enabled', (tester) async {
       final server = MockServer.create();
-      await tester.pumpWidget(createTestWidget(
-        child: const SignIn(),
-        accessStatus: MockAccessStatus.create(server: server),
-      ));
-      await tester.pump();
-
-      expect(find.text('Create Account'), findsOneWidget);
-      expect(find.byType(TextButton), findsOneWidget);
-    });
-
-    testWidgets('hides Create Account button when registration disabled', (tester) async {
-      final server = ServerSchema(
-        domain: 'closed.social',
-        title: 'Closed Server',
-        desc: 'No registration',
-        version: '4.2.0',
-        thumbnail: 'https://example.com/thumb.png',
-        usage: const ServerUsageSchema(userActiveMonthly: 100),
-        config: MockServerConfig.create(),
-        registration: const RegisterConfigSchema(enabled: false, approvalRequired: false),
-        contact: const ContactSchema(email: 'admin@closed.social'),
-      );
-
       await tester.pumpWidget(createTestWidget(
         child: const SignIn(),
         accessStatus: MockAccessStatus.create(server: server),
@@ -282,17 +259,7 @@ void main() {
       expect(find.byType(TextButton), findsNothing);
     });
 
-    testWidgets('hides Create Account button when no server', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        child: const SignIn(),
-        accessStatus: MockAccessStatus.anonymous(),
-      ));
-      await tester.pump();
-
-      expect(find.text('Create Account'), findsNothing);
-    });
-
-    testWidgets('renders sign in icon and Create Account in column', (tester) async {
+    testWidgets('renders only sign in icon button', (tester) async {
       final server = MockServer.create();
       await tester.pumpWidget(createTestWidget(
         child: const SignIn(),
@@ -300,9 +267,8 @@ void main() {
       ));
       await tester.pump();
 
-      expect(find.byType(Column), findsAtLeast(1));
       expect(find.byIcon(Icons.person_outline), findsOneWidget);
-      expect(find.text('Create Account'), findsOneWidget);
+      expect(find.byType(IconButton), findsOneWidget);
     });
   });
 }
