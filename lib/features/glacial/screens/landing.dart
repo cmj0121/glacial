@@ -57,9 +57,10 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
 
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final bool hasDomain = status?.domain?.isNotEmpty == true;
+    final bool isSignedIn = status?.isSignedIn == true;
     final bool hasPublicFeeds = status?.server?.config.timelinesAccess.hasPublicFeeds ?? true;
     final RoutePath route = !hasDomain ? RoutePath.explorer :
-        hasPublicFeeds ? RoutePath.timeline : RoutePath.trends;
+        (isSignedIn || hasPublicFeeds) ? RoutePath.timeline : RoutePath.trends;
 
     if (mounted) {
       logger.i("preloading completed, navigating to the ${route.path} page (${status?.domain}) ...");

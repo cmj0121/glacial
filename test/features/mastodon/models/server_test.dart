@@ -193,6 +193,14 @@ void main() {
       expect(access.liveFeeds.federated, TimelineAccessLevel.disabled);
     });
 
+    test('fromJson with missing home key defaults to authenticated', () {
+      final access = TimelinesAccessSchema.fromJson({
+        'live_feeds': {'local': 'disabled', 'remote': 'disabled'},
+      });
+
+      expect(access.home, TimelineAccessLevel.authenticated);
+    });
+
     test('hasPublicFeeds is true when local is available', () {
       final access = TimelinesAccessSchema.fromJson({
         'live_feeds': {'local': 'public', 'remote': 'disabled'},

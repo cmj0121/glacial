@@ -94,8 +94,9 @@ class TimelinesAccessSchema {
 
   factory TimelinesAccessSchema.fromJson(Map<String, dynamic>? json) {
     if (json == null) return const TimelinesAccessSchema();
+    final String? home = json['home'] as String?;
     return TimelinesAccessSchema(
-      home: TimelineAccessLevel.fromString(json['home'] as String?),
+      home: home != null ? TimelineAccessLevel.fromString(home) : TimelineAccessLevel.authenticated,
       liveFeeds: LiveFeedsAccessSchema.fromJson(
         json['live_feeds'] as Map<String, dynamic>? ?? {},
       ),
