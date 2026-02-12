@@ -87,6 +87,11 @@ class TimelinesAccessSchema {
     this.liveFeeds = const LiveFeedsAccessSchema(),
   });
 
+  // Whether any public feed (local or federated) is available.
+  bool get hasPublicFeeds =>
+    liveFeeds.local != TimelineAccessLevel.disabled ||
+    liveFeeds.federated != TimelineAccessLevel.disabled;
+
   factory TimelinesAccessSchema.fromJson(Map<String, dynamic>? json) {
     if (json == null) return const TimelinesAccessSchema();
     return TimelinesAccessSchema(

@@ -192,6 +192,32 @@ void main() {
       expect(access.liveFeeds.local, TimelineAccessLevel.disabled);
       expect(access.liveFeeds.federated, TimelineAccessLevel.disabled);
     });
+
+    test('hasPublicFeeds is true when local is available', () {
+      final access = TimelinesAccessSchema.fromJson({
+        'live_feeds': {'local': 'public', 'remote': 'disabled'},
+      });
+      expect(access.hasPublicFeeds, true);
+    });
+
+    test('hasPublicFeeds is true when federated is available', () {
+      final access = TimelinesAccessSchema.fromJson({
+        'live_feeds': {'local': 'disabled', 'remote': 'public'},
+      });
+      expect(access.hasPublicFeeds, true);
+    });
+
+    test('hasPublicFeeds is false when both disabled', () {
+      final access = TimelinesAccessSchema.fromJson({
+        'live_feeds': {'local': 'disabled', 'remote': 'disabled'},
+      });
+      expect(access.hasPublicFeeds, false);
+    });
+
+    test('hasPublicFeeds is true with default constructor', () {
+      const access = TimelinesAccessSchema();
+      expect(access.hasPublicFeeds, true);
+    });
   });
 
   group('ServerConfigSchema', () {
