@@ -153,6 +153,7 @@ extension AccountsExtensions on AccessStatusSchema {
   }
 
   // Get the account data schema from the access token.
+  // Throws [HttpException] on 401 so callers can clean up invalid credentials.
   Future<AccountSchema?> getAccountByAccessToken(String? token) async {
     if (token == null || domain == null) {
       return null;
@@ -160,14 +161,21 @@ extension AccountsExtensions on AccessStatusSchema {
 
     final Uri uri = UriEx.handle(domain!, "/api/v1/accounts/verify_credentials");
     final Map<String, String> headers = {"Authorization": "Bearer $token"};
-    final response = await get(uri, headers: headers);
     try {
+      final response = await get(uri, headers: headers);
       final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
       final AccountSchema account = AccountSchema.fromJson(json);
 
       return account;
+    } on HttpException catch (e) {
+      if (e.isUnauthorized) {
+        logger.w("access token unauthorized (401) for domain: $domain");
+        rethrow;
+      }
+      logger.w("failed to get account by access token, error: $e");
+      return null;
     } catch (e) {
-      logger.w("failed to get account by access token: $token, error: $e");
+      logger.w("failed to get account by access token, error: $e");
       return null;
     }
   }
