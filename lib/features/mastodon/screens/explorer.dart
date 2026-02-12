@@ -140,25 +140,35 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
 
   // The callback when user clicks the mastodon server.
   Future<void> onSelect(ServerSchema schema) async {
-    final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
-    List<ServerInfoSchema> history = status.history.toList();
+    final AccessStatusSchema current = ref.read(accessStatusProvider) ?? AccessStatusSchema();
+    List<ServerInfoSchema> history = current.history.toList();
 
     // If the server not already in the history, add it.
     if (!history.any((ServerInfoSchema info) => info.domain == schema.domain)) {
       history.add(schema.toInfo());
     }
 
+    // Build a clean status without carrying over stale accessToken from
+    // the previous server — prevents isSignedIn from being wrong.
+    final AccessStatusSchema clean = AccessStatusSchema(domain: schema.domain)
+        .copyWith(history: history, server: schema);
+
     logger.i("onTap: ${schema.domain}");
-    await storage.saveAccessStatus(status.copyWith(domain: schema.domain, history: history, server: schema), ref: ref);
+    await storage.saveAccessStatus(clean, ref: ref);
     await storage.loadAccessStatus(ref: ref);
 
     Sentry.configureScope((scope) {
-      // Set the server as the Sentry scope server tag.
       scope.setTag('mastodon.server', schema.domain);
     });
 
     if (mounted) {
-      context.go(RoutePath.timeline.path);
+      final AccessStatusSchema? updated = ref.read(accessStatusProvider);
+      final bool isSignedIn = updated?.isSignedIn == true;
+      final timelinesAccess = schema.config.timelinesAccess;
+      final bool hasTimeline = SidebarButtonType.timeline.isAccessible(
+        isSignedIn: isSignedIn, access: timelinesAccess,
+      );
+      context.go(hasTimeline ? RoutePath.timeline.path : RoutePath.trends.path);
     }
   }
 
