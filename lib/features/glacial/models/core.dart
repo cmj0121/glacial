@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/mastodon/models/config.dart';
+import 'package:glacial/features/timeline/models/timeline.dart';
 
 // The possible actions in sidebar and used to interact with the current server.
 enum SidebarButtonType {
@@ -79,6 +81,21 @@ enum SidebarButtonType {
         return true;
       default:
         return false;
+    }
+  }
+
+  // Check if this sidebar action is accessible given the auth state and server config.
+  // For the timeline button, it checks whether any timeline tab is accessible.
+  bool isAccessible({required bool isSignedIn, TimelinesAccessSchema? access}) {
+    switch (this) {
+      case timeline:
+        return TimelineType.values
+            .where((t) => t.inTimelineTab)
+            .any((t) => t.isAccessible(isSignedIn: isSignedIn, access: access));
+      case trending:
+        return true;
+      default:
+        return supportAnonymous || isSignedIn;
     }
   }
 }

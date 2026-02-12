@@ -144,6 +144,7 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final bool isSignedIn = status?.accessToken?.isNotEmpty == true;
     final bool isAdmin = status?.account?.role?.hasPrivilege == true;
+    final timelinesAccess = status?.server?.config.timelinesAccess;
 
     final List<Widget> children = actions.map((action) {
       final int index = actions.indexOf(action);
@@ -177,11 +178,12 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
             onPressed: isAdmin ? () => debounce.callOnce(() => onSelect(index)) : null,
           );
         default:
+          final bool accessible = action.isAccessible(isSignedIn: isSignedIn, access: timelinesAccess);
           return IconButton(
             icon: icon,
             tooltip: action.tooltip(context),
             color: isSelected ? Theme.of(context).colorScheme.primary : null,
-            onPressed: (action.supportAnonymous || isSignedIn) ? () => debounce.callOnce(() => onSelect(index)) : null,
+            onPressed: accessible ? () => debounce.callOnce(() => onSelect(index)) : null,
           );
       }
     }).toList();

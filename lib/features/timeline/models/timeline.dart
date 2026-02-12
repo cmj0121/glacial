@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/mastodon/models/config.dart';
 
 // The type list for the timeline, based on the Mastodon API.
 enum TimelineType {
@@ -84,6 +85,39 @@ enum TimelineType {
         return true; // Can be accessed anonymously.
       default:
         return false; // Requires authentication.
+    }
+  }
+
+  // Check if this timeline is accessible given the server config and auth state.
+  bool isAccessible({required bool isSignedIn, TimelinesAccessSchema? access}) {
+    final TimelinesAccessSchema config = access ?? const TimelinesAccessSchema();
+    final TimelineAccessLevel level = _accessLevel(config);
+
+    switch (level) {
+      case TimelineAccessLevel.public:
+        return true;
+      case TimelineAccessLevel.authenticated:
+        return isSignedIn;
+      case TimelineAccessLevel.disabled:
+        return false;
+    }
+  }
+
+  // Map this timeline type to its access level from the server config.
+  TimelineAccessLevel _accessLevel(TimelinesAccessSchema config) {
+    switch (this) {
+      case home:
+        return config.home;
+      case local:
+        return config.liveFeeds.local;
+      case federal:
+      case public:
+        return config.liveFeeds.federated;
+      case favourites:
+      case bookmarks:
+        return TimelineAccessLevel.authenticated;
+      default:
+        return TimelineAccessLevel.authenticated;
     }
   }
 

@@ -50,7 +50,20 @@ extension AccessStatusExtension on Storage {
     }
 
     final String? accessToken = await loadAccessToken(activeKey);
-    final AccountSchema? account = await status.getAccountByAccessToken(accessToken);
+    AccountSchema? account;
+    String? validToken = accessToken;
+
+    try {
+      account = await status.getAccountByAccessToken(accessToken);
+    } on HttpException catch (e) {
+      if (e.isUnauthorized && activeKey != null) {
+        logger.w("token revoked/expired for key: $activeKey, cleaning up credentials");
+        await removeAccessToken(activeKey);
+        await removeSavedAccount(activeKey);
+        await remove(_keyActiveAccountKey);
+        validToken = null;
+      }
+    }
 
     // After fetching account, ensure composite key is saved.
     if (account != null && domain != null && accessToken != null) {
@@ -76,7 +89,7 @@ extension AccessStatusExtension on Storage {
     final ServerSchema? server = await ServerSchema.fetch(domain);
     final List<EmojiSchema> emojis = await status.fetchCustomEmojis();
 
-    status = status.copyWith(accessToken: accessToken, account: account, server: server, emojis: emojis);
+    status = status.copyWith(accessToken: validToken, account: account, server: server, emojis: emojis);
 
     if (ref?.context.mounted ?? false) {
       ref?.read(accessStatusProvider.notifier).state = status;
@@ -219,7 +232,23 @@ extension AccessStatusExtension on Storage {
 
     // Build a temporary AccessStatusSchema to fetch account data.
     AccessStatusSchema status = AccessStatusSchema(domain: saved.domain);
-    final AccountSchema? account = await status.getAccountByAccessToken(accessToken);
+    AccountSchema? account;
+
+    try {
+      account = await status.getAccountByAccessToken(accessToken);
+    } on HttpException catch (e) {
+      if (e.isUnauthorized) {
+        logger.w("token revoked/expired for account: ${saved.compositeKey}, cleaning up");
+        await removeSavedAccount(saved.compositeKey);
+        return;
+      }
+    }
+
+    if (account == null) {
+      logger.w("failed to verify account: ${saved.compositeKey}");
+      return;
+    }
+
     final ServerSchema? server = await ServerSchema.fetch(saved.domain);
     final List<EmojiSchema> emojis = await status.fetchCustomEmojis();
 

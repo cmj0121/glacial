@@ -28,29 +28,11 @@ class _SignInState extends ConsumerState<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    final AccessStatusSchema? status = ref.read(accessStatusProvider);
-    final bool registrationEnabled = status?.server?.registration.enabled ?? false;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton.filledTonal(
-          icon: const Icon(Icons.person_outline),
-          tooltip: AppLocalizations.of(context)?.btn_sidebar_sign_in ?? 'Sign In',
-          color: Theme.of(context).colorScheme.onPrimaryContainer,
-          onPressed: onSignIn,
-        ),
-        if (registrationEnabled) ...[
-          const SizedBox(height: 8),
-          TextButton(
-            onPressed: () => context.push(RoutePath.register.path),
-            child: Text(
-              AppLocalizations.of(context)?.btn_register ?? 'Create Account',
-              style: TextStyle(fontSize: 12),
-            ),
-          ),
-        ],
-      ],
+    return IconButton.filledTonal(
+      icon: const Icon(Icons.person_outline),
+      tooltip: AppLocalizations.of(context)?.btn_sidebar_sign_in ?? 'Sign In',
+      color: Theme.of(context).colorScheme.onPrimaryContainer,
+      onPressed: onSignIn,
     );
   }
 
