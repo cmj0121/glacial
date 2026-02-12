@@ -1021,4 +1021,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dots => '...';
+
+  @override
+  String get btn_drawer_switch_account => 'Switch Account';
+
+  @override
+  String get btn_account_picker_add => 'Add Account';
+
+  @override
+  String get txt_account_picker_title => 'Accounts';
+
+  @override
+  String msg_account_switched(String username) {
+    return 'Switched to $username';
+  }
+
+  @override
+  String get msg_account_removed => 'Account removed';
 }

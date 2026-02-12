@@ -318,5 +318,10 @@
   "txt_work_in_progress": "진행 중",
   "txt_default_server_name": "Glacial 서버",
   "txt_hashtag_usage": "최근 며칠간 {uses}회 사용",
-  "dots": "..."
+  "dots": "...",
+  "btn_drawer_switch_account": "계정 전환",
+  "btn_account_picker_add": "계정 추가",
+  "txt_account_picker_title": "계정",
+  "msg_account_switched": "{username}(으)로 전환됨",
+  "msg_account_removed": "계정이 삭제됨"
 }

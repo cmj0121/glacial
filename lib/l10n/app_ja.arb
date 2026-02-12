@@ -318,5 +318,10 @@
   "txt_work_in_progress": "作業中",
   "txt_default_server_name": "Glacialサーバー",
   "txt_hashtag_usage": "過去数日間で{uses}回使用",
-  "dots": "..."
+  "dots": "...",
+  "btn_drawer_switch_account": "アカウント切替",
+  "btn_account_picker_add": "アカウント追加",
+  "txt_account_picker_title": "アカウント",
+  "msg_account_switched": "{username}に切り替えました",
+  "msg_account_removed": "アカウントを削除しました"
 }
