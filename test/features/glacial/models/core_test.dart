@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/glacial/models/core.dart';
+import 'package:glacial/features/mastodon/models/config.dart';
 
 import '../../../helpers/test_helpers.dart';
 
@@ -70,6 +71,75 @@ void main() {
         final String tooltip = type.tooltip(capturedContext);
         expect(tooltip.isNotEmpty, true, reason: '${type.name} should have a non-empty tooltip');
       }
+    });
+
+    group('isAccessible', () {
+      test('timeline is accessible with default config (all public)', () {
+        expect(
+          SidebarButtonType.timeline.isAccessible(isSignedIn: false),
+          isTrue,
+        );
+      });
+
+      test('timeline is accessible when signed in', () {
+        const access = TimelinesAccessSchema(
+          home: TimelineAccessLevel.authenticated,
+          liveFeeds: LiveFeedsAccessSchema(
+            local: TimelineAccessLevel.disabled,
+            federated: TimelineAccessLevel.disabled,
+          ),
+        );
+        expect(
+          SidebarButtonType.timeline.isAccessible(isSignedIn: true, access: access),
+          isTrue,
+        );
+      });
+
+      test('timeline is inaccessible when all tabs disabled and anonymous', () {
+        const access = TimelinesAccessSchema(
+          home: TimelineAccessLevel.authenticated,
+          liveFeeds: LiveFeedsAccessSchema(
+            local: TimelineAccessLevel.disabled,
+            federated: TimelineAccessLevel.disabled,
+          ),
+        );
+        expect(
+          SidebarButtonType.timeline.isAccessible(isSignedIn: false, access: access),
+          isFalse,
+        );
+      });
+
+      test('timeline is accessible when local is public and anonymous', () {
+        const access = TimelinesAccessSchema(
+          home: TimelineAccessLevel.authenticated,
+          liveFeeds: LiveFeedsAccessSchema(
+            local: TimelineAccessLevel.public,
+            federated: TimelineAccessLevel.disabled,
+          ),
+        );
+        expect(
+          SidebarButtonType.timeline.isAccessible(isSignedIn: false, access: access),
+          isTrue,
+        );
+      });
+
+      test('trending is always accessible', () {
+        expect(
+          SidebarButtonType.trending.isAccessible(isSignedIn: false),
+          isTrue,
+        );
+        expect(
+          SidebarButtonType.trending.isAccessible(isSignedIn: true),
+          isTrue,
+        );
+      });
+
+      test('auth-required buttons need sign-in', () {
+        expect(SidebarButtonType.list.isAccessible(isSignedIn: false), isFalse);
+        expect(SidebarButtonType.list.isAccessible(isSignedIn: true), isTrue);
+        expect(SidebarButtonType.notifications.isAccessible(isSignedIn: false), isFalse);
+        expect(SidebarButtonType.conversations.isAccessible(isSignedIn: false), isFalse);
+      });
     });
   });
 
