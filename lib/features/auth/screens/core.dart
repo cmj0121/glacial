@@ -7,6 +7,7 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
+export 'account_picker.dart';
 export 'register.dart';
 
 // The Sign-In widget to navigate to the sign-in page of the Mastodon server.

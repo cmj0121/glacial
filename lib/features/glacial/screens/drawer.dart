@@ -23,7 +23,10 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
   @override
   Widget build(BuildContext context) {
     final AccessStatusSchema? status = ref.watch(accessStatusProvider);
-    final List<DrawerButtonType> actions = DrawerButtonType.values.toList();
+    final bool isSignedIn = status?.accessToken?.isNotEmpty ?? false;
+    final List<DrawerButtonType> actions = DrawerButtonType.values
+        .where((a) => a != DrawerButtonType.switchAccount || isSignedIn)
+        .toList();
     final int logoutIndex = actions.indexWhere((action) => action == DrawerButtonType.logout);
     final List<Widget> children = actions.map((action) {
       return ListTile(
@@ -91,6 +94,14 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
     context.pop(); // Close the drawer before navigating
 
     switch (action) {
+      case DrawerButtonType.switchAccount:
+        if (mounted) {
+          showAdaptiveGlassSheet(
+            context: context,
+            builder: (_) => AccountPickerSheet(status: status),
+          );
+        }
+        return;
       case DrawerButtonType.switchServer:
         storage.saveAccessStatus((status ?? AccessStatusSchema()).copyWith(domain: ''), ref: ref);
         break;
