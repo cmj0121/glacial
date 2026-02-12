@@ -322,6 +322,8 @@ void main() {
   group('Global streaming helpers', () {
     tearDown(() {
       disposeStreamingService('test.social');
+      disposeStreamingService('test.social@user1');
+      disposeStreamingService('test.social@user2');
     });
 
     test('getStreamingService creates and reuses service', () {
@@ -334,6 +336,31 @@ void main() {
       final s1 = getStreamingService('test.social');
       disposeStreamingService('test.social');
       final s2 = getStreamingService('test.social');
+      expect(identical(s1, s2), isFalse);
+    });
+
+    test('getStreamingService with accountId creates composite key', () {
+      final s1 = getStreamingService('test.social', accountId: 'user1');
+      final s2 = getStreamingService('test.social', accountId: 'user1');
+      expect(identical(s1, s2), isTrue);
+    });
+
+    test('different accountIds on same domain create separate services', () {
+      final s1 = getStreamingService('test.social', accountId: 'user1');
+      final s2 = getStreamingService('test.social', accountId: 'user2');
+      expect(identical(s1, s2), isFalse);
+    });
+
+    test('disposeStreamingService with composite key', () {
+      final s1 = getStreamingService('test.social', accountId: 'user1');
+      disposeStreamingService('test.social@user1');
+      final s2 = getStreamingService('test.social', accountId: 'user1');
+      expect(identical(s1, s2), isFalse);
+    });
+
+    test('service without accountId is separate from service with accountId', () {
+      final s1 = getStreamingService('test.social');
+      final s2 = getStreamingService('test.social', accountId: 'user1');
       expect(identical(s1, s2), isFalse);
     });
   });
