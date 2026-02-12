@@ -170,7 +170,7 @@ extension AccessStatusExtension on Storage {
       logger.i("save access token for key: $key");
     }
 
-    setString(AccessStatusSchema.keyAccessToken, jsonEncode(json), secure: true);
+    await setString(AccessStatusSchema.keyAccessToken, jsonEncode(json), secure: true);
   }
 
   // Load the access token for the given key from the storage.
