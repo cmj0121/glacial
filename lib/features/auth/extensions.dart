@@ -20,6 +20,9 @@ class _StateCacheEntry {
 // The OAuth sign-in in-memory state cache that hold the random state-server mapping.
 final Map<String, _StateCacheEntry> _stateCache = {};
 
+// SharedPreferences key for persisted OAuth state (mobile app restart resilience).
+const String _keyPendingAuth = "pending_oauth_auth";
+
 /// Clean up expired entries from the state cache.
 void _cleanupStateCache() {
   _stateCache.removeWhere((_, entry) => entry.isExpired);
@@ -34,7 +37,7 @@ extension AuthExtension on Storage {
     info = await loadOAuth2Info(domain);
     if (info == null) {
       info = await OAuth2Info.register(domain);
-      saveOAuth2Info(domain, info);
+      await saveOAuth2Info(domain, info);
     }
 
     return info;
@@ -58,10 +61,18 @@ extension AuthExtension on Storage {
     await setString(OAuth2Info.prefsOAuthInfoKey, jsonEncode(json), secure: true);
   }
 
-  // Save the state-server mapping to the cache with TTL.
-  void saveStateServer(String state, String server) {
+  // Save the state-server mapping to in-memory cache and persistent storage.
+  Future<void> saveStateServer(String state, String server) async {
     _cleanupStateCache();
     _stateCache[state] = _StateCacheEntry(server);
+
+    // Persist for mobile app restart resilience — if the OS reclaims the app
+    // during OAuth, the state can be recovered from SharedPreferences.
+    await setString(_keyPendingAuth, jsonEncode({
+      'state': state,
+      'server': server,
+      'expiresAt': DateTime.now().add(const Duration(minutes: 10)).toIso8601String(),
+    }));
   }
 
   // Gain the access token from the redirect URI and state.
@@ -71,11 +82,28 @@ extension AuthExtension on Storage {
 
     final Storage storage = Storage();
     _cleanupStateCache();
-    final _StateCacheEntry? entry = state != null ? _stateCache[state] : null;
+    _StateCacheEntry? entry = state != null ? _stateCache[state] : null;
+
+    // Fall back to persisted state if in-memory cache was lost (e.g., app
+    // restarted by OS during OAuth flow on mobile).
+    if (entry == null && state != null) {
+      final String? body = await getString(_keyPendingAuth);
+      if (body != null) {
+        final Map<String, dynamic> persisted = jsonDecode(body) as Map<String, dynamic>;
+        if (persisted['state'] == state) {
+          final DateTime expiresAt = DateTime.parse(persisted['expiresAt'] as String);
+          if (DateTime.now().isBefore(expiresAt)) {
+            entry = _StateCacheEntry(persisted['server'] as String);
+          }
+        }
+      }
+    }
+
     final String? server = entry?.isExpired == false ? entry?.server : null;
 
-    // Remove the used state from cache
+    // Clean up used state from both caches.
     if (state != null) _stateCache.remove(state);
+    await remove(_keyPendingAuth);
 
     if (server == null || code == null || server != expectedServer) {
       logger.w("unexpected expected: server=$server, code=$code");
@@ -120,7 +148,7 @@ extension AccessTokenExtension on OAuth2Info {
     final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
     final String? accessToken = json['access_token'] as String?;
 
-    storage.saveAccessToken(domain, accessToken);
+    await storage.saveAccessToken(domain, accessToken);
     return accessToken;
   }
 }

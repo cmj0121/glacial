@@ -31,7 +31,7 @@ extension AuthExtensions on AccessStatusSchema {
     }
         ..removeWhere((key, value) => value == null);
 
-    storage.saveStateServer(state, domain);
+    await storage.saveStateServer(state, domain);
     return UriEx.handle(domain, "/oauth/authorize", query);
   }
 
@@ -61,7 +61,7 @@ extension AuthExtensions on AccessStatusSchema {
     final Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
     final String? accessToken = json['access_token'] as String?;
 
-    storage.saveAccessToken(domain, accessToken);
+    await storage.saveAccessToken(domain, accessToken);
     return accessToken;
   }
 
