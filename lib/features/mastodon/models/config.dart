@@ -37,16 +37,79 @@ class StatusConfigSchema {
   }
 }
 
+// Access levels for timeline feeds (Mastodon 4.5.0+).
+// ref: https://docs.joinmastodon.org/entities/Instance/#timelines_access
+enum TimelineAccessLevel {
+  public,        // Anyone can view.
+  authenticated, // Only signed-in users.
+  disabled;      // Not available at all.
+
+  factory TimelineAccessLevel.fromString(String? value) {
+    switch (value) {
+      case 'public':
+        return TimelineAccessLevel.public;
+      case 'authenticated':
+        return TimelineAccessLevel.authenticated;
+      default:
+        return TimelineAccessLevel.disabled;
+    }
+  }
+}
+
+// The live feeds access configuration from timelines_access.live_feeds.
+class LiveFeedsAccessSchema {
+  final TimelineAccessLevel local;
+  final TimelineAccessLevel federated;
+  final TimelineAccessLevel bubble;
+
+  const LiveFeedsAccessSchema({
+    this.local = TimelineAccessLevel.public,
+    this.federated = TimelineAccessLevel.public,
+    this.bubble = TimelineAccessLevel.public,
+  });
+
+  factory LiveFeedsAccessSchema.fromJson(Map<String, dynamic> json) {
+    return LiveFeedsAccessSchema(
+      local: TimelineAccessLevel.fromString(json['local'] as String?),
+      federated: TimelineAccessLevel.fromString(json['remote'] as String?),
+      bubble: TimelineAccessLevel.fromString(json['bubble'] as String?),
+    );
+  }
+}
+
+// The timelines access configuration from configuration.timelines_access.
+class TimelinesAccessSchema {
+  final TimelineAccessLevel home;
+  final LiveFeedsAccessSchema liveFeeds;
+
+  const TimelinesAccessSchema({
+    this.home = TimelineAccessLevel.authenticated,
+    this.liveFeeds = const LiveFeedsAccessSchema(),
+  });
+
+  factory TimelinesAccessSchema.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return const TimelinesAccessSchema();
+    return TimelinesAccessSchema(
+      home: TimelineAccessLevel.fromString(json['home'] as String?),
+      liveFeeds: LiveFeedsAccessSchema.fromJson(
+        json['live_feeds'] as Map<String, dynamic>? ?? {},
+      ),
+    );
+  }
+}
+
 // The server configuration
 class ServerConfigSchema {
   final StatusConfigSchema statuses;
   final PollConfigSchema polls;
   final bool translationEnabled;
+  final TimelinesAccessSchema timelinesAccess;
 
   const ServerConfigSchema({
     required this.statuses,
     required this.polls,
     required this.translationEnabled,
+    this.timelinesAccess = const TimelinesAccessSchema(),
   });
 
   factory ServerConfigSchema.fromJson(Map<String, dynamic> json) {
@@ -54,6 +117,9 @@ class ServerConfigSchema {
       statuses: StatusConfigSchema.fromJson(json['statuses'] as Map<String, dynamic>),
       polls: PollConfigSchema.fromJson(json['polls'] as Map<String, dynamic>),
       translationEnabled: (json['translation'] as Map<String, dynamic>?)?['enabled'] as bool? ?? false,
+      timelinesAccess: TimelinesAccessSchema.fromJson(
+        json['timelines_access'] as Map<String, dynamic>?,
+      ),
     );
   }
 }

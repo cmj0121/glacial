@@ -107,6 +107,93 @@ void main() {
     });
   });
 
+  group('TimelineAccessLevel', () {
+    test('fromString parses public', () {
+      expect(TimelineAccessLevel.fromString('public'), TimelineAccessLevel.public);
+    });
+
+    test('fromString parses authenticated', () {
+      expect(TimelineAccessLevel.fromString('authenticated'), TimelineAccessLevel.authenticated);
+    });
+
+    test('fromString parses disabled', () {
+      expect(TimelineAccessLevel.fromString('disabled'), TimelineAccessLevel.disabled);
+    });
+
+    test('fromString defaults unknown to disabled', () {
+      expect(TimelineAccessLevel.fromString('unknown'), TimelineAccessLevel.disabled);
+    });
+
+    test('fromString defaults null to disabled', () {
+      expect(TimelineAccessLevel.fromString(null), TimelineAccessLevel.disabled);
+    });
+  });
+
+  group('LiveFeedsAccessSchema', () {
+    test('fromJson parses all fields', () {
+      final json = {
+        'local': 'public',
+        'remote': 'disabled',
+        'bubble': 'authenticated',
+      };
+      final feeds = LiveFeedsAccessSchema.fromJson(json);
+
+      expect(feeds.local, TimelineAccessLevel.public);
+      expect(feeds.federated, TimelineAccessLevel.disabled);
+      expect(feeds.bubble, TimelineAccessLevel.authenticated);
+    });
+
+    test('fromJson defaults to disabled when empty', () {
+      final feeds = LiveFeedsAccessSchema.fromJson({});
+
+      expect(feeds.local, TimelineAccessLevel.disabled);
+      expect(feeds.federated, TimelineAccessLevel.disabled);
+      expect(feeds.bubble, TimelineAccessLevel.disabled);
+    });
+
+    test('default constructor uses public', () {
+      const feeds = LiveFeedsAccessSchema();
+
+      expect(feeds.local, TimelineAccessLevel.public);
+      expect(feeds.federated, TimelineAccessLevel.public);
+      expect(feeds.bubble, TimelineAccessLevel.public);
+    });
+  });
+
+  group('TimelinesAccessSchema', () {
+    test('fromJson with null returns defaults', () {
+      final access = TimelinesAccessSchema.fromJson(null);
+
+      expect(access.home, TimelineAccessLevel.authenticated);
+      expect(access.liveFeeds.local, TimelineAccessLevel.public);
+      expect(access.liveFeeds.federated, TimelineAccessLevel.public);
+    });
+
+    test('fromJson parses populated data', () {
+      final access = TimelinesAccessSchema.fromJson({
+        'home': 'authenticated',
+        'live_feeds': {
+          'local': 'disabled',
+          'remote': 'disabled',
+        },
+      });
+
+      expect(access.home, TimelineAccessLevel.authenticated);
+      expect(access.liveFeeds.local, TimelineAccessLevel.disabled);
+      expect(access.liveFeeds.federated, TimelineAccessLevel.disabled);
+    });
+
+    test('fromJson with missing live_feeds defaults', () {
+      final access = TimelinesAccessSchema.fromJson({
+        'home': 'public',
+      });
+
+      expect(access.home, TimelineAccessLevel.public);
+      expect(access.liveFeeds.local, TimelineAccessLevel.disabled);
+      expect(access.liveFeeds.federated, TimelineAccessLevel.disabled);
+    });
+  });
+
   group('ServerConfigSchema', () {
     test('fromJson parses nested statuses/polls/translation', () {
       final json = {
@@ -147,6 +234,54 @@ void main() {
       final config = ServerConfigSchema.fromJson(json);
 
       expect(config.translationEnabled, false);
+    });
+
+    test('fromJson defaults timelinesAccess when absent', () {
+      final json = {
+        'statuses': {
+          'characters_reserved_per_url': 0,
+          'max_characters': 0,
+          'max_media_attachments': 0,
+        },
+        'polls': {
+          'max_options': 0,
+          'max_characters_per_option': 0,
+          'min_expiration': 0,
+          'max_expiration': 0,
+        },
+      };
+      final config = ServerConfigSchema.fromJson(json);
+
+      expect(config.timelinesAccess.home, TimelineAccessLevel.authenticated);
+      expect(config.timelinesAccess.liveFeeds.local, TimelineAccessLevel.public);
+      expect(config.timelinesAccess.liveFeeds.federated, TimelineAccessLevel.public);
+    });
+
+    test('fromJson parses timelines_access when present', () {
+      final json = {
+        'statuses': {
+          'characters_reserved_per_url': 0,
+          'max_characters': 0,
+          'max_media_attachments': 0,
+        },
+        'polls': {
+          'max_options': 0,
+          'max_characters_per_option': 0,
+          'min_expiration': 0,
+          'max_expiration': 0,
+        },
+        'timelines_access': {
+          'home': 'authenticated',
+          'live_feeds': {
+            'local': 'disabled',
+            'remote': 'disabled',
+          },
+        },
+      };
+      final config = ServerConfigSchema.fromJson(json);
+
+      expect(config.timelinesAccess.liveFeeds.local, TimelineAccessLevel.disabled);
+      expect(config.timelinesAccess.liveFeeds.federated, TimelineAccessLevel.disabled);
     });
   });
 
