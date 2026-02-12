@@ -87,6 +87,33 @@ void main() {
     });
   });
 
+  group('activeKeyMatchesDomain (domain-match guard)', () {
+    test('activeKey from different domain is ignored', () {
+      expect(activeKeyMatchesDomain('old.server@123', 'new.server'), isFalse);
+    });
+
+    test('composite activeKey matching current domain is used', () {
+      expect(activeKeyMatchesDomain('mastodon.social@123', 'mastodon.social'), isTrue);
+    });
+
+    test('plain domain activeKey is used when matching', () {
+      expect(activeKeyMatchesDomain('mastodon.social', 'mastodon.social'), isTrue);
+    });
+
+    test('returns true when activeKey is null (no guard needed)', () {
+      expect(activeKeyMatchesDomain(null, 'mastodon.social'), isTrue);
+    });
+
+    test('returns true when domain is null (no guard needed)', () {
+      expect(activeKeyMatchesDomain('old.server@123', null), isTrue);
+    });
+
+    test('similar domain prefix does not false-match', () {
+      // 'mastodon.social.evil@456' should NOT match domain 'mastodon.social'
+      expect(activeKeyMatchesDomain('mastodon.social.evil@456', 'mastodon.social'), isFalse);
+    });
+  });
+
   group('401 cleanup flow contract', () {
     test('anonymous status after cleanup has correct routing hints', () {
       // After 401 cleanup, status should be anonymous with server config available

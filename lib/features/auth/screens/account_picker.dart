@@ -2,6 +2,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -122,6 +124,26 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
     );
   }
 
+  Future<void> onAddAccount() async {
+    final AccessStatusSchema? status = widget.status;
+    final String? domain = status?.domain;
+
+    if (status == null || domain == null || domain.isEmpty) {
+      return;
+    }
+
+    Navigator.of(context).pop();
+
+    // Clear webview cookies so the Mastodon server shows a fresh login
+    // form instead of auto-signing-in with the previous account's session.
+    await WebViewCookieManager().clearCookies();
+
+    final Uri uri = await status.authorize(domain: domain, state: const Uuid().v4());
+    if (mounted) {
+      context.push(RoutePath.webview.path, extra: uri);
+    }
+  }
+
   Future<void> onSwitchAccount(SavedAccountSchema saved) async {
     final Storage storage = Storage();
     await storage.switchToAccount(saved, ref: ref);
@@ -150,17 +172,6 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
     }
   }
 
-  Future<void> onAddAccount() async {
-    Navigator.of(context).pop();
-    // Navigate to the sign-in flow (explorer → select server → sign in).
-    final Storage storage = Storage();
-    final AccessStatusSchema status = (widget.status ?? AccessStatusSchema()).copyWith(domain: '');
-    await storage.saveAccessStatus(status, ref: ref);
-
-    if (mounted) {
-      context.push(RoutePath.explorer.path);
-    }
-  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
