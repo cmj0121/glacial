@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -32,6 +33,14 @@ const String _keySavedAccounts = "saved_accounts";
 // The key for tracking the active account composite key.
 const String _keyActiveAccountKey = "active_account_key";
 
+/// Returns `true` when [activeKey] belongs to [domain].
+/// Prevents verifying tokens against the wrong server on domain switch.
+@visibleForTesting
+bool activeKeyMatchesDomain(String? activeKey, String? domain) {
+  if (activeKey == null || domain == null) return true;
+  return activeKey.startsWith('$domain@') || activeKey == domain;
+}
+
 extension AccessStatusExtension on Storage {
   // Load the access status from the storage.
   Future<AccessStatusSchema?> loadAccessStatus({WidgetRef? ref}) async {
@@ -45,6 +54,12 @@ extension AccessStatusExtension on Storage {
 
     // Load the active account key, falling back to finding a key for the domain.
     String? activeKey = await getString(_keyActiveAccountKey);
+    // Skip activeKey if it belongs to a different domain — prevents
+    // verifying an old token against the wrong server (which would 401
+    // and destroy the old credentials).
+    if (!activeKeyMatchesDomain(activeKey, domain)) {
+      activeKey = null;
+    }
     if (activeKey == null && domain != null) {
       activeKey = await _findActiveKeyForDomain(domain);
     }
