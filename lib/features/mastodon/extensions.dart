@@ -26,6 +26,12 @@ export 'api/tags.dart';
 export 'api/timeline.dart';
 export 'api/trends.dart';
 
+// The key for storing saved accounts list.
+const String _keySavedAccounts = "saved_accounts";
+
+// The key for tracking the active account composite key.
+const String _keyActiveAccountKey = "active_account_key";
+
 extension AccessStatusExtension on Storage {
   // Load the access status from the storage.
   Future<AccessStatusSchema?> loadAccessStatus({WidgetRef? ref}) async {
@@ -33,8 +39,40 @@ extension AccessStatusExtension on Storage {
     AccessStatusSchema status = (json == null ? null : AccessStatusSchema.fromString(json)) ?? AccessStatusSchema();
 
     final String? domain = status.domain?.isNotEmpty == true ? status.domain : null;
-    final String? accessToken = await loadAccessToken(domain);
+
+    // Migrate old domain-only token keys to composite keys if needed.
+    await _migrateTokenKeys(domain);
+
+    // Load the active account key, falling back to finding a key for the domain.
+    String? activeKey = await getString(_keyActiveAccountKey);
+    if (activeKey == null && domain != null) {
+      activeKey = await _findActiveKeyForDomain(domain);
+    }
+
+    final String? accessToken = await loadAccessToken(activeKey);
     final AccountSchema? account = await status.getAccountByAccessToken(accessToken);
+
+    // After fetching account, ensure composite key is saved.
+    if (account != null && domain != null && accessToken != null) {
+      final String compositeKey = '$domain@${account.id}';
+      if (activeKey != compositeKey) {
+        await saveAccessToken(compositeKey, accessToken);
+        if (activeKey != null && activeKey != compositeKey) {
+          await removeAccessToken(activeKey);
+        }
+        activeKey = compositeKey;
+      }
+      await setString(_keyActiveAccountKey, compositeKey);
+      await addSavedAccount(SavedAccountSchema(
+        domain: domain,
+        accountId: account.id,
+        username: account.acct,
+        displayName: account.displayName,
+        avatar: account.avatar,
+        lastUsed: DateTime.now(),
+      ));
+    }
+
     final ServerSchema? server = await ServerSchema.fetch(domain);
     final List<EmojiSchema> emojis = await status.fetchCustomEmojis();
 
@@ -47,6 +85,40 @@ extension AccessStatusExtension on Storage {
     return status;
   }
 
+  // Migrate old domain-only token keys to composite format.
+  Future<void> _migrateTokenKeys(String? domain) async {
+    if (domain == null) return;
+
+    final String? body = await getString(AccessStatusSchema.keyAccessToken, secure: true);
+    final Map<String, dynamic> json = jsonDecode(body ?? '{}');
+
+    // Check if domain key exists without '@' (old format).
+    if (json.containsKey(domain) && !domain.contains('@')) {
+      final String? token = json[domain] as String?;
+      if (token != null) {
+        logger.i("migrating token key from domain-only: $domain");
+        // Keep old key for now — it will be replaced in loadAccessStatus
+        // after account is fetched and compositeKey is known.
+      }
+    }
+  }
+
+  // Find an active key for the given domain from the token map.
+  Future<String?> _findActiveKeyForDomain(String domain) async {
+    final String? body = await getString(AccessStatusSchema.keyAccessToken, secure: true);
+    final Map<String, dynamic> json = jsonDecode(body ?? '{}');
+
+    // First try composite keys for this domain.
+    for (final key in json.keys) {
+      if (key.startsWith('$domain@')) return key;
+    }
+
+    // Fall back to plain domain key (pre-migration).
+    if (json.containsKey(domain)) return domain;
+
+    return null;
+  }
+
   // Save the access status to the storage.
   Future<void> saveAccessStatus(AccessStatusSchema schema, {WidgetRef? ref}) async {
     final String json = jsonEncode(schema.toJson());
@@ -57,63 +129,158 @@ extension AccessStatusExtension on Storage {
     }
   }
 
-  // Save the access token per domain to the storage.
-  Future<void> saveAccessToken(String domain, String? accessToken) async {
+  // Save the access token using the given key (composite key or domain).
+  Future<void> saveAccessToken(String key, String? accessToken) async {
     final String? body = await getString(AccessStatusSchema.keyAccessToken, secure: true);
     final Map<String, dynamic> json = jsonDecode(body ?? '{}');
 
     if (accessToken == null || accessToken.isEmpty) {
-      // If the access token is null or empty, remove it from the storage.
-      json.remove(domain);
-      logger.i("remove access token for domain: $domain");
+      json.remove(key);
+      logger.i("remove access token for key: $key");
     } else {
-      // add or update the access token for the domain.
-      json[domain] = accessToken;
-      logger.i("save access token for domain: $domain");
+      json[key] = accessToken;
+      logger.i("save access token for key: $key");
     }
 
     setString(AccessStatusSchema.keyAccessToken, jsonEncode(json), secure: true);
   }
 
-  // Load the access token per domain from the storage.
-  Future<String?> loadAccessToken(String? domain) async {
-    if (domain == null || domain.isEmpty) {
+  // Load the access token for the given key from the storage.
+  Future<String?> loadAccessToken(String? key) async {
+    if (key == null || key.isEmpty) {
       return null;
     }
 
     final String? body = await getString(AccessStatusSchema.keyAccessToken, secure: true);
     final Map<String, dynamic> json = jsonDecode(body ?? '{}');
 
-    return json[domain] as String?;
+    return json[key] as String?;
   }
 
-  // Remove the access token for the given domain from the storage.
-  Future<void> removeAccessToken(String? domain) async {
-    if (domain == null || domain.isEmpty) {
+  // Remove the access token for the given key from the storage.
+  Future<void> removeAccessToken(String? key) async {
+    if (key == null || key.isEmpty) {
       return;
     }
 
     final String? body = await getString(AccessStatusSchema.keyAccessToken, secure: true);
     final Map<String, dynamic> json = jsonDecode(body ?? '{}');
 
-    json.remove(domain);
+    json.remove(key);
     await setString(AccessStatusSchema.keyAccessToken, jsonEncode(json), secure: true);
   }
 
+  // Load all saved accounts from storage.
+  Future<List<SavedAccountSchema>> loadSavedAccounts() async {
+    final String? body = await getString(_keySavedAccounts);
+    if (body == null || body.isEmpty) return [];
+
+    final List<dynamic> list = jsonDecode(body) as List<dynamic>;
+    return list
+        .map((e) => SavedAccountSchema.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  // Add or update a saved account in the list (matched by compositeKey).
+  Future<void> addSavedAccount(SavedAccountSchema account) async {
+    final List<SavedAccountSchema> accounts = await loadSavedAccounts();
+    final int index = accounts.indexWhere((a) => a.compositeKey == account.compositeKey);
+
+    if (index >= 0) {
+      accounts[index] = account;
+    } else {
+      accounts.add(account);
+    }
+
+    await _saveSavedAccounts(accounts);
+  }
+
+  // Remove a saved account by composite key and its associated token.
+  Future<void> removeSavedAccount(String compositeKey) async {
+    final List<SavedAccountSchema> accounts = await loadSavedAccounts();
+    accounts.removeWhere((a) => a.compositeKey == compositeKey);
+    await _saveSavedAccounts(accounts);
+    await removeAccessToken(compositeKey);
+  }
+
+  // Persist the saved accounts list to storage.
+  Future<void> _saveSavedAccounts(List<SavedAccountSchema> accounts) async {
+    final String json = jsonEncode(accounts.map((a) => a.toJson()).toList());
+    await setString(_keySavedAccounts, json);
+  }
+
+  // Switch to a previously saved account.
+  Future<void> switchToAccount(SavedAccountSchema saved, {WidgetRef? ref}) async {
+    final String? accessToken = await loadAccessToken(saved.compositeKey);
+    if (accessToken == null) {
+      logger.w("no token found for account: ${saved.compositeKey}");
+      return;
+    }
+
+    // Build a temporary AccessStatusSchema to fetch account data.
+    AccessStatusSchema status = AccessStatusSchema(domain: saved.domain);
+    final AccountSchema? account = await status.getAccountByAccessToken(accessToken);
+    final ServerSchema? server = await ServerSchema.fetch(saved.domain);
+    final List<EmojiSchema> emojis = await status.fetchCustomEmojis();
+
+    // Preserve history from current status.
+    final String? currentJson = await getString(AccessStatusSchema.key);
+    final AccessStatusSchema? current = currentJson != null ? AccessStatusSchema.fromString(currentJson) : null;
+
+    status = status.copyWith(
+      accessToken: accessToken,
+      account: account,
+      server: server,
+      emojis: emojis,
+      history: current?.history ?? [],
+    );
+
+    await saveAccessStatus(status, ref: ref);
+    await setString(_keyActiveAccountKey, saved.compositeKey);
+
+    // Update lastUsed timestamp.
+    await addSavedAccount(saved.copyWith(lastUsed: DateTime.now()));
+  }
 
   // Logout the current Mastodon server.
   Future<void> logout(AccessStatusSchema? schema, {WidgetRef? ref}) async {
+    await schema?.revokeAccessToken(domain: schema.domain, token: schema.accessToken);
+
+    // Remove token by composite key if available.
+    final String? activeKey = await getString(_keyActiveAccountKey);
+    await removeAccessToken(activeKey ?? schema?.domain);
+
+    // Remove the saved account entry.
+    if (activeKey != null) {
+      await removeSavedAccount(activeKey);
+    }
+
+    // Check if another account exists on the same domain to switch to.
+    final List<SavedAccountSchema> accounts = await loadSavedAccounts();
+    final SavedAccountSchema? nextAccount = schema?.domain != null
+        ? accounts
+            .where((a) => a.domain == schema!.domain)
+            .fold<SavedAccountSchema?>(null, (prev, a) =>
+                prev == null || a.lastUsed.isAfter(prev.lastUsed) ? a : prev)
+        : null;
+
+    if (nextAccount != null) {
+      // Switch to the most recently used account on the same domain.
+      final String? nextToken = await loadAccessToken(nextAccount.compositeKey);
+      if (nextToken != null) {
+        await switchToAccount(nextAccount, ref: ref);
+        return;
+      }
+    }
+
+    // No other accounts — reset to explorer.
     final AccessStatusSchema status = AccessStatusSchema().copyWith(
       domain: schema?.domain,
       history: schema?.history ?? [],
     );
 
-    await status.revokeAccessToken(domain: schema?.domain, token: schema?.accessToken);
-    await removeAccessToken(schema?.domain);
-
-    if (ref?.context.mounted ?? false) {
-      ref?.read(accessStatusProvider.notifier).state = status;
-    }
+    await remove(_keyActiveAccountKey);
+    await saveAccessStatus(status, ref: ref);
   }
 }
 

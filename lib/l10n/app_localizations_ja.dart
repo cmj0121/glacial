@@ -986,4 +986,21 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get dots => '...';
+
+  @override
+  String get btn_drawer_switch_account => 'アカウント切替';
+
+  @override
+  String get btn_account_picker_add => 'アカウント追加';
+
+  @override
+  String get txt_account_picker_title => 'アカウント';
+
+  @override
+  String msg_account_switched(String username) {
+    return '$usernameに切り替えました';
+  }
+
+  @override
+  String get msg_account_removed => 'アカウントを削除しました';
 }

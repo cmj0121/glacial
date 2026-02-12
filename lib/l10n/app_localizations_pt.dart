@@ -1035,4 +1035,21 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get dots => '...';
+
+  @override
+  String get btn_drawer_switch_account => 'Trocar conta';
+
+  @override
+  String get btn_account_picker_add => 'Adicionar conta';
+
+  @override
+  String get txt_account_picker_title => 'Contas';
+
+  @override
+  String msg_account_switched(String username) {
+    return 'Alterado para $username';
+  }
+
+  @override
+  String get msg_account_removed => 'Conta removida';
 }

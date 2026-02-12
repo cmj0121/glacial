@@ -1,4 +1,6 @@
 // The OAuth2 info registered in the Mastodon server
+export 'saved_account.dart';
+
 import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';

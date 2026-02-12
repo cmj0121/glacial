@@ -74,11 +74,12 @@ void main() {
   });
 
   group('DrawerButtonType', () {
-    test('has 5 values', () {
-      expect(DrawerButtonType.values.length, 5);
+    test('has 6 values', () {
+      expect(DrawerButtonType.values.length, 6);
     });
 
     test('returns correct icons', () {
+      expect(DrawerButtonType.switchAccount.icon(), Icons.people);
       expect(DrawerButtonType.switchServer.icon(), Icons.swap_horiz);
       expect(DrawerButtonType.directory.icon(), Icons.groups);
       expect(DrawerButtonType.announcement.icon(), Icons.campaign);
@@ -87,6 +88,7 @@ void main() {
     });
 
     test('maps to correct routes', () {
+      expect(DrawerButtonType.switchAccount.route, RoutePath.timeline);
       expect(DrawerButtonType.switchServer.route, RoutePath.explorer);
       expect(DrawerButtonType.directory.route, RoutePath.directory);
       expect(DrawerButtonType.announcement.route, RoutePath.timeline);

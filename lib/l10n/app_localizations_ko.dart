@@ -987,4 +987,21 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get dots => '...';
+
+  @override
+  String get btn_drawer_switch_account => '계정 전환';
+
+  @override
+  String get btn_account_picker_add => '계정 추가';
+
+  @override
+  String get txt_account_picker_title => '계정';
+
+  @override
+  String msg_account_switched(String username) {
+    return '$username(으)로 전환됨';
+  }
+
+  @override
+  String get msg_account_removed => '계정이 삭제됨';
 }

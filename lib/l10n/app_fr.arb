@@ -318,5 +318,10 @@
   "txt_work_in_progress": "En cours",
   "txt_default_server_name": "Serveur Glacial",
   "txt_hashtag_usage": "{uses} utilisé ces derniers jours",
-  "dots": "..."
+  "dots": "...",
+  "btn_drawer_switch_account": "Changer de compte",
+  "btn_account_picker_add": "Ajouter un compte",
+  "txt_account_picker_title": "Comptes",
+  "msg_account_switched": "Basculé vers {username}",
+  "msg_account_removed": "Compte supprimé"
 }

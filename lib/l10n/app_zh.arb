@@ -318,5 +318,10 @@
   "txt_work_in_progress": "進行中",
   "txt_default_server_name": "Glacial 伺服器",
   "txt_hashtag_usage": "過去幾天使用了{uses}次",
-  "dots": "..."
+  "dots": "...",
+  "btn_drawer_switch_account": "切換帳號",
+  "btn_account_picker_add": "新增帳號",
+  "txt_account_picker_title": "帳號",
+  "msg_account_switched": "已切換至 {username}",
+  "msg_account_removed": "帳號已移除"
 }

@@ -986,4 +986,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get dots => '...';
+
+  @override
+  String get btn_drawer_switch_account => '切換帳號';
+
+  @override
+  String get btn_account_picker_add => '新增帳號';
+
+  @override
+  String get txt_account_picker_title => '帳號';
+
+  @override
+  String msg_account_switched(String username) {
+    return '已切換至 $username';
+  }
+
+  @override
+  String get msg_account_removed => '帳號已移除';
 }

@@ -85,6 +85,7 @@ enum SidebarButtonType {
 
 // The possible actions in the drawer and used to interact with the current server.
 enum DrawerButtonType {
+  switchAccount,
   switchServer,
   directory,
   announcement,
@@ -94,6 +95,8 @@ enum DrawerButtonType {
   // The icon associated with the drawer button type, returns the active or not
   IconData icon() {
     switch (this) {
+      case switchAccount:
+        return Icons.people;
       case switchServer:
         return Icons.swap_horiz;
       case directory:
@@ -110,6 +113,8 @@ enum DrawerButtonType {
   // The tooltip text for the drawer button type, localized if possible.
   String tooltip(BuildContext context) {
     switch (this) {
+      case switchAccount:
+        return AppLocalizations.of(context)?.btn_drawer_switch_account ?? "Switch Account";
       case switchServer:
         return AppLocalizations.of(context)?.btn_drawer_switch_server ?? "Switch Server";
       case directory:
@@ -125,6 +130,8 @@ enum DrawerButtonType {
 
   RoutePath get route {
     switch (this) {
+      case switchAccount:
+        return RoutePath.timeline; // Opens a bottom sheet, not a route.
       case switchServer:
         return RoutePath.explorer;
       case directory:

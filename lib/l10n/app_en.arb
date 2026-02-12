@@ -359,5 +359,17 @@
       }
     }
   },
-  "dots": "..."
+  "dots": "...",
+  "btn_drawer_switch_account": "Switch Account",
+  "btn_account_picker_add": "Add Account",
+  "txt_account_picker_title": "Accounts",
+  "msg_account_switched": "Switched to {username}",
+  "@msg_account_switched": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "msg_account_removed": "Account removed"
 }

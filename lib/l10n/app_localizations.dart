@@ -2023,6 +2023,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'...'**
   String get dots;
+
+  /// No description provided for @btn_drawer_switch_account.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch Account'**
+  String get btn_drawer_switch_account;
+
+  /// No description provided for @btn_account_picker_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account'**
+  String get btn_account_picker_add;
+
+  /// No description provided for @txt_account_picker_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts'**
+  String get txt_account_picker_title;
+
+  /// No description provided for @msg_account_switched.
+  ///
+  /// In en, this message translates to:
+  /// **'Switched to {username}'**
+  String msg_account_switched(String username);
+
+  /// No description provided for @msg_account_removed.
+  ///
+  /// In en, this message translates to:
+  /// **'Account removed'**
+  String get msg_account_removed;
 }
 
 class _AppLocalizationsDelegate
