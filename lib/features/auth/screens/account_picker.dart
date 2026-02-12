@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -132,6 +133,11 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
     }
 
     Navigator.of(context).pop();
+
+    // Clear webview cookies so the Mastodon server shows a fresh login
+    // form instead of auto-signing-in with the previous account's session.
+    await WebViewCookieManager().clearCookies();
+
     final Uri uri = await status.authorize(domain: domain, state: const Uuid().v4());
     if (mounted) {
       context.push(RoutePath.webview.path, extra: uri);
