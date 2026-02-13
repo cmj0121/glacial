@@ -1,5 +1,7 @@
 // The timeline widget that contains the status from the current selected Mastodon server.
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
@@ -46,6 +48,8 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
   StreamSubscription<StreamingEvent>? _streamSubscription;
   VoidCallback? _streamingUnsubscribe;
 
+  bool _isOffline = false;
+
   List<StatusSchema> unreaded = [];
   List<StatusSchema> statuses = [];
 
@@ -67,6 +71,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
         });
       }
 
+      _loadCachedTimeline();
       onLoad();
       _initStreaming();
     });
@@ -89,6 +94,27 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     );
 
     _streamSubscription = service.events.listen(_onStreamingEvent);
+  }
+
+  Future<void> _loadCachedTimeline() async {
+    final String? key = widget.status.compositeKey;
+    if (key == null) return;
+
+    final String? cached = await Storage().loadCachedTimeline(key, widget.type.name);
+    if (cached == null || !mounted) return;
+
+    // Only use cache if we haven't loaded network data yet.
+    if (statuses.isNotEmpty) return;
+
+    final List<dynamic> json = jsonDecode(cached) as List<dynamic>;
+    final List<StatusSchema> parsed = json
+        .map((e) => StatusSchema.fromJson(e))
+        .where((s) => s.filterAction != FilterAction.hide)
+        .toList();
+
+    if (parsed.isNotEmpty && mounted) {
+      setState(() => statuses = parsed);
+    }
   }
 
   void _onStreamingEvent(StreamingEvent event) {
@@ -170,6 +196,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
         mainAxisSize: MainAxisSize.min,
         children: [
           buildLoadingIndicator(),
+          OfflineBanner(isOffline: _isOffline),
           buildUnreadedBanner(),
           Flexible(child: buildContent()),
         ],
@@ -266,24 +293,43 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
     setLoading(true);
 
-    final (schemas, newMaxId) = await widget.status.fetchTimeline(
-      widget.type,
-      account: widget.type == TimelineType.schedule ? widget.status.account : widget.account,
-      tag: widget.hashtag,
-      listId: widget.listId,
-      maxId: maxId,
-    );
+    try {
+      final (schemas, newMaxId) = await widget.status.fetchTimeline(
+        widget.type,
+        account: widget.type == TimelineType.schedule ? widget.status.account : widget.account,
+        tag: widget.hashtag,
+        listId: widget.listId,
+        maxId: maxId,
+        compositeKey: widget.status.compositeKey,
+      );
 
-    // Check the new statuses is repeating the old ones to avoid infinite loading.
-    final existingIds = statuses.map((s) => s.id).toSet();
-    final bool isRepeat = schemas.isNotEmpty && schemas.every((s) => existingIds.contains(s.id));
+      // Check the new statuses is repeating the old ones to avoid infinite loading.
+      final existingIds = statuses.map((s) => s.id).toSet();
+      final bool isRepeat = schemas.isNotEmpty && schemas.every((s) => existingIds.contains(s.id));
 
-    if (mounted) {
-      setState(() {
-        statuses.addAll(isRepeat ? [] : schemas);
-        maxId = isRepeat ? null : (newMaxId ?? (schemas.isNotEmpty ? schemas.last.id : null));
-      });
-      markLoadComplete(isEmpty: isRepeat || schemas.isEmpty);
+      if (mounted) {
+        setState(() {
+          // On first-page refresh, replace cached data with fresh network data.
+          if (maxId == null && isRefresh) {
+            statuses = schemas;
+          } else {
+            statuses.addAll(isRepeat ? [] : schemas);
+          }
+          maxId = isRepeat ? null : (newMaxId ?? (schemas.isNotEmpty ? schemas.last.id : null));
+          if (_isOffline) _isOffline = false;
+        });
+        markLoadComplete(isEmpty: isRepeat || schemas.isEmpty);
+      }
+    } on SocketException {
+      if (mounted) {
+        setState(() => _isOffline = true);
+        markLoadComplete(isEmpty: statuses.isEmpty);
+      }
+    } on HttpTimeoutException {
+      if (mounted) {
+        setState(() => _isOffline = true);
+        markLoadComplete(isEmpty: statuses.isEmpty);
+      }
     }
   }
 

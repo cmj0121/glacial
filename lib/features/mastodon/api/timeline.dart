@@ -34,6 +34,7 @@ extension TimelineExtensions on AccessStatusSchema {
     AccountSchema? account,
     String? tag,
     String? listId,
+    String? compositeKey,
   }) async {
     final Map<String, String> query = {"max_id": maxId ?? "", "min_id": minId ?? ""};
     late final String endpoint;
@@ -96,6 +97,11 @@ extension TimelineExtensions on AccessStatusSchema {
       // filter-out the statuses that are hidden by filters.
       (s) => s.filterAction != FilterAction.hide,
     ).toList();
+
+    // Cache the raw JSON for offline use (first page only).
+    if (maxId == null && minId == null && compositeKey != null) {
+      Storage().cacheTimeline(compositeKey, type.name, body);
+    }
 
     // save the related info to the in-memory cache.
     for (final s in status) {
