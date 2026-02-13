@@ -1074,4 +1074,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get btn_undo => 'Annuler';
+
+  @override
+  String get txt_offline_banner => 'Vous êtes hors ligne';
+
+  @override
+  String get txt_cached_data => 'Affichage des données en cache';
+
+  @override
+  String get msg_network_restored => 'Connexion rétablie';
 }

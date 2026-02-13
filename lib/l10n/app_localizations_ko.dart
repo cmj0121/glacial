@@ -1025,4 +1025,13 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get btn_undo => '실행 취소';
+
+  @override
+  String get txt_offline_banner => '오프라인 상태입니다';
+
+  @override
+  String get txt_cached_data => '캐시된 데이터를 표시 중';
+
+  @override
+  String get msg_network_restored => '연결이 복원되었습니다';
 }

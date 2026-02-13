@@ -1070,4 +1070,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get btn_undo => 'Rückgängig';
+
+  @override
+  String get txt_offline_banner => 'Sie sind offline';
+
+  @override
+  String get txt_cached_data => 'Zwischengespeicherte Daten werden angezeigt';
+
+  @override
+  String get msg_network_restored => 'Verbindung wiederhergestellt';
 }

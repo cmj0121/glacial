@@ -1024,4 +1024,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get btn_undo => '復原';
+
+  @override
+  String get txt_offline_banner => '您已离线';
+
+  @override
+  String get txt_cached_data => '正在显示缓存数据';
+
+  @override
+  String get msg_network_restored => '连接已恢复';
 }

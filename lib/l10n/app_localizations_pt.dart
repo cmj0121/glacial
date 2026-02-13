@@ -1073,4 +1073,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get btn_undo => 'Desfazer';
+
+  @override
+  String get txt_offline_banner => 'Você está offline';
+
+  @override
+  String get txt_cached_data => 'Mostrando dados em cache';
+
+  @override
+  String get msg_network_restored => 'Conexão restaurada';
 }

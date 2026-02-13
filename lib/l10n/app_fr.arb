@@ -330,5 +330,8 @@
   "msg_draft_saved": "Brouillon enregistré",
   "msg_draft_deleted": "Brouillon supprimé",
   "txt_draft_reply": "Brouillon de réponse",
-  "btn_undo": "Annuler"
+  "btn_undo": "Annuler",
+  "txt_offline_banner": "Vous êtes hors ligne",
+  "txt_cached_data": "Affichage des données en cache",
+  "msg_network_restored": "Connexion rétablie"
 }

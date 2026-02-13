@@ -378,5 +378,8 @@
   "msg_draft_saved": "Draft saved",
   "msg_draft_deleted": "Draft deleted",
   "txt_draft_reply": "Reply draft",
-  "btn_undo": "Undo"
+  "btn_undo": "Undo",
+  "txt_offline_banner": "You are offline",
+  "txt_cached_data": "Showing cached data",
+  "msg_network_restored": "Connection restored"
 }

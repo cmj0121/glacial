@@ -1059,4 +1059,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btn_undo => 'Undo';
+
+  @override
+  String get txt_offline_banner => 'You are offline';
+
+  @override
+  String get txt_cached_data => 'Showing cached data';
+
+  @override
+  String get msg_network_restored => 'Connection restored';
 }

@@ -330,5 +330,8 @@
   "msg_draft_saved": "Rascunho salvo",
   "msg_draft_deleted": "Rascunho excluído",
   "txt_draft_reply": "Rascunho de resposta",
-  "btn_undo": "Desfazer"
+  "btn_undo": "Desfazer",
+  "txt_offline_banner": "Você está offline",
+  "txt_cached_data": "Mostrando dados em cache",
+  "msg_network_restored": "Conexão restaurada"
 }

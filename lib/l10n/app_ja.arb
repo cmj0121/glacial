@@ -330,5 +330,8 @@
   "msg_draft_saved": "下書きを保存しました",
   "msg_draft_deleted": "下書きを削除しました",
   "txt_draft_reply": "返信の下書き",
-  "btn_undo": "元に戻す"
+  "btn_undo": "元に戻す",
+  "txt_offline_banner": "オフラインです",
+  "txt_cached_data": "キャッシュされたデータを表示中",
+  "msg_network_restored": "接続が復元されました"
 }
