@@ -114,6 +114,36 @@ void main() {
     });
   });
 
+  group('compositeKey', () {
+    test('returns domain@accountId when both present', () {
+      final status = const AccessStatusSchema(domain: 'mastodon.social').copyWith(
+        account: AccountSchema.fromJson(_accountJson()..['id'] = '12345'),
+      );
+
+      expect(status.compositeKey, 'mastodon.social@12345');
+    });
+
+    test('returns null when domain is null', () {
+      final status = const AccessStatusSchema(domain: null).copyWith(
+        account: AccountSchema.fromJson(_accountJson()),
+      );
+
+      expect(status.compositeKey, isNull);
+    });
+
+    test('returns null when account is null', () {
+      const status = AccessStatusSchema(domain: 'mastodon.social');
+
+      expect(status.compositeKey, isNull);
+    });
+
+    test('returns null when both are null', () {
+      const status = AccessStatusSchema(domain: null);
+
+      expect(status.compositeKey, isNull);
+    });
+  });
+
   group('401 cleanup flow contract', () {
     test('anonymous status after cleanup has correct routing hints', () {
       // After 401 cleanup, status should be anonymous with server config available

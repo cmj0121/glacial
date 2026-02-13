@@ -1038,4 +1038,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get msg_account_removed => 'Account removed';
+
+  @override
+  String get btn_drawer_drafts => 'Drafts';
+
+  @override
+  String get txt_drafts_title => 'Drafts';
+
+  @override
+  String get txt_no_drafts => 'No drafts';
+
+  @override
+  String get msg_draft_saved => 'Draft saved';
+
+  @override
+  String get msg_draft_deleted => 'Draft deleted';
+
+  @override
+  String get txt_draft_reply => 'Reply draft';
+
+  @override
+  String get btn_undo => 'Undo';
 }

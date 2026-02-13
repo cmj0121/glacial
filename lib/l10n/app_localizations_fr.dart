@@ -1053,4 +1053,25 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get msg_account_removed => 'Compte supprimé';
+
+  @override
+  String get btn_drawer_drafts => 'Brouillons';
+
+  @override
+  String get txt_drafts_title => 'Brouillons';
+
+  @override
+  String get txt_no_drafts => 'Aucun brouillon';
+
+  @override
+  String get msg_draft_saved => 'Brouillon enregistré';
+
+  @override
+  String get msg_draft_deleted => 'Brouillon supprimé';
+
+  @override
+  String get txt_draft_reply => 'Brouillon de réponse';
+
+  @override
+  String get btn_undo => 'Annuler';
 }

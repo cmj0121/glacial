@@ -323,5 +323,12 @@
   "btn_account_picker_add": "Adicionar conta",
   "txt_account_picker_title": "Contas",
   "msg_account_switched": "Alterado para {username}",
-  "msg_account_removed": "Conta removida"
+  "msg_account_removed": "Conta removida",
+  "btn_drawer_drafts": "Rascunhos",
+  "txt_drafts_title": "Rascunhos",
+  "txt_no_drafts": "Sem rascunhos",
+  "msg_draft_saved": "Rascunho salvo",
+  "msg_draft_deleted": "Rascunho excluído",
+  "txt_draft_reply": "Rascunho de resposta",
+  "btn_undo": "Desfazer"
 }

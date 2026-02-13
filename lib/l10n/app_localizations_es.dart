@@ -1052,4 +1052,25 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get msg_account_removed => 'Cuenta eliminada';
+
+  @override
+  String get btn_drawer_drafts => 'Borradores';
+
+  @override
+  String get txt_drafts_title => 'Borradores';
+
+  @override
+  String get txt_no_drafts => 'Sin borradores';
+
+  @override
+  String get msg_draft_saved => 'Borrador guardado';
+
+  @override
+  String get msg_draft_deleted => 'Borrador eliminado';
+
+  @override
+  String get txt_draft_reply => 'Borrador de respuesta';
+
+  @override
+  String get btn_undo => 'Deshacer';
 }

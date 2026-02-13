@@ -323,5 +323,12 @@
   "btn_account_picker_add": "Añadir cuenta",
   "txt_account_picker_title": "Cuentas",
   "msg_account_switched": "Cambiado a {username}",
-  "msg_account_removed": "Cuenta eliminada"
+  "msg_account_removed": "Cuenta eliminada",
+  "btn_drawer_drafts": "Borradores",
+  "txt_drafts_title": "Borradores",
+  "txt_no_drafts": "Sin borradores",
+  "msg_draft_saved": "Borrador guardado",
+  "msg_draft_deleted": "Borrador eliminado",
+  "txt_draft_reply": "Borrador de respuesta",
+  "btn_undo": "Deshacer"
 }

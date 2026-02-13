@@ -2,6 +2,7 @@
 
 export 'application.dart';
 export 'attachment.dart';
+export 'draft.dart';
 export 'emoji.dart';
 export 'interaction.dart';
 export 'poll.dart';

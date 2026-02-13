@@ -1049,4 +1049,25 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get msg_account_removed => 'Konto entfernt';
+
+  @override
+  String get btn_drawer_drafts => 'Entwürfe';
+
+  @override
+  String get txt_drafts_title => 'Entwürfe';
+
+  @override
+  String get txt_no_drafts => 'Keine Entwürfe';
+
+  @override
+  String get msg_draft_saved => 'Entwurf gespeichert';
+
+  @override
+  String get msg_draft_deleted => 'Entwurf gelöscht';
+
+  @override
+  String get txt_draft_reply => 'Antwortentwurf';
+
+  @override
+  String get btn_undo => 'Rückgängig';
 }

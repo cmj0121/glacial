@@ -1003,4 +1003,25 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get msg_account_removed => 'アカウントを削除しました';
+
+  @override
+  String get btn_drawer_drafts => '下書き';
+
+  @override
+  String get txt_drafts_title => '下書き';
+
+  @override
+  String get txt_no_drafts => '下書きはありません';
+
+  @override
+  String get msg_draft_saved => '下書きを保存しました';
+
+  @override
+  String get msg_draft_deleted => '下書きを削除しました';
+
+  @override
+  String get txt_draft_reply => '返信の下書き';
+
+  @override
+  String get btn_undo => '元に戻す';
 }

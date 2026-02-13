@@ -323,5 +323,12 @@
   "btn_account_picker_add": "계정 추가",
   "txt_account_picker_title": "계정",
   "msg_account_switched": "{username}(으)로 전환됨",
-  "msg_account_removed": "계정이 삭제됨"
+  "msg_account_removed": "계정이 삭제됨",
+  "btn_drawer_drafts": "임시 저장",
+  "txt_drafts_title": "임시 저장",
+  "txt_no_drafts": "임시 저장이 없습니다",
+  "msg_draft_saved": "임시 저장됨",
+  "msg_draft_deleted": "임시 저장 삭제됨",
+  "txt_draft_reply": "답글 임시 저장",
+  "btn_undo": "실행 취소"
 }

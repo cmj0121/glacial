@@ -2053,6 +2053,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account removed'**
   String get msg_account_removed;
+
+  /// No description provided for @btn_drawer_drafts.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafts'**
+  String get btn_drawer_drafts;
+
+  /// No description provided for @txt_drafts_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafts'**
+  String get txt_drafts_title;
+
+  /// No description provided for @txt_no_drafts.
+  ///
+  /// In en, this message translates to:
+  /// **'No drafts'**
+  String get txt_no_drafts;
+
+  /// No description provided for @msg_draft_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft saved'**
+  String get msg_draft_saved;
+
+  /// No description provided for @msg_draft_deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft deleted'**
+  String get msg_draft_deleted;
+
+  /// No description provided for @txt_draft_reply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply draft'**
+  String get txt_draft_reply;
+
+  /// No description provided for @btn_undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get btn_undo;
 }
 
 class _AppLocalizationsDelegate
