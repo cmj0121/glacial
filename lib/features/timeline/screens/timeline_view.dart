@@ -195,7 +195,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          buildLoadingIndicator(),
+          if (statuses.isNotEmpty) buildLoadingIndicator(),
           OfflineBanner(isOffline: _isOffline),
           buildUnreadedBanner(),
           Flexible(child: buildContent()),
@@ -230,6 +230,12 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
   // Build the list of the statuses and optionally header widget.
   Widget buildContent() {
     if (statuses.isEmpty) {
+      if (isLoading || !isCompleted) {
+        return const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: SkeletonTimeline(),
+        );
+      }
       return const SizedBox.shrink();
     }
 
