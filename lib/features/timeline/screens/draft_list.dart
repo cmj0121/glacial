@@ -147,22 +147,25 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
     final int index = drafts.indexOf(draft);
     setState(() => drafts.removeWhere((d) => d.id == draft.id));
 
+    // Defer actual storage deletion for 5 seconds to allow undo.
+    bool undone = false;
     final l10n = AppLocalizations.of(context);
     final String message = l10n?.msg_draft_deleted ?? 'Draft deleted';
 
-    // Defer the actual deletion until the undo window expires.
-    final reason = await ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
       duration: const Duration(seconds: 5),
       action: SnackBarAction(
         label: l10n?.btn_undo ?? 'Undo',
         onPressed: () {
+          undone = true;
           if (mounted) setState(() => drafts.insert(index.clamp(0, drafts.length), draft));
         },
       ),
-    )).closed;
+    ));
 
-    if (reason != SnackBarClosedReason.action) {
+    await Future<void>.delayed(const Duration(seconds: 5));
+    if (!undone) {
       await Storage().removeDraft(key, draft.id);
     }
   }
