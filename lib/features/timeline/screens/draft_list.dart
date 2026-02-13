@@ -150,19 +150,21 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
     final l10n = AppLocalizations.of(context);
     final String message = l10n?.msg_draft_deleted ?? 'Draft deleted';
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    // Defer the actual deletion until the undo window expires.
+    final reason = await ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
+      duration: const Duration(seconds: 5),
       action: SnackBarAction(
         label: l10n?.btn_undo ?? 'Undo',
-        onPressed: () async {
-          // Re-insert the draft back to the list and storage.
-          await Storage().saveDraft(key, draft);
+        onPressed: () {
           if (mounted) setState(() => drafts.insert(index.clamp(0, drafts.length), draft));
         },
       ),
-    ));
+    )).closed;
 
-    await Storage().removeDraft(key, draft.id);
+    if (reason != SnackBarClosedReason.action) {
+      await Storage().removeDraft(key, draft.id);
+    }
   }
 }
 
