@@ -71,6 +71,7 @@ dependencies:
   pub_semver: ^2.2.0
   exif: ^3.3.0
   web_socket_channel: ^3.0.1
+  flutter_blurhash: ^0.9.1
 
 dev_dependencies:
   sentry_dart_plugin: ^3.1.1
