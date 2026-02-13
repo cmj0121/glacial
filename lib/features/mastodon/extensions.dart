@@ -294,6 +294,11 @@ extension AccessStatusExtension on Storage {
     final String? activeKey = await getString(_keyActiveAccountKey);
     await removeAccessToken(activeKey ?? schema?.domain);
 
+    // Clear cached timeline data for the account.
+    if (activeKey != null) {
+      await clearTimelineCaches(activeKey);
+    }
+
     // Remove the saved account entry.
     if (activeKey != null) {
       await removeSavedAccount(activeKey);

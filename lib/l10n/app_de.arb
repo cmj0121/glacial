@@ -330,5 +330,8 @@
   "msg_draft_saved": "Entwurf gespeichert",
   "msg_draft_deleted": "Entwurf gelöscht",
   "txt_draft_reply": "Antwortentwurf",
-  "btn_undo": "Rückgängig"
+  "btn_undo": "Rückgängig",
+  "txt_offline_banner": "Sie sind offline",
+  "txt_cached_data": "Zwischengespeicherte Daten werden angezeigt",
+  "msg_network_restored": "Verbindung wiederhergestellt"
 }

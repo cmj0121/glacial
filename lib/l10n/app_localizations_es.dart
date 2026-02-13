@@ -1073,4 +1073,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get btn_undo => 'Deshacer';
+
+  @override
+  String get txt_offline_banner => 'Estás sin conexión';
+
+  @override
+  String get txt_cached_data => 'Mostrando datos en caché';
+
+  @override
+  String get msg_network_restored => 'Conexión restaurada';
 }

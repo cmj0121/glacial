@@ -1024,4 +1024,13 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get btn_undo => '元に戻す';
+
+  @override
+  String get txt_offline_banner => 'オフラインです';
+
+  @override
+  String get txt_cached_data => 'キャッシュされたデータを表示中';
+
+  @override
+  String get msg_network_restored => '接続が復元されました';
 }

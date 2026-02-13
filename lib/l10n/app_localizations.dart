@@ -2095,6 +2095,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Undo'**
   String get btn_undo;
+
+  /// No description provided for @txt_offline_banner.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline'**
+  String get txt_offline_banner;
+
+  /// No description provided for @txt_cached_data.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing cached data'**
+  String get txt_cached_data;
+
+  /// No description provided for @msg_network_restored.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection restored'**
+  String get msg_network_restored;
 }
 
 class _AppLocalizationsDelegate
