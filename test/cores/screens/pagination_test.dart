@@ -169,6 +169,19 @@ void main() {
       expect(find.byType(ClockProgressIndicator), findsNothing);
     });
 
+    testWidgets('buildLoadingIndicator uses AnimatedSwitcher', (tester) async {
+      await tester.pumpWidget(createTestWidget(child: const _TestPaginatedWidget()));
+      await tester.pump();
+
+      expect(
+        find.descendant(
+          of: find.byType(_TestPaginatedWidget),
+          matching: find.byType(AnimatedSwitcher),
+        ),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('shouldSkipLoad is true when isCompleted', (tester) async {
       await tester.pumpWidget(createTestWidget(
         child: _TestPaginatedWidget(

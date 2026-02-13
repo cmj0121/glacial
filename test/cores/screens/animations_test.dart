@@ -123,16 +123,15 @@ void main() {
       expect(find.byType(ClockProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('uses default size of 40', (tester) async {
+    testWidgets('uses default size of 32', (tester) async {
       await tester.pumpWidget(createTestWidget(
         child: const ClockProgressIndicator(),
       ));
       await tester.pump();
 
-      // Default size is 40, so SizedBox should be 80x80 (size * 2)
       final SizedBox sizedBox = tester.widget<SizedBox>(find.byType(SizedBox).first);
-      expect(sizedBox.width, 80);
-      expect(sizedBox.height, 80);
+      expect(sizedBox.width, 32);
+      expect(sizedBox.height, 32);
     });
 
     testWidgets('accepts custom size', (tester) async {
@@ -141,20 +140,18 @@ void main() {
       ));
       await tester.pump();
 
-      // Custom size is 60, so SizedBox should be 120x120 (size * 2)
       final SizedBox sizedBox = tester.widget<SizedBox>(find.byType(SizedBox).first);
-      expect(sizedBox.width, 120);
-      expect(sizedBox.height, 120);
+      expect(sizedBox.width, 60);
+      expect(sizedBox.height, 60);
     });
 
-    testWidgets('creates 12 clock bars', (tester) async {
+    testWidgets('uses CustomPaint for arc rendering', (tester) async {
       await tester.pumpWidget(createTestWidget(
         child: const ClockProgressIndicator(),
       ));
       await tester.pump();
 
-      // The clock indicator creates 12 Positioned widgets (one for each hour)
-      expect(find.byType(Positioned), findsNWidgets(12));
+      expect(find.byType(CustomPaint), findsWidgets);
     });
 
     testWidgets('uses AnimatedBuilder for animation', (tester) async {
@@ -193,13 +190,15 @@ void main() {
       expect(find.byType(ClockProgressIndicator), findsNothing);
     });
 
-    testWidgets('uses Stack for bar layout', (tester) async {
+    testWidgets('renders SizedBox matching size parameter', (tester) async {
       await tester.pumpWidget(createTestWidget(
-        child: const ClockProgressIndicator(),
+        child: const ClockProgressIndicator(size: 24),
       ));
       await tester.pump();
 
-      expect(find.byType(Stack), findsWidgets);
+      final SizedBox sizedBox = tester.widget<SizedBox>(find.byType(SizedBox).first);
+      expect(sizedBox.width, 24);
+      expect(sizedBox.height, 24);
     });
 
     testWidgets('wraps in Center widget', (tester) async {
@@ -209,6 +208,39 @@ void main() {
       await tester.pump();
 
       expect(find.byType(Center), findsWidgets);
+    });
+
+    testWidgets('convenience constructors have correct sizes', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: const ClockProgressIndicator.small(),
+      ));
+      await tester.pump();
+      var sizedBox = tester.widget<SizedBox>(find.byType(SizedBox).first);
+      expect(sizedBox.width, 20);
+      expect(sizedBox.height, 20);
+
+      await tester.pumpWidget(createTestWidget(
+        child: const ClockProgressIndicator.large(),
+      ));
+      await tester.pump();
+      sizedBox = tester.widget<SizedBox>(find.byType(SizedBox).first);
+      expect(sizedBox.width, 48);
+      expect(sizedBox.height, 48);
+    });
+
+    testWidgets('does not include internal padding', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: const ClockProgressIndicator(),
+      ));
+      await tester.pump();
+
+      expect(
+        find.descendant(
+          of: find.byType(ClockProgressIndicator),
+          matching: find.byType(Padding),
+        ),
+        findsNothing,
+      );
     });
   });
 }
