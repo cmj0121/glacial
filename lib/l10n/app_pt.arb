@@ -329,5 +329,6 @@
   "txt_no_drafts": "Sem rascunhos",
   "msg_draft_saved": "Rascunho salvo",
   "msg_draft_deleted": "Rascunho excluído",
-  "txt_draft_reply": "Rascunho de resposta"
+  "txt_draft_reply": "Rascunho de resposta",
+  "btn_undo": "Desfazer"
 }

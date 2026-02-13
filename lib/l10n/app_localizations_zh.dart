@@ -1021,4 +1021,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_draft_reply => '回覆草稿';
+
+  @override
+  String get btn_undo => '復原';
 }

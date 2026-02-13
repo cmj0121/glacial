@@ -329,5 +329,6 @@
   "txt_no_drafts": "Keine Entwürfe",
   "msg_draft_saved": "Entwurf gespeichert",
   "msg_draft_deleted": "Entwurf gelöscht",
-  "txt_draft_reply": "Antwortentwurf"
+  "txt_draft_reply": "Antwortentwurf",
+  "btn_undo": "Rückgängig"
 }

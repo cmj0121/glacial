@@ -1022,4 +1022,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_draft_reply => '답글 임시 저장';
+
+  @override
+  String get btn_undo => '실행 취소';
 }

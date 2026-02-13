@@ -1056,4 +1056,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_draft_reply => 'Reply draft';
+
+  @override
+  String get btn_undo => 'Undo';
 }

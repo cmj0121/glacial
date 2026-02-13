@@ -2089,6 +2089,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reply draft'**
   String get txt_draft_reply;
+
+  /// No description provided for @btn_undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get btn_undo;
 }
 
 class _AppLocalizationsDelegate

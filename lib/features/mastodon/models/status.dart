@@ -292,6 +292,14 @@ class AccessStatusSchema {
   }
 
   bool get isSignedIn =>  accessToken?.isNotEmpty == true;
+
+  // The composite key for the current account, scoped as domain@accountId.
+  String? get compositeKey {
+    final String? d = domain;
+    final String? id = account?.id;
+    if (d == null || id == null) return null;
+    return '$d@$id';
+  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

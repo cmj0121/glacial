@@ -1071,4 +1071,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_draft_reply => 'Brouillon de réponse';
+
+  @override
+  String get btn_undo => 'Annuler';
 }

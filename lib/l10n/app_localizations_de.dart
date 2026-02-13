@@ -1067,4 +1067,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_draft_reply => 'Antwortentwurf';
+
+  @override
+  String get btn_undo => 'Rückgängig';
 }

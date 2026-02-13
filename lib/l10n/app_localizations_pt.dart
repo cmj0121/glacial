@@ -1070,4 +1070,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_draft_reply => 'Rascunho de resposta';
+
+  @override
+  String get btn_undo => 'Desfazer';
 }

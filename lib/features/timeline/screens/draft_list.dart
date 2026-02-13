@@ -21,12 +21,7 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
   List<DraftSchema> drafts = [];
   bool isLoading = true;
 
-  String? get _compositeKey {
-    final String? domain = widget.status?.domain;
-    final String? accountId = widget.status?.account?.id;
-    if (domain == null || accountId == null) return null;
-    return '$domain@$accountId';
-  }
+  String? get _compositeKey => widget.status?.compositeKey;
 
   @override
   void initState() {
@@ -41,8 +36,7 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
       return;
     }
 
-    final Storage storage = Storage();
-    final List<DraftSchema> saved = await storage.loadDrafts(key);
+    final List<DraftSchema> saved = await Storage().loadDrafts(key);
 
     if (mounted) {
       setState(() {
@@ -100,6 +94,7 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
         ? '${draft.content.substring(0, 80)}...'
         : draft.content;
     final String duration = timeago.format(draft.updatedAt, locale: timeagoLocale(context));
+    final Color hintColor = Theme.of(context).hintColor;
 
     return Dismissible(
       key: ValueKey(draft.id),
@@ -123,14 +118,14 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
         ),
         subtitle: Row(
           children: [
-            Text(duration, style: const TextStyle(color: Colors.grey)),
+            Text(duration, style: TextStyle(color: hintColor)),
             if (draft.poll != null) ...[
               const SizedBox(width: 8),
-              Icon(Icons.poll, size: 14, color: Colors.grey),
+              Icon(Icons.poll, size: 14, color: hintColor),
             ],
             if (draft.quoteToId != null) ...[
               const SizedBox(width: 8),
-              Icon(Icons.format_quote, size: 14, color: Colors.grey),
+              Icon(Icons.format_quote, size: 14, color: hintColor),
             ],
           ],
         ),
@@ -149,15 +144,25 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
     final String? key = _compositeKey;
     if (key == null) return;
 
-    final Storage storage = Storage();
-    await storage.removeDraft(key, draft.id);
+    final int index = drafts.indexOf(draft);
+    setState(() => drafts.removeWhere((d) => d.id == draft.id));
 
-    if (mounted) {
-      final l10n = AppLocalizations.of(context);
-      final String message = l10n?.msg_draft_deleted ?? 'Draft deleted';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-      setState(() => drafts.removeWhere((d) => d.id == draft.id));
-    }
+    final l10n = AppLocalizations.of(context);
+    final String message = l10n?.msg_draft_deleted ?? 'Draft deleted';
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      action: SnackBarAction(
+        label: l10n?.btn_undo ?? 'Undo',
+        onPressed: () async {
+          // Re-insert the draft back to the list and storage.
+          await Storage().saveDraft(key, draft);
+          if (mounted) setState(() => drafts.insert(index.clamp(0, drafts.length), draft));
+        },
+      ),
+    ));
+
+    await Storage().removeDraft(key, draft.id);
   }
 }
 

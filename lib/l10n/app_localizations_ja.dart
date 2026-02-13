@@ -1021,4 +1021,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_draft_reply => '返信の下書き';
+
+  @override
+  String get btn_undo => '元に戻す';
 }

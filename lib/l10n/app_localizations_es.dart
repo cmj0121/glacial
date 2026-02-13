@@ -1070,4 +1070,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_draft_reply => 'Borrador de respuesta';
+
+  @override
+  String get btn_undo => 'Deshacer';
 }

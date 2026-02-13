@@ -329,5 +329,6 @@
   "txt_no_drafts": "下書きはありません",
   "msg_draft_saved": "下書きを保存しました",
   "msg_draft_deleted": "下書きを削除しました",
-  "txt_draft_reply": "返信の下書き"
+  "txt_draft_reply": "返信の下書き",
+  "btn_undo": "元に戻す"
 }

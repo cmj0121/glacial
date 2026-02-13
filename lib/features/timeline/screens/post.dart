@@ -477,22 +477,9 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
     }
   }
 
-  // Auto-save the current compose state as a draft when navigating away.
-  Future<void> _autoSaveDraft() async {
-    // Only save drafts for new posts (not edits) and when there's content.
-    if (widget.editFrom != null) return;
-
-    final String? domain = status?.domain;
-    final String? accountId = status?.account?.id;
-    if (domain == null || accountId == null) return;
-
-    final String compositeKey = '$domain@$accountId';
-    final Storage storage = Storage();
-
-    final bool hasContent = controller.text.isNotEmpty || (poll?.isValid ?? false);
-    if (!hasContent) return;
-
-    final DraftSchema draft = DraftSchema(
+  // Build a DraftSchema from the current form state.
+  DraftSchema _buildDraftFromForm() {
+    return DraftSchema(
       id: _draftId,
       content: controller.text,
       spoiler: spoiler,
@@ -504,23 +491,30 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       poll: poll,
       updatedAt: DateTime.now(),
     );
+  }
 
-    await storage.saveDraft(compositeKey, draft);
+  // Auto-save the current compose state as a draft when navigating away.
+  Future<void> _autoSaveDraft() async {
+    if (widget.editFrom != null) return;
+
+    final String? key = status?.compositeKey;
+    if (key == null) return;
+
+    final bool hasContent = controller.text.isNotEmpty || (poll?.isValid ?? false);
+    if (!hasContent) return;
+
+    await Storage().saveDraft(key, _buildDraftFromForm());
     if (mounted) {
-      final l10n = AppLocalizations.of(context);
-      final String message = l10n?.msg_draft_saved ?? 'Draft saved';
+      final String message = AppLocalizations.of(context)?.msg_draft_saved ?? 'Draft saved';
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
   // Remove the draft after a successful post.
   Future<void> _removeDraftOnPost() async {
-    final String? domain = status?.domain;
-    final String? accountId = status?.account?.id;
-    if (domain == null || accountId == null) return;
-
-    final String compositeKey = '$domain@$accountId';
-    await Storage().removeDraft(compositeKey, _draftId);
+    final String? key = status?.compositeKey;
+    if (key == null) return;
+    await Storage().removeDraft(key, _draftId);
   }
 
   bool get isSignedIn => status?.domain?.isNotEmpty == true && status?.accessToken?.isNotEmpty == true;

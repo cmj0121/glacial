@@ -329,5 +329,6 @@
   "txt_no_drafts": "沒有草稿",
   "msg_draft_saved": "草稿已儲存",
   "msg_draft_deleted": "草稿已刪除",
-  "txt_draft_reply": "回覆草稿"
+  "txt_draft_reply": "回覆草稿",
+  "btn_undo": "復原"
 }

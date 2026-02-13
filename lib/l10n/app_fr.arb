@@ -329,5 +329,6 @@
   "txt_no_drafts": "Aucun brouillon",
   "msg_draft_saved": "Brouillon enregistré",
   "msg_draft_deleted": "Brouillon supprimé",
-  "txt_draft_reply": "Brouillon de réponse"
+  "txt_draft_reply": "Brouillon de réponse",
+  "btn_undo": "Annuler"
 }
