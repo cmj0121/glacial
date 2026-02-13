@@ -77,6 +77,15 @@ class NewPollSchema {
     this.options = const ["", ""],
   });
 
+  factory NewPollSchema.fromJson(Map<String, dynamic> json) {
+    return NewPollSchema(
+      hideTotals: json['hide_totals'] as bool?,
+      multiple: json['multiple'] as bool?,
+      expiresIn: json['expires_in'] as int? ?? 86400,
+      options: (json['options'] as List<dynamic>).map((e) => e as String).toList(),
+    );
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> json = {
       'hide_totals': hideTotals,

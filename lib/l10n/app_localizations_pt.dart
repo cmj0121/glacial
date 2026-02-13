@@ -1052,4 +1052,22 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get msg_account_removed => 'Conta removida';
+
+  @override
+  String get btn_drawer_drafts => 'Rascunhos';
+
+  @override
+  String get txt_drafts_title => 'Rascunhos';
+
+  @override
+  String get txt_no_drafts => 'Sem rascunhos';
+
+  @override
+  String get msg_draft_saved => 'Rascunho salvo';
+
+  @override
+  String get msg_draft_deleted => 'Rascunho excluído';
+
+  @override
+  String get txt_draft_reply => 'Rascunho de resposta';
 }

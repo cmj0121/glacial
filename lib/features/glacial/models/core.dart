@@ -103,6 +103,7 @@ enum SidebarButtonType {
 // The possible actions in the drawer and used to interact with the current server.
 enum DrawerButtonType {
   switchAccount,
+  drafts,
   switchServer,
   directory,
   announcement,
@@ -114,6 +115,8 @@ enum DrawerButtonType {
     switch (this) {
       case switchAccount:
         return Icons.people;
+      case drafts:
+        return Icons.edit_note;
       case switchServer:
         return Icons.swap_horiz;
       case directory:
@@ -132,6 +135,8 @@ enum DrawerButtonType {
     switch (this) {
       case switchAccount:
         return AppLocalizations.of(context)?.btn_drawer_switch_account ?? "Switch Account";
+      case drafts:
+        return AppLocalizations.of(context)?.btn_drawer_drafts ?? "Drafts";
       case switchServer:
         return AppLocalizations.of(context)?.btn_drawer_switch_server ?? "Switch Server";
       case directory:
@@ -148,6 +153,8 @@ enum DrawerButtonType {
   RoutePath get route {
     switch (this) {
       case switchAccount:
+        return RoutePath.timeline; // Opens a bottom sheet, not a route.
+      case drafts:
         return RoutePath.timeline; // Opens a bottom sheet, not a route.
       case switchServer:
         return RoutePath.explorer;

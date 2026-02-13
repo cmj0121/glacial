@@ -323,5 +323,11 @@
   "btn_account_picker_add": "Konto hinzufügen",
   "txt_account_picker_title": "Konten",
   "msg_account_switched": "Zu {username} gewechselt",
-  "msg_account_removed": "Konto entfernt"
+  "msg_account_removed": "Konto entfernt",
+  "btn_drawer_drafts": "Entwürfe",
+  "txt_drafts_title": "Entwürfe",
+  "txt_no_drafts": "Keine Entwürfe",
+  "msg_draft_saved": "Entwurf gespeichert",
+  "msg_draft_deleted": "Entwurf gelöscht",
+  "txt_draft_reply": "Antwortentwurf"
 }

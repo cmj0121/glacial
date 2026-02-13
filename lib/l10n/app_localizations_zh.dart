@@ -1003,4 +1003,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_account_removed => '帳號已移除';
+
+  @override
+  String get btn_drawer_drafts => '草稿';
+
+  @override
+  String get txt_drafts_title => '草稿';
+
+  @override
+  String get txt_no_drafts => '沒有草稿';
+
+  @override
+  String get msg_draft_saved => '草稿已儲存';
+
+  @override
+  String get msg_draft_deleted => '草稿已刪除';
+
+  @override
+  String get txt_draft_reply => '回覆草稿';
 }

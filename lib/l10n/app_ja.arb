@@ -323,5 +323,11 @@
   "btn_account_picker_add": "アカウント追加",
   "txt_account_picker_title": "アカウント",
   "msg_account_switched": "{username}に切り替えました",
-  "msg_account_removed": "アカウントを削除しました"
+  "msg_account_removed": "アカウントを削除しました",
+  "btn_drawer_drafts": "下書き",
+  "txt_drafts_title": "下書き",
+  "txt_no_drafts": "下書きはありません",
+  "msg_draft_saved": "下書きを保存しました",
+  "msg_draft_deleted": "下書きを削除しました",
+  "txt_draft_reply": "返信の下書き"
 }

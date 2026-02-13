@@ -371,5 +371,11 @@
       }
     }
   },
-  "msg_account_removed": "Account removed"
+  "msg_account_removed": "Account removed",
+  "btn_drawer_drafts": "Drafts",
+  "txt_drafts_title": "Drafts",
+  "txt_no_drafts": "No drafts",
+  "msg_draft_saved": "Draft saved",
+  "msg_draft_deleted": "Draft deleted",
+  "txt_draft_reply": "Reply draft"
 }

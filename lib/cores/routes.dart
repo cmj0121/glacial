@@ -33,6 +33,7 @@ enum RoutePath {
   adminReport,       // The admin report detail page.
   adminAccount,      // The admin account detail page.
   register,          // The account registration page.
+  postDraft,         // The post page pre-filled from a saved draft.
   wip;               // The work-in-progress page of the app.
 
   // Get the string path for the route.
@@ -96,6 +97,8 @@ enum RoutePath {
         return '/home/admin/account';
       case RoutePath.register:
         return '/home/register';
+      case RoutePath.postDraft:
+        return '/home/post/draft';
       case RoutePath.wip:
         return '/wip';
     }

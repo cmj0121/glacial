@@ -323,5 +323,11 @@
   "btn_account_picker_add": "Ajouter un compte",
   "txt_account_picker_title": "Comptes",
   "msg_account_switched": "Basculé vers {username}",
-  "msg_account_removed": "Compte supprimé"
+  "msg_account_removed": "Compte supprimé",
+  "btn_drawer_drafts": "Brouillons",
+  "txt_drafts_title": "Brouillons",
+  "txt_no_drafts": "Aucun brouillon",
+  "msg_draft_saved": "Brouillon enregistré",
+  "msg_draft_deleted": "Brouillon supprimé",
+  "txt_draft_reply": "Brouillon de réponse"
 }

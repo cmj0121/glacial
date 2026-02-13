@@ -25,7 +25,7 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
     final AccessStatusSchema? status = ref.watch(accessStatusProvider);
     final bool isSignedIn = status?.accessToken?.isNotEmpty ?? false;
     final List<DrawerButtonType> actions = DrawerButtonType.values
-        .where((a) => a != DrawerButtonType.switchAccount || isSignedIn)
+        .where((a) => (a != DrawerButtonType.switchAccount && a != DrawerButtonType.drafts) || isSignedIn)
         .toList();
     final int logoutIndex = actions.indexWhere((action) => action == DrawerButtonType.logout);
     final List<Widget> children = actions.map((action) {
@@ -99,6 +99,14 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
           showAdaptiveGlassSheet(
             context: context,
             builder: (_) => AccountPickerSheet(status: status),
+          );
+        }
+        return;
+      case DrawerButtonType.drafts:
+        if (mounted) {
+          showAdaptiveGlassSheet(
+            context: context,
+            builder: (_) => DraftListSheet(status: status),
           );
         }
         return;

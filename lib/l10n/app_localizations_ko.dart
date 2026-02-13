@@ -1004,4 +1004,22 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get msg_account_removed => '계정이 삭제됨';
+
+  @override
+  String get btn_drawer_drafts => '임시 저장';
+
+  @override
+  String get txt_drafts_title => '임시 저장';
+
+  @override
+  String get txt_no_drafts => '임시 저장이 없습니다';
+
+  @override
+  String get msg_draft_saved => '임시 저장됨';
+
+  @override
+  String get msg_draft_deleted => '임시 저장 삭제됨';
+
+  @override
+  String get txt_draft_reply => '답글 임시 저장';
 }

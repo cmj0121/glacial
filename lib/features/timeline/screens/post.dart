@@ -15,6 +15,7 @@ class PostStatusForm extends ConsumerStatefulWidget {
   final StatusSchema? replyTo;
   final StatusSchema? quoteTo;
   final StatusSchema? editFrom;
+  final DraftSchema? draftFrom;
   final ValueChanged<StatusSchema>? onPost;
 
   const PostStatusForm({
@@ -22,6 +23,7 @@ class PostStatusForm extends ConsumerStatefulWidget {
     this.replyTo,
     this.quoteTo,
     this.editFrom,
+    this.draftFrom,
     this.onPost,
   });
 
@@ -35,18 +37,23 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   final double mediaWidth = 100;
   final String idempotentKey = const Uuid().v4();
 
-  late final TextEditingController controller = TextEditingController(text: widget.editFrom?.plainText ?? "");
-  late final TextEditingController spoilerController = TextEditingController(text: widget.editFrom?.spoiler ?? "");
+  late final TextEditingController controller = TextEditingController(
+    text: widget.draftFrom?.content ?? widget.editFrom?.plainText ?? "",
+  );
+  late final TextEditingController spoilerController = TextEditingController(
+    text: widget.draftFrom?.spoiler ?? widget.editFrom?.spoiler ?? "",
+  );
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   late final SystemPreferenceSchema? pref = ref.read(preferenceProvider);
 
+  late final String _draftId = widget.draftFrom?.id ?? const Uuid().v4();
   bool isScheduled = false;
-  NewPollSchema? poll;
-  late bool isSensitive = widget.editFrom?.sensitive ?? false;
-  late String? spoiler = widget.editFrom?.spoiler.isNotEmpty == true ? widget.editFrom?.spoiler : null;
+  late NewPollSchema? poll = widget.draftFrom?.poll;
+  late bool isSensitive = widget.draftFrom?.sensitive ?? widget.editFrom?.sensitive ?? false;
+  late String? spoiler = widget.draftFrom?.spoiler ?? (widget.editFrom?.spoiler.isNotEmpty == true ? widget.editFrom?.spoiler : null);
   late List<AttachmentSchema> medias = widget.editFrom?.attachments ?? [];
-  late VisibilityType vtype = widget.replyTo?.visibility ?? pref?.visibility ?? VisibilityType.public;
-  late QuotePolicyType qtype = widget.editFrom?.quoteApproval?.toUser ?? pref?.quotePolicy ?? QuotePolicyType.public;
+  late VisibilityType vtype = widget.draftFrom?.visibility ?? widget.replyTo?.visibility ?? pref?.visibility ?? VisibilityType.public;
+  late QuotePolicyType qtype = widget.draftFrom?.quotePolicy ?? widget.editFrom?.quoteApproval?.toUser ?? pref?.quotePolicy ?? QuotePolicyType.public;
   late DateTime? scheduledAt = widget.editFrom?.scheduledAt;
 
   @override
@@ -68,7 +75,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       child: Dismissible(
         key: UniqueKey(),
         direction: DismissDirection.startToEnd,
-        confirmDismiss: (_) async { context.pop(); return false; },
+        confirmDismiss: (_) async {
+          _autoSaveDraft();
+          context.pop();
+          return false;
+        },
         child: buildLayout(),
       ),
     );
@@ -388,8 +399,11 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
         await status?.createStatus(schema: schema, idempotentKey: idempotentKey, account: account!) :
         await status?.editStatus(id: widget.editFrom!.id, schema: schema, idempotentKey: idempotentKey, account: account!);
 
+    if (mounted && post != null) {
+      widget.onPost?.call(post);
+      await _removeDraftOnPost();
+    }
     if (mounted) {
-      if (post != null) widget.onPost?.call(post);
       context.pop();
     }
   }
@@ -461,6 +475,52 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
         // Do nothing, no mention will be added.
         break;
     }
+  }
+
+  // Auto-save the current compose state as a draft when navigating away.
+  Future<void> _autoSaveDraft() async {
+    // Only save drafts for new posts (not edits) and when there's content.
+    if (widget.editFrom != null) return;
+
+    final String? domain = status?.domain;
+    final String? accountId = status?.account?.id;
+    if (domain == null || accountId == null) return;
+
+    final String compositeKey = '$domain@$accountId';
+    final Storage storage = Storage();
+
+    final bool hasContent = controller.text.isNotEmpty || (poll?.isValid ?? false);
+    if (!hasContent) return;
+
+    final DraftSchema draft = DraftSchema(
+      id: _draftId,
+      content: controller.text,
+      spoiler: spoiler,
+      sensitive: isSensitive,
+      visibility: vtype,
+      quotePolicy: qtype,
+      inReplyToId: widget.replyTo?.id ?? widget.draftFrom?.inReplyToId,
+      quoteToId: widget.quoteTo?.id ?? widget.draftFrom?.quoteToId,
+      poll: poll,
+      updatedAt: DateTime.now(),
+    );
+
+    await storage.saveDraft(compositeKey, draft);
+    if (mounted) {
+      final l10n = AppLocalizations.of(context);
+      final String message = l10n?.msg_draft_saved ?? 'Draft saved';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
+  // Remove the draft after a successful post.
+  Future<void> _removeDraftOnPost() async {
+    final String? domain = status?.domain;
+    final String? accountId = status?.account?.id;
+    if (domain == null || accountId == null) return;
+
+    final String compositeKey = '$domain@$accountId';
+    await Storage().removeDraft(compositeKey, _draftId);
   }
 
   bool get isSignedIn => status?.domain?.isNotEmpty == true && status?.accessToken?.isNotEmpty == true;
