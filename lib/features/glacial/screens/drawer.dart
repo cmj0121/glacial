@@ -104,9 +104,10 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
         return;
       case DrawerButtonType.drafts:
         if (mounted) {
+          final messenger = ScaffoldMessenger.of(context);
           showAdaptiveGlassSheet(
             context: context,
-            builder: (_) => DraftListSheet(status: status),
+            builder: (_) => DraftListSheet(status: status, messenger: messenger),
           );
         }
         return;

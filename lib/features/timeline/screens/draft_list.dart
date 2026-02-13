@@ -10,8 +10,9 @@ import 'package:glacial/features/models.dart';
 // Bottom sheet that displays saved drafts for the current account.
 class DraftListSheet extends ConsumerStatefulWidget {
   final AccessStatusSchema? status;
+  final ScaffoldMessengerState? messenger;
 
-  const DraftListSheet({super.key, required this.status});
+  const DraftListSheet({super.key, required this.status, this.messenger});
 
   @override
   ConsumerState<DraftListSheet> createState() => _DraftListSheetState();
@@ -152,7 +153,8 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
     final l10n = AppLocalizations.of(context);
     final String message = l10n?.msg_draft_deleted ?? 'Draft deleted';
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    final messenger = widget.messenger ?? ScaffoldMessenger.of(context);
+    messenger.showSnackBar(SnackBar(
       content: Text(message),
       duration: const Duration(seconds: 5),
       action: SnackBarAction(
