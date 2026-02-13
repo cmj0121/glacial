@@ -1,4 +1,6 @@
 // The draft list bottom sheet for managing saved drafts.
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -165,6 +167,9 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
         },
       ),
     ));
+
+    // Force-hide snackbar after 5s in case the built-in timer stalls in bottom sheet context.
+    Timer(const Duration(seconds: 5), () => messenger.hideCurrentSnackBar());
 
     await Future<void>.delayed(const Duration(seconds: 5));
     if (!undone) {

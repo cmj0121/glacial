@@ -20,6 +20,26 @@ class GlacialDrawer extends ConsumerStatefulWidget {
 }
 
 class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
+  int _draftCount = -1; // -1 = not loaded yet
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadDraftCount());
+  }
+
+  Future<void> _loadDraftCount() async {
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final String? key = status?.compositeKey;
+    if (key == null) {
+      if (mounted) setState(() => _draftCount = 0);
+      return;
+    }
+
+    final drafts = await Storage().loadDrafts(key);
+    if (mounted) setState(() => _draftCount = drafts.length);
+  }
+
   @override
   Widget build(BuildContext context) {
     final AccessStatusSchema? status = ref.watch(accessStatusProvider);
@@ -29,10 +49,12 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
         .toList();
     final int logoutIndex = actions.indexWhere((action) => action == DrawerButtonType.logout);
     final List<Widget> children = actions.map((action) {
+      final bool enabled = action != DrawerButtonType.drafts || _draftCount > 0;
       return ListTile(
-        leading: Icon(action.icon()),
+        leading: Icon(action.icon(), color: enabled ? null : Theme.of(context).disabledColor),
         title: Text(action.tooltip(context)),
-        onTap: () => onTap(status, action),
+        enabled: enabled,
+        onTap: enabled ? () => onTap(status, action) : null,
       );
     }).toList();
 
