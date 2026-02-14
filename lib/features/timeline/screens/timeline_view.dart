@@ -289,7 +289,10 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   // Clean-up and refresh the timeline when the user pulls down the list.
   Future<void> onRefresh() async {
-    setState(() => unreaded.clear());
+    setState(() {
+      unreaded.clear();
+      maxId = null;
+    });
     await refreshList(onLoad);
   }
 
@@ -309,14 +312,15 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
         compositeKey: widget.status.compositeKey,
       );
 
-      // Check the new statuses is repeating the old ones to avoid infinite loading.
+      // On first page, always replace (covers both initial load over cache and refresh).
+      // Only check for repeats on subsequent pages to avoid infinite loading loops.
+      final bool isFirstPage = maxId == null;
       final existingIds = statuses.map((s) => s.id).toSet();
-      final bool isRepeat = schemas.isNotEmpty && schemas.every((s) => existingIds.contains(s.id));
+      final bool isRepeat = !isFirstPage && schemas.isNotEmpty && schemas.every((s) => existingIds.contains(s.id));
 
       if (mounted) {
         setState(() {
-          // On first-page refresh, replace cached data with fresh network data.
-          if (maxId == null && isRefresh) {
+          if (isFirstPage) {
             statuses = schemas;
           } else {
             statuses.addAll(isRepeat ? [] : schemas);
