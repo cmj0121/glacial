@@ -25,7 +25,7 @@ class MastodonServer extends StatelessWidget {
       future: ServerSchema.fetch(domain),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const ClockProgressIndicator();
+          return const LoadingOverlay(isLoading: true, child: SizedBox.expand());
         } else if (snapshot.hasError) {
           final String text = AppLocalizations.of(context)?.err_invalid_instance(domain) ?? 'Invalid instance: $domain';
           return NoResult(message: text);

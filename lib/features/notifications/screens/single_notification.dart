@@ -37,7 +37,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
   @override
   Widget build(BuildContext context) {
     if (child == null) {
-      return const ClockProgressIndicator();
+      return const LoadingOverlay(isLoading: true, child: SizedBox(height: 100));
     }
 
     return Container(

@@ -73,7 +73,7 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
   Widget buildListView() {
     if (lists.isEmpty) {
       final String message = AppLocalizations.of(context)?.txt_no_result ?? "No results found";
-      return loaded ? NoResult(message: message, icon: Icons.coffee) : const ClockProgressIndicator();
+      return loaded ? NoResult(message: message, icon: Icons.coffee) : const LoadingOverlay(isLoading: true, child: SizedBox.expand());
     }
 
     return ListView.builder(
