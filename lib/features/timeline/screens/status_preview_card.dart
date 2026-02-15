@@ -111,7 +111,7 @@ class PreviewCard extends StatelessWidget {
       height: schema.height.toDouble(),
       child: CachedNetworkImage(
         imageUrl: schema.image!,
-        placeholder: (context, url) => const ClockProgressIndicator(),
+        placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
         errorWidget: (context, url, error) => const Icon(Icons.error),
       ),
     );

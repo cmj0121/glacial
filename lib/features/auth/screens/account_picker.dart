@@ -46,8 +46,6 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
     final l10n = AppLocalizations.of(context);
     final String title = l10n?.txt_account_picker_title ?? 'Accounts';
 
-    if (isLoading) return const ClockProgressIndicator();
-
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -56,15 +54,19 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
         children: [
           Text(title, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
-          Flexible(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: accounts.length,
-              itemBuilder: (context, index) => buildAccountTile(accounts[index]),
+          if (isLoading)
+            const Center(child: Padding(padding: EdgeInsets.all(32), child: ClockProgressIndicator()))
+          else ...[
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: accounts.length,
+                itemBuilder: (context, index) => buildAccountTile(accounts[index]),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          buildAddAccountButton(context),
+            const SizedBox(height: 8),
+            buildAddAccountButton(context),
+          ],
         ],
       ),
     );

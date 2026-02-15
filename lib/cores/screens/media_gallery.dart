@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import 'package:glacial/cores/screens/animations.dart';
+import 'package:glacial/cores/screens/blurhash_placeholder.dart';
 import 'package:glacial/cores/screens/media_viewer.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/timeline/models/core.dart';
@@ -144,8 +145,9 @@ class _MediaGalleryState extends State<MediaGallery> {
         return CachedNetworkImage(
           imageUrl: schema.url,
           fit: BoxFit.contain,
-          placeholder: (context, url) => const Center(
-            child: ClockProgressIndicator(),
+          placeholder: (context, url) => BlurhashPlaceholder(
+            blurhash: schema.blurhash,
+            fit: BoxFit.contain,
           ),
           errorWidget: (context, url, error) => const Icon(
             Icons.error,

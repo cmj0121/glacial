@@ -66,7 +66,7 @@ class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProvid
             future: isReblog ? status?.fetchRebloggedBy(schema: widget.schema) : status?.fetchFavouritedBy(schema: widget.schema),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const ClockProgressIndicator();
+                return const LoadingOverlay(isLoading: true, child: SizedBox.expand());
               } else if (snapshot.hasError) {
                 return const SizedBox.shrink();
               }

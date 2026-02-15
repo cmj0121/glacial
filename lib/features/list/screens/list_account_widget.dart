@@ -39,20 +39,15 @@ class _ListAccountWidgetState extends ConsumerState<ListAccountWidget> with Pagi
       return NoResult(message: message, icon: Icons.coffee);
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (isLoading) const ClockProgressIndicator(),
-        Flexible(
-          child: ListView.builder(
-            itemCount: accounts.length,
-            itemBuilder: (context, index) => AccountLite(
-              schema: accounts[index],
-              onTap: () => widget.onSelected?.call(accounts[index]),
-            ),
-          ),
+    return LoadingOverlay(
+      isLoading: isLoading,
+      child: ListView.builder(
+        itemCount: accounts.length,
+        itemBuilder: (context, index) => AccountLite(
+          schema: accounts[index],
+          onTap: () => widget.onSelected?.call(accounts[index]),
         ),
-      ],
+      ),
     );
   }
 

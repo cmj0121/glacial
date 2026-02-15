@@ -71,99 +71,139 @@ class _FlippingState extends State<Flipping> with SingleTickerProviderStateMixin
   }
 }
 
-// The clock-like progress indicator which shows the progress of the task.
+// The arc-style progress indicator for indeterminate loading states.
 class ClockProgressIndicator extends StatefulWidget {
   final double size;
-  final double barHeight;
-  final double barWidth;
   final Duration duration;
   final Color? color;
+  final double strokeWidth;
 
   const ClockProgressIndicator({
     super.key,
-    this.size = 40.0,
-    this.barHeight = 10.0,
-    this.barWidth = 3.75,
-    this.duration = const Duration(milliseconds: 650),
+    this.size = 32.0,
+    this.duration = const Duration(milliseconds: 1200),
     this.color,
+    this.strokeWidth = 3.0,
   });
+
+  const ClockProgressIndicator.small({
+    super.key,
+    this.color,
+    this.duration = const Duration(milliseconds: 1200),
+  }) : size = 20.0,
+       strokeWidth = 2.0;
+
+  const ClockProgressIndicator.medium({
+    super.key,
+    this.color,
+    this.duration = const Duration(milliseconds: 1200),
+  }) : size = 32.0,
+       strokeWidth = 3.0;
+
+  const ClockProgressIndicator.large({
+    super.key,
+    this.color,
+    this.duration = const Duration(milliseconds: 1200),
+  }) : size = 48.0,
+       strokeWidth = 3.5;
 
   @override
   State<ClockProgressIndicator> createState() => _ClockProgressIndicatorState();
 }
 
-class _ClockProgressIndicatorState extends State<ClockProgressIndicator> with SingleTickerProviderStateMixin {
-  late final AnimationController controller;
-  late final Animation<double> animation;
+class _ClockProgressIndicatorState extends State<ClockProgressIndicator>
+    with TickerProviderStateMixin {
+  late final AnimationController _rotationController;
+  late final AnimationController _sweepController;
+  late final CurvedAnimation _sweepAnimation;
 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
+    _rotationController = AnimationController(
       vsync: this,
       duration: widget.duration,
     )..repeat();
 
-    animation = Tween<double>(begin: 0, end: 1).animate(controller);
+    _sweepController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: widget.duration.inMilliseconds ~/ 2),
+    )..repeat(reverse: true);
+
+    _sweepAnimation = CurvedAnimation(
+      parent: _sweepController,
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    _sweepAnimation.dispose();
+    _rotationController.dispose();
+    _sweepController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 18.0),
-        child: buildContent(),
-      ),
-    );
-  }
-
-  Widget buildContent() {
-    return SizedBox(
-      width: widget.size * 2,
-      height: widget.size * 2,
-      child: AnimatedBuilder(
-        animation: animation,
-        builder: (context, child) => buildClockBar(),
-      ),
-    );
-  }
-
-  Widget buildClockBar() {
     final Color color = widget.color ?? Theme.of(context).colorScheme.secondary;
 
-    return Stack(
-      children: List.generate(12, (index) {
-        final double angle = (2 * pi / 12) * index;
-        final double radius = widget.size / 2;
-
-        final double x = radius + radius * 0.8 * cos(angle);
-        final double y = radius + radius * 0.8 * sin(angle);
-        final double progress = ((animation.value * 12) - index) % 12 / 12;
-        final Color barColor = color.withValues(alpha: progress);
-
-        return Positioned(
-          left: x - 2,
-          top: y - 2,
-          child: Transform.rotate(
-            angle: angle + pi / 2,
-            child: Container(
-              width: widget.barWidth,
-              height: widget.barHeight,
-              decoration: BoxDecoration(
-                color: barColor,
-                borderRadius: BorderRadius.circular(widget.barWidth / 2),
+    return Center(
+      child: SizedBox(
+        width: widget.size,
+        height: widget.size,
+        child: AnimatedBuilder(
+          animation: Listenable.merge([_rotationController, _sweepAnimation]),
+          builder: (context, child) {
+            return CustomPaint(
+              painter: _ArcSpinnerPainter(
+                rotation: _rotationController.value,
+                sweep: _sweepAnimation.value,
+                color: color,
+                strokeWidth: widget.strokeWidth,
               ),
-            ),
-          ),
-        );
-      }),
+            );
+          },
+        ),
+      ),
     );
+  }
+}
+
+class _ArcSpinnerPainter extends CustomPainter {
+  final double rotation;
+  final double sweep;
+  final Color color;
+  final double strokeWidth;
+
+  _ArcSpinnerPainter({
+    required this.rotation,
+    required this.sweep,
+    required this.color,
+    required this.strokeWidth,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final Rect arcRect = (Offset.zero & size).deflate(strokeWidth / 2);
+    final double startAngle = rotation * 2 * pi;
+    final double sweepAngle = 0.5 + sweep * 2.0;
+
+    canvas.drawArc(arcRect, startAngle, sweepAngle, false, paint);
+  }
+
+  @override
+  bool shouldRepaint(_ArcSpinnerPainter oldDelegate) {
+    return rotation != oldDelegate.rotation ||
+        sweep != oldDelegate.sweep ||
+        color != oldDelegate.color ||
+        strokeWidth != oldDelegate.strokeWidth;
   }
 }
 

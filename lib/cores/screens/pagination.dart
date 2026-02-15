@@ -80,12 +80,15 @@ mixin PaginatedListMixin<T extends StatefulWidget> on State<T> {
     _isCompleted = false;
   }
 
-  /// Builds the loading indicator widget.
+  /// Builds the loading indicator widget with a smooth fade transition.
   /// Shows ClockProgressIndicator when loading (but not during pull-to-refresh).
   Widget buildLoadingIndicator() {
-    return (_isLoading && !_isRefresh)
-        ? const ClockProgressIndicator()
-        : const SizedBox.shrink();
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      child: (_isLoading && !_isRefresh)
+          ? const ClockProgressIndicator(key: ValueKey('loading'))
+          : const SizedBox.shrink(key: ValueKey('idle')),
+    );
   }
 }
 

@@ -26,8 +26,6 @@ class _AnnouncementSheetState extends State<AnnouncementSheet> {
 
   @override
   Widget build(BuildContext context) {
-    if (announcements == null) return const ClockProgressIndicator();
-
     final String title = AppLocalizations.of(context)?.btn_drawer_announcement ?? "Announcements";
 
     return Padding(
@@ -38,7 +36,9 @@ class _AnnouncementSheetState extends State<AnnouncementSheet> {
         children: [
           Text(title, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
-          if (announcements!.isEmpty)
+          if (announcements == null)
+            const Center(child: Padding(padding: EdgeInsets.all(32), child: ClockProgressIndicator()))
+          else if (announcements!.isEmpty)
             NoResult(
               message: AppLocalizations.of(context)?.txt_no_announcements ?? "No announcements",
               icon: Icons.campaign_outlined,

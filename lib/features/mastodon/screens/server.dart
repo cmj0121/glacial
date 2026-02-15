@@ -25,7 +25,7 @@ class MastodonServer extends StatelessWidget {
       future: ServerSchema.fetch(domain),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const ClockProgressIndicator();
+          return const LoadingOverlay(isLoading: true, child: SizedBox.expand());
         } else if (snapshot.hasError) {
           final String text = AppLocalizations.of(context)?.err_invalid_instance(domain) ?? 'Invalid instance: $domain';
           return NoResult(message: text);
@@ -101,7 +101,7 @@ class MastodonServer extends StatelessWidget {
         maxHeight: double.infinity,
         child: CachedNetworkImage(
           imageUrl: schema.thumbnail,
-          placeholder: (context, url) => const ClockProgressIndicator(),
+          placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       ),
@@ -220,7 +220,7 @@ class MastodonServerInfo extends StatelessWidget {
             width: size,
             height: size,
             fit: BoxFit.cover,
-            placeholder: (context, url) => const ClockProgressIndicator(),
+            placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
             errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
         ),

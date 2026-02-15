@@ -30,7 +30,7 @@ class _FollowRequestsState extends ConsumerState<FollowRequests> {
       future: _requestsFuture,
       builder: (BuildContext context, AsyncSnapshot<List<AccountSchema>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const ClockProgressIndicator();
+          return const LoadingOverlay(isLoading: true, child: SizedBox.expand());
         } else if (snapshot.hasError) {
           logger.e("failed to load the follow requests: ${snapshot.error}");
           return const NoResult();

@@ -44,7 +44,7 @@ class _DomainBlockListState extends ConsumerState<DomainBlockList> with Paginate
     }
 
     if (domains.isEmpty && isLoading) {
-      return const ClockProgressIndicator();
+      return const LoadingOverlay(isLoading: true, child: SizedBox.expand());
     } else if (domains.isEmpty && isCompleted) {
       final String message = AppLocalizations.of(context)?.txt_no_domain_blocks ?? "No blocked domains";
       return NoResult(message: message, icon: Icons.dns_outlined);
