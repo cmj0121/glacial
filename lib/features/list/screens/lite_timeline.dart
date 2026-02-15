@@ -151,10 +151,7 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
       future: _membersFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Align(
-            alignment: Alignment.topCenter,
-            child: ClockProgressIndicator(),
-          );
+          return const LoadingOverlay(isLoading: true, child: SizedBox.expand());
         } else if (snapshot.hasError || snapshot.data == null) {
           return const NoResult();
         }

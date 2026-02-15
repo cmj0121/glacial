@@ -54,8 +54,6 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
     final l10n = AppLocalizations.of(context);
     final String title = l10n?.txt_drafts_title ?? 'Drafts';
 
-    if (isLoading) return const ClockProgressIndicator();
-
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -64,7 +62,10 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
         children: [
           Text(title, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
-          drafts.isEmpty ? buildEmptyState(context) : buildDraftList(),
+          if (isLoading)
+            const Center(child: Padding(padding: EdgeInsets.all(32), child: ClockProgressIndicator()))
+          else
+            drafts.isEmpty ? buildEmptyState(context) : buildDraftList(),
         ],
       ),
     );

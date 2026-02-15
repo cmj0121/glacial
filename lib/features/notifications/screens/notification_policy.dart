@@ -26,8 +26,6 @@ class _NotificationPolicySheetState extends State<NotificationPolicySheet> {
 
   @override
   Widget build(BuildContext context) {
-    if (policy == null) return const ClockProgressIndicator();
-
     final String title = AppLocalizations.of(context)?.txt_notification_policy ?? "Notification Policy";
 
     return Padding(
@@ -38,6 +36,9 @@ class _NotificationPolicySheetState extends State<NotificationPolicySheet> {
         children: [
           Text(title, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
+          if (policy == null)
+            const Center(child: Padding(padding: EdgeInsets.all(32), child: ClockProgressIndicator()))
+          else ...[
           buildRow(
             label: AppLocalizations.of(context)?.txt_notification_policy_not_following ?? "People you don't follow",
             value: policy!.forNotFollowing,
@@ -63,6 +64,7 @@ class _NotificationPolicySheetState extends State<NotificationPolicySheet> {
             value: policy!.forLimitedAccounts,
             onChanged: (v) => onUpdate(policy!.copyWith(forLimitedAccounts: v)),
           ),
+          ],
         ],
       ),
     );
