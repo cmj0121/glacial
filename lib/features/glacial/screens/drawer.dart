@@ -82,7 +82,7 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
                           placeholder: (context, url) => SizedBox(
                             width: width,
                             height: height,
-                            child: ClockProgressIndicator(size: min(width, height)),
+                            child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
                           ),
                           errorWidget: (context, url, error) => const Icon(Icons.error),
                           imageBuilder: (context, imageProvider) => Image(

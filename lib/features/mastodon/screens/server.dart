@@ -101,7 +101,7 @@ class MastodonServer extends StatelessWidget {
         maxHeight: double.infinity,
         child: CachedNetworkImage(
           imageUrl: schema.thumbnail,
-          placeholder: (context, url) => const ClockProgressIndicator(),
+          placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       ),
@@ -220,7 +220,7 @@ class MastodonServerInfo extends StatelessWidget {
             width: size,
             height: size,
             fit: BoxFit.cover,
-            placeholder: (context, url) => const ClockProgressIndicator(),
+            placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
             errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
         ),

@@ -63,7 +63,7 @@ class ProfilePage extends ConsumerWidget {
   Widget buildBanner(BuildContext context) {
     final Widget banner = CachedNetworkImage(
       imageUrl: schema.header,
-      placeholder: (context, url) => const ClockProgressIndicator(),
+      placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
       errorWidget: (context, url, error) => const Icon(Icons.error),
     );
 
@@ -97,7 +97,7 @@ class ProfilePage extends ConsumerWidget {
   Widget buildAvatar(BuildContext context) {
     final Widget avatar = CachedNetworkImage(
       imageUrl: schema.avatar,
-      placeholder: (context, url) => const ClockProgressIndicator(),
+      placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
       errorWidget: (context, url, error) => const Icon(Icons.error),
       fit: BoxFit.cover,
     );

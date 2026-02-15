@@ -291,7 +291,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
     final Widget banner = schema.header == null ?
         CachedNetworkImage(
           imageUrl: widget.account.header,
-          placeholder: (context, url) => const ClockProgressIndicator(),
+          placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ) :
         Image.file(schema.header!, fit: BoxFit.cover);
@@ -315,7 +315,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
     final Widget avatar = schema.avatar == null ?
         CachedNetworkImage(
           imageUrl: widget.account.avatar,
-          placeholder: (context, url) => const ClockProgressIndicator(),
+          placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
           errorWidget: (context, url, error) => const Icon(Icons.error),
           fit: BoxFit.cover,
         ) :

@@ -246,7 +246,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
               width: mediaWidth,
               height: mediaWidth,
               fit: BoxFit.cover,
-              placeholder: (context, url) => const ClockProgressIndicator(),
+              placeholder: (context, url) => BlurhashPlaceholder(blurhash: media.blurhash),
               errorWidget: (context, url, error) => Icon(Icons.error, color: Theme.of(context).colorScheme.error),
             ),
             Positioned(
