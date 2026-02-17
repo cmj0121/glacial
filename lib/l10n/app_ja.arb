@@ -337,5 +337,7 @@
   "msg_confirm_reset": "すべてのデータ、アカウント、設定が削除されます。この操作は元に戻せません。",
   "btn_confirm": "確認",
   "msg_loading_error": "読み込み中にエラーが発生しました。もう一度お試しください。",
-  "btn_retry": "再試行"
+  "btn_retry": "再試行",
+  "msg_test_notification_pending": "5秒後にテスト通知が送信されます...",
+  "msg_test_notification_foreground": "アプリがフォアグラウンドの間は通知は送信されません。"
 }

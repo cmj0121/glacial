@@ -106,7 +106,7 @@ class _StatusState extends ConsumerState<Status> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Icon(action.icon(active: true), color: Colors.grey, size: metadataHeight),
+          Icon(action.icon(active: true), color: Theme.of(context).hintColor, size: metadataHeight),
           const SizedBox(width: 4),
           AccountAvatar(schema: account, size: metadataHeight),
         ],

@@ -105,7 +105,7 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
         subtitle: Text(
           '@${saved.username}@${saved.domain}',
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(color: Colors.grey),
+          style: TextStyle(color: Theme.of(context).hintColor),
         ),
         trailing: isCurrent ? const Icon(Icons.check_circle, color: Colors.green) : null,
         onTap: isCurrent ? null : () => onSwitchAccount(saved),
@@ -153,7 +153,7 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
     if (mounted) {
       final l10n = AppLocalizations.of(context);
       final String message = l10n?.msg_account_switched(saved.username) ?? 'Switched to ${saved.username}';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      showSnackbar(context, message);
       Navigator.of(context).pop();
 
       ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
@@ -167,7 +167,7 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
     if (mounted) {
       final l10n = AppLocalizations.of(context);
       final String message = l10n?.msg_account_removed ?? 'Account removed';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      showSnackbar(context, message);
       setState(() {
         accounts.removeWhere((a) => a.compositeKey == saved.compositeKey);
       });

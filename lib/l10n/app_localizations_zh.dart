@@ -1045,4 +1045,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get btn_retry => '重試';
+
+  @override
+  String get msg_test_notification_pending => '測試通知將在 5 秒後發送...';
+
+  @override
+  String get msg_test_notification_foreground => '應用程式在前景時不會發送通知。';
 }

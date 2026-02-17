@@ -103,9 +103,9 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
         hintText: AppLocalizations.of(context)?.txt_hint_server_explorer ?? "mastodon.social or keyword",
         hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondaryContainer),
 
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          borderSide: BorderSide(color: Colors.grey, width: 1),
+        border: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline, width: 1),
         ),
       ),
 

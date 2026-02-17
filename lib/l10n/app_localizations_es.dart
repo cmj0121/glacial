@@ -1096,4 +1096,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get btn_retry => 'Reintentar';
+
+  @override
+  String get msg_test_notification_pending =>
+      'La notificación de prueba se enviará en 5 segundos...';
+
+  @override
+  String get msg_test_notification_foreground =>
+      'Las notificaciones no se envían mientras la aplicación está en primer plano.';
 }

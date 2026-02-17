@@ -66,7 +66,7 @@ class TrendsLink extends StatelessWidget {
 
         Text(
           schema.desc,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
           maxLines: 4,
           overflow: TextOverflow.ellipsis,
         ),
@@ -95,7 +95,7 @@ class TrendsLink extends StatelessWidget {
 
   Widget buildAuthor(BuildContext context) {
     final Uri? uri = Uri.tryParse(schema.authUrl);
-    final Widget author = Text(schema.authName, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.grey));
+    final Widget author = Text(schema.authName, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).hintColor));
 
     if (uri == null || schema.authUrl.isEmpty) {
       return author;

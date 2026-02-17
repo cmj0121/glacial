@@ -17,7 +17,7 @@ class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextStyle style = Theme.of(context).textTheme.bodySmall!.copyWith(
-      color: Colors.grey,
+      color: Theme.of(context).hintColor,
       fontSize: size,
     );
 

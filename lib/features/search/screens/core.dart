@@ -148,10 +148,7 @@ class _ExplorerTabState extends ConsumerState<ExplorerTab> with SingleTickerProv
       future: _searchFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Align(
-            alignment: Alignment.topCenter,
-            child: LinearProgressIndicator(),
-          );
+          return const LoadingOverlay(isLoading: true, child: SizedBox.expand());
         } else if (snapshot.hasError || snapshot.data == null) {
           return const NoResult();
         }

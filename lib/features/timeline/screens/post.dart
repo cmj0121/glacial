@@ -506,7 +506,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
     await Storage().saveDraft(key, _buildDraftFromForm());
     if (mounted) {
       final String message = AppLocalizations.of(context)?.msg_draft_saved ?? 'Draft saved';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      showSnackbar(context, message);
     }
   }
 

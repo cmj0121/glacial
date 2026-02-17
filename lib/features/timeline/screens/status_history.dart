@@ -130,7 +130,7 @@ class StatusEdit extends StatelessWidget {
       children: [
         Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
         const SizedBox(height: 8),
-        Text(schema.createdAt.toLocal().toString(), style: const TextStyle(color: Colors.grey)),
+        Text(schema.createdAt.toLocal().toString(), style: TextStyle(color: Theme.of(context).hintColor)),
         const Divider(),
         HtmlDone(html: schema.content, emojis: schema.emojis),
         Poll(schema: schema.poll),

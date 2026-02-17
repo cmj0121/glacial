@@ -337,5 +337,7 @@
   "msg_confirm_reset": "Esto eliminará todos tus datos, cuentas y configuraciones. Esta acción no se puede deshacer.",
   "btn_confirm": "Confirmar",
   "msg_loading_error": "Algo salió mal al cargar. Por favor, inténtalo de nuevo.",
-  "btn_retry": "Reintentar"
+  "btn_retry": "Reintentar",
+  "msg_test_notification_pending": "La notificación de prueba se enviará en 5 segundos...",
+  "msg_test_notification_foreground": "Las notificaciones no se envían mientras la aplicación está en primer plano."
 }

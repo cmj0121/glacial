@@ -337,5 +337,7 @@
   "msg_confirm_reset": "Toutes vos données, comptes et paramètres seront supprimés. Cette action est irréversible.",
   "btn_confirm": "Confirmer",
   "msg_loading_error": "Une erreur est survenue lors du chargement. Veuillez réessayer.",
-  "btn_retry": "Réessayer"
+  "btn_retry": "Réessayer",
+  "msg_test_notification_pending": "La notification de test sera envoyée dans 5 secondes...",
+  "msg_test_notification_foreground": "Les notifications ne sont pas envoyées lorsque l'application est au premier plan."
 }

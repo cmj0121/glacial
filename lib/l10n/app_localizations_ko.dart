@@ -1046,4 +1046,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get btn_retry => '다시 시도';
+
+  @override
+  String get msg_test_notification_pending => '5초 후에 테스트 알림이 전송됩니다...';
+
+  @override
+  String get msg_test_notification_foreground =>
+      '앱이 포그라운드에 있는 동안에는 알림이 전송되지 않습니다.';
 }

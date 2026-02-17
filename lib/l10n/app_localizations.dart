@@ -2137,6 +2137,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get btn_retry;
+
+  /// No description provided for @msg_test_notification_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Test notification will be sent in 5 seconds...'**
+  String get msg_test_notification_pending;
+
+  /// No description provided for @msg_test_notification_foreground.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are not sent while the app is in the foreground.'**
+  String get msg_test_notification_foreground;
 }
 
 class _AppLocalizationsDelegate

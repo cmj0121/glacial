@@ -472,7 +472,7 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
 
   // The dummy notification to send in local device.
   Future<void> sendDummyNotification() async {
-    showSnackbar(context, "Dummy notification will be sent in 5 seconds ...");
+    showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_pending ?? "Test notification will be sent in 5 seconds...");
 
     Future.delayed(const Duration(seconds: 5), () {
       final state = WidgetsBinding.instance.lifecycleState;
@@ -484,7 +484,7 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           return;
         default:
           AppBadgePlus.updateBadge(0);
-          showSnackbar(context, "It should not send the notification while the app is in foreground.");
+          showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_foreground ?? "Notifications are not sent while the app is in the foreground.");
           return;
       }
     });

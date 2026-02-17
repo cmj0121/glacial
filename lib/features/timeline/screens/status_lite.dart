@@ -158,7 +158,7 @@ class StatusLite extends ConsumerWidget {
     if (schema.scheduledAt != null) {
       return Tooltip(
         message: schema.scheduledAt!.toLocal().toString(),
-        child: Icon(Icons.schedule_outlined, size: iconSize, color: Colors.grey),
+        child: Icon(Icons.schedule_outlined, size: iconSize, color: Theme.of(context).hintColor),
       );
     }
 
@@ -166,7 +166,7 @@ class StatusLite extends ConsumerWidget {
 
     return Tooltip(
       message: schema.createdAt.toLocal().toString(),
-      child: Text(duration, style: const TextStyle(color: Colors.grey)),
+      child: Text(duration, style: TextStyle(color: Theme.of(context).hintColor)),
     );
   }
 

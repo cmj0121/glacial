@@ -1045,4 +1045,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get btn_retry => '再試行';
+
+  @override
+  String get msg_test_notification_pending => '5秒後にテスト通知が送信されます...';
+
+  @override
+  String get msg_test_notification_foreground => 'アプリがフォアグラウンドの間は通知は送信されません。';
 }
