@@ -1033,4 +1033,16 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get msg_network_restored => '接続が復元されました';
+
+  @override
+  String get msg_confirm_reset => 'すべてのデータ、アカウント、設定が削除されます。この操作は元に戻せません。';
+
+  @override
+  String get btn_confirm => '確認';
+
+  @override
+  String get msg_loading_error => '読み込み中にエラーが発生しました。もう一度お試しください。';
+
+  @override
+  String get btn_retry => '再試行';
 }

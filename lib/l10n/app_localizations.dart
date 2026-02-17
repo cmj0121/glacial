@@ -2113,6 +2113,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connection restored'**
   String get msg_network_restored;
+
+  /// No description provided for @msg_confirm_reset.
+  ///
+  /// In en, this message translates to:
+  /// **'This will delete all your data, accounts, and settings. This cannot be undone.'**
+  String get msg_confirm_reset;
+
+  /// No description provided for @btn_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get btn_confirm;
+
+  /// No description provided for @msg_loading_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while loading. Please try again.'**
+  String get msg_loading_error;
+
+  /// No description provided for @btn_retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get btn_retry;
 }
 
 class _AppLocalizationsDelegate

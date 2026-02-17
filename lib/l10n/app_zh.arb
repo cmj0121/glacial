@@ -333,5 +333,9 @@
   "btn_undo": "復原",
   "txt_offline_banner": "您已离线",
   "txt_cached_data": "正在显示缓存数据",
-  "msg_network_restored": "连接已恢复"
+  "msg_network_restored": "连接已恢复",
+  "msg_confirm_reset": "這將刪除所有資料、帳號和設定，此操作無法復原。",
+  "btn_confirm": "確認",
+  "msg_loading_error": "載入時發生錯誤，請重試。",
+  "btn_retry": "重試"
 }

@@ -83,7 +83,7 @@ class MastodonServer extends StatelessWidget {
               ClipRRect(child: buildExtraContent(context)),
 
               const Spacer(),
-              buildMetadata(),
+              buildMetadata(context),
             ],
           ),
         );
@@ -148,7 +148,7 @@ class MastodonServer extends StatelessWidget {
 
   // Build the metadata of the server, including the server version and the
   // supported languages.
-  Widget buildMetadata() {
+  Widget buildMetadata(BuildContext context) {
     final List<String> tags = [
       'v${schema.version}',
       'mau: ${schema.usage.userActiveMonthly}',
@@ -164,10 +164,10 @@ class MastodonServer extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             margin: const EdgeInsets.only(left: 8),
             decoration: BoxDecoration(
-              color: Colors.grey.shade400,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Text(tag, style: TextStyle(fontSize: badgeFontSize, color: Colors.black)),
+            child: Text(tag, style: TextStyle(fontSize: badgeFontSize, color: Theme.of(context).colorScheme.onSurface)),
           );
         }),
       ],
@@ -180,17 +180,17 @@ class MastodonServer extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      margin: const EdgeInsets.only(left: 8),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade400,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Builder(
-        builder: (context) => Text(
+    return Builder(
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        margin: const EdgeInsets.only(left: 8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(
           AppLocalizations.of(context)?.txt_server_registration ?? 'Registration',
-          style: TextStyle(fontSize: badgeFontSize, color: Colors.black),
+          style: TextStyle(fontSize: badgeFontSize, color: Theme.of(context).colorScheme.onSurface),
         ),
       ),
     );

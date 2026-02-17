@@ -333,5 +333,9 @@
   "btn_undo": "Annuler",
   "txt_offline_banner": "Vous êtes hors ligne",
   "txt_cached_data": "Affichage des données en cache",
-  "msg_network_restored": "Connexion rétablie"
+  "msg_network_restored": "Connexion rétablie",
+  "msg_confirm_reset": "Toutes vos données, comptes et paramètres seront supprimés. Cette action est irréversible.",
+  "btn_confirm": "Confirmer",
+  "msg_loading_error": "Une erreur est survenue lors du chargement. Veuillez réessayer.",
+  "btn_retry": "Réessayer"
 }

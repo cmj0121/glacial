@@ -1083,4 +1083,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get msg_network_restored => 'Connexion rétablie';
+
+  @override
+  String get msg_confirm_reset =>
+      'Toutes vos données, comptes et paramètres seront supprimés. Cette action est irréversible.';
+
+  @override
+  String get btn_confirm => 'Confirmer';
+
+  @override
+  String get msg_loading_error =>
+      'Une erreur est survenue lors du chargement. Veuillez réessayer.';
+
+  @override
+  String get btn_retry => 'Réessayer';
 }

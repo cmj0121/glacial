@@ -1034,4 +1034,16 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get msg_network_restored => '연결이 복원되었습니다';
+
+  @override
+  String get msg_confirm_reset => '모든 데이터, 계정 및 설정이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.';
+
+  @override
+  String get btn_confirm => '확인';
+
+  @override
+  String get msg_loading_error => '로딩 중 오류가 발생했습니다. 다시 시도해 주세요.';
+
+  @override
+  String get btn_retry => '다시 시도';
 }

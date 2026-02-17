@@ -325,7 +325,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
       width: size,
       height: size,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white, width: 2),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant, width: 2),
         color: Theme.of(context).colorScheme.surface,
         shape: BoxShape.circle,
       ),

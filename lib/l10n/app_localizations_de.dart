@@ -1079,4 +1079,18 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get msg_network_restored => 'Verbindung wiederhergestellt';
+
+  @override
+  String get msg_confirm_reset =>
+      'Alle Daten, Konten und Einstellungen werden gelöscht. Dies kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get btn_confirm => 'Bestätigen';
+
+  @override
+  String get msg_loading_error =>
+      'Beim Laden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.';
+
+  @override
+  String get btn_retry => 'Erneut versuchen';
 }

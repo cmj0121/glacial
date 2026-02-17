@@ -381,5 +381,9 @@
   "btn_undo": "Undo",
   "txt_offline_banner": "You are offline",
   "txt_cached_data": "Showing cached data",
-  "msg_network_restored": "Connection restored"
+  "msg_network_restored": "Connection restored",
+  "msg_confirm_reset": "This will delete all your data, accounts, and settings. This cannot be undone.",
+  "btn_confirm": "Confirm",
+  "msg_loading_error": "Something went wrong while loading. Please try again.",
+  "btn_retry": "Retry"
 }

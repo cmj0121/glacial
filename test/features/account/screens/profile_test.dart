@@ -219,6 +219,40 @@ void main() {
 
       expect(find.byType(UserStatistics), findsOneWidget);
     });
+
+    testWidgets('avatar border uses theme color not hardcoded white', (tester) async {
+      final viewedAccount = MockAccount.create(id: '999');
+      final selfAccount = MockAccount.create(id: '123');
+      final status = MockAccessStatus.authenticated(
+        account: selfAccount,
+        server: MockServer.create(),
+      );
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(
+            body: ProfilePage(schema: viewedAccount),
+          ),
+          accessStatus: status,
+        ));
+        await tester.pump();
+      });
+
+      // Find the avatar Container with BoxDecoration
+      final containerFinder = find.byWidgetPredicate((widget) =>
+        widget is Container &&
+        widget.decoration is BoxDecoration &&
+        (widget.decoration as BoxDecoration).shape == BoxShape.circle &&
+        (widget.decoration as BoxDecoration).border != null
+      );
+      expect(containerFinder, findsOneWidget);
+
+      final Container container = tester.widget(containerFinder);
+      final BoxDecoration decoration = container.decoration as BoxDecoration;
+      final Border border = decoration.border as Border;
+      // Should NOT be hardcoded Colors.white
+      expect(border.top.color, isNot(equals(Colors.white)));
+    });
   });
 }
 

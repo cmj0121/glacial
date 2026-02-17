@@ -333,5 +333,9 @@
   "btn_undo": "Desfazer",
   "txt_offline_banner": "Você está offline",
   "txt_cached_data": "Mostrando dados em cache",
-  "msg_network_restored": "Conexão restaurada"
+  "msg_network_restored": "Conexão restaurada",
+  "msg_confirm_reset": "Isso excluirá todos os seus dados, contas e configurações. Esta ação não pode ser desfeita.",
+  "btn_confirm": "Confirmar",
+  "msg_loading_error": "Algo deu errado ao carregar. Por favor, tente novamente.",
+  "btn_retry": "Tentar novamente"
 }

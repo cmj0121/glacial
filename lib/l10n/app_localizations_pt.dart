@@ -1082,4 +1082,18 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get msg_network_restored => 'Conexão restaurada';
+
+  @override
+  String get msg_confirm_reset =>
+      'Isso excluirá todos os seus dados, contas e configurações. Esta ação não pode ser desfeita.';
+
+  @override
+  String get btn_confirm => 'Confirmar';
+
+  @override
+  String get msg_loading_error =>
+      'Algo deu errado ao carregar. Por favor, tente novamente.';
+
+  @override
+  String get btn_retry => 'Tentar novamente';
 }

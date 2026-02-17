@@ -1033,4 +1033,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_network_restored => '连接已恢复';
+
+  @override
+  String get msg_confirm_reset => '這將刪除所有資料、帳號和設定，此操作無法復原。';
+
+  @override
+  String get btn_confirm => '確認';
+
+  @override
+  String get msg_loading_error => '載入時發生錯誤，請重試。';
+
+  @override
+  String get btn_retry => '重試';
 }

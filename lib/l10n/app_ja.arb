@@ -333,5 +333,9 @@
   "btn_undo": "元に戻す",
   "txt_offline_banner": "オフラインです",
   "txt_cached_data": "キャッシュされたデータを表示中",
-  "msg_network_restored": "接続が復元されました"
+  "msg_network_restored": "接続が復元されました",
+  "msg_confirm_reset": "すべてのデータ、アカウント、設定が削除されます。この操作は元に戻せません。",
+  "btn_confirm": "確認",
+  "msg_loading_error": "読み込み中にエラーが発生しました。もう一度お試しください。",
+  "btn_retry": "再試行"
 }

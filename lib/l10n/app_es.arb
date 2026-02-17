@@ -333,5 +333,9 @@
   "btn_undo": "Deshacer",
   "txt_offline_banner": "Estás sin conexión",
   "txt_cached_data": "Mostrando datos en caché",
-  "msg_network_restored": "Conexión restaurada"
+  "msg_network_restored": "Conexión restaurada",
+  "msg_confirm_reset": "Esto eliminará todos tus datos, cuentas y configuraciones. Esta acción no se puede deshacer.",
+  "btn_confirm": "Confirmar",
+  "msg_loading_error": "Algo salió mal al cargar. Por favor, inténtalo de nuevo.",
+  "btn_retry": "Reintentar"
 }

@@ -106,7 +106,7 @@ class ProfilePage extends ConsumerWidget {
       width: avatarSize,
       height: avatarSize,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white, width: 2),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant, width: 2),
         color: Theme.of(context).colorScheme.surface,
         shape: BoxShape.circle,
       ),
