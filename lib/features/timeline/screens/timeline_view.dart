@@ -242,7 +242,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
     return CustomMaterialIndicator(
       onRefresh: onRefresh,
-      indicatorBuilder: (_, __) => const ClockProgressIndicator(),
+      indicatorBuilder: ClockProgressIndicator.refreshBuilder,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: ScrollablePositionedList.builder(
