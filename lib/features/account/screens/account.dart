@@ -45,7 +45,7 @@ class Account extends StatelessWidget {
       placeholder: (context, url) => SizedBox(
         width: size,
         height: size,
-        child: ClockProgressIndicator(size: size),
+        child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
       ),
       errorWidget: (context, url, error) => const Icon(Icons.error),
       imageBuilder: (context, imageProvider) {
@@ -109,7 +109,7 @@ class AccountAvatar extends StatelessWidget {
         placeholder: (context, url) => SizedBox(
           width: size,
           height: size,
-          child: ClockProgressIndicator(size: size),
+          child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
         ),
         errorWidget: (context, url, error) => const Icon(Icons.error),
         imageBuilder: (context, imageProvider) => Image(
@@ -157,7 +157,7 @@ class AccountLite extends StatelessWidget {
         placeholder: (context, url) => SizedBox(
           width: size,
           height: size,
-          child: ClockProgressIndicator(size: size),
+          child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
         ),
         errorWidget: (context, url, error) => const Icon(Icons.error),
         imageBuilder: (context, imageProvider) => Image(

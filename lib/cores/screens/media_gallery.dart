@@ -265,7 +265,7 @@ class _MediaGalleryState extends State<MediaGallery> {
             ),
             const SizedBox(height: 4),
             if (isLoadingExif)
-              const Center(child: ClockProgressIndicator())
+              const Center(child: ClockProgressIndicator.small())
             else
               buildExifInfo(),
           ],
