@@ -156,6 +156,61 @@ void main() {
       expect(streamTypeForTimeline(TimelineType.schedule), isNull);
     });
   });
+
+  group('isEventForTimeline', () {
+    StreamingEvent makeEvent(List<String> stream) {
+      return StreamingEvent(type: StreamingEventType.update, stream: stream);
+    }
+
+    test('matches home timeline to user stream', () {
+      expect(isEventForTimeline(makeEvent(['user']), TimelineType.home), isTrue);
+    });
+
+    test('matches local timeline to public:local stream', () {
+      expect(isEventForTimeline(makeEvent(['public:local']), TimelineType.local), isTrue);
+    });
+
+    test('matches federal timeline to public:remote stream', () {
+      expect(isEventForTimeline(makeEvent(['public:remote']), TimelineType.federal), isTrue);
+    });
+
+    test('matches public timeline to public stream', () {
+      expect(isEventForTimeline(makeEvent(['public']), TimelineType.public), isTrue);
+    });
+
+    test('rejects event from wrong stream', () {
+      expect(isEventForTimeline(makeEvent(['public:local']), TimelineType.home), isFalse);
+      expect(isEventForTimeline(makeEvent(['user']), TimelineType.local), isFalse);
+      expect(isEventForTimeline(makeEvent(['public']), TimelineType.federal), isFalse);
+      expect(isEventForTimeline(makeEvent(['public:remote']), TimelineType.public), isFalse);
+    });
+
+    test('rejects event for unsupported timeline types', () {
+      expect(isEventForTimeline(makeEvent(['user']), TimelineType.favourites), isFalse);
+      expect(isEventForTimeline(makeEvent(['user']), TimelineType.bookmarks), isFalse);
+      expect(isEventForTimeline(makeEvent(['user']), TimelineType.pin), isFalse);
+    });
+
+    test('matches hashtag timeline with correct tag', () {
+      expect(isEventForTimeline(makeEvent(['hashtag', 'flutter']), TimelineType.hashtag, hashtag: 'flutter'), isTrue);
+    });
+
+    test('rejects hashtag event with wrong tag', () {
+      expect(isEventForTimeline(makeEvent(['hashtag', 'dart']), TimelineType.hashtag, hashtag: 'flutter'), isFalse);
+    });
+
+    test('matches list timeline with correct list ID', () {
+      expect(isEventForTimeline(makeEvent(['list', '42']), TimelineType.list, listId: '42'), isTrue);
+    });
+
+    test('rejects list event with wrong list ID', () {
+      expect(isEventForTimeline(makeEvent(['list', '99']), TimelineType.list, listId: '42'), isFalse);
+    });
+
+    test('rejects event with empty stream array', () {
+      expect(isEventForTimeline(makeEvent([]), TimelineType.home), isFalse);
+    });
+  });
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

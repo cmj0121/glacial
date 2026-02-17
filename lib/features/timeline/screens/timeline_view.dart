@@ -119,6 +119,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   void _onStreamingEvent(StreamingEvent event) {
     if (!mounted) return;
+    if (!isEventForTimeline(event, widget.type, hashtag: widget.hashtag, listId: widget.listId)) return;
 
     switch (event.type) {
       case StreamingEventType.update:
