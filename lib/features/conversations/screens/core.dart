@@ -110,7 +110,7 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
 
     return CustomMaterialIndicator(
       onRefresh: onRefresh,
-      indicatorBuilder: (_, __) => const ClockProgressIndicator(),
+      indicatorBuilder: ClockProgressIndicator.refreshBuilder,
       child: isRefresh ? const SizedBox.shrink() : builder,
     );
   }

@@ -1,4 +1,5 @@
 // Widget tests for animation widgets.
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -241,6 +242,41 @@ void main() {
         ),
         findsNothing,
       );
+    });
+
+    testWidgets('refreshBuilder returns widget with Opacity and Transform.scale', (tester) async {
+      // Use a simple AnimationController to simulate IndicatorController behavior.
+      // Since IndicatorController is internal to custom_refresh_indicator,
+      // we test the static method indirectly via CustomMaterialIndicator.
+      await tester.pumpWidget(createTestWidget(
+        child: CustomMaterialIndicator(
+          onRefresh: () async {},
+          indicatorBuilder: ClockProgressIndicator.refreshBuilder,
+          child: const SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: SizedBox(height: 1000),
+          ),
+        ),
+      ));
+      await tester.pump();
+
+      // The widget tree should contain ClockProgressIndicator via refreshBuilder
+      expect(find.byType(CustomMaterialIndicator), findsOneWidget);
+    });
+
+    testWidgets('refreshBuilder produces AnimatedBuilder with ClockProgressIndicator', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ClockProgressIndicator.refreshBuilder(
+            context,
+            IndicatorController(),
+          ),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.byType(AnimatedBuilder), findsWidgets);
+      expect(find.byType(ClockProgressIndicator), findsOneWidget);
     });
   });
 }

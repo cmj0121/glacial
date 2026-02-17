@@ -156,11 +156,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
       future: playerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(
+          return Center(
             child: SizedBox(
               width: 50,
               height: 50,
-              child: ClockProgressIndicator(),
+              child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
             ),
           );
         }

@@ -139,7 +139,7 @@ class _TrendsState extends State<Trends> with PaginatedListMixin {
 
     return CustomMaterialIndicator(
       onRefresh: onRefresh,
-      indicatorBuilder: (_, __) => const ClockProgressIndicator(),
+      indicatorBuilder: ClockProgressIndicator.refreshBuilder,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: ScrollablePositionedList.builder(

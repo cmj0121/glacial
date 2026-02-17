@@ -91,4 +91,21 @@ StreamType? streamTypeForTimeline(TimelineType type) {
   };
 }
 
+// Check whether a streaming event belongs to the given timeline type.
+// For hashtag/list streams, also verifies the specific tag or list ID.
+bool isEventForTimeline(StreamingEvent event, TimelineType type, {String? hashtag, String? listId}) {
+  final StreamType? streamType = streamTypeForTimeline(type);
+  if (streamType == null) return false;
+  if (!event.stream.contains(streamType.streamName)) return false;
+
+  if (streamType == StreamType.hashtag && hashtag != null) {
+    return event.stream.contains(hashtag);
+  }
+  if (streamType == StreamType.list && listId != null) {
+    return event.stream.contains(listId);
+  }
+
+  return true;
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

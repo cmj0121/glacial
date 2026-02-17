@@ -1,5 +1,6 @@
 // The animations widget library for the app.
 import 'dart:math';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 
 // The flipping card widget that shows a front and back side.
@@ -106,6 +107,27 @@ class ClockProgressIndicator extends StatefulWidget {
     this.duration = const Duration(milliseconds: 1200),
   }) : size = 48.0,
        strokeWidth = 3.5;
+
+  // Pull-to-refresh indicator builder for [CustomMaterialIndicator].
+  // Fades in and scales up with pull progress, then spins at full size while loading.
+  static Widget refreshBuilder(BuildContext context, IndicatorController controller) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, child) {
+        final double progress = controller.value.clamp(0.0, 1.0);
+        return Opacity(
+          opacity: progress,
+          child: Transform.scale(
+            scale: 0.5 + progress * 0.5,
+            child: child,
+          ),
+        );
+      },
+      child: ClockProgressIndicator(
+        color: Theme.of(context).colorScheme.primary,
+      ),
+    );
+  }
 
   @override
   State<ClockProgressIndicator> createState() => _ClockProgressIndicatorState();

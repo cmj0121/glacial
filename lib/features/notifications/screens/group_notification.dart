@@ -129,7 +129,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
 
     return CustomMaterialIndicator(
       onRefresh: onRefresh,
-      indicatorBuilder: (_, __) => const ClockProgressIndicator(),
+      indicatorBuilder: ClockProgressIndicator.refreshBuilder,
       child: isRefresh ? const SizedBox.shrink() : builder,
     );
   }
