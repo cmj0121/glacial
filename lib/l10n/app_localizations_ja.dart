@@ -1051,4 +1051,19 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get msg_test_notification_foreground => 'アプリがフォアグラウンドの間は通知は送信されません。';
+
+  @override
+  String get lbl_swipe_back => 'スワイプして戻る';
+
+  @override
+  String get lbl_swipe_remove => 'スワイプして削除';
+
+  @override
+  String get lbl_swipe_delete => 'スワイプして消去';
+
+  @override
+  String get lbl_avatar => 'アバター';
+
+  @override
+  String get msg_admin_only => '管理者権限が必要です';
 }

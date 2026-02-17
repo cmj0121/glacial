@@ -77,8 +77,9 @@ class _FiltersState extends ConsumerState<Filters> {
           onTap: () => context.push(RoutePath.editFilterForm.path, extra: filter),
         );
 
-        return Dismissible(
-          key: ValueKey(filter.id),
+        return AccessibleDismissible(
+          dismissKey: ValueKey(filter.id),
+          dismissLabel: AppLocalizations.of(context)?.lbl_swipe_delete,
           background: Container(
             alignment: Alignment.centerLeft,
             color: Theme.of(context).colorScheme.error,

@@ -74,14 +74,15 @@ class _HistoryDrawerState extends ConsumerState<HistoryDrawer> {
           onTap: () => widget.onTap?.call(info.domain),
         );
 
-        return Dismissible(
-          key: ValueKey(info.domain),
+        return AccessibleDismissible(
+          dismissKey: ValueKey(info.domain),
           background: Container(
             alignment: Alignment.centerLeft,
             color: Theme.of(context).colorScheme.error,
             child: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.onError),
           ),
           direction: DismissDirection.startToEnd,
+          dismissLabel: AppLocalizations.of(context)?.lbl_swipe_remove,
           confirmDismiss: (_) async {
             onRemoveHistory(info);
             return false;

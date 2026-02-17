@@ -1051,4 +1051,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_test_notification_foreground => '應用程式在前景時不會發送通知。';
+
+  @override
+  String get lbl_swipe_back => '滑動返回';
+
+  @override
+  String get lbl_swipe_remove => '滑動移除';
+
+  @override
+  String get lbl_swipe_delete => '滑動刪除';
+
+  @override
+  String get lbl_avatar => '頭像';
+
+  @override
+  String get msg_admin_only => '需要管理員權限';
 }

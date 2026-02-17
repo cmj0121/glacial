@@ -71,9 +71,10 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
         buildHeader(),
         const Divider(),
         Flexible(
-          child: Dismissible(
-            key: UniqueKey(),
+          child: AccessibleDismissible(
+            dismissKey: UniqueKey(),
             direction: DismissDirection.startToEnd,
+            dismissLabel: AppLocalizations.of(context)?.lbl_swipe_back,
             confirmDismiss: (_) async { context.pop(); return false; },
             child: showMembers ? buildMembers() : buildTimeline(),
           ),

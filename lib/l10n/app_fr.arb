@@ -339,5 +339,10 @@
   "msg_loading_error": "Une erreur est survenue lors du chargement. Veuillez réessayer.",
   "btn_retry": "Réessayer",
   "msg_test_notification_pending": "La notification de test sera envoyée dans 5 secondes...",
-  "msg_test_notification_foreground": "Les notifications ne sont pas envoyées lorsque l'application est au premier plan."
+  "msg_test_notification_foreground": "Les notifications ne sont pas envoyées lorsque l'application est au premier plan.",
+  "lbl_swipe_back": "Glisser pour revenir",
+  "lbl_swipe_remove": "Glisser pour supprimer",
+  "lbl_swipe_delete": "Glisser pour effacer",
+  "lbl_avatar": "Avatar",
+  "msg_admin_only": "Accès administrateur requis"
 }

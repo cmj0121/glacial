@@ -44,9 +44,10 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
-      child: isDisposed ? const SizedBox() : Dismissible(
-        key: ValueKey(widget.schema.id),
+      child: isDisposed ? const SizedBox() : AccessibleDismissible(
+        dismissKey: ValueKey(widget.schema.id),
         direction: DismissDirection.startToEnd,
+        dismissLabel: AppLocalizations.of(context)?.lbl_swipe_back,
         confirmDismiss: (_) async { onDismiss(); return false; },
         child: buildContent(),
       ),

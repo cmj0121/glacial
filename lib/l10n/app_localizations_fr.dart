@@ -1105,4 +1105,19 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get msg_test_notification_foreground =>
       'Les notifications ne sont pas envoyées lorsque l\'application est au premier plan.';
+
+  @override
+  String get lbl_swipe_back => 'Glisser pour revenir';
+
+  @override
+  String get lbl_swipe_remove => 'Glisser pour supprimer';
+
+  @override
+  String get lbl_swipe_delete => 'Glisser pour effacer';
+
+  @override
+  String get lbl_avatar => 'Avatar';
+
+  @override
+  String get msg_admin_only => 'Accès administrateur requis';
 }

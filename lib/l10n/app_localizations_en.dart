@@ -1090,4 +1090,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get msg_test_notification_foreground =>
       'Notifications are not sent while the app is in the foreground.';
+
+  @override
+  String get lbl_swipe_back => 'Swipe to go back';
+
+  @override
+  String get lbl_swipe_remove => 'Swipe to remove';
+
+  @override
+  String get lbl_swipe_delete => 'Swipe to delete';
+
+  @override
+  String get lbl_avatar => 'Avatar';
+
+  @override
+  String get msg_admin_only => 'Admin access required';
 }

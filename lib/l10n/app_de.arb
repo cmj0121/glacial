@@ -339,5 +339,10 @@
   "msg_loading_error": "Beim Laden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
   "btn_retry": "Erneut versuchen",
   "msg_test_notification_pending": "Testbenachrichtigung wird in 5 Sekunden gesendet...",
-  "msg_test_notification_foreground": "Benachrichtigungen werden nicht gesendet, während die App im Vordergrund ist."
+  "msg_test_notification_foreground": "Benachrichtigungen werden nicht gesendet, während die App im Vordergrund ist.",
+  "lbl_swipe_back": "Wischen, um zurückzugehen",
+  "lbl_swipe_remove": "Wischen zum Entfernen",
+  "lbl_swipe_delete": "Wischen zum Löschen",
+  "lbl_avatar": "Profilbild",
+  "msg_admin_only": "Administratorzugang erforderlich"
 }

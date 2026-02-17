@@ -40,24 +40,27 @@ class Account extends StatelessWidget {
 
   // Build the Avatar of the user.
   Widget buildAvatar() {
-    return CachedNetworkImage(
-      imageUrl: schema.avatar,
-      placeholder: (context, url) => SizedBox(
-        width: size,
-        height: size,
-        child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-      ),
-      errorWidget: (context, url, error) => const Icon(Icons.error),
-      imageBuilder: (context, imageProvider) {
-        final Widget image = Image(
-          image: imageProvider,
+    return Semantics(
+      label: schema.displayName.isNotEmpty ? schema.displayName : schema.acct,
+      child: CachedNetworkImage(
+        imageUrl: schema.avatar,
+        placeholder: (context, url) => SizedBox(
           width: size,
           height: size,
-          fit: BoxFit.cover,
-        );
+          child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
+        ),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+        imageBuilder: (context, imageProvider) {
+          final Widget image = Image(
+            image: imageProvider,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+          );
 
-        return ClipRRect(borderRadius: BorderRadius.circular(8), child: image);
-      }
+          return ClipRRect(borderRadius: BorderRadius.circular(8), child: image);
+        }
+      ),
     );
   }
 
@@ -103,20 +106,23 @@ class AccountAvatar extends StatelessWidget {
   }
 
   Widget buildContent() {
-    return ClipOval(
-      child: CachedNetworkImage(
-        imageUrl: schema.avatar,
-        placeholder: (context, url) => SizedBox(
-          width: size,
-          height: size,
-          child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-        ),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
-        imageBuilder: (context, imageProvider) => Image(
-          image: imageProvider,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
+    return Semantics(
+      label: schema.displayName.isNotEmpty ? schema.displayName : schema.acct,
+      child: ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: schema.avatar,
+          placeholder: (context, url) => SizedBox(
+            width: size,
+            height: size,
+            child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
+          ),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+          imageBuilder: (context, imageProvider) => Image(
+            image: imageProvider,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
@@ -151,20 +157,23 @@ class AccountLite extends StatelessWidget {
   }
 
   Widget buildAvatar() {
-    return ClipOval(
-      child: CachedNetworkImage(
-        imageUrl: schema!.avatar,
-        placeholder: (context, url) => SizedBox(
-          width: size,
-          height: size,
-          child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-        ),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
-        imageBuilder: (context, imageProvider) => Image(
-          image: imageProvider,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
+    return Semantics(
+      label: schema!.displayName.isNotEmpty ? schema!.displayName : schema!.acct,
+      child: ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: schema!.avatar,
+          placeholder: (context, url) => SizedBox(
+            width: size,
+            height: size,
+            child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
+          ),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+          imageBuilder: (context, imageProvider) => Image(
+            image: imageProvider,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );

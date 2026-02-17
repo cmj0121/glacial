@@ -1053,4 +1053,19 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get msg_test_notification_foreground =>
       '앱이 포그라운드에 있는 동안에는 알림이 전송되지 않습니다.';
+
+  @override
+  String get lbl_swipe_back => '스와이프하여 뒤로 가기';
+
+  @override
+  String get lbl_swipe_remove => '스와이프하여 제거';
+
+  @override
+  String get lbl_swipe_delete => '스와이프하여 삭제';
+
+  @override
+  String get lbl_avatar => '아바타';
+
+  @override
+  String get msg_admin_only => '관리자 권한이 필요합니다';
 }

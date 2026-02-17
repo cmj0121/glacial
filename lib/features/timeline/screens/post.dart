@@ -72,9 +72,10 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Dismissible(
-        key: UniqueKey(),
+      child: AccessibleDismissible(
+        dismissKey: UniqueKey(),
         direction: DismissDirection.startToEnd,
+        dismissLabel: AppLocalizations.of(context)?.lbl_swipe_back,
         confirmDismiss: (_) async {
           _autoSaveDraft();
           context.pop();

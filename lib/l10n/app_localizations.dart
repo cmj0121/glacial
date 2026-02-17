@@ -2149,6 +2149,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Notifications are not sent while the app is in the foreground.'**
   String get msg_test_notification_foreground;
+
+  /// No description provided for @lbl_swipe_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to go back'**
+  String get lbl_swipe_back;
+
+  /// No description provided for @lbl_swipe_remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to remove'**
+  String get lbl_swipe_remove;
+
+  /// No description provided for @lbl_swipe_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to delete'**
+  String get lbl_swipe_delete;
+
+  /// No description provided for @lbl_avatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar'**
+  String get lbl_avatar;
+
+  /// No description provided for @msg_admin_only.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin access required'**
+  String get msg_admin_only;
 }
 
 class _AppLocalizationsDelegate

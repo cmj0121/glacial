@@ -339,5 +339,10 @@
   "msg_loading_error": "載入時發生錯誤，請重試。",
   "btn_retry": "重試",
   "msg_test_notification_pending": "測試通知將在 5 秒後發送...",
-  "msg_test_notification_foreground": "應用程式在前景時不會發送通知。"
+  "msg_test_notification_foreground": "應用程式在前景時不會發送通知。",
+  "lbl_swipe_back": "滑動返回",
+  "lbl_swipe_remove": "滑動移除",
+  "lbl_swipe_delete": "滑動刪除",
+  "lbl_avatar": "頭像",
+  "msg_admin_only": "需要管理員權限"
 }

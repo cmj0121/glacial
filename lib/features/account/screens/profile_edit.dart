@@ -222,9 +222,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
   Widget buildFieldItem(int index) {
     final (TextEditingController nameController, TextEditingController valueController) = fieldControllers[index];
 
-    return Dismissible(
-      key: UniqueKey(),
+    return AccessibleDismissible(
+      dismissKey: UniqueKey(),
       direction: DismissDirection.startToEnd,
+      dismissLabel: AppLocalizations.of(context)?.lbl_swipe_remove,
       confirmDismiss: (_) async {
         final List<FieldSchema> fields = List.from(schema.fields);
         fields.removeAt(index);
@@ -312,14 +313,18 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
 
   // Build the avatar image for the account profile.
   Widget buildAvatar(double size) {
-    final Widget avatar = schema.avatar == null ?
-        CachedNetworkImage(
-          imageUrl: widget.account.avatar,
-          placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-          fit: BoxFit.cover,
-        ) :
-        Image.file(schema.avatar!, fit: BoxFit.cover);
+    final String avatarLabel = AppLocalizations.of(context)?.lbl_avatar ?? 'Avatar';
+    final Widget avatar = Semantics(
+      label: avatarLabel,
+      child: schema.avatar == null ?
+          CachedNetworkImage(
+            imageUrl: widget.account.avatar,
+            placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+            fit: BoxFit.cover,
+          ) :
+          Image.file(schema.avatar!, fit: BoxFit.cover),
+    );
 
     return Container(
       width: size,

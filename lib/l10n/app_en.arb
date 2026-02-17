@@ -387,5 +387,10 @@
   "msg_loading_error": "Something went wrong while loading. Please try again.",
   "btn_retry": "Retry",
   "msg_test_notification_pending": "Test notification will be sent in 5 seconds...",
-  "msg_test_notification_foreground": "Notifications are not sent while the app is in the foreground."
+  "msg_test_notification_foreground": "Notifications are not sent while the app is in the foreground.",
+  "lbl_swipe_back": "Swipe to go back",
+  "lbl_swipe_remove": "Swipe to remove",
+  "lbl_swipe_delete": "Swipe to delete",
+  "lbl_avatar": "Avatar",
+  "msg_admin_only": "Admin access required"
 }

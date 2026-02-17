@@ -58,6 +58,8 @@ class AccessibleDismissible extends StatelessWidget {
   final Future<bool?> Function(DismissDirection)? confirmDismiss;
   final void Function(DismissDirection)? onDismissed;
   final String? dismissLabel;
+  final Widget? background;
+  final Widget? secondaryBackground;
 
   const AccessibleDismissible({
     super.key,
@@ -67,6 +69,8 @@ class AccessibleDismissible extends StatelessWidget {
     this.confirmDismiss,
     this.onDismissed,
     this.dismissLabel,
+    this.background,
+    this.secondaryBackground,
   });
 
   @override
@@ -79,6 +83,8 @@ class AccessibleDismissible extends StatelessWidget {
         direction: direction,
         confirmDismiss: confirmDismiss,
         onDismissed: onDismissed,
+        background: background,
+        secondaryBackground: secondaryBackground,
         child: child,
       ),
     );

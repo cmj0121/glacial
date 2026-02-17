@@ -165,9 +165,10 @@ class _AccountListState extends ConsumerState<AccountList> with PaginatedListMix
 
         if (widget.onDismiss == null) return child;
 
-        return Dismissible(
-          key: ValueKey(account.id),
+        return AccessibleDismissible(
+          dismissKey: ValueKey(account.id),
           direction: DismissDirection.endToStart,
+          dismissLabel: AppLocalizations.of(context)?.lbl_swipe_remove,
           background: Container(
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 16),

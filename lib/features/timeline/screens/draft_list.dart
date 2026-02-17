@@ -100,9 +100,10 @@ class _DraftListSheetState extends ConsumerState<DraftListSheet> {
     final String duration = timeago.format(draft.updatedAt, locale: timeagoLocale(context));
     final Color hintColor = Theme.of(context).hintColor;
 
-    return Dismissible(
-      key: ValueKey(draft.id),
+    return AccessibleDismissible(
+      dismissKey: ValueKey(draft.id),
       direction: DismissDirection.endToStart,
+      dismissLabel: AppLocalizations.of(context)?.lbl_swipe_delete,
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),

@@ -1101,4 +1101,19 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get msg_test_notification_foreground =>
       'Benachrichtigungen werden nicht gesendet, während die App im Vordergrund ist.';
+
+  @override
+  String get lbl_swipe_back => 'Wischen, um zurückzugehen';
+
+  @override
+  String get lbl_swipe_remove => 'Wischen zum Entfernen';
+
+  @override
+  String get lbl_swipe_delete => 'Wischen zum Löschen';
+
+  @override
+  String get lbl_avatar => 'Profilbild';
+
+  @override
+  String get msg_admin_only => 'Administratorzugang erforderlich';
 }

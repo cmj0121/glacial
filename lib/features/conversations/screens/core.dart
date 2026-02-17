@@ -87,9 +87,10 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
       itemBuilder: (BuildContext context, int index) {
         final ConversationSchema conversation = conversations[index];
 
-        return Dismissible(
-          key: ValueKey(conversation.id),
+        return AccessibleDismissible(
+          dismissKey: ValueKey(conversation.id),
           direction: DismissDirection.endToStart,
+          dismissLabel: AppLocalizations.of(context)?.lbl_swipe_delete,
           background: Container(
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 16),
