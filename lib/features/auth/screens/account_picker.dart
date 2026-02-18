@@ -111,7 +111,7 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
           overflow: TextOverflow.ellipsis,
           style: TextStyle(color: Theme.of(context).hintColor),
         ),
-        trailing: isCurrent ? const Icon(Icons.check_circle, color: Colors.green) : null,
+        trailing: isCurrent ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary) : null,
         onTap: isCurrent ? null : () => onSwitchAccount(saved),
       ),
     );

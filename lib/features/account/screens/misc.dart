@@ -173,7 +173,7 @@ class _AccountListState extends ConsumerState<AccountList> with PaginatedListMix
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 16),
             color: Theme.of(context).colorScheme.error,
-            child: const Icon(Icons.person_remove, color: Colors.white),
+            child: Icon(Icons.person_remove, color: Theme.of(context).colorScheme.onError),
           ),
           confirmDismiss: (_) async {
             setState(() => accounts.removeAt(index));

@@ -71,7 +71,7 @@ class _DomainBlockListState extends ConsumerState<DomainBlockList> with Paginate
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 16),
             color: Theme.of(context).colorScheme.error,
-            child: const Icon(Icons.delete, color: Colors.white),
+            child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onError),
           ),
           confirmDismiss: (_) async {
             setState(() => domains.removeAt(index));
