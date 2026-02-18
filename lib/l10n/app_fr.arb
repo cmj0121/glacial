@@ -344,5 +344,10 @@
   "lbl_swipe_remove": "Glisser pour supprimer",
   "lbl_swipe_delete": "Glisser pour effacer",
   "lbl_avatar": "Avatar",
-  "msg_admin_only": "Accès administrateur requis"
+  "msg_admin_only": "Accès administrateur requis",
+  "msg_confirm_delete_post": "Voulez-vous vraiment supprimer cette publication ? Cette action est irréversible.",
+  "msg_confirm_block": "Bloquer {account} ? Vous ne verrez plus ses publications.",
+  "msg_confirm_mute": "Masquer {account} ? Ses publications seront cachées de vos fils.",
+  "msg_confirm_delete_conversation": "Supprimer cette conversation ?",
+  "msg_confirm_delete_filter": "Supprimer ce filtre ?"
 }

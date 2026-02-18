@@ -87,7 +87,12 @@ class _FiltersState extends ConsumerState<Filters> {
           ),
           direction: DismissDirection.startToEnd,
           confirmDismiss: (_) async {
-            onDelete(schema: filter);
+            final confirmed = await showConfirmDialog(
+              context: context,
+              title: AppLocalizations.of(context)?.txt_admin_confirm_action ?? 'Confirm',
+              message: AppLocalizations.of(context)?.msg_confirm_delete_filter ?? 'Delete this filter?',
+            );
+            if (confirmed) onDelete(schema: filter);
             return false;
           },
           child: tile,

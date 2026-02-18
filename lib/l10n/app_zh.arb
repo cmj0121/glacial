@@ -344,5 +344,10 @@
   "lbl_swipe_remove": "滑動移除",
   "lbl_swipe_delete": "滑動刪除",
   "lbl_avatar": "頭像",
-  "msg_admin_only": "需要管理員權限"
+  "msg_admin_only": "需要管理員權限",
+  "msg_confirm_delete_post": "確定要刪除這篇貼文嗎？此操作無法復原。",
+  "msg_confirm_block": "封鎖 {account}？您將不再看到他們的貼文。",
+  "msg_confirm_mute": "靜音 {account}？他們的貼文將從您的動態中隱藏。",
+  "msg_confirm_delete_conversation": "刪除這則對話？",
+  "msg_confirm_delete_filter": "刪除此過濾器？"
 }

@@ -1105,4 +1105,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get msg_admin_only => 'Admin access required';
+
+  @override
+  String get msg_confirm_delete_post =>
+      'Are you sure you want to delete this post? This cannot be undone.';
+
+  @override
+  String msg_confirm_block(String account) {
+    return 'Block $account? You will no longer see their posts.';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return 'Mute $account? Their posts will be hidden from your feeds.';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation => 'Delete this conversation?';
+
+  @override
+  String get msg_confirm_delete_filter => 'Delete this filter?';
 }

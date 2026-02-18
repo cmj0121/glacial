@@ -1068,4 +1068,23 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get msg_admin_only => '관리자 권한이 필요합니다';
+
+  @override
+  String get msg_confirm_delete_post => '이 게시물을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.';
+
+  @override
+  String msg_confirm_block(String account) {
+    return '$account을(를) 차단하시겠습니까? 더 이상 해당 사용자의 게시물을 볼 수 없습니다.';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return '$account을(를) 뮤트하시겠습니까? 해당 사용자의 게시물이 피드에서 숨겨집니다.';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation => '이 대화를 삭제하시겠습니까?';
+
+  @override
+  String get msg_confirm_delete_filter => '이 필터를 삭제하시겠습니까?';
 }

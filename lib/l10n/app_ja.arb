@@ -344,5 +344,10 @@
   "lbl_swipe_remove": "スワイプして削除",
   "lbl_swipe_delete": "スワイプして消去",
   "lbl_avatar": "アバター",
-  "msg_admin_only": "管理者権限が必要です"
+  "msg_admin_only": "管理者権限が必要です",
+  "msg_confirm_delete_post": "この投稿を削除しますか？この操作は元に戻せません。",
+  "msg_confirm_block": "{account}をブロックしますか？この人の投稿は表示されなくなります。",
+  "msg_confirm_mute": "{account}をミュートしますか？この人の投稿がフィードから非表示になります。",
+  "msg_confirm_delete_conversation": "この会話を削除しますか？",
+  "msg_confirm_delete_filter": "このフィルターを削除しますか？"
 }

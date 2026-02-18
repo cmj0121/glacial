@@ -98,7 +98,12 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
             child: const Icon(Icons.delete_outline, color: Colors.white),
           ),
           confirmDismiss: (_) async {
-            onDismiss(index, conversation.id);
+            final confirmed = await showConfirmDialog(
+              context: context,
+              title: AppLocalizations.of(context)?.txt_admin_confirm_action ?? 'Confirm',
+              message: AppLocalizations.of(context)?.msg_confirm_delete_conversation ?? 'Delete this conversation?',
+            );
+            if (confirmed) onDismiss(index, conversation.id);
             return false;
           },
           child: ConversationItem(

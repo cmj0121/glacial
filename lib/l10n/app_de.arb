@@ -344,5 +344,10 @@
   "lbl_swipe_remove": "Wischen zum Entfernen",
   "lbl_swipe_delete": "Wischen zum Löschen",
   "lbl_avatar": "Profilbild",
-  "msg_admin_only": "Administratorzugang erforderlich"
+  "msg_admin_only": "Administratorzugang erforderlich",
+  "msg_confirm_delete_post": "Möchten Sie diesen Beitrag wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
+  "msg_confirm_block": "{account} blockieren? Sie werden deren Beiträge nicht mehr sehen.",
+  "msg_confirm_mute": "{account} stummschalten? Deren Beiträge werden in Ihren Feeds ausgeblendet.",
+  "msg_confirm_delete_conversation": "Diese Konversation löschen?",
+  "msg_confirm_delete_filter": "Diesen Filter löschen?"
 }

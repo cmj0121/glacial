@@ -560,6 +560,89 @@ void main() {
       expect(find.byType(InkWell), findsWidgets);
     });
   });
+  group('showConfirmDialog', () {
+    testWidgets('returns true when confirm button is tapped', (tester) async {
+      late bool result;
+
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () async {
+              result = await showConfirmDialog(
+                context: context,
+                title: 'Delete',
+                message: 'Are you sure?',
+              );
+            },
+            child: const Text('Open Dialog'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Are you sure?'), findsOneWidget);
+      expect(find.text('Delete'), findsOneWidget);
+
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+
+      expect(result, isTrue);
+    });
+
+    testWidgets('returns false when cancel button is tapped', (tester) async {
+      late bool result;
+
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () async {
+              result = await showConfirmDialog(
+                context: context,
+                title: 'Delete',
+                message: 'Are you sure?',
+              );
+            },
+            child: const Text('Open Dialog'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Close'));
+      await tester.pumpAndSettle();
+
+      expect(result, isFalse);
+    });
+
+    testWidgets('shows custom confirmLabel on confirm button', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showConfirmDialog(
+              context: context,
+              title: 'Action',
+              message: 'Proceed?',
+              confirmLabel: 'Do It',
+            ),
+            child: const Text('Open Dialog'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Do It'), findsOneWidget);
+      expect(find.text('Confirm'), findsNothing);
+    });
+  });
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

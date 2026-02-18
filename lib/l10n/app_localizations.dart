@@ -2179,6 +2179,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Admin access required'**
   String get msg_admin_only;
+
+  /// No description provided for @msg_confirm_delete_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this post? This cannot be undone.'**
+  String get msg_confirm_delete_post;
+
+  /// No description provided for @msg_confirm_block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {account}? You will no longer see their posts.'**
+  String msg_confirm_block(String account);
+
+  /// No description provided for @msg_confirm_mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute {account}? Their posts will be hidden from your feeds.'**
+  String msg_confirm_mute(String account);
+
+  /// No description provided for @msg_confirm_delete_conversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this conversation?'**
+  String get msg_confirm_delete_conversation;
+
+  /// No description provided for @msg_confirm_delete_filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this filter?'**
+  String get msg_confirm_delete_filter;
 }
 
 class _AppLocalizationsDelegate

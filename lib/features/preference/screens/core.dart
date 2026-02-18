@@ -348,30 +348,13 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_reset ?? "Clear all settings and reset the app."),
           leading: Icon(Icons.restart_alt, size: iconSize, color: Theme.of(context).colorScheme.error),
           onTap: () async {
-            final bool? confirmed = await showAdaptiveGlassDialog<bool>(
+            final bool confirmed = await showConfirmDialog(
               context: context,
               title: AppLocalizations.of(context)?.btn_preference_engineer_reset ?? "Reset system",
-              barrierDismissible: false,
-              builder: (context) => Text(
-                AppLocalizations.of(context)?.msg_confirm_reset ?? "This will delete all your data, accounts, and settings. This cannot be undone.",
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(AppLocalizations.of(context)?.btn_close ?? "Cancel"),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                    foregroundColor: Theme.of(context).colorScheme.onError,
-                  ),
-                  child: Text(AppLocalizations.of(context)?.btn_confirm ?? "Confirm"),
-                ),
-              ],
+              message: AppLocalizations.of(context)?.msg_confirm_reset ?? "This will delete all your data, accounts, and settings. This cannot be undone.",
             );
 
-            if (confirmed != true || !mounted) return;
+            if (!confirmed || !mounted) return;
 
             await storage.purge();
 

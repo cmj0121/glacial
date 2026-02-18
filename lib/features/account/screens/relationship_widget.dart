@@ -108,6 +108,18 @@ class _RelationshipState extends ConsumerState<Relationship> {
           return;
         }
         if (value is RelationshipType) {
+          if (value.isDangerous) {
+            final l10n = AppLocalizations.of(context);
+            final String message = value == RelationshipType.block
+                ? (l10n?.msg_confirm_block(widget.schema.displayName) ?? 'Block this account?')
+                : (l10n?.msg_confirm_mute(widget.schema.displayName) ?? 'Mute this account?');
+            final confirmed = await showConfirmDialog(
+              context: context,
+              title: l10n?.txt_admin_confirm_action ?? 'Confirm',
+              message: message,
+            );
+            if (!confirmed) return;
+          }
           await status?.changeRelationship(account: widget.schema, type: value);
           onRefresh();
         }

@@ -242,9 +242,16 @@ class _InteractionState extends State<Interaction> {
         widget.onReload?.call(updatedStatus);
         return;
       case StatusInteraction.delete:
+        if (mounted) context.pop();
+        final confirmedDelete = await showConfirmDialog(
+          context: context,
+          title: AppLocalizations.of(context)?.txt_admin_confirm_action ?? 'Confirm',
+          message: AppLocalizations.of(context)?.msg_confirm_delete_post ?? 'Are you sure you want to delete this post?',
+        );
+        if (!confirmedDelete || !mounted) return;
         await widget.status.deleteStatus(widget.schema);
         widget.onDeleted?.call();
-        break;
+        return;
       case StatusInteraction.share:
         final String text = AppLocalizations.of(context)?.msg_copied_to_clipboard ?? "Copy to clipboard";
 
@@ -290,9 +297,16 @@ class _InteractionState extends State<Interaction> {
         widget.onReload?.call(mutedStatus);
         return;
       case StatusInteraction.block:
+        if (mounted) context.pop();
+        final confirmedBlock = await showConfirmDialog(
+          context: context,
+          title: AppLocalizations.of(context)?.txt_admin_confirm_action ?? 'Confirm',
+          message: AppLocalizations.of(context)?.msg_confirm_block(widget.schema.account.displayName) ?? 'Block this account?',
+        );
+        if (!confirmedBlock || !mounted) return;
         await widget.status.changeRelationship(account: widget.schema.account, type: RelationshipType.block);
         widget.onDeleted?.call();
-        break;
+        return;
       case StatusInteraction.report:
         // Pop the opened menu first, then show the report dialog
         if (mounted) context.pop();
@@ -303,8 +317,6 @@ class _InteractionState extends State<Interaction> {
         );
         return;
     }
-
-    if (mounted) { context.pop(); }
   }
 
   bool get isSignedIn => widget.status.accessToken?.isNotEmpty == true;

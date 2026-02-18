@@ -1119,4 +1119,24 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get msg_admin_only => 'Acesso de administrador necessário';
+
+  @override
+  String get msg_confirm_delete_post =>
+      'Tem certeza de que deseja excluir esta publicação? Esta ação não pode ser desfeita.';
+
+  @override
+  String msg_confirm_block(String account) {
+    return 'Bloquear $account? Você não verá mais as publicações desta pessoa.';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return 'Silenciar $account? As publicações desta pessoa serão ocultadas dos seus feeds.';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation => 'Excluir esta conversa?';
+
+  @override
+  String get msg_confirm_delete_filter => 'Excluir este filtro?';
 }

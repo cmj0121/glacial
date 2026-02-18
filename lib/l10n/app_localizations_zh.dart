@@ -1066,4 +1066,23 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_admin_only => '需要管理員權限';
+
+  @override
+  String get msg_confirm_delete_post => '確定要刪除這篇貼文嗎？此操作無法復原。';
+
+  @override
+  String msg_confirm_block(String account) {
+    return '封鎖 $account？您將不再看到他們的貼文。';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return '靜音 $account？他們的貼文將從您的動態中隱藏。';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation => '刪除這則對話？';
+
+  @override
+  String get msg_confirm_delete_filter => '刪除此過濾器？';
 }

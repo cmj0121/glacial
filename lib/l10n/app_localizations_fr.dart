@@ -1120,4 +1120,25 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get msg_admin_only => 'Accès administrateur requis';
+
+  @override
+  String get msg_confirm_delete_post =>
+      'Voulez-vous vraiment supprimer cette publication ? Cette action est irréversible.';
+
+  @override
+  String msg_confirm_block(String account) {
+    return 'Bloquer $account ? Vous ne verrez plus ses publications.';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return 'Masquer $account ? Ses publications seront cachées de vos fils.';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation =>
+      'Supprimer cette conversation ?';
+
+  @override
+  String get msg_confirm_delete_filter => 'Supprimer ce filtre ?';
 }

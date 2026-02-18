@@ -344,5 +344,10 @@
   "lbl_swipe_remove": "Deslizar para remover",
   "lbl_swipe_delete": "Deslizar para excluir",
   "lbl_avatar": "Avatar",
-  "msg_admin_only": "Acesso de administrador necessário"
+  "msg_admin_only": "Acesso de administrador necessário",
+  "msg_confirm_delete_post": "Tem certeza de que deseja excluir esta publicação? Esta ação não pode ser desfeita.",
+  "msg_confirm_block": "Bloquear {account}? Você não verá mais as publicações desta pessoa.",
+  "msg_confirm_mute": "Silenciar {account}? As publicações desta pessoa serão ocultadas dos seus feeds.",
+  "msg_confirm_delete_conversation": "Excluir esta conversa?",
+  "msg_confirm_delete_filter": "Excluir este filtro?"
 }
