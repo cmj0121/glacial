@@ -44,9 +44,10 @@ class _StatusHistoryState extends ConsumerState<StatusHistory> with TickerProvid
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
-      child: isDisposed ? const SizedBox() : Dismissible(
-        key: ValueKey(widget.schema.id),
+      child: isDisposed ? const SizedBox() : AccessibleDismissible(
+        dismissKey: ValueKey(widget.schema.id),
         direction: DismissDirection.startToEnd,
+        dismissLabel: AppLocalizations.of(context)?.lbl_swipe_back,
         confirmDismiss: (_) async { onDismiss(); return false; },
         child: buildContent(),
       ),
@@ -130,7 +131,7 @@ class StatusEdit extends StatelessWidget {
       children: [
         Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
         const SizedBox(height: 8),
-        Text(schema.createdAt.toLocal().toString(), style: const TextStyle(color: Colors.grey)),
+        Text(schema.createdAt.toLocal().toString(), style: TextStyle(color: Theme.of(context).hintColor)),
         const Divider(),
         HtmlDone(html: schema.content, emojis: schema.emojis),
         Poll(schema: schema.poll),

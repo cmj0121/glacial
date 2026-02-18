@@ -1068,4 +1068,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get msg_network_restored => 'Connection restored';
+
+  @override
+  String get msg_confirm_reset =>
+      'This will delete all your data, accounts, and settings. This cannot be undone.';
+
+  @override
+  String get btn_confirm => 'Confirm';
+
+  @override
+  String get msg_loading_error =>
+      'Something went wrong while loading. Please try again.';
+
+  @override
+  String get btn_retry => 'Retry';
+
+  @override
+  String get msg_test_notification_pending =>
+      'Test notification will be sent in 5 seconds...';
+
+  @override
+  String get msg_test_notification_foreground =>
+      'Notifications are not sent while the app is in the foreground.';
+
+  @override
+  String get lbl_swipe_back => 'Swipe to go back';
+
+  @override
+  String get lbl_swipe_remove => 'Swipe to remove';
+
+  @override
+  String get lbl_swipe_delete => 'Swipe to delete';
+
+  @override
+  String get lbl_avatar => 'Avatar';
+
+  @override
+  String get msg_admin_only => 'Admin access required';
+
+  @override
+  String get msg_confirm_delete_post =>
+      'Are you sure you want to delete this post? This cannot be undone.';
+
+  @override
+  String msg_confirm_block(String account) {
+    return 'Block $account? You will no longer see their posts.';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return 'Mute $account? Their posts will be hidden from your feeds.';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation => 'Delete this conversation?';
+
+  @override
+  String get msg_confirm_delete_filter => 'Delete this filter?';
 }

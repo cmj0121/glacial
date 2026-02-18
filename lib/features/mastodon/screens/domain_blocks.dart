@@ -63,9 +63,10 @@ class _DomainBlockListState extends ConsumerState<DomainBlockList> with Paginate
       itemBuilder: (context, index) {
         final String domain = domains[index];
 
-        return Dismissible(
-          key: ValueKey(domain),
+        return AccessibleDismissible(
+          dismissKey: ValueKey(domain),
           direction: DismissDirection.endToStart,
+          dismissLabel: AppLocalizations.of(context)?.lbl_swipe_remove,
           background: Container(
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 16),

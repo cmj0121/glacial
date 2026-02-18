@@ -67,9 +67,10 @@ class _StatusContextState extends ConsumerState<StatusContext> {
           });
         }
 
-        return Dismissible(
-          key: ValueKey(widget.schema.id),
+        return AccessibleDismissible(
+          dismissKey: ValueKey(widget.schema.id),
           direction: DismissDirection.startToEnd,
+          dismissLabel: AppLocalizations.of(context)?.lbl_swipe_back,
           confirmDismiss: (_) async { context.pop(); return false; },
           child: buildContent(allStatuses, selectedIndex),
         );

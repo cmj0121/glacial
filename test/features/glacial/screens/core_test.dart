@@ -246,6 +246,37 @@ void main() {
       const landing = LandingPage();
       expect(landing, isA<LandingPage>());
     });
+
+    testWidgets('error state shows cloud_off icon and retry button', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: const LandingPage(),
+        ));
+        await tester.pump();
+        // Allow async onLoading to fail (Storage not initialized)
+        await Future.delayed(const Duration(milliseconds: 100));
+        await tester.pump();
+      });
+
+      // Should show error UI with cloud_off icon and retry button
+      expect(find.byIcon(Icons.cloud_off_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.refresh), findsOneWidget);
+    });
+
+    testWidgets('error state does not show raw exception text', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: const LandingPage(),
+        ));
+        await tester.pump();
+        await Future.delayed(const Duration(milliseconds: 100));
+        await tester.pump();
+      });
+
+      // Should not contain "Exception" or "Error" type text
+      expect(find.textContaining('Exception'), findsNothing);
+      expect(find.textContaining('LateInitialization'), findsNothing);
+    });
   });
 
   group('AnnouncementSheet', () {

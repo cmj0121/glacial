@@ -38,7 +38,42 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
 
     return Scaffold(
       body: SafeArea(
-        child: error == null ? Center(child: Flipping(child: icon)) : NoResult(message: error!),
+        child: error == null
+            ? Center(child: Flipping(child: icon))
+            : buildError(context),
+      ),
+    );
+  }
+
+  Widget buildError(BuildContext context) {
+    final String message = AppLocalizations.of(context)?.msg_loading_error
+        ?? "Something went wrong while loading. Please try again.";
+    final String retryLabel = AppLocalizations.of(context)?.btn_retry ?? "Retry";
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.cloud_off_outlined, size: 64, color: Theme.of(context).colorScheme.error),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                setState(() => error = null);
+                onLoading();
+              },
+              icon: const Icon(Icons.refresh),
+              label: Text(retryLabel),
+            ),
+          ],
+        ),
       ),
     );
   }

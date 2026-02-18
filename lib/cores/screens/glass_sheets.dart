@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:glacial/cores/platform.dart';
 import 'package:glacial/cores/screens/glass_style.dart';
+import 'package:glacial/l10n/app_localizations.dart';
 
 /// Shows an adaptive modal bottom sheet with glassmorphism on Apple
 /// platforms and a Material bottom sheet on Android/other platforms.
@@ -140,6 +141,37 @@ Future<T?> showAdaptiveGlassDialog<T>({
       actions: actions,
     ),
   );
+}
+
+/// Shows a confirmation dialog with cancel/confirm buttons.
+/// Returns `true` if the user confirms, `false` otherwise.
+Future<bool> showConfirmDialog({
+  required BuildContext context,
+  required String title,
+  required String message,
+  String? confirmLabel,
+}) async {
+  final result = await showAdaptiveGlassDialog<bool>(
+    context: context,
+    title: title,
+    barrierDismissible: false,
+    builder: (context) => Text(message),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(false),
+        child: Text(AppLocalizations.of(context)?.btn_close ?? 'Cancel'),
+      ),
+      ElevatedButton(
+        onPressed: () => Navigator.of(context).pop(true),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.error,
+          foregroundColor: Theme.of(context).colorScheme.onError,
+        ),
+        child: Text(confirmLabel ?? AppLocalizations.of(context)?.btn_confirm ?? 'Confirm'),
+      ),
+    ],
+  );
+  return result ?? false;
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

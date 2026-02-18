@@ -67,6 +67,26 @@ void main() {
       expect(find.text('v4.3.0'), findsOneWidget);
     });
 
+    testWidgets('metadata chips use theme colors not hardcoded', (tester) async {
+      final server = MockServer.create(version: '4.3.0');
+
+      await tester.pumpWidget(createTestWidget(
+        child: SizedBox(
+          height: 500,
+          child: MastodonServer(schema: server),
+        ),
+      ));
+      await tester.pump();
+
+      // Find the version chip container
+      final chip = find.text('v4.3.0');
+      expect(chip, findsOneWidget);
+
+      // Verify no hardcoded Colors.black text
+      final Text textWidget = tester.widget(chip);
+      expect(textWidget.style?.color, isNot(equals(Colors.black)));
+    });
+
     testWidgets('shows contact email', (tester) async {
       final server = MockServer.create(domain: 'test.social');
 

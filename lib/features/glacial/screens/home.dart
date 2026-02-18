@@ -171,11 +171,15 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
           return SignIn(size: sidebarSize);
         case SidebarButtonType.admin:
-          return IconButton(
+          final Widget adminButton = IconButton(
             icon: icon,
             tooltip: action.tooltip(context),
             color: isSelected ? Theme.of(context).colorScheme.primary : null,
             onPressed: isAdmin ? () => debounce.callOnce(() => onSelect(index)) : null,
+          );
+          return isAdmin ? adminButton : AccessibleTooltip(
+            message: AppLocalizations.of(context)?.msg_admin_only ?? 'Admin access required',
+            child: adminButton,
           );
         default:
           final bool accessible = action.isAccessible(isSignedIn: isSignedIn, access: timelinesAccess);

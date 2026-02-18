@@ -1082,4 +1082,61 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get msg_network_restored => 'Conexão restaurada';
+
+  @override
+  String get msg_confirm_reset =>
+      'Isso excluirá todos os seus dados, contas e configurações. Esta ação não pode ser desfeita.';
+
+  @override
+  String get btn_confirm => 'Confirmar';
+
+  @override
+  String get msg_loading_error =>
+      'Algo deu errado ao carregar. Por favor, tente novamente.';
+
+  @override
+  String get btn_retry => 'Tentar novamente';
+
+  @override
+  String get msg_test_notification_pending =>
+      'A notificação de teste será enviada em 5 segundos...';
+
+  @override
+  String get msg_test_notification_foreground =>
+      'Notificações não são enviadas enquanto o aplicativo está em primeiro plano.';
+
+  @override
+  String get lbl_swipe_back => 'Deslizar para voltar';
+
+  @override
+  String get lbl_swipe_remove => 'Deslizar para remover';
+
+  @override
+  String get lbl_swipe_delete => 'Deslizar para excluir';
+
+  @override
+  String get lbl_avatar => 'Avatar';
+
+  @override
+  String get msg_admin_only => 'Acesso de administrador necessário';
+
+  @override
+  String get msg_confirm_delete_post =>
+      'Tem certeza de que deseja excluir esta publicação? Esta ação não pode ser desfeita.';
+
+  @override
+  String msg_confirm_block(String account) {
+    return 'Bloquear $account? Você não verá mais as publicações desta pessoa.';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return 'Silenciar $account? As publicações desta pessoa serão ocultadas dos seus feeds.';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation => 'Excluir esta conversa?';
+
+  @override
+  String get msg_confirm_delete_filter => 'Excluir este filtro?';
 }

@@ -333,5 +333,21 @@
   "btn_undo": "Rückgängig",
   "txt_offline_banner": "Sie sind offline",
   "txt_cached_data": "Zwischengespeicherte Daten werden angezeigt",
-  "msg_network_restored": "Verbindung wiederhergestellt"
+  "msg_network_restored": "Verbindung wiederhergestellt",
+  "msg_confirm_reset": "Alle Daten, Konten und Einstellungen werden gelöscht. Dies kann nicht rückgängig gemacht werden.",
+  "btn_confirm": "Bestätigen",
+  "msg_loading_error": "Beim Laden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+  "btn_retry": "Erneut versuchen",
+  "msg_test_notification_pending": "Testbenachrichtigung wird in 5 Sekunden gesendet...",
+  "msg_test_notification_foreground": "Benachrichtigungen werden nicht gesendet, während die App im Vordergrund ist.",
+  "lbl_swipe_back": "Wischen, um zurückzugehen",
+  "lbl_swipe_remove": "Wischen zum Entfernen",
+  "lbl_swipe_delete": "Wischen zum Löschen",
+  "lbl_avatar": "Profilbild",
+  "msg_admin_only": "Administratorzugang erforderlich",
+  "msg_confirm_delete_post": "Möchten Sie diesen Beitrag wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
+  "msg_confirm_block": "{account} blockieren? Sie werden deren Beiträge nicht mehr sehen.",
+  "msg_confirm_mute": "{account} stummschalten? Deren Beiträge werden in Ihren Feeds ausgeblendet.",
+  "msg_confirm_delete_conversation": "Diese Konversation löschen?",
+  "msg_confirm_delete_filter": "Diesen Filter löschen?"
 }

@@ -76,9 +76,10 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
     final bool isCurrent = widget.status?.account?.id == saved.accountId &&
         widget.status?.domain == saved.domain;
 
-    return Dismissible(
-      key: ValueKey(saved.compositeKey),
+    return AccessibleDismissible(
+      dismissKey: ValueKey(saved.compositeKey),
       direction: DismissDirection.endToStart,
+      dismissLabel: AppLocalizations.of(context)?.lbl_swipe_remove,
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
@@ -88,14 +89,17 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
       confirmDismiss: (_) async => !isCurrent,
       onDismissed: (_) => onRemoveAccount(saved),
       child: ListTile(
-        leading: ClipOval(
-          child: CachedNetworkImage(
-            imageUrl: saved.avatar,
-            width: 40,
-            height: 40,
-            fit: BoxFit.cover,
-            placeholder: (_, __) => const SizedBox(width: 40, height: 40),
-            errorWidget: (_, __, ___) => const Icon(Icons.person),
+        leading: Semantics(
+          label: saved.displayName.isNotEmpty ? saved.displayName : saved.username,
+          child: ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: saved.avatar,
+              width: 40,
+              height: 40,
+              fit: BoxFit.cover,
+              placeholder: (_, __) => const SizedBox(width: 40, height: 40),
+              errorWidget: (_, __, ___) => const Icon(Icons.person),
+            ),
           ),
         ),
         title: Text(
@@ -105,7 +109,7 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
         subtitle: Text(
           '@${saved.username}@${saved.domain}',
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(color: Colors.grey),
+          style: TextStyle(color: Theme.of(context).hintColor),
         ),
         trailing: isCurrent ? const Icon(Icons.check_circle, color: Colors.green) : null,
         onTap: isCurrent ? null : () => onSwitchAccount(saved),
@@ -153,7 +157,7 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
     if (mounted) {
       final l10n = AppLocalizations.of(context);
       final String message = l10n?.msg_account_switched(saved.username) ?? 'Switched to ${saved.username}';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      showSnackbar(context, message);
       Navigator.of(context).pop();
 
       ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
@@ -167,7 +171,7 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
     if (mounted) {
       final l10n = AppLocalizations.of(context);
       final String message = l10n?.msg_account_removed ?? 'Account removed';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      showSnackbar(context, message);
       setState(() {
         accounts.removeWhere((a) => a.compositeKey == saved.compositeKey);
       });

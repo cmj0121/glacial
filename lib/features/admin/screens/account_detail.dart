@@ -124,29 +124,13 @@ class _AdminAccountDetailState extends ConsumerState<AdminAccountDetail> {
     if (status == null) return;
 
     if (action.isDangerous) {
-      final bool? confirmed = await showDialog<bool>(
+      final bool confirmed = await showConfirmDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: Text(AppLocalizations.of(context)?.txt_admin_confirm_action ?? 'Confirm Action'),
-          content: Text(AppLocalizations.of(context)?.desc_admin_confirm_action ?? 'This action cannot be easily undone. Are you sure?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(AppLocalizations.of(context)?.btn_close ?? 'Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.error,
-                foregroundColor: Theme.of(context).colorScheme.onError,
-              ),
-              child: Text(action.label(context)),
-            ),
-          ],
-        ),
+        title: AppLocalizations.of(context)?.txt_admin_confirm_action ?? 'Confirm Action',
+        message: AppLocalizations.of(context)?.desc_admin_confirm_action ?? 'This action cannot be easily undone. Are you sure?',
+        confirmLabel: action.label(context),
       );
-
-      if (confirmed != true) return;
+      if (!confirmed) return;
     }
 
     late AdminAccountSchema updated;

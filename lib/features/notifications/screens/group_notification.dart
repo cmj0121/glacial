@@ -109,9 +109,10 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
       itemBuilder: (BuildContext context, int index) {
         final GroupSchema group = groups[index];
 
-        return Dismissible(
-          key: ValueKey(group.key),
+        return AccessibleDismissible(
+          dismissKey: ValueKey(group.key),
           direction: DismissDirection.endToStart,
+          dismissLabel: AppLocalizations.of(context)?.lbl_swipe_remove,
           background: Container(
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 16),

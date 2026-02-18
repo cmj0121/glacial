@@ -1034,4 +1034,57 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get msg_network_restored => '연결이 복원되었습니다';
+
+  @override
+  String get msg_confirm_reset => '모든 데이터, 계정 및 설정이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.';
+
+  @override
+  String get btn_confirm => '확인';
+
+  @override
+  String get msg_loading_error => '로딩 중 오류가 발생했습니다. 다시 시도해 주세요.';
+
+  @override
+  String get btn_retry => '다시 시도';
+
+  @override
+  String get msg_test_notification_pending => '5초 후에 테스트 알림이 전송됩니다...';
+
+  @override
+  String get msg_test_notification_foreground =>
+      '앱이 포그라운드에 있는 동안에는 알림이 전송되지 않습니다.';
+
+  @override
+  String get lbl_swipe_back => '스와이프하여 뒤로 가기';
+
+  @override
+  String get lbl_swipe_remove => '스와이프하여 제거';
+
+  @override
+  String get lbl_swipe_delete => '스와이프하여 삭제';
+
+  @override
+  String get lbl_avatar => '아바타';
+
+  @override
+  String get msg_admin_only => '관리자 권한이 필요합니다';
+
+  @override
+  String get msg_confirm_delete_post => '이 게시물을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.';
+
+  @override
+  String msg_confirm_block(String account) {
+    return '$account을(를) 차단하시겠습니까? 더 이상 해당 사용자의 게시물을 볼 수 없습니다.';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return '$account을(를) 뮤트하시겠습니까? 해당 사용자의 게시물이 피드에서 숨겨집니다.';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation => '이 대화를 삭제하시겠습니까?';
+
+  @override
+  String get msg_confirm_delete_filter => '이 필터를 삭제하시겠습니까?';
 }

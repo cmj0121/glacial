@@ -1083,4 +1083,62 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get msg_network_restored => 'Connexion rétablie';
+
+  @override
+  String get msg_confirm_reset =>
+      'Toutes vos données, comptes et paramètres seront supprimés. Cette action est irréversible.';
+
+  @override
+  String get btn_confirm => 'Confirmer';
+
+  @override
+  String get msg_loading_error =>
+      'Une erreur est survenue lors du chargement. Veuillez réessayer.';
+
+  @override
+  String get btn_retry => 'Réessayer';
+
+  @override
+  String get msg_test_notification_pending =>
+      'La notification de test sera envoyée dans 5 secondes...';
+
+  @override
+  String get msg_test_notification_foreground =>
+      'Les notifications ne sont pas envoyées lorsque l\'application est au premier plan.';
+
+  @override
+  String get lbl_swipe_back => 'Glisser pour revenir';
+
+  @override
+  String get lbl_swipe_remove => 'Glisser pour supprimer';
+
+  @override
+  String get lbl_swipe_delete => 'Glisser pour effacer';
+
+  @override
+  String get lbl_avatar => 'Avatar';
+
+  @override
+  String get msg_admin_only => 'Accès administrateur requis';
+
+  @override
+  String get msg_confirm_delete_post =>
+      'Voulez-vous vraiment supprimer cette publication ? Cette action est irréversible.';
+
+  @override
+  String msg_confirm_block(String account) {
+    return 'Bloquer $account ? Vous ne verrez plus ses publications.';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return 'Masquer $account ? Ses publications seront cachées de vos fils.';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation =>
+      'Supprimer cette conversation ?';
+
+  @override
+  String get msg_confirm_delete_filter => 'Supprimer ce filtre ?';
 }

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:glacial/cores/screens/accessibility.dart';
 import 'package:glacial/cores/screens/view.dart';
 
 import '../../helpers/test_helpers.dart';
@@ -144,6 +145,42 @@ void main() {
 
       expect(find.text('Deep Indent'), findsOneWidget);
       expect(find.byType(Indent), findsNWidgets(5));
+    });
+  });
+
+  group('BackableView', () {
+    testWidgets('uses AccessibleDismissible instead of raw Dismissible', (tester) async {
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: const BackableView(
+          child: Text('Content'),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.byType(AccessibleDismissible), findsOneWidget);
+    });
+
+    testWidgets('renders child content', (tester) async {
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: const BackableView(
+          child: Text('Test Content'),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.text('Test Content'), findsOneWidget);
+    });
+
+    testWidgets('renders optional title', (tester) async {
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: const BackableView(
+          title: 'Page Title',
+          child: Text('Content'),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.text('Page Title'), findsOneWidget);
     });
   });
 }

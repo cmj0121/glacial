@@ -1033,4 +1033,56 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_network_restored => '连接已恢复';
+
+  @override
+  String get msg_confirm_reset => '這將刪除所有資料、帳號和設定，此操作無法復原。';
+
+  @override
+  String get btn_confirm => '確認';
+
+  @override
+  String get msg_loading_error => '載入時發生錯誤，請重試。';
+
+  @override
+  String get btn_retry => '重試';
+
+  @override
+  String get msg_test_notification_pending => '測試通知將在 5 秒後發送...';
+
+  @override
+  String get msg_test_notification_foreground => '應用程式在前景時不會發送通知。';
+
+  @override
+  String get lbl_swipe_back => '滑動返回';
+
+  @override
+  String get lbl_swipe_remove => '滑動移除';
+
+  @override
+  String get lbl_swipe_delete => '滑動刪除';
+
+  @override
+  String get lbl_avatar => '頭像';
+
+  @override
+  String get msg_admin_only => '需要管理員權限';
+
+  @override
+  String get msg_confirm_delete_post => '確定要刪除這篇貼文嗎？此操作無法復原。';
+
+  @override
+  String msg_confirm_block(String account) {
+    return '封鎖 $account？您將不再看到他們的貼文。';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return '靜音 $account？他們的貼文將從您的動態中隱藏。';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation => '刪除這則對話？';
+
+  @override
+  String get msg_confirm_delete_filter => '刪除此過濾器？';
 }

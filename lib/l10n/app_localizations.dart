@@ -2113,6 +2113,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connection restored'**
   String get msg_network_restored;
+
+  /// No description provided for @msg_confirm_reset.
+  ///
+  /// In en, this message translates to:
+  /// **'This will delete all your data, accounts, and settings. This cannot be undone.'**
+  String get msg_confirm_reset;
+
+  /// No description provided for @btn_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get btn_confirm;
+
+  /// No description provided for @msg_loading_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while loading. Please try again.'**
+  String get msg_loading_error;
+
+  /// No description provided for @btn_retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get btn_retry;
+
+  /// No description provided for @msg_test_notification_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Test notification will be sent in 5 seconds...'**
+  String get msg_test_notification_pending;
+
+  /// No description provided for @msg_test_notification_foreground.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are not sent while the app is in the foreground.'**
+  String get msg_test_notification_foreground;
+
+  /// No description provided for @lbl_swipe_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to go back'**
+  String get lbl_swipe_back;
+
+  /// No description provided for @lbl_swipe_remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to remove'**
+  String get lbl_swipe_remove;
+
+  /// No description provided for @lbl_swipe_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to delete'**
+  String get lbl_swipe_delete;
+
+  /// No description provided for @lbl_avatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar'**
+  String get lbl_avatar;
+
+  /// No description provided for @msg_admin_only.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin access required'**
+  String get msg_admin_only;
+
+  /// No description provided for @msg_confirm_delete_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this post? This cannot be undone.'**
+  String get msg_confirm_delete_post;
+
+  /// No description provided for @msg_confirm_block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {account}? You will no longer see their posts.'**
+  String msg_confirm_block(String account);
+
+  /// No description provided for @msg_confirm_mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute {account}? Their posts will be hidden from your feeds.'**
+  String msg_confirm_mute(String account);
+
+  /// No description provided for @msg_confirm_delete_conversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this conversation?'**
+  String get msg_confirm_delete_conversation;
+
+  /// No description provided for @msg_confirm_delete_filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this filter?'**
+  String get msg_confirm_delete_filter;
 }
 
 class _AppLocalizationsDelegate

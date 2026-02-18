@@ -348,6 +348,14 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_reset ?? "Clear all settings and reset the app."),
           leading: Icon(Icons.restart_alt, size: iconSize, color: Theme.of(context).colorScheme.error),
           onTap: () async {
+            final bool confirmed = await showConfirmDialog(
+              context: context,
+              title: AppLocalizations.of(context)?.btn_preference_engineer_reset ?? "Reset system",
+              message: AppLocalizations.of(context)?.msg_confirm_reset ?? "This will delete all your data, accounts, and settings. This cannot be undone.",
+            );
+
+            if (!confirmed || !mounted) return;
+
             await storage.purge();
 
             if (mounted) {
@@ -447,7 +455,7 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
 
   // The dummy notification to send in local device.
   Future<void> sendDummyNotification() async {
-    showSnackbar(context, "Dummy notification will be sent in 5 seconds ...");
+    showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_pending ?? "Test notification will be sent in 5 seconds...");
 
     Future.delayed(const Duration(seconds: 5), () {
       final state = WidgetsBinding.instance.lifecycleState;
@@ -459,7 +467,7 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           return;
         default:
           AppBadgePlus.updateBadge(0);
-          showSnackbar(context, "It should not send the notification while the app is in foreground.");
+          showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_foreground ?? "Notifications are not sent while the app is in the foreground.");
           return;
       }
     });

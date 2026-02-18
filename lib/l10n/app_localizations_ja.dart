@@ -1033,4 +1033,56 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get msg_network_restored => '接続が復元されました';
+
+  @override
+  String get msg_confirm_reset => 'すべてのデータ、アカウント、設定が削除されます。この操作は元に戻せません。';
+
+  @override
+  String get btn_confirm => '確認';
+
+  @override
+  String get msg_loading_error => '読み込み中にエラーが発生しました。もう一度お試しください。';
+
+  @override
+  String get btn_retry => '再試行';
+
+  @override
+  String get msg_test_notification_pending => '5秒後にテスト通知が送信されます...';
+
+  @override
+  String get msg_test_notification_foreground => 'アプリがフォアグラウンドの間は通知は送信されません。';
+
+  @override
+  String get lbl_swipe_back => 'スワイプして戻る';
+
+  @override
+  String get lbl_swipe_remove => 'スワイプして削除';
+
+  @override
+  String get lbl_swipe_delete => 'スワイプして消去';
+
+  @override
+  String get lbl_avatar => 'アバター';
+
+  @override
+  String get msg_admin_only => '管理者権限が必要です';
+
+  @override
+  String get msg_confirm_delete_post => 'この投稿を削除しますか？この操作は元に戻せません。';
+
+  @override
+  String msg_confirm_block(String account) {
+    return '$accountをブロックしますか？この人の投稿は表示されなくなります。';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return '$accountをミュートしますか？この人の投稿がフィードから非表示になります。';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation => 'この会話を削除しますか？';
+
+  @override
+  String get msg_confirm_delete_filter => 'このフィルターを削除しますか？';
 }

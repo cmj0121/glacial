@@ -228,8 +228,9 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
             final StatusSchema? schema = snapshot.data;
             if (schema == null) return const SizedBox.shrink();
 
-            return Dismissible(
-              key: ValueKey(s.statusId),
+            return AccessibleDismissible(
+              dismissKey: ValueKey(s.statusId),
+              dismissLabel: AppLocalizations.of(context)?.lbl_swipe_remove,
               background: Container(
                 alignment: Alignment.centerLeft,
                 color: Theme.of(context).colorScheme.error,

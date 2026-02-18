@@ -232,6 +232,36 @@ void main() {
       );
       expect(semantics.properties.hint, 'Swipe to remove');
     });
+
+    testWidgets('renders background when provided', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: AccessibleDismissible(
+          dismissKey: const Key('test-bg'),
+          direction: DismissDirection.endToStart,
+          background: Container(color: Colors.red),
+          child: const Text('With background'),
+        ),
+      ));
+      await tester.pump();
+
+      final Dismissible dismissible = tester.widget<Dismissible>(find.byType(Dismissible));
+      expect(dismissible.background, isNotNull);
+    });
+
+    testWidgets('renders secondaryBackground when provided', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: AccessibleDismissible(
+          dismissKey: const Key('test-sec-bg'),
+          background: Container(color: Colors.red),
+          secondaryBackground: Container(color: Colors.blue),
+          child: const Text('With secondary'),
+        ),
+      ));
+      await tester.pump();
+
+      final Dismissible dismissible = tester.widget<Dismissible>(find.byType(Dismissible));
+      expect(dismissible.secondaryBackground, isNotNull);
+    });
   });
 
   group('IconAccessibility extension', () {

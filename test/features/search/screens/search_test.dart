@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/screens.dart';
 
 import '../../../helpers/test_helpers.dart';
@@ -112,7 +113,7 @@ void main() {
         await tester.pump();
       });
 
-      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+      expect(find.byType(LoadingOverlay), findsOneWidget);
     });
   });
 }

@@ -95,18 +95,21 @@ class ProfilePage extends ConsumerWidget {
 
   // Build the Avatar of the user.
   Widget buildAvatar(BuildContext context) {
-    final Widget avatar = CachedNetworkImage(
-      imageUrl: schema.avatar,
-      placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-      errorWidget: (context, url, error) => const Icon(Icons.error),
-      fit: BoxFit.cover,
+    final Widget avatar = Semantics(
+      label: schema.displayName.isNotEmpty ? schema.displayName : schema.acct,
+      child: CachedNetworkImage(
+        imageUrl: schema.avatar,
+        placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+        fit: BoxFit.cover,
+      ),
     );
 
     return Container(
       width: avatarSize,
       height: avatarSize,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white, width: 2),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant, width: 2),
         color: Theme.of(context).colorScheme.surface,
         shape: BoxShape.circle,
       ),

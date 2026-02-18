@@ -189,11 +189,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             FilledButton(
               onPressed: _isSubmitting ? null : onRegister,
               child: _isSubmitting
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
+                  ? const ClockProgressIndicator.small()
                   : Text(l10n?.btn_register ?? 'Register'),
             ),
           ],

@@ -51,7 +51,7 @@ class _TranslateViewState extends State<TranslateView> {
     return TextButton.icon(
       onPressed: !translationEnabled || isLoading ? null : onToggle,
       icon: isLoading
-          ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+          ? const SizedBox(width: 14, height: 14, child: ClockProgressIndicator.small())
           : const Icon(Icons.translate, size: 14),
       label: Text(label, style: const TextStyle(fontSize: 12)),
       style: TextButton.styleFrom(

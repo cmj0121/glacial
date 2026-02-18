@@ -1079,4 +1079,61 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get msg_network_restored => 'Verbindung wiederhergestellt';
+
+  @override
+  String get msg_confirm_reset =>
+      'Alle Daten, Konten und Einstellungen werden gelöscht. Dies kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get btn_confirm => 'Bestätigen';
+
+  @override
+  String get msg_loading_error =>
+      'Beim Laden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.';
+
+  @override
+  String get btn_retry => 'Erneut versuchen';
+
+  @override
+  String get msg_test_notification_pending =>
+      'Testbenachrichtigung wird in 5 Sekunden gesendet...';
+
+  @override
+  String get msg_test_notification_foreground =>
+      'Benachrichtigungen werden nicht gesendet, während die App im Vordergrund ist.';
+
+  @override
+  String get lbl_swipe_back => 'Wischen, um zurückzugehen';
+
+  @override
+  String get lbl_swipe_remove => 'Wischen zum Entfernen';
+
+  @override
+  String get lbl_swipe_delete => 'Wischen zum Löschen';
+
+  @override
+  String get lbl_avatar => 'Profilbild';
+
+  @override
+  String get msg_admin_only => 'Administratorzugang erforderlich';
+
+  @override
+  String get msg_confirm_delete_post =>
+      'Möchten Sie diesen Beitrag wirklich löschen? Dies kann nicht rückgängig gemacht werden.';
+
+  @override
+  String msg_confirm_block(String account) {
+    return '$account blockieren? Sie werden deren Beiträge nicht mehr sehen.';
+  }
+
+  @override
+  String msg_confirm_mute(String account) {
+    return '$account stummschalten? Deren Beiträge werden in Ihren Feeds ausgeblendet.';
+  }
+
+  @override
+  String get msg_confirm_delete_conversation => 'Diese Konversation löschen?';
+
+  @override
+  String get msg_confirm_delete_filter => 'Diesen Filter löschen?';
 }

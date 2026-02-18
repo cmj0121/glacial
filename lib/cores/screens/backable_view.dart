@@ -42,9 +42,10 @@ class _BackableViewState extends State<BackableView> {
   }
 
   Widget buildContent() {
-    return Dismissible(
-      key: UniqueKey(),
+    return AccessibleDismissible(
+      dismissKey: UniqueKey(),
       direction: DismissDirection.startToEnd,
+      dismissLabel: AppLocalizations.of(context)?.lbl_swipe_back,
       confirmDismiss: (_) async {
         setState(() => isDisposed = true);
         context.pop();

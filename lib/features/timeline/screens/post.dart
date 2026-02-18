@@ -72,9 +72,10 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Dismissible(
-        key: UniqueKey(),
+      child: AccessibleDismissible(
+        dismissKey: UniqueKey(),
         direction: DismissDirection.startToEnd,
+        dismissLabel: AppLocalizations.of(context)?.lbl_swipe_back,
         confirmDismiss: (_) async {
           _autoSaveDraft();
           context.pop();
@@ -506,7 +507,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
     await Storage().saveDraft(key, _buildDraftFromForm());
     if (mounted) {
       final String message = AppLocalizations.of(context)?.msg_draft_saved ?? 'Draft saved';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      showSnackbar(context, message);
     }
   }
 

@@ -381,5 +381,35 @@
   "btn_undo": "Undo",
   "txt_offline_banner": "You are offline",
   "txt_cached_data": "Showing cached data",
-  "msg_network_restored": "Connection restored"
+  "msg_network_restored": "Connection restored",
+  "msg_confirm_reset": "This will delete all your data, accounts, and settings. This cannot be undone.",
+  "btn_confirm": "Confirm",
+  "msg_loading_error": "Something went wrong while loading. Please try again.",
+  "btn_retry": "Retry",
+  "msg_test_notification_pending": "Test notification will be sent in 5 seconds...",
+  "msg_test_notification_foreground": "Notifications are not sent while the app is in the foreground.",
+  "lbl_swipe_back": "Swipe to go back",
+  "lbl_swipe_remove": "Swipe to remove",
+  "lbl_swipe_delete": "Swipe to delete",
+  "lbl_avatar": "Avatar",
+  "msg_admin_only": "Admin access required",
+  "msg_confirm_delete_post": "Are you sure you want to delete this post? This cannot be undone.",
+  "msg_confirm_block": "Block {account}? You will no longer see their posts.",
+  "@msg_confirm_block": {
+    "placeholders": {
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "msg_confirm_mute": "Mute {account}? Their posts will be hidden from your feeds.",
+  "@msg_confirm_mute": {
+    "placeholders": {
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "msg_confirm_delete_conversation": "Delete this conversation?",
+  "msg_confirm_delete_filter": "Delete this filter?"
 }
