@@ -248,7 +248,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
               height: mediaWidth,
               fit: BoxFit.cover,
               placeholder: (context, url) => BlurhashPlaceholder(blurhash: media.blurhash),
-              errorWidget: (context, url, error) => Icon(Icons.error, color: Theme.of(context).colorScheme.error),
+              errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
             ),
             Positioned(
               top: 0,

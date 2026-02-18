@@ -49,7 +49,7 @@ class Account extends StatelessWidget {
           height: size,
           child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
         ),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
+        errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
         imageBuilder: (context, imageProvider) {
           final Widget image = Image(
             image: imageProvider,
@@ -116,7 +116,7 @@ class AccountAvatar extends StatelessWidget {
             height: size,
             child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
           ),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
+          errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
           imageBuilder: (context, imageProvider) => Image(
             image: imageProvider,
             width: size,
@@ -167,7 +167,7 @@ class AccountLite extends StatelessWidget {
             height: size,
             child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
           ),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
+          errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
           imageBuilder: (context, imageProvider) => Image(
             image: imageProvider,
             width: size,

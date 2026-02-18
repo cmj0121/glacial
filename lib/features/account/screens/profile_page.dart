@@ -64,7 +64,7 @@ class ProfilePage extends ConsumerWidget {
     final Widget banner = CachedNetworkImage(
       imageUrl: schema.header,
       placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-      errorWidget: (context, url, error) => const Icon(Icons.error),
+      errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
     );
 
     return SizedBox(
@@ -100,7 +100,7 @@ class ProfilePage extends ConsumerWidget {
       child: CachedNetworkImage(
         imageUrl: schema.avatar,
         placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
+        errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
         fit: BoxFit.cover,
       ),
     );

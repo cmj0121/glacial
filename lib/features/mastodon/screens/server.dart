@@ -102,7 +102,7 @@ class MastodonServer extends StatelessWidget {
         child: CachedNetworkImage(
           imageUrl: schema.thumbnail,
           placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
+          errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
         ),
       ),
     );
@@ -221,7 +221,7 @@ class MastodonServerInfo extends StatelessWidget {
             height: size,
             fit: BoxFit.cover,
             placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
+            errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
           ),
         ),
         const SizedBox(width: 16),

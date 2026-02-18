@@ -91,14 +91,14 @@ class Attachment extends StatelessWidget {
           imageUrl: schema.previewUrl ?? schema.url,
           fit: BoxFit.cover,
           placeholder: (context, url) => BlurhashPlaceholder(blurhash: schema.blurhash),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
+          errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
         );
       case MediaType.gifv:
         return CachedNetworkImage(
           imageUrl: schema.previewUrl ?? schema.url,
           fit: BoxFit.cover,
           placeholder: (context, url) => BlurhashPlaceholder(blurhash: schema.blurhash),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
+          errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
         );
       case MediaType.video:
         final Uri url = Uri.parse(schema.url);

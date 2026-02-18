@@ -85,7 +85,7 @@ class TrendsLink extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: schema.image,
               fit: BoxFit.cover,
-              errorWidget: (context, url, error) => const Icon(Icons.error),
+              errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
             ),
           ),
         ),

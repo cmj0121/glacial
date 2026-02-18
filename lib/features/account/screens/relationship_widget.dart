@@ -120,8 +120,15 @@ class _RelationshipState extends ConsumerState<Relationship> {
             );
             if (!confirmed) return;
           }
-          await status?.changeRelationship(account: widget.schema, type: value);
-          onRefresh();
+          try {
+            await status?.changeRelationship(account: widget.schema, type: value);
+            onRefresh();
+          } catch (e) {
+            logger.e("Failed to change relationship: $e");
+            if (mounted) {
+              showSnackbar(context, AppLocalizations.of(context)?.msg_network_error ?? 'Something went wrong. Please try again.');
+            }
+          }
         }
       }
     );

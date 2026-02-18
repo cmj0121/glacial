@@ -114,13 +114,22 @@ class _TranslateViewState extends State<TranslateView> {
       }
     } on HttpException catch (e) {
       logger.e("HTTP error translating status: ${e.statusCode} ${e.message}");
-      if (mounted) setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isLoading = false);
+        showSnackbar(context, AppLocalizations.of(context)?.msg_network_error ?? 'Something went wrong. Please try again.');
+      }
     } on HttpTimeoutException catch (e) {
       logger.e("Translation request timed out: $e");
-      if (mounted) setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isLoading = false);
+        showSnackbar(context, AppLocalizations.of(context)?.msg_network_error ?? 'Something went wrong. Please try again.');
+      }
     } catch (e) {
       logger.e("failed to translate status: $e");
-      if (mounted) setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isLoading = false);
+        showSnackbar(context, AppLocalizations.of(context)?.msg_network_error ?? 'Something went wrong. Please try again.');
+      }
     }
   }
 
