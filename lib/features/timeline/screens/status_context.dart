@@ -24,7 +24,7 @@ class StatusContext extends ConsumerStatefulWidget {
 
 class _StatusContextState extends ConsumerState<StatusContext> {
   final ItemScrollController itemScrollController = ItemScrollController();
-  late final Future<StatusContextSchema?> _contextFuture;
+  late Future<StatusContextSchema?> _contextFuture;
 
   @override
   void initState() {
@@ -41,7 +41,13 @@ class _StatusContextState extends ConsumerState<StatusContext> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LoadingOverlay(isLoading: true, child: SizedBox.expand());
         } else if (snapshot.hasError || snapshot.data == null) {
-          return const SizedBox.shrink();
+          return ErrorState(
+            message: AppLocalizations.of(context)?.msg_network_error,
+            onRetry: () => setState(() {
+              final AccessStatusSchema? status = ref.read(accessStatusProvider);
+              _contextFuture = status?.getStatusContext(schema: widget.schema) ?? Future.value(null);
+            }),
+          );
         }
 
         final StatusContextSchema ctx = snapshot.data!;

@@ -68,7 +68,9 @@ class _StatusInfoState extends ConsumerState<StatusInfo> with SingleTickerProvid
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const LoadingOverlay(isLoading: true, child: SizedBox.expand());
               } else if (snapshot.hasError) {
-                return const SizedBox.shrink();
+                return ErrorState(
+                  message: AppLocalizations.of(context)?.msg_network_error,
+                );
               }
 
               final List<AccountSchema> accounts = snapshot.data as List<AccountSchema>;

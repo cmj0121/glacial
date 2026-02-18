@@ -223,10 +223,20 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
         return FutureBuilder(
           future: _statusFutures[s.statusId],
           builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) return const SizedBox.shrink();
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(child: ClockProgressIndicator()),
+              );
+            }
 
             final StatusSchema? schema = snapshot.data;
-            if (schema == null) return const SizedBox.shrink();
+            if (schema == null) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: ImageErrorPlaceholder(),
+              );
+            }
 
             return AccessibleDismissible(
               dismissKey: ValueKey(s.statusId),
