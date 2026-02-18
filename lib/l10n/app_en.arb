@@ -411,5 +411,21 @@
     }
   },
   "msg_confirm_delete_conversation": "Delete this conversation?",
-  "msg_confirm_delete_filter": "Delete this filter?"
+  "msg_confirm_delete_filter": "Delete this filter?",
+  "msg_network_error": "Something went wrong. Please try again.",
+  "@msg_network_error": {
+    "description": "Generic network error message shown when a request fails"
+  },
+  "btn_tap_retry": "Tap to retry",
+  "@btn_tap_retry": {
+    "description": "Button label prompting user to tap to retry a failed action"
+  },
+  "btn_change_server": "Change server",
+  "@btn_change_server": {
+    "description": "Button label to change the current server"
+  },
+  "msg_server_unreachable": "Server is unreachable. Check your connection or try a different server.",
+  "@msg_server_unreachable": {
+    "description": "Error message when server cannot be reached"
+  }
 }

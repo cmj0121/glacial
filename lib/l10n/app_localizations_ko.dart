@@ -1087,4 +1087,17 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get msg_confirm_delete_filter => '이 필터를 삭제하시겠습니까?';
+
+  @override
+  String get msg_network_error => '문제가 발생했습니다. 다시 시도해주세요.';
+
+  @override
+  String get btn_tap_retry => '탭하여 재시도';
+
+  @override
+  String get btn_change_server => '서버 변경';
+
+  @override
+  String get msg_server_unreachable =>
+      '서버에 연결할 수 없습니다. 연결을 확인하거나 다른 서버를 시도해주세요.';
 }

@@ -349,5 +349,9 @@
   "msg_confirm_block": "{account} blockieren? Sie werden deren Beiträge nicht mehr sehen.",
   "msg_confirm_mute": "{account} stummschalten? Deren Beiträge werden in Ihren Feeds ausgeblendet.",
   "msg_confirm_delete_conversation": "Diese Konversation löschen?",
-  "msg_confirm_delete_filter": "Diesen Filter löschen?"
+  "msg_confirm_delete_filter": "Diesen Filter löschen?",
+  "msg_network_error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+  "btn_tap_retry": "Zum Wiederholen tippen",
+  "btn_change_server": "Server wechseln",
+  "msg_server_unreachable": "Server nicht erreichbar. Prüfen Sie Ihre Verbindung oder versuchen Sie einen anderen Server."
 }

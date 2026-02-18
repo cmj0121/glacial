@@ -349,5 +349,9 @@
   "msg_confirm_block": "{account}をブロックしますか？この人の投稿は表示されなくなります。",
   "msg_confirm_mute": "{account}をミュートしますか？この人の投稿がフィードから非表示になります。",
   "msg_confirm_delete_conversation": "この会話を削除しますか？",
-  "msg_confirm_delete_filter": "このフィルターを削除しますか？"
+  "msg_confirm_delete_filter": "このフィルターを削除しますか？",
+  "msg_network_error": "問題が発生しました。もう一度お試しください。",
+  "btn_tap_retry": "タップして再試行",
+  "btn_change_server": "サーバーを変更",
+  "msg_server_unreachable": "サーバーに接続できません。接続を確認するか、別のサーバーをお試しください。"
 }

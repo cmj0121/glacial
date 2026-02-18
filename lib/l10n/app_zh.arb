@@ -349,5 +349,9 @@
   "msg_confirm_block": "封鎖 {account}？您將不再看到他們的貼文。",
   "msg_confirm_mute": "靜音 {account}？他們的貼文將從您的動態中隱藏。",
   "msg_confirm_delete_conversation": "刪除這則對話？",
-  "msg_confirm_delete_filter": "刪除此過濾器？"
+  "msg_confirm_delete_filter": "刪除此過濾器？",
+  "msg_network_error": "發生錯誤，請重試。",
+  "btn_tap_retry": "輕觸重試",
+  "btn_change_server": "更換伺服器",
+  "msg_server_unreachable": "無法連線至伺服器。請檢查連線或嘗試其他伺服器。"
 }

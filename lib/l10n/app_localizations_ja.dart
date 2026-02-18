@@ -1085,4 +1085,16 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get msg_confirm_delete_filter => 'このフィルターを削除しますか？';
+
+  @override
+  String get msg_network_error => '問題が発生しました。もう一度お試しください。';
+
+  @override
+  String get btn_tap_retry => 'タップして再試行';
+
+  @override
+  String get btn_change_server => 'サーバーを変更';
+
+  @override
+  String get msg_server_unreachable => 'サーバーに接続できません。接続を確認するか、別のサーバーをお試しください。';
 }

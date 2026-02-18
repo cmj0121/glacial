@@ -1085,4 +1085,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_confirm_delete_filter => '刪除此過濾器？';
+
+  @override
+  String get msg_network_error => '發生錯誤，請重試。';
+
+  @override
+  String get btn_tap_retry => '輕觸重試';
+
+  @override
+  String get btn_change_server => '更換伺服器';
+
+  @override
+  String get msg_server_unreachable => '無法連線至伺服器。請檢查連線或嘗試其他伺服器。';
 }
