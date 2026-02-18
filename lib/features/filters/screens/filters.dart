@@ -61,7 +61,7 @@ class _FiltersState extends ConsumerState<Filters> {
 
   Widget buildContent() {
     if (filters.isEmpty) {
-      return const SizedBox.shrink();
+      return const NoResult();
     }
 
     return ListView.builder(
