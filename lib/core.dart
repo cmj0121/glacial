@@ -15,6 +15,7 @@ export 'cores/screens/blurhash_placeholder.dart';
 export 'cores/screens/glass.dart';
 export 'cores/screens/loading_overlay.dart';
 export 'cores/screens/content.dart';
+export 'cores/screens/error_state.dart';
 export 'cores/screens/media.dart';
 export 'cores/screens/misc.dart';
 export 'cores/screens/pagination.dart';

@@ -134,7 +134,8 @@ class _TrendsState extends State<Trends> with PaginatedListMixin {
   // Build the list of the trends.
   Widget buildContent() {
     if (trends.isEmpty) {
-      return const SizedBox.shrink();
+      if (isLoading) return const SizedBox.shrink();
+      return const NoResult();
     }
 
     return CustomMaterialIndicator(

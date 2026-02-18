@@ -39,8 +39,10 @@ class _TestPaginatedWidgetState extends State<_TestPaginatedWidget>
         Text('isLoading: $isLoading'),
         Text('isRefresh: $isRefresh'),
         Text('isCompleted: $isCompleted'),
+        Text('hasError: $hasError'),
         Text('shouldSkipLoad: $shouldSkipLoad'),
         buildLoadingIndicator(),
+        buildErrorIndicator(() => setLoading(true)),
       ],
     );
   }
@@ -194,6 +196,106 @@ void main() {
       await tester.pump();
 
       expect(find.text('shouldSkipLoad: true'), findsOneWidget);
+    });
+
+    testWidgets('markLoadError sets hasError flag', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: _TestPaginatedWidget(
+          onInit: (state) async {
+            state.setLoading(true);
+            state.markLoadError();
+          },
+        ),
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('hasError: true'), findsOneWidget);
+      expect(find.text('isLoading: false'), findsOneWidget);
+    });
+
+    testWidgets('markLoadComplete clears hasError', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: _TestPaginatedWidget(
+          onInit: (state) async {
+            state.markLoadError();
+            state.markLoadComplete(isEmpty: false);
+          },
+        ),
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('hasError: false'), findsOneWidget);
+    });
+
+    testWidgets('refreshList clears hasError', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: _TestPaginatedWidget(
+          onInit: (state) async {
+            state.markLoadError();
+            await state.refreshList(() async {
+              state.markLoadComplete(isEmpty: false);
+            });
+          },
+        ),
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('hasError: false'), findsOneWidget);
+    });
+
+    testWidgets('buildErrorIndicator shows tap-to-retry when hasError', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: _TestPaginatedWidget(
+          onInit: (state) async => state.markLoadError(),
+        ),
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byIcon(Icons.error_outline), findsOneWidget);
+      expect(find.text('Tap to retry'), findsOneWidget);
+    });
+
+    testWidgets('buildErrorIndicator hidden when no error', (tester) async {
+      await tester.pumpWidget(createTestWidget(child: const _TestPaginatedWidget()));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.error_outline), findsNothing);
+    });
+
+    testWidgets('tapping error indicator retries and clears error', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: _TestPaginatedWidget(
+          onInit: (state) async => state.markLoadError(),
+        ),
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      await tester.tap(find.text('Tap to retry'));
+      await tester.pump();
+
+      expect(find.text('hasError: false'), findsOneWidget);
+      expect(find.text('isLoading: true'), findsOneWidget);
+    });
+
+    testWidgets('resetPagination clears hasError', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: _TestPaginatedWidget(
+          onInit: (state) async {
+            state.markLoadError();
+            state.resetPagination();
+            state.rebuild();
+          },
+        ),
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('hasError: false'), findsOneWidget);
     });
   });
 }

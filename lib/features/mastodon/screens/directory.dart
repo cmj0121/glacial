@@ -163,7 +163,8 @@ class _DirectoryListState extends ConsumerState<_DirectoryList> with PaginatedLi
   // Build the list of accounts in the directory.
   Widget buildContent() {
     if (accounts.isEmpty) {
-      return const SizedBox.shrink();
+      if (isLoading) return const SizedBox.shrink();
+      return const NoResult();
     }
 
     return ListView.builder(

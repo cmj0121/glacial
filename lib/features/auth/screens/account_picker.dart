@@ -111,7 +111,7 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
           overflow: TextOverflow.ellipsis,
           style: TextStyle(color: Theme.of(context).hintColor),
         ),
-        trailing: isCurrent ? const Icon(Icons.check_circle, color: Colors.green) : null,
+        trailing: isCurrent ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary) : null,
         onTap: isCurrent ? null : () => onSwitchAccount(saved),
       ),
     );
@@ -151,16 +151,23 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
   }
 
   Future<void> onSwitchAccount(SavedAccountSchema saved) async {
-    final Storage storage = Storage();
-    await storage.switchToAccount(saved, ref: ref);
+    try {
+      final Storage storage = Storage();
+      await storage.switchToAccount(saved, ref: ref);
 
-    if (mounted) {
-      final l10n = AppLocalizations.of(context);
-      final String message = l10n?.msg_account_switched(saved.username) ?? 'Switched to ${saved.username}';
-      showSnackbar(context, message);
-      Navigator.of(context).pop();
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        final String message = l10n?.msg_account_switched(saved.username) ?? 'Switched to ${saved.username}';
+        showSnackbar(context, message);
+        Navigator.of(context).pop();
 
-      ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
+        ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
+      }
+    } catch (e) {
+      logger.e("Failed to switch account: $e");
+      if (mounted) {
+        showSnackbar(context, AppLocalizations.of(context)?.msg_network_error ?? 'Something went wrong. Please try again.');
+      }
     }
   }
 

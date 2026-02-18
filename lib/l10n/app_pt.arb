@@ -349,5 +349,9 @@
   "msg_confirm_block": "Bloquear {account}? Você não verá mais as publicações desta pessoa.",
   "msg_confirm_mute": "Silenciar {account}? As publicações desta pessoa serão ocultadas dos seus feeds.",
   "msg_confirm_delete_conversation": "Excluir esta conversa?",
-  "msg_confirm_delete_filter": "Excluir este filtro?"
+  "msg_confirm_delete_filter": "Excluir este filtro?",
+  "msg_network_error": "Algo deu errado. Por favor, tente novamente.",
+  "btn_tap_retry": "Toque para tentar novamente",
+  "btn_change_server": "Trocar servidor",
+  "msg_server_unreachable": "Servidor inacessível. Verifique sua conexão ou tente um servidor diferente."
 }

@@ -95,7 +95,7 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 16),
             color: Theme.of(context).colorScheme.error,
-            child: const Icon(Icons.delete_outline, color: Colors.white),
+            child: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.onError),
           ),
           confirmDismiss: (_) async {
             final confirmed = await showConfirmDialog(

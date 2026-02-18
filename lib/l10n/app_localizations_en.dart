@@ -1125,4 +1125,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get msg_confirm_delete_filter => 'Delete this filter?';
+
+  @override
+  String get msg_network_error => 'Something went wrong. Please try again.';
+
+  @override
+  String get btn_tap_retry => 'Tap to retry';
+
+  @override
+  String get btn_change_server => 'Change server';
+
+  @override
+  String get msg_server_unreachable =>
+      'Server is unreachable. Check your connection or try a different server.';
 }

@@ -186,6 +186,21 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   @override
   Widget build(BuildContext context) {
+    if (hasError && statuses.isEmpty) {
+      final String changeServer = AppLocalizations.of(context)?.btn_change_server ?? "Change server";
+      return ErrorState(
+        message: AppLocalizations.of(context)?.msg_server_unreachable
+            ?? "Server is unreachable. Check your connection or try a different server.",
+        onRetry: () {
+          resetPagination();
+          setState(() => _isOffline = false);
+          onLoad();
+        },
+        onSecondaryAction: () => context.go(RoutePath.explorer.path),
+        secondaryLabel: changeServer,
+      );
+    }
+
     if (isCompleted && !isLoading && statuses.isEmpty) {
       final String message = AppLocalizations.of(context)?.txt_no_result ?? "No results found";
       return NoResult(message: message, icon: Icons.coffee);
@@ -197,6 +212,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (statuses.isNotEmpty) buildLoadingIndicator(),
+          if (statuses.isNotEmpty) buildErrorIndicator(onLoad),
           OfflineBanner(isOffline: _isOffline),
           buildUnreadedBanner(),
           Flexible(child: buildContent()),
@@ -334,12 +350,20 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     } on SocketException {
       if (mounted) {
         setState(() => _isOffline = true);
-        markLoadComplete(isEmpty: statuses.isEmpty);
+        if (statuses.isEmpty) {
+          markLoadError();
+        } else {
+          markLoadComplete(isEmpty: false);
+        }
       }
     } on HttpTimeoutException {
       if (mounted) {
         setState(() => _isOffline = true);
-        markLoadComplete(isEmpty: statuses.isEmpty);
+        if (statuses.isEmpty) {
+          markLoadError();
+        } else {
+          markLoadComplete(isEmpty: false);
+        }
       }
     }
   }

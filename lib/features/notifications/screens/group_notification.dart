@@ -117,7 +117,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 16),
             color: Theme.of(context).colorScheme.error,
-            child: const Icon(Icons.delete_outline, color: Colors.white),
+            child: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.onError),
           ),
           confirmDismiss: (_) async {
             onDismissGroup(index, group.key);

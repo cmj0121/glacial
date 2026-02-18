@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:glacial/cores/screens/animations.dart';
+import 'package:glacial/l10n/app_localizations.dart';
 
 /// Mixin for paginated list state management.
 ///
@@ -31,6 +32,7 @@ mixin PaginatedListMixin<T extends StatefulWidget> on State<T> {
   bool _isRefresh = false;
   bool _isLoading = false;
   bool _isCompleted = false;
+  bool _hasError = false;
 
   /// Whether the list is currently being refreshed (pull-to-refresh).
   bool get isRefresh => _isRefresh;
@@ -40,6 +42,9 @@ mixin PaginatedListMixin<T extends StatefulWidget> on State<T> {
 
   /// Whether all items have been loaded (no more pages).
   bool get isCompleted => _isCompleted;
+
+  /// Whether the last load operation failed.
+  bool get hasError => _hasError;
 
   /// Returns true if loading should be skipped (already loading or completed).
   bool get shouldSkipLoad => _isLoading || _isCompleted;
@@ -57,6 +62,18 @@ mixin PaginatedListMixin<T extends StatefulWidget> on State<T> {
         _isRefresh = false;
         _isLoading = false;
         _isCompleted = isEmpty;
+        _hasError = false;
+      });
+    }
+  }
+
+  /// Marks the load operation as failed. Call this when a load error occurs.
+  void markLoadError() {
+    if (mounted) {
+      setState(() {
+        _isRefresh = false;
+        _isLoading = false;
+        _hasError = true;
       });
     }
   }
@@ -68,6 +85,7 @@ mixin PaginatedListMixin<T extends StatefulWidget> on State<T> {
       _isRefresh = true;
       _isLoading = false;
       _isCompleted = false;
+      _hasError = false;
     });
 
     await loadFunction();
@@ -78,6 +96,7 @@ mixin PaginatedListMixin<T extends StatefulWidget> on State<T> {
     _isRefresh = false;
     _isLoading = false;
     _isCompleted = false;
+    _hasError = false;
   }
 
   /// Builds the loading indicator widget with a smooth fade transition.
@@ -88,6 +107,37 @@ mixin PaginatedListMixin<T extends StatefulWidget> on State<T> {
       child: (_isLoading && !_isRefresh)
           ? const ClockProgressIndicator(key: ValueKey('loading'))
           : const SizedBox.shrink(key: ValueKey('idle')),
+    );
+  }
+
+  /// Builds an inline error indicator with a tap-to-retry action.
+  Widget buildErrorIndicator(VoidCallback onRetry) {
+    if (!_hasError) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Center(
+        child: InkWell(
+          onTap: () {
+            setState(() => _hasError = false);
+            onRetry();
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocalizations.of(context)?.btn_tap_retry ?? 'Tap to retry',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1141,4 +1141,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get msg_confirm_delete_filter => 'Supprimer ce filtre ?';
+
+  @override
+  String get msg_network_error =>
+      'Une erreur est survenue. Veuillez réessayer.';
+
+  @override
+  String get btn_tap_retry => 'Appuyez pour réessayer';
+
+  @override
+  String get btn_change_server => 'Changer de serveur';
+
+  @override
+  String get msg_server_unreachable =>
+      'Serveur inaccessible. Vérifiez votre connexion ou essayez un autre serveur.';
 }

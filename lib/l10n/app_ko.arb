@@ -349,5 +349,9 @@
   "msg_confirm_block": "{account}을(를) 차단하시겠습니까? 더 이상 해당 사용자의 게시물을 볼 수 없습니다.",
   "msg_confirm_mute": "{account}을(를) 뮤트하시겠습니까? 해당 사용자의 게시물이 피드에서 숨겨집니다.",
   "msg_confirm_delete_conversation": "이 대화를 삭제하시겠습니까?",
-  "msg_confirm_delete_filter": "이 필터를 삭제하시겠습니까?"
+  "msg_confirm_delete_filter": "이 필터를 삭제하시겠습니까?",
+  "msg_network_error": "문제가 발생했습니다. 다시 시도해주세요.",
+  "btn_tap_retry": "탭하여 재시도",
+  "btn_change_server": "서버 변경",
+  "msg_server_unreachable": "서버에 연결할 수 없습니다. 연결을 확인하거나 다른 서버를 시도해주세요."
 }

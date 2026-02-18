@@ -1139,4 +1139,18 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get msg_confirm_delete_filter => 'Excluir este filtro?';
+
+  @override
+  String get msg_network_error =>
+      'Algo deu errado. Por favor, tente novamente.';
+
+  @override
+  String get btn_tap_retry => 'Toque para tentar novamente';
+
+  @override
+  String get btn_change_server => 'Trocar servidor';
+
+  @override
+  String get msg_server_unreachable =>
+      'Servidor inacessível. Verifique sua conexão ou tente um servidor diferente.';
 }

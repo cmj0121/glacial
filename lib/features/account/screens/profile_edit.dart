@@ -293,7 +293,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
         CachedNetworkImage(
           imageUrl: widget.account.header,
           placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
+          errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
         ) :
         Image.file(schema.header!, fit: BoxFit.cover);
 
@@ -320,7 +320,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
           CachedNetworkImage(
             imageUrl: widget.account.avatar,
             placeholder: (context, url) => ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
+            errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
             fit: BoxFit.cover,
           ) :
           Image.file(schema.avatar!, fit: BoxFit.cover),

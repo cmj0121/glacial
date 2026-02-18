@@ -2209,6 +2209,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete this filter?'**
   String get msg_confirm_delete_filter;
+
+  /// Generic network error message shown when a request fails
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get msg_network_error;
+
+  /// Button label prompting user to tap to retry a failed action
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to retry'**
+  String get btn_tap_retry;
+
+  /// Button label to change the current server
+  ///
+  /// In en, this message translates to:
+  /// **'Change server'**
+  String get btn_change_server;
+
+  /// Error message when server cannot be reached
+  ///
+  /// In en, this message translates to:
+  /// **'Server is unreachable. Check your connection or try a different server.'**
+  String get msg_server_unreachable;
 }
 
 class _AppLocalizationsDelegate

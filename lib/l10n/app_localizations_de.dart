@@ -1136,4 +1136,18 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get msg_confirm_delete_filter => 'Diesen Filter löschen?';
+
+  @override
+  String get msg_network_error =>
+      'Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.';
+
+  @override
+  String get btn_tap_retry => 'Zum Wiederholen tippen';
+
+  @override
+  String get btn_change_server => 'Server wechseln';
+
+  @override
+  String get msg_server_unreachable =>
+      'Server nicht erreichbar. Prüfen Sie Ihre Verbindung oder versuchen Sie einen anderen Server.';
 }
