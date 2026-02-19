@@ -1026,13 +1026,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_undo => '復原';
 
   @override
-  String get txt_offline_banner => '您已离线';
+  String get txt_offline_banner => '您已離線';
 
   @override
-  String get txt_cached_data => '正在显示缓存数据';
+  String get txt_cached_data => '正在顯示快取資料';
 
   @override
-  String get msg_network_restored => '连接已恢复';
+  String get msg_network_restored => '連線已恢復';
 
   @override
   String get msg_confirm_reset => '這將刪除所有資料、帳號和設定，此操作無法復原。';
