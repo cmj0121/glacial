@@ -72,7 +72,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
       }
 
       _loadCachedTimeline();
-      onLoad();
+      onLoad().then((_) => _restoreMarkerPosition());
       _initStreaming();
     });
   }
@@ -174,6 +174,26 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
       if (firstIndex != null && firstIndex < statuses.length) {
         _saveMarkerDebounced(statuses[firstIndex].id);
       }
+    }
+  }
+
+  // Restore the last-read position for the home timeline by fetching
+  // the saved marker and scrolling to the matching status.
+  Future<void> _restoreMarkerPosition() async {
+    if (widget.type != TimelineType.home || !widget.status.isSignedIn) return;
+    if (statuses.isEmpty) return;
+
+    try {
+      final MarkersSchema? markers = await widget.status.getMarker(type: TimelineMarkerType.home);
+      final String? lastReadId = markers?.markers[TimelineMarkerType.home]?.lastReadID;
+      if (lastReadId == null || !mounted) return;
+
+      final int index = statuses.indexWhere((s) => s.id == lastReadId);
+      if (index > 0 && itemScrollController.isAttached) {
+        itemScrollController.jumpTo(index: index);
+      }
+    } catch (_) {
+      // Marker restore is best-effort; don't block on failure.
     }
   }
 
