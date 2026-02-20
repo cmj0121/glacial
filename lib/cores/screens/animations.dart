@@ -2,6 +2,7 @@
 import 'dart:math';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // The flipping card widget that shows a front and back side.
 class Flipping extends StatefulWidget {
@@ -111,10 +112,20 @@ class ClockProgressIndicator extends StatefulWidget {
   // Pull-to-refresh indicator builder for [CustomMaterialIndicator].
   // Fades in and scales up with pull progress, then spins at full size while loading.
   static Widget refreshBuilder(BuildContext context, IndicatorController controller) {
+    bool didTriggerHaptic = false;
+
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
         final double progress = controller.value.clamp(0.0, 1.0);
+
+        if (progress >= 1.0 && !didTriggerHaptic) {
+          didTriggerHaptic = true;
+          HapticFeedback.mediumImpact();
+        } else if (progress < 1.0) {
+          didTriggerHaptic = false;
+        }
+
         return Opacity(
           opacity: progress,
           child: Transform.scale(

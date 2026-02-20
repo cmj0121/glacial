@@ -2,6 +2,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:glacial/cores/platform.dart';
 import 'package:glacial/cores/screens/glass_style.dart';
@@ -162,7 +163,10 @@ Future<bool> showConfirmDialog({
         child: Text(AppLocalizations.of(context)?.btn_close ?? 'Cancel'),
       ),
       ElevatedButton(
-        onPressed: () => Navigator.of(context).pop(true),
+        onPressed: () {
+          HapticFeedback.mediumImpact();
+          Navigator.of(context).pop(true);
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.error,
           foregroundColor: Theme.of(context).colorScheme.onError,

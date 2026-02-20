@@ -218,6 +218,7 @@ class _InteractionState extends State<Interaction> {
       case StatusInteraction.favourite:
       case StatusInteraction.bookmark:
       case StatusInteraction.pin:
+        HapticFeedback.lightImpact();
         final StatusSchema updatedStatus = await widget.status.interactWithStatus(
           widget.schema,
           widget.action,
@@ -256,6 +257,7 @@ class _InteractionState extends State<Interaction> {
         final String text = AppLocalizations.of(context)?.msg_copied_to_clipboard ?? "Copy to clipboard";
 
         Clipboard.setData(ClipboardData(text: widget.schema.uri));
+        HapticFeedback.lightImpact();
         showSnackbar(context, text);
         return;
       case StatusInteraction.filter:
@@ -288,6 +290,7 @@ class _InteractionState extends State<Interaction> {
         );
         return;
       case StatusInteraction.mute:
+        HapticFeedback.lightImpact();
         final StatusSchema mutedStatus = await widget.status.interactWithStatus(
           widget.schema,
           widget.action,
