@@ -162,6 +162,49 @@ void main() {
       await tester.tap(find.byType(ConversationItem));
       expect(tapped, isTrue);
     });
+
+    testWidgets('renders with single participant', (tester) async {
+      final conversation = MockConversation.create(
+        accounts: [MockAccount.create(displayName: 'Solo')],
+        lastStatus: MockStatus.create(content: '<p>Single</p>'),
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: ConversationItem(schema: conversation),
+      ));
+      await tester.pump();
+
+      expect(find.text('Solo'), findsOneWidget);
+      expect(find.byType(ConversationItem), findsOneWidget);
+    });
+
+    testWidgets('shows bold text when unread', (tester) async {
+      final conversation = MockConversation.createUnread();
+
+      await tester.pumpWidget(createTestWidget(
+        child: ConversationItem(schema: conversation),
+      ));
+      await tester.pump();
+
+      // When unread, participant names should be bold (FontWeight.bold)
+      final textWidgets = tester.widgetList<Text>(find.byType(Text));
+      final hasBold = textWidgets.any((t) => t.style?.fontWeight == FontWeight.bold);
+      expect(hasBold, isTrue);
+    });
+
+    testWidgets('renders with no participants gracefully', (tester) async {
+      final conversation = MockConversation.create(
+        accounts: [],
+        lastStatus: MockStatus.create(content: '<p>Empty</p>'),
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: ConversationItem(schema: conversation),
+      ));
+      await tester.pump();
+
+      expect(find.byType(ConversationItem), findsOneWidget);
+    });
   });
 }
 

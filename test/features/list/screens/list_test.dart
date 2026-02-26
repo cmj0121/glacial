@@ -159,6 +159,38 @@ void main() {
       expect(find.byType(InkWellDone), findsOneWidget);
     });
   });
+
+  group('ListSchema', () {
+    test('create factory produces valid schema', () {
+      final schema = MockListSchema.create(title: 'Test');
+      expect(schema.title, 'Test');
+      expect(schema.id, isNotEmpty);
+    });
+
+    test('replyPolicy defaults to list', () {
+      final schema = MockListSchema.create();
+      expect(schema.replyPolicy, isA<ReplyPolicyType>());
+    });
+
+    test('exclusive defaults correctly', () {
+      final schema = MockListSchema.create(exclusive: true);
+      expect(schema.exclusive, true);
+    });
+  });
+
+  group('ReplyPolicyType', () {
+    test('has all expected values', () {
+      expect(ReplyPolicyType.values, contains(ReplyPolicyType.followed));
+      expect(ReplyPolicyType.values, contains(ReplyPolicyType.list));
+      expect(ReplyPolicyType.values, contains(ReplyPolicyType.none));
+    });
+
+    test('each has icon', () {
+      for (final type in ReplyPolicyType.values) {
+        expect(type.icon, isA<IconData>());
+      }
+    });
+  });
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

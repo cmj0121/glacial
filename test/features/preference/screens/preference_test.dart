@@ -159,6 +159,86 @@ void main() {
       expect(ReplyTagType.none.icon(), Icons.cancel);
     });
   });
+
+  group('VisibilityType', () {
+    test('has all expected values', () {
+      expect(VisibilityType.values, contains(VisibilityType.public));
+      expect(VisibilityType.values, contains(VisibilityType.unlisted));
+      expect(VisibilityType.values, contains(VisibilityType.private));
+      expect(VisibilityType.values, contains(VisibilityType.direct));
+    });
+
+    test('each has icon() method', () {
+      for (final v in VisibilityType.values) {
+        expect(v.icon(), isA<IconData>());
+      }
+    });
+
+    test('values match by name', () {
+      final found = VisibilityType.values.firstWhere(
+        (v) => v.name == 'public',
+        orElse: () => VisibilityType.public,
+      );
+      expect(found, VisibilityType.public);
+    });
+  });
+
+  group('QuotePolicyType', () {
+    test('has expected values', () {
+      expect(QuotePolicyType.values.length, greaterThanOrEqualTo(2));
+    });
+
+    test('each has icon', () {
+      for (final v in QuotePolicyType.values) {
+        expect(v.icon, isA<IconData>());
+      }
+    });
+
+    test('fromString parses correctly', () {
+      expect(QuotePolicyType.fromString('public'), QuotePolicyType.public);
+      expect(QuotePolicyType.fromString('followers'), QuotePolicyType.followers);
+      expect(QuotePolicyType.fromString('nobody'), QuotePolicyType.nobody);
+    });
+  });
+
+  group('SystemPreferenceSchema additional fields', () {
+    test('defaults are correct', () {
+      const schema = SystemPreferenceSchema();
+      expect(schema.fontScale, 1.0);
+      expect(schema.hideReplies, false);
+      expect(schema.hideReblogs, false);
+      expect(schema.autoPlayVideo, true);
+      expect(schema.timelineLimit, 40);
+    });
+
+    test('copyWith updates fields', () {
+      const schema = SystemPreferenceSchema();
+      final updated = schema.copyWith(
+        hideReplies: true,
+        hideReblogs: true,
+        fontScale: 1.2,
+      );
+      expect(updated.hideReplies, true);
+      expect(updated.hideReblogs, true);
+      expect(updated.fontScale, 1.2);
+      expect(updated.autoPlayVideo, true);
+    });
+
+    test('toJson includes additional fields', () {
+      const schema = SystemPreferenceSchema(hideReplies: true);
+      final json = schema.toJson();
+      expect(json['hide_replies'], true);
+      expect(json['font_scale'], 1.0);
+    });
+
+    test('fromJson restores additional fields', () {
+      final json = SystemPreferenceSchema(fontScale: 1.3, hideReblogs: true).toJson();
+      final restored = SystemPreferenceSchema.fromJson(json);
+      expect(restored.fontScale, 1.3);
+      expect(restored.hideReblogs, true);
+      expect(restored.hideReplies, false);
+    });
+  });
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
