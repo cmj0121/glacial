@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:glacial/core.dart';
+import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
 import '../../../helpers/test_helpers.dart';
@@ -227,6 +229,118 @@ void main() {
       expect(find.byType(Divider), findsAtLeastNWidgets(2));
     });
 
+    testWidgets('hides email row when email is empty', (tester) async {
+      final account = MockAdminAccount.create(email: '');
+      final status = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AdminAccountDetail(schema: account),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.email), findsNothing);
+    });
+
+    testWidgets('hides IP row when ip is null', (tester) async {
+      final account = MockAdminAccount.create(ip: null);
+      final status = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AdminAccountDetail(schema: account),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.computer), findsNothing);
+    });
+
+    testWidgets('hides locale row when locale is null', (tester) async {
+      final account = MockAdminAccount.create(locale: null);
+      final status = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AdminAccountDetail(schema: account),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.language), findsNothing);
+    });
+
+    testWidgets('hides role row when role is null', (tester) async {
+      final account = MockAdminAccount.create(role: null);
+      final status = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AdminAccountDetail(schema: account),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.badge), findsNothing);
+    });
+
+    testWidgets('action buttons show Silence and Suspend text', (tester) async {
+      final account = MockAdminAccount.create();
+      final status = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AdminAccountDetail(schema: account),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      // Active account should have Silence and Suspend buttons
+      expect(find.text('Silence'), findsOneWidget);
+      expect(find.text('Suspend'), findsOneWidget);
+    });
+
+    testWidgets('shows account widget that is tappable', (tester) async {
+      final account = MockAdminAccount.create();
+      final status = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AdminAccountDetail(schema: account),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      expect(find.byType(InkWellDone), findsWidgets);
+      expect(find.byType(Account), findsOneWidget);
+    });
+  });
+
+  group('AdminAccountSchema', () {
+    test('status getter returns active for default account', () {
+      final account = MockAdminAccount.create();
+      expect(account.status, AdminAccountStatus.active);
+    });
+
+    test('status getter returns pending', () {
+      final account = MockAdminAccount.pending();
+      expect(account.status, AdminAccountStatus.pending);
+    });
+
+    test('status getter returns suspended', () {
+      final account = MockAdminAccount.createSuspended();
+      expect(account.status, AdminAccountStatus.suspended);
+    });
+
+    test('status getter returns silenced', () {
+      final account = MockAdminAccount.createSilenced();
+      expect(account.status, AdminAccountStatus.silenced);
+    });
+
+    test('status getter returns disabled', () {
+      final account = MockAdminAccount.createDisabled();
+      expect(account.status, AdminAccountStatus.disabled);
+    });
+
+    test('remote account has non-null domain', () {
+      final account = MockAdminAccount.remote();
+      expect(account.domain, 'remote.social');
+    });
   });
 }
 

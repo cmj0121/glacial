@@ -376,7 +376,45 @@ void main() {
       expect(restored.hideReblogs, true);
       expect(restored.hideReplies, false);
     });
+
+    test('copyWith with imageQuality change', () {
+      const schema = SystemPreferenceSchema();
+      final updated = schema.copyWith(imageQuality: ImageQualityType.high);
+      expect(updated.imageQuality, ImageQualityType.high);
+      expect(updated.theme, ThemeMode.dark);
+    });
+
+    test('copyWith with replyTag change', () {
+      const schema = SystemPreferenceSchema();
+      final updated = schema.copyWith(replyTag: ReplyTagType.poster);
+      expect(updated.replyTag, ReplyTagType.poster);
+    });
+
+    test('copyWith with autoPlayVideo change', () {
+      const schema = SystemPreferenceSchema();
+      final updated = schema.copyWith(autoPlayVideo: false);
+      expect(updated.autoPlayVideo, false);
+    });
+
+    test('copyWith with timelineLimit change', () {
+      const schema = SystemPreferenceSchema();
+      final updated = schema.copyWith(timelineLimit: 80);
+      expect(updated.timelineLimit, 80);
+    });
+
+    test('toJson includes imageQuality', () {
+      const schema = SystemPreferenceSchema(imageQuality: ImageQualityType.high);
+      final json = schema.toJson();
+      expect(json['image_quality'], 'high');
+    });
+
+    test('fromJson restores imageQuality', () {
+      final json = const SystemPreferenceSchema(imageQuality: ImageQualityType.low).toJson();
+      final restored = SystemPreferenceSchema.fromJson(json);
+      expect(restored.imageQuality, ImageQualityType.low);
+    });
   });
+
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

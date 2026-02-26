@@ -164,6 +164,37 @@ void main() {
       // The InkWellDone is for the main card, not the author
     });
 
+    testWidgets('displays author as tappable link when authUrl is valid', (tester) async {
+      final link = MockLink.create(
+        authName: 'Linked Author',
+        authUrl: 'https://example.com/author',
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: TrendsLink(schema: link),
+      ));
+      await tester.pump();
+
+      expect(find.text('Linked Author'), findsOneWidget);
+      // Should have an InkWell around the author when URL is valid
+      expect(find.byType(InkWell), findsWidgets);
+    });
+
+    testWidgets('renders with no-author link', (tester) async {
+      final link = MockLink.withoutAuthor(
+        title: 'No Author Article',
+        desc: 'Article with no author info',
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: TrendsLink(schema: link),
+      ));
+      await tester.pump();
+
+      expect(find.text('No Author Article'), findsOneWidget);
+      expect(find.text('Article with no author info'), findsOneWidget);
+    });
+
     testWidgets('clips image with rounded corners', (tester) async {
       final link = MockLink.create();
 

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -99,6 +100,39 @@ void main() {
         expect(chip.selected, isFalse, reason: '$label should not be selected by default');
       }
     });
+
+    testWidgets('shows NoResult when accounts list is empty after load', (tester) async {
+      final noDomainStatus = const AccessStatusSchema(domain: null, accessToken: 'test');
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: AdminAccountList(status: noDomainStatus)),
+        ));
+        await tester.pump();
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        await tester.pump();
+      });
+
+      expect(find.byType(NoResult), findsOneWidget);
+    });
+
+    testWidgets('tapping a status filter chip selects it', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: AdminAccountList(status: status)),
+        ));
+        await tester.pump();
+
+        // Tap the Pending chip inside runAsync to handle timers
+        await tester.tap(find.text('Pending'));
+        await tester.pump();
+      });
+
+      final FilterChip chip = tester.widget<FilterChip>(
+        find.widgetWithText(FilterChip, 'Pending'),
+      );
+      expect(chip.selected, isTrue);
+    });
   });
 
   group('AdminAccountStatus', () {
@@ -120,6 +154,17 @@ void main() {
       expect(AdminAccountStatus.values[2], AdminAccountStatus.disabled);
       expect(AdminAccountStatus.values[3], AdminAccountStatus.silenced);
       expect(AdminAccountStatus.values[4], AdminAccountStatus.suspended);
+    });
+  });
+
+  group('AdminAccountOrigin', () {
+    test('has 2 values', () {
+      expect(AdminAccountOrigin.values.length, 2);
+    });
+
+    test('contains local and remote', () {
+      expect(AdminAccountOrigin.values, contains(AdminAccountOrigin.local));
+      expect(AdminAccountOrigin.values, contains(AdminAccountOrigin.remote));
     });
   });
 }

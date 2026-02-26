@@ -190,6 +190,58 @@ void main() {
       // Empty domain shows SizedBox.shrink
       expect(find.byType(SizedBox), findsWidgets);
     });
+
+    testWidgets('users tab is disabled when not signed in', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: const Scaffold(body: TrendsTab()),
+          accessStatus: const AccessStatusSchema(domain: 'example.com', accessToken: null),
+        ));
+        await tester.pump();
+      });
+
+      // The users tab icon should be rendered with disabled color
+      expect(find.byIcon(Icons.person_outline), findsOneWidget);
+    });
+  });
+
+  group('Trends loading states', () {
+    testWidgets('shows NoResult when load completes with empty data', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(
+            body: Trends(
+              type: TrendsType.tags,
+              status: const AccessStatusSchema(domain: null, accessToken: 'test'),
+            ),
+          ),
+        ));
+        await tester.pump();
+        // Allow onLoad to fail (null domain) → empty trends
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        await tester.pump();
+      });
+
+      expect(find.byType(NoResult), findsOneWidget);
+    });
+
+    testWidgets('renders for each TrendsType', (tester) async {
+      for (final type in TrendsType.values) {
+        await tester.runAsync(() async {
+          await tester.pumpWidget(createTestWidgetRaw(
+            child: Scaffold(
+              body: Trends(
+                type: type,
+                status: const AccessStatusSchema(domain: null, accessToken: 'test'),
+              ),
+            ),
+          ));
+          await tester.pump();
+        });
+
+        expect(find.byType(Trends), findsOneWidget);
+      }
+    });
   });
 
   group('SuggestionSourceType', () {

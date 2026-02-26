@@ -137,6 +137,23 @@ void main() {
       // The toolbar row has a tune icon for notification policy
       expect(find.byIcon(Icons.tune), findsOneWidget);
     });
+
+    testWidgets('shows Column layout when signed in', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: const Scaffold(body: GroupNotification()),
+          accessStatus: status,
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byType(Column), findsWidgets);
+      expect(find.byType(Align), findsWidgets);
+    });
   });
 }
 
