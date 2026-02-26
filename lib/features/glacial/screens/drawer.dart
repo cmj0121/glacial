@@ -66,7 +66,6 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
 
         return Drawer(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
               DrawerHeader(
                 child: Column(
@@ -98,9 +97,12 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
               ),
 
               AccountLite(schema: status?.account, size: tabSize),
-              ...children.sublist(0, logoutIndex),
-
-              const Spacer(),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: children.sublist(0, logoutIndex),
+                ),
+              ),
               if (status?.accessToken?.isNotEmpty ?? false) children[logoutIndex],
               const SizedBox(height: 8),
             ],

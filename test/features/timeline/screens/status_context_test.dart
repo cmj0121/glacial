@@ -17,8 +17,8 @@ void main() {
       final schema = MockStatus.create();
 
       await tester.runAsync(() async {
-        await tester.pumpWidget(createTestWidget(
-          child: StatusContext(schema: schema),
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: StatusContext(schema: schema)),
           accessStatus: status,
         ));
         await tester.pump();
@@ -34,8 +34,8 @@ void main() {
       final schema = MockStatus.create();
 
       await tester.runAsync(() async {
-        await tester.pumpWidget(createTestWidget(
-          child: StatusContext(schema: schema),
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: StatusContext(schema: schema)),
           accessStatus: status,
         ));
         await tester.pump();
@@ -53,8 +53,8 @@ void main() {
       final schema = MockStatus.create(id: 'ctx-1', content: '<p>Context status</p>');
 
       await tester.runAsync(() async {
-        await tester.pumpWidget(createTestWidget(
-          child: StatusContext(schema: schema),
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: StatusContext(schema: schema)),
           accessStatus: status,
         ));
         await tester.pump();
