@@ -207,6 +207,80 @@ void main() {
       final ClipRRect clipRRect = tester.widget<ClipRRect>(find.byType(ClipRRect));
       expect(clipRRect.borderRadius, BorderRadius.circular(8));
     });
+
+    testWidgets('main card onTap triggers navigation', (tester) async {
+      final link = MockLink.create(url: 'https://example.com/article');
+
+      await tester.pumpWidget(createTestWidget(
+        child: TrendsLink(schema: link),
+      ));
+      await tester.pump();
+
+      // Find the InkWellDone wrapping the card and verify its onTap is set
+      final InkWellDone inkWellDone = tester.widget<InkWellDone>(
+        find.descendant(
+          of: find.byType(TrendsLink),
+          matching: find.byType(InkWellDone),
+        ).first,
+      );
+      expect(inkWellDone.onTap, isNotNull);
+
+      // Tap the card — triggers context.push which throws without GoRouter
+      await tester.tap(find.byType(InkWellDone).first);
+      await tester.pump();
+
+      // Consume the expected GoRouter error
+      expect(tester.takeException(), isNotNull);
+    });
+
+    testWidgets('author link onTap triggers navigation when authUrl is valid', (tester) async {
+      final link = MockLink.create(
+        authName: 'Tappable Author',
+        authUrl: 'https://example.com/author-page',
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: TrendsLink(schema: link),
+      ));
+      await tester.pump();
+
+      // Find the author InkWell (not InkWellDone)
+      final Finder authorInkWell = find.ancestor(
+        of: find.text('Tappable Author'),
+        matching: find.byType(InkWell),
+      );
+      expect(authorInkWell, findsWidgets);
+
+      // Tap the author link — triggers context.push which throws without GoRouter
+      await tester.tap(find.text('Tappable Author'));
+      await tester.pump();
+
+      // Consume the expected GoRouter error
+      expect(tester.takeException(), isNotNull);
+    });
+
+    testWidgets('CachedNetworkImage has an errorWidget callback', (tester) async {
+      final link = MockLink.create(image: 'https://example.com/broken.jpg');
+
+      await tester.pumpWidget(createTestWidget(
+        child: TrendsLink(schema: link),
+      ));
+      await tester.pump();
+
+      // Verify the CachedNetworkImage has an errorWidget that returns ImageErrorPlaceholder
+      final CachedNetworkImage image = tester.widget<CachedNetworkImage>(
+        find.byType(CachedNetworkImage),
+      );
+      expect(image.errorWidget, isNotNull);
+
+      // Invoke the errorWidget callback to cover line 88
+      final Widget errorWidget = image.errorWidget!(
+        tester.element(find.byType(CachedNetworkImage)),
+        'https://example.com/broken.jpg',
+        Exception('load failed'),
+      );
+      expect(errorWidget, isA<ImageErrorPlaceholder>());
+    });
   });
 }
 

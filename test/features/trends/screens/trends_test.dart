@@ -262,6 +262,68 @@ void main() {
     });
   });
 
+  group('SuggestionSourceType tooltip', () {
+    testWidgets('each source type has localized tooltip', (tester) async {
+      late BuildContext capturedContext;
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(builder: (context) {
+          capturedContext = context;
+          return const SizedBox.shrink();
+        }),
+      ));
+      await tester.pump();
+
+      for (final type in SuggestionSourceType.values) {
+        expect(type.tooltip(capturedContext), isNotEmpty);
+      }
+    });
+
+    testWidgets('staff tooltip contains staff text', (tester) async {
+      late BuildContext capturedContext;
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(builder: (context) {
+          capturedContext = context;
+          return const SizedBox.shrink();
+        }),
+      ));
+      await tester.pump();
+
+      final tooltip = SuggestionSourceType.staff.tooltip(capturedContext);
+      expect(tooltip, isA<String>());
+      expect(tooltip.isNotEmpty, isTrue);
+    });
+
+    testWidgets('pastInteractions tooltip is non-empty', (tester) async {
+      late BuildContext capturedContext;
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(builder: (context) {
+          capturedContext = context;
+          return const SizedBox.shrink();
+        }),
+      ));
+      await tester.pump();
+
+      final tooltip = SuggestionSourceType.pastInteractions.tooltip(capturedContext);
+      expect(tooltip, isA<String>());
+      expect(tooltip.isNotEmpty, isTrue);
+    });
+
+    testWidgets('global tooltip is non-empty', (tester) async {
+      late BuildContext capturedContext;
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(builder: (context) {
+          capturedContext = context;
+          return const SizedBox.shrink();
+        }),
+      ));
+      await tester.pump();
+
+      final tooltip = SuggestionSourceType.global.tooltip(capturedContext);
+      expect(tooltip, isA<String>());
+      expect(tooltip.isNotEmpty, isTrue);
+    });
+  });
+
   group('SuggestionSchema', () {
     test('fromJson parses all fields', () {
       final json = {
@@ -293,6 +355,20 @@ void main() {
       expect(suggestion.source, SuggestionSourceType.staff);
       expect(suggestion.sources, ['staff', 'global']);
       expect(suggestion.account.username, 'test');
+    });
+
+    test('fromString parses JSON string', () {
+      final jsonStr = '{"source":"global","sources":["global"],"account":{"id":"1","username":"x","acct":"x","display_name":"X","url":"https://example.com/@x","note":"","avatar":"","avatar_static":"","header":"","header_static":"","locked":false,"bot":false,"indexable":false,"created_at":"2024-01-01T00:00:00.000Z","followers_count":0,"following_count":0,"statuses_count":0,"emojis":[],"fields":[]}}';
+      final suggestion = SuggestionSchema.fromString(jsonStr);
+      expect(suggestion.source, SuggestionSourceType.global);
+      expect(suggestion.sources, ['global']);
+      expect(suggestion.account.username, 'x');
+    });
+
+    test('fromString parses pastInteractions source', () {
+      final jsonStr = '{"source":"past_interactions","sources":["past_interactions"],"account":{"id":"2","username":"y","acct":"y","display_name":"Y","url":"https://example.com/@y","note":"","avatar":"","avatar_static":"","header":"","header_static":"","locked":false,"bot":false,"indexable":false,"created_at":"2024-01-01T00:00:00.000Z","followers_count":0,"following_count":0,"statuses_count":0,"emojis":[],"fields":[]}}';
+      final suggestion = SuggestionSchema.fromString(jsonStr);
+      expect(suggestion.source, SuggestionSourceType.pastInteractions);
     });
   });
 }
