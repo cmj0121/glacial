@@ -353,5 +353,8 @@
   "msg_network_error": "Algo deu errado. Por favor, tente novamente.",
   "btn_tap_retry": "Toque para tentar novamente",
   "btn_change_server": "Trocar servidor",
-  "msg_server_unreachable": "Servidor inacessível. Verifique sua conexão ou tente um servidor diferente."
+  "msg_server_unreachable": "Servidor inacessível. Verifique sua conexão ou tente um servidor diferente.",
+  "msg_share_upload_failed": "Falha ao enviar imagem compartilhada",
+  "msg_share_received": "Conteúdo compartilhado recebido",
+  "msg_share_not_signed_in": "Entre para compartilhar conteúdo"
 }

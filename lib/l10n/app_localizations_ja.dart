@@ -1097,4 +1097,13 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get msg_server_unreachable => 'サーバーに接続できません。接続を確認するか、別のサーバーをお試しください。';
+
+  @override
+  String get msg_share_upload_failed => '共有画像のアップロードに失敗しました';
+
+  @override
+  String get msg_share_received => '共有コンテンツを受信しました';
+
+  @override
+  String get msg_share_not_signed_in => 'コンテンツを共有するにはサインインしてください';
 }

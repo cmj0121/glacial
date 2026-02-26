@@ -353,5 +353,8 @@
   "msg_network_error": "Algo salió mal. Por favor, inténtalo de nuevo.",
   "btn_tap_retry": "Toca para reintentar",
   "btn_change_server": "Cambiar servidor",
-  "msg_server_unreachable": "Servidor inaccesible. Verifica tu conexión o prueba con otro servidor."
+  "msg_server_unreachable": "Servidor inaccesible. Verifica tu conexión o prueba con otro servidor.",
+  "msg_share_upload_failed": "Error al subir la imagen compartida",
+  "msg_share_received": "Contenido compartido recibido",
+  "msg_share_not_signed_in": "Inicia sesión para compartir contenido"
 }

@@ -1100,4 +1100,13 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get msg_server_unreachable =>
       '서버에 연결할 수 없습니다. 연결을 확인하거나 다른 서버를 시도해주세요.';
+
+  @override
+  String get msg_share_upload_failed => '공유된 이미지 업로드 실패';
+
+  @override
+  String get msg_share_received => '공유 콘텐츠 수신됨';
+
+  @override
+  String get msg_share_not_signed_in => '콘텐츠를 공유하려면 로그인하세요';
 }

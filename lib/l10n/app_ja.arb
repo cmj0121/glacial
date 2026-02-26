@@ -353,5 +353,8 @@
   "msg_network_error": "問題が発生しました。もう一度お試しください。",
   "btn_tap_retry": "タップして再試行",
   "btn_change_server": "サーバーを変更",
-  "msg_server_unreachable": "サーバーに接続できません。接続を確認するか、別のサーバーをお試しください。"
+  "msg_server_unreachable": "サーバーに接続できません。接続を確認するか、別のサーバーをお試しください。",
+  "msg_share_upload_failed": "共有画像のアップロードに失敗しました",
+  "msg_share_received": "共有コンテンツを受信しました",
+  "msg_share_not_signed_in": "コンテンツを共有するにはサインインしてください"
 }

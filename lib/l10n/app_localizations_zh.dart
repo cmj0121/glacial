@@ -1097,4 +1097,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_server_unreachable => '無法連線至伺服器。請檢查連線或嘗試其他伺服器。';
+
+  @override
+  String get msg_share_upload_failed => '上傳分享圖片失敗';
+
+  @override
+  String get msg_share_received => '已接收分享內容';
+
+  @override
+  String get msg_share_not_signed_in => '登入以分享內容';
 }

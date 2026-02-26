@@ -2,6 +2,7 @@
 // may disable the button if the action is not supported for now.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -254,11 +255,18 @@ class _InteractionState extends State<Interaction> {
         widget.onDeleted?.call();
         return;
       case StatusInteraction.share:
-        final String text = AppLocalizations.of(context)?.msg_copied_to_clipboard ?? "Copy to clipboard";
-
-        Clipboard.setData(ClipboardData(text: widget.schema.uri));
         HapticFeedback.lightImpact();
-        showSnackbar(context, text);
+        try {
+          final String uri = widget.schema.uri;
+          final String plainText = widget.schema.plainText;
+          final String content = plainText.isNotEmpty ? '$plainText\n$uri' : uri;
+          await Share.share(content);
+        } catch (_) {
+          if (!mounted) return;
+          Clipboard.setData(ClipboardData(text: widget.schema.uri));
+          final String text = AppLocalizations.of(context)?.msg_copied_to_clipboard ?? "Copy to clipboard";
+          showSnackbar(context, text);
+        }
         return;
       case StatusInteraction.filter:
         context.pop();

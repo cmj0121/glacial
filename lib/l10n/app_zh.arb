@@ -353,5 +353,8 @@
   "msg_network_error": "發生錯誤，請重試。",
   "btn_tap_retry": "輕觸重試",
   "btn_change_server": "更換伺服器",
-  "msg_server_unreachable": "無法連線至伺服器。請檢查連線或嘗試其他伺服器。"
+  "msg_server_unreachable": "無法連線至伺服器。請檢查連線或嘗試其他伺服器。",
+  "msg_share_upload_failed": "上傳分享圖片失敗",
+  "msg_share_received": "已接收分享內容",
+  "msg_share_not_signed_in": "登入以分享內容"
 }

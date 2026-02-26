@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
 import '../../../helpers/test_helpers.dart';
@@ -187,6 +188,42 @@ void main() {
 
       // No ColorFiltered with StatusLite for quote
       expect(find.byType(StatusLite), findsNothing);
+    });
+  });
+
+  group('PostStatusForm with sharedContent', () {
+    testWidgets('pre-fills text from sharedContent', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      const shared = SharedContentSchema(text: 'Shared text from Safari');
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm(sharedContent: shared)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+      });
+
+      expect(find.text('Shared text from Safari'), findsOneWidget);
+    });
+
+    testWidgets('renders correctly with empty sharedContent', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      const shared = SharedContentSchema();
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm(sharedContent: shared)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byType(PostStatusForm), findsOneWidget);
     });
   });
 
