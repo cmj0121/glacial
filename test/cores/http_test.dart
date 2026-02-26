@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/cores/http.dart';
+import 'package:glacial/cores/misc.dart';
 
 void main() {
   group('Constants', () {
@@ -328,6 +329,204 @@ void main() {
       final uri = UriEx.handle('example.com');
 
       expect(uri.path, '');
+    });
+
+    test('handles multiple query parameters', () {
+      final uri = UriEx.handle('example.com', '/api/test', {
+        'limit': '20',
+        'offset': '10',
+        'q': 'hello world',
+      });
+
+      expect(uri.queryParameters['limit'], '20');
+      expect(uri.queryParameters['offset'], '10');
+      expect(uri.queryParameters['q'], 'hello world');
+    });
+
+    test('handles null query parameters', () {
+      final uri = UriEx.handle('example.com', '/api/test', null);
+
+      expect(uri.queryParameters, isEmpty);
+    });
+
+    test('localhost without port', () {
+      final uri = UriEx.handle('localhost', '/api/test');
+
+      expect(uri.scheme, 'http');
+      expect(uri.host, 'localhost');
+    });
+  });
+
+  group('userAgent', () {
+    test('returns a non-empty string', () {
+      final ua = userAgent;
+
+      expect(ua, isNotEmpty);
+    });
+
+    test('returns fallback when PackageInfo not available', () {
+      // PackageInfo is not initialized in test environment → falls back
+      final ua = userAgent;
+      // Either the fallback or real package info
+      expect(ua, isA<String>());
+      expect(ua, isNotEmpty);
+    });
+  });
+
+  group('RetryConfig edge cases', () {
+    test('getDelay at attempt 0 returns base delay', () {
+      const config = RetryConfig(
+        baseDelay: Duration(seconds: 1),
+        backoffMultiplier: 2.0,
+        jitterFactor: 0.0,
+      );
+
+      // 2^0 = 1, so 1000ms * 1 = 1000ms
+      expect(config.getDelay(0).inMilliseconds, 1000);
+    });
+
+    test('getDelay with high attempt number produces large delay', () {
+      const config = RetryConfig(
+        baseDelay: Duration(seconds: 1),
+        backoffMultiplier: 2.0,
+        jitterFactor: 0.0,
+      );
+
+      // 2^10 = 1024, so 1000ms * 1024 = 1024000ms
+      expect(config.getDelay(10).inMilliseconds, 1024000);
+    });
+
+    test('getDelay with zero jitter is deterministic', () {
+      const config = RetryConfig(
+        baseDelay: Duration(milliseconds: 100),
+        backoffMultiplier: 2.0,
+        jitterFactor: 0.0,
+      );
+
+      final results = List.generate(10, (_) => config.getDelay(1).inMilliseconds);
+      // All should be the same value
+      expect(results.toSet().length, 1);
+      expect(results.first, 200);
+    });
+
+    test('getDelay with multiplier of 1 uses constant delay', () {
+      const config = RetryConfig(
+        baseDelay: Duration(seconds: 1),
+        backoffMultiplier: 1.0,
+        jitterFactor: 0.0,
+      );
+
+      // 1^N = 1 for all N
+      expect(config.getDelay(0).inMilliseconds, 1000);
+      expect(config.getDelay(1).inMilliseconds, 1000);
+      expect(config.getDelay(5).inMilliseconds, 1000);
+    });
+  });
+
+  group('HttpException additional checks', () {
+    test('isServerError boundary at 500', () {
+      expect(
+        HttpException(statusCode: 499, message: '', uri: Uri.parse('http://x')).isServerError,
+        isFalse,
+      );
+      expect(
+        HttpException(statusCode: 500, message: '', uri: Uri.parse('http://x')).isServerError,
+        isTrue,
+      );
+    });
+
+    test('isClientError boundary at 400 and 499', () {
+      expect(
+        HttpException(statusCode: 399, message: '', uri: Uri.parse('http://x')).isClientError,
+        isFalse,
+      );
+      expect(
+        HttpException(statusCode: 400, message: '', uri: Uri.parse('http://x')).isClientError,
+        isTrue,
+      );
+    });
+
+    test('implements Exception interface', () {
+      final exception = HttpException(
+        statusCode: 500,
+        message: 'Internal Server Error',
+        uri: Uri.parse('http://x/test'),
+      );
+      expect(exception, isA<Exception>());
+    });
+
+    test('body preserves response content', () {
+      const jsonBody = '{"error":"rate_limit","message":"Too many requests"}';
+      final exception = HttpException(
+        statusCode: 429,
+        message: 'Too Many Requests',
+        uri: Uri.parse('http://x'),
+        body: jsonBody,
+      );
+      expect(exception.body, jsonBody);
+      expect(exception.isRateLimited, isTrue);
+    });
+  });
+
+  group('RateLimitException additional checks', () {
+    test('retryAfter can be non-standard duration', () {
+      final exception = RateLimitException(
+        uri: Uri.parse('http://x'),
+        limit: 100,
+        remaining: 0,
+        resetAt: DateTime.now().add(const Duration(hours: 1)),
+        retryAfter: const Duration(seconds: 120),
+      );
+
+      expect(exception.retryAfter.inSeconds, 120);
+      expect(exception.limit, 100);
+    });
+
+    test('toString includes path information', () {
+      final exception = RateLimitException(
+        uri: Uri.parse('https://example.com/api/v1/statuses'),
+        limit: 300,
+        remaining: 0,
+        resetAt: DateTime.now(),
+        retryAfter: const Duration(seconds: 30),
+      );
+
+      expect(exception.toString(), contains('/api/v1/statuses'));
+      expect(exception.toString(), contains('30s'));
+    });
+  });
+
+  group('HttpTimeoutException additional checks', () {
+    test('toString includes path', () {
+      final exception = HttpTimeoutException(
+        uri: Uri.parse('https://example.com/api/v1/timelines'),
+        timeout: const Duration(seconds: 15),
+      );
+
+      expect(exception.toString(), contains('/api/v1/timelines'));
+      expect(exception.toString(), contains('15s'));
+    });
+
+    test('implements Exception interface', () {
+      final exception = HttpTimeoutException(
+        uri: Uri.parse('http://x'),
+        timeout: const Duration(seconds: 30),
+      );
+      expect(exception, isA<Exception>());
+    });
+  });
+
+  group('Info class', () {
+    test('Info instance provides PackageInfo accessor', () {
+      final info = Info();
+      // In test environment, PackageInfo.fromPlatform() is not called,
+      // so info.info should be null.
+      expect(info.info, isNull);
+    });
+
+    test('userAgent returns Glacial fallback when PackageInfo is null', () {
+      // Info().info is null in test environment, so userAgent should be the fallback
+      expect(userAgent, 'Glacial/0.1.0');
     });
   });
 }

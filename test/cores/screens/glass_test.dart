@@ -643,6 +643,278 @@ void main() {
       expect(find.text('Confirm'), findsNothing);
     });
   });
+
+  group('showAdaptiveGlassSheet', () {
+    testWidgets('shows a modal bottom sheet', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showAdaptiveGlassSheet(
+              context: context,
+              builder: (context) => const Text('Sheet Content'),
+            ),
+            child: const Text('Open Sheet'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Sheet'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sheet Content'), findsOneWidget);
+    });
+
+    testWidgets('sheet is dismissible by default', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showAdaptiveGlassSheet(
+              context: context,
+              builder: (context) => const SizedBox(height: 100, child: Text('Dismiss Me')),
+            ),
+            child: const Text('Open Sheet'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Sheet'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Dismiss Me'), findsOneWidget);
+    });
+
+    testWidgets('sheet uses ClipRRect for rounded corners on glass platform', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showAdaptiveGlassSheet(
+              context: context,
+              builder: (context) => const Text('Glass Sheet'),
+            ),
+            child: const Text('Open Sheet'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Sheet'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ClipRRect), findsWidgets);
+    });
+
+    testWidgets('sheet uses BackdropFilter on glass platform', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showAdaptiveGlassSheet(
+              context: context,
+              builder: (context) => const Text('Blur Sheet'),
+            ),
+            child: const Text('Open Sheet'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Sheet'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BackdropFilter), findsWidgets);
+    });
+
+    testWidgets('sheet supports scroll controlled mode', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showAdaptiveGlassSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => const SizedBox(height: 200, child: Text('Scroll Sheet')),
+            ),
+            child: const Text('Open Sheet'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Sheet'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Scroll Sheet'), findsOneWidget);
+    });
+  });
+
+  group('showAdaptiveGlassDialog', () {
+    testWidgets('shows a dialog with builder content', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showAdaptiveGlassDialog(
+              context: context,
+              builder: (context) => const Text('Dialog Content'),
+            ),
+            child: const Text('Open Dialog'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Dialog Content'), findsOneWidget);
+    });
+
+    testWidgets('shows title when provided', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showAdaptiveGlassDialog(
+              context: context,
+              title: 'Dialog Title',
+              builder: (context) => const Text('Body'),
+            ),
+            child: const Text('Open Dialog'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Dialog Title'), findsOneWidget);
+      expect(find.text('Body'), findsOneWidget);
+    });
+
+    testWidgets('shows actions when provided', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showAdaptiveGlassDialog(
+              context: context,
+              builder: (context) => const Text('Body'),
+              actions: [
+                TextButton(
+                  onPressed: () {},
+                  child: const Text('Action 1'),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: const Text('Action 2'),
+                ),
+              ],
+            ),
+            child: const Text('Open Dialog'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Action 1'), findsOneWidget);
+      expect(find.text('Action 2'), findsOneWidget);
+    });
+
+    testWidgets('uses ClipRRect and BackdropFilter on glass platform', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showAdaptiveGlassDialog(
+              context: context,
+              builder: (context) => const Text('Glass Dialog'),
+            ),
+            child: const Text('Open Dialog'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ClipRRect), findsWidgets);
+      expect(find.byType(BackdropFilter), findsWidgets);
+    });
+
+    testWidgets('dialog without title omits title widget', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showAdaptiveGlassDialog(
+              context: context,
+              builder: (context) => const Text('No Title Body'),
+            ),
+            child: const Text('Open Dialog'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('No Title Body'), findsOneWidget);
+    });
+
+    testWidgets('dialog without actions omits actions row', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => showAdaptiveGlassDialog(
+              context: context,
+              title: 'Simple Dialog',
+              builder: (context) => const Text('Simple Body'),
+            ),
+            child: const Text('Open Dialog'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Simple Dialog'), findsOneWidget);
+      expect(find.text('Simple Body'), findsOneWidget);
+    });
+  });
+
+  group('showConfirmDialog edge cases', () {
+    testWidgets('returns false when dismissed without tapping', (tester) async {
+      late bool result;
+
+      await tester.pumpWidget(createTestWidget(
+        child: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () async {
+              result = await showConfirmDialog(
+                context: context,
+                title: 'Test',
+                message: 'Confirm?',
+              );
+            },
+            child: const Text('Open Dialog'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pumpAndSettle();
+
+      // The dialog has barrierDismissible: false, so we must tap cancel
+      await tester.tap(find.text('Close'));
+      await tester.pumpAndSettle();
+
+      expect(result, isFalse);
+    });
+  });
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

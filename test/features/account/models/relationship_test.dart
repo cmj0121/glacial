@@ -142,6 +142,25 @@ void main() {
       final regular = RoleSchema.fromJson(roleJson(permissions: '0'));
       expect(regular.hasPrivilege, false);
     });
+
+    test('hasPermission returns true for admin role', () {
+      final admin = RoleSchema.fromJson(roleJson(permissions: '1'));
+      expect(admin.hasPermission(PermissionBitmap.reports), true);
+      expect(admin.hasPermission(PermissionBitmap.devops), true);
+    });
+
+    test('hasPermission returns true for specific permission', () {
+      // 0x0010 = reports bit
+      final moderator = RoleSchema.fromJson(roleJson(permissions: '16'));
+      expect(moderator.hasPermission(PermissionBitmap.reports), true);
+      expect(moderator.hasPermission(PermissionBitmap.devops), false);
+    });
+
+    test('hasPermission returns false for zero permissions', () {
+      final regular = RoleSchema.fromJson(roleJson(permissions: '0'));
+      expect(regular.hasPermission(PermissionBitmap.administrator), false);
+      expect(regular.hasPermission(PermissionBitmap.reports), false);
+    });
   });
 
   group('RelationshipSchema', () {

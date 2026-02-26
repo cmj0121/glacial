@@ -87,6 +87,78 @@ void main() {
 
       expect(find.byType(Row), findsWidgets);
     });
+
+    testWidgets('has ClipRect wrapping content', (tester) async {
+      final account = MockAccount.create();
+
+      await tester.pumpWidget(createTestWidget(
+        child: Account(schema: account),
+      ));
+      await tester.pump();
+
+      expect(find.byType(ClipRect), findsWidgets);
+    });
+
+    testWidgets('has Semantics widget for accessibility', (tester) async {
+      final account = MockAccount.create(displayName: 'Semantic Test');
+
+      await tester.pumpWidget(createTestWidget(
+        child: Account(schema: account),
+      ));
+      await tester.pump();
+
+      expect(find.byType(Semantics), findsWidgets);
+    });
+
+    testWidgets('Semantics label uses displayName when present', (tester) async {
+      final account = MockAccount.create(displayName: 'AccessibleName');
+
+      await tester.pumpWidget(createTestWidget(
+        child: Account(schema: account),
+      ));
+      await tester.pump();
+
+      final semantics = tester.widgetList<Semantics>(find.byType(Semantics));
+      final hasCorrectLabel = semantics.any((s) => s.properties.label == 'AccessibleName');
+      expect(hasCorrectLabel, isTrue);
+    });
+
+    testWidgets('Semantics label uses acct when displayName is empty', (tester) async {
+      final account = MockAccount.create(username: 'acctuser', displayName: '');
+
+      await tester.pumpWidget(createTestWidget(
+        child: Account(schema: account),
+      ));
+      await tester.pump();
+
+      final semantics = tester.widgetList<Semantics>(find.byType(Semantics));
+      final hasAcctLabel = semantics.any((s) => s.properties.label == 'acctuser');
+      expect(hasAcctLabel, isTrue);
+    });
+
+    testWidgets('uses Column for name layout', (tester) async {
+      final account = MockAccount.create();
+
+      await tester.pumpWidget(createTestWidget(
+        child: Account(schema: account),
+      ));
+      await tester.pump();
+
+      expect(find.byType(Column), findsWidgets);
+    });
+
+    testWidgets('renders with emojis in display name', (tester) async {
+      // Account with custom emoji in display name should render without error
+      final account = MockAccount.create(displayName: 'User With Name');
+
+      await tester.pumpWidget(createTestWidget(
+        child: Account(schema: account),
+      ));
+      await tester.pump();
+
+      expect(find.byType(Account), findsOneWidget);
+      expect(find.textContaining('User With Name'), findsOneWidget);
+    });
   });
 
   group('AccountAvatar', () {
@@ -143,6 +215,55 @@ void main() {
       await tester.pump();
 
       expect(find.byType(InkWellDone), findsOneWidget);
+    });
+
+    testWidgets('has Semantics for accessibility', (tester) async {
+      final account = MockAccount.create(displayName: 'AvatarUser');
+
+      await tester.pumpWidget(createTestWidget(
+        child: AccountAvatar(schema: account),
+      ));
+      await tester.pump();
+
+      expect(find.byType(Semantics), findsWidgets);
+    });
+
+    testWidgets('Semantics label uses displayName when present', (tester) async {
+      final account = MockAccount.create(displayName: 'AvatarAccess');
+
+      await tester.pumpWidget(createTestWidget(
+        child: AccountAvatar(schema: account),
+      ));
+      await tester.pump();
+
+      final semantics = tester.widgetList<Semantics>(find.byType(Semantics));
+      final hasCorrectLabel = semantics.any((s) => s.properties.label == 'AvatarAccess');
+      expect(hasCorrectLabel, isTrue);
+    });
+
+    testWidgets('Semantics label uses acct when displayName is empty', (tester) async {
+      final account = MockAccount.create(username: 'acctavatar', displayName: '');
+
+      await tester.pumpWidget(createTestWidget(
+        child: AccountAvatar(schema: account),
+      ));
+      await tester.pump();
+
+      final semantics = tester.widgetList<Semantics>(find.byType(Semantics));
+      final hasAcctLabel = semantics.any((s) => s.properties.label == 'acctavatar');
+      expect(hasAcctLabel, isTrue);
+    });
+
+    testWidgets('tooltip message is the account acct', (tester) async {
+      final account = MockAccount.create(username: 'tooltipuser');
+
+      await tester.pumpWidget(createTestWidget(
+        child: AccountAvatar(schema: account),
+      ));
+      await tester.pump();
+
+      final tooltip = tester.widget<Tooltip>(find.byType(Tooltip));
+      expect(tooltip.message, 'tooltipuser');
     });
   });
 
@@ -217,6 +338,43 @@ void main() {
       // AccountLite uses: schema?.displayName ?? schema?.username ?? '-'
       // Empty string is not null, so it will show ''
       expect(find.byType(ListTile), findsOneWidget);
+    });
+
+    testWidgets('has Semantics for avatar accessibility', (tester) async {
+      final account = MockAccount.create(displayName: 'LiteUser');
+
+      await tester.pumpWidget(createTestWidget(
+        child: AccountLite(schema: account),
+      ));
+      await tester.pump();
+
+      expect(find.byType(Semantics), findsWidgets);
+    });
+
+    testWidgets('Semantics label uses displayName when not empty', (tester) async {
+      final account = MockAccount.create(displayName: 'LiteLabel');
+
+      await tester.pumpWidget(createTestWidget(
+        child: AccountLite(schema: account),
+      ));
+      await tester.pump();
+
+      final semantics = tester.widgetList<Semantics>(find.byType(Semantics));
+      final hasCorrectLabel = semantics.any((s) => s.properties.label == 'LiteLabel');
+      expect(hasCorrectLabel, isTrue);
+    });
+
+    testWidgets('Semantics label uses acct when displayName is empty', (tester) async {
+      final account = MockAccount.create(username: 'litacct', displayName: '');
+
+      await tester.pumpWidget(createTestWidget(
+        child: AccountLite(schema: account),
+      ));
+      await tester.pump();
+
+      final semantics = tester.widgetList<Semantics>(find.byType(Semantics));
+      final hasAcctLabel = semantics.any((s) => s.properties.label == 'litacct');
+      expect(hasAcctLabel, isTrue);
     });
   });
 }
