@@ -85,6 +85,12 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
     if (mounted) {
       logger.i("preloading completed, navigating to the ${route.path} page (${status?.domain}) ...");
       context.go(route.path);
+
+      // Check for shared content from a cold launch.
+      final SharedContentSchema? shared = ShareReceiver.consumePendingContent();
+      if (shared != null && shared.hasContent && isSignedIn) {
+        context.push(RoutePath.postShared.path, extra: shared);
+      }
     }
   }
 }

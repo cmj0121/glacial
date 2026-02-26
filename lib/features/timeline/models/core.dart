@@ -13,5 +13,6 @@ export 'timeline.dart';
 export 'translation.dart';
 export 'visibility.dart';
 export 'quotes.dart';
+export 'shared_content.dart';
 
 // vim: set ts=2 sw=2 sts=2 et:

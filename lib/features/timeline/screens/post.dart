@@ -16,6 +16,7 @@ class PostStatusForm extends ConsumerStatefulWidget {
   final StatusSchema? quoteTo;
   final StatusSchema? editFrom;
   final DraftSchema? draftFrom;
+  final SharedContentSchema? sharedContent;
   final ValueChanged<StatusSchema>? onPost;
 
   const PostStatusForm({
@@ -24,6 +25,7 @@ class PostStatusForm extends ConsumerStatefulWidget {
     this.quoteTo,
     this.editFrom,
     this.draftFrom,
+    this.sharedContent,
     this.onPost,
   });
 
@@ -38,7 +40,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   final String idempotentKey = const Uuid().v4();
 
   late final TextEditingController controller = TextEditingController(
-    text: widget.draftFrom?.content ?? widget.editFrom?.plainText ?? "",
+    text: widget.sharedContent?.text ?? widget.draftFrom?.content ?? widget.editFrom?.plainText ?? "",
   );
   late final TextEditingController spoilerController = TextEditingController(
     text: widget.draftFrom?.spoiler ?? widget.editFrom?.spoiler ?? "",
@@ -60,6 +62,7 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
   void initState() {
     super.initState();
     onInitMentioned();
+    _uploadSharedMedia();
   }
 
   @override
@@ -475,6 +478,25 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
       case ReplyTagType.none:
         // Do nothing, no mention will be added.
         break;
+    }
+  }
+
+  // Upload shared media files from the share extension.
+  Future<void> _uploadSharedMedia() async {
+    final List<String> paths = widget.sharedContent?.imagePaths ?? [];
+    if (paths.isEmpty || status == null) return;
+
+    for (final String path in paths) {
+      try {
+        final AttachmentSchema attachment = await status!.uploadMedia(path);
+        if (mounted) setState(() => medias.add(attachment));
+      } catch (e) {
+        logger.w("Failed to upload shared media: $e");
+        if (mounted) {
+          final String message = AppLocalizations.of(context)?.msg_share_upload_failed ?? "Failed to upload shared image";
+          showSnackbar(context, message);
+        }
+      }
     }
   }
 

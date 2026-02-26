@@ -353,5 +353,8 @@
   "msg_network_error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
   "btn_tap_retry": "Zum Wiederholen tippen",
   "btn_change_server": "Server wechseln",
-  "msg_server_unreachable": "Server nicht erreichbar. Prüfen Sie Ihre Verbindung oder versuchen Sie einen anderen Server."
+  "msg_server_unreachable": "Server nicht erreichbar. Prüfen Sie Ihre Verbindung oder versuchen Sie einen anderen Server.",
+  "msg_share_upload_failed": "Hochladen des geteilten Bildes fehlgeschlagen",
+  "msg_share_received": "Geteilter Inhalt empfangen",
+  "msg_share_not_signed_in": "Zum Teilen anmelden"
 }

@@ -1155,4 +1155,15 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get msg_server_unreachable =>
       'Serveur inaccessible. Vérifiez votre connexion ou essayez un autre serveur.';
+
+  @override
+  String get msg_share_upload_failed =>
+      'Échec du téléchargement de l\'image partagée';
+
+  @override
+  String get msg_share_received => 'Contenu partagé reçu';
+
+  @override
+  String get msg_share_not_signed_in =>
+      'Connectez-vous pour partager du contenu';
 }

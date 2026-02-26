@@ -353,5 +353,8 @@
   "msg_network_error": "Une erreur est survenue. Veuillez réessayer.",
   "btn_tap_retry": "Appuyez pour réessayer",
   "btn_change_server": "Changer de serveur",
-  "msg_server_unreachable": "Serveur inaccessible. Vérifiez votre connexion ou essayez un autre serveur."
+  "msg_server_unreachable": "Serveur inaccessible. Vérifiez votre connexion ou essayez un autre serveur.",
+  "msg_share_upload_failed": "Échec du téléchargement de l'image partagée",
+  "msg_share_received": "Contenu partagé reçu",
+  "msg_share_not_signed_in": "Connectez-vous pour partager du contenu"
 }

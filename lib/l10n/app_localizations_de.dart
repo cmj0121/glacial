@@ -1150,4 +1150,14 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get msg_server_unreachable =>
       'Server nicht erreichbar. Prüfen Sie Ihre Verbindung oder versuchen Sie einen anderen Server.';
+
+  @override
+  String get msg_share_upload_failed =>
+      'Hochladen des geteilten Bildes fehlgeschlagen';
+
+  @override
+  String get msg_share_received => 'Geteilter Inhalt empfangen';
+
+  @override
+  String get msg_share_not_signed_in => 'Zum Teilen anmelden';
 }

@@ -39,6 +39,18 @@ class _CoreAppState extends ConsumerState<CoreApp> {
   late SystemPreferenceSchema? schema = widget.schema;
 
   @override
+  void initState() {
+    super.initState();
+    ShareReceiver.init(navigatorKey);
+  }
+
+  @override
+  void dispose() {
+    ShareReceiver.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final info = Info().info;
     final bool _ = ref.watch(reloadProvider);
@@ -150,6 +162,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           case RoutePath.post:
           case RoutePath.postQuote:
           case RoutePath.postDraft:
+          case RoutePath.postShared:
           case RoutePath.edit:
           case RoutePath.status:
           case RoutePath.editProfile:
@@ -276,6 +289,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           builder: (BuildContext context, GoRouterState state) {
             final DraftSchema draft = state.extra as DraftSchema;
             return PostStatusForm(draftFrom: draft);
+          },
+        ),
+        GoRoute(
+          path: RoutePath.postShared.path,
+          builder: (BuildContext context, GoRouterState state) {
+            final SharedContentSchema content = state.extra as SharedContentSchema;
+            return PostStatusForm(sharedContent: content);
           },
         ),
         GoRoute(

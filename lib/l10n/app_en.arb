@@ -427,5 +427,8 @@
   "msg_server_unreachable": "Server is unreachable. Check your connection or try a different server.",
   "@msg_server_unreachable": {
     "description": "Error message when server cannot be reached"
-  }
+  },
+  "msg_share_upload_failed": "Failed to upload shared image",
+  "msg_share_received": "Shared content received",
+  "msg_share_not_signed_in": "Sign in to share content"
 }

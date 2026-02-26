@@ -2233,6 +2233,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Server is unreachable. Check your connection or try a different server.'**
   String get msg_server_unreachable;
+
+  /// No description provided for @msg_share_upload_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload shared image'**
+  String get msg_share_upload_failed;
+
+  /// No description provided for @msg_share_received.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared content received'**
+  String get msg_share_received;
+
+  /// No description provided for @msg_share_not_signed_in.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to share content'**
+  String get msg_share_not_signed_in;
 }
 
 class _AppLocalizationsDelegate

@@ -1138,4 +1138,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get msg_server_unreachable =>
       'Server is unreachable. Check your connection or try a different server.';
+
+  @override
+  String get msg_share_upload_failed => 'Failed to upload shared image';
+
+  @override
+  String get msg_share_received => 'Shared content received';
+
+  @override
+  String get msg_share_not_signed_in => 'Sign in to share content';
 }

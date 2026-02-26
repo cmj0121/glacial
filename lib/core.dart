@@ -6,6 +6,7 @@ export 'cores/http.dart';
 export 'cores/misc.dart';
 export 'cores/platform.dart';
 export 'cores/routes.dart';
+export 'cores/share_receiver.dart';
 export 'cores/storage.dart';
 export 'cores/streaming.dart';
 export 'cores/timeline_cache.dart';
