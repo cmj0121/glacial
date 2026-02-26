@@ -1,8 +1,10 @@
 // Widget tests for search screens: SearchExplorer, ExplorerTab.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
 import '../../../helpers/test_helpers.dart';
@@ -104,6 +106,44 @@ void main() {
   });
 
   group('ExplorerTab', () {
+    test('is a ConsumerStatefulWidget', () {
+      const widget = ExplorerTab(keyword: 'test');
+      expect(widget, isA<ConsumerStatefulWidget>());
+    });
+
+    test('accepts keyword parameter', () {
+      const widget = ExplorerTab(keyword: 'flutter');
+      expect(widget.keyword, 'flutter');
+    });
+
+    testWidgets('renders with no-domain status', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: const Scaffold(body: ExplorerTab(keyword: 'test')),
+          accessStatus: const AccessStatusSchema(domain: null, accessToken: 'test'),
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byType(ExplorerTab), findsOneWidget);
+    });
+
+    testWidgets('shows NoResult when search returns null', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: const Scaffold(body: ExplorerTab(keyword: 'nonexistent')),
+          accessStatus: const AccessStatusSchema(domain: null, accessToken: 'test'),
+        ));
+        await tester.pump();
+        // Allow the search future to complete (throws with null domain).
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        await tester.pump();
+      });
+
+      // With null domain, search throws → snapshot.hasError → NoResult
+      expect(find.byType(NoResult), findsOneWidget);
+    });
+
     testWidgets('shows loading indicator initially', (tester) async {
       await tester.runAsync(() async {
         await tester.pumpWidget(createTestWidgetRaw(
@@ -114,6 +154,17 @@ void main() {
       });
 
       expect(find.byType(LoadingOverlay), findsOneWidget);
+    });
+  });
+
+  group('SearchResultSchema', () {
+    test('isEmpty returns true when all lists empty', () {
+      final schema = SearchResultSchema.fromJson({
+        'accounts': <dynamic>[],
+        'statuses': <dynamic>[],
+        'hashtags': <dynamic>[],
+      });
+      expect(schema.isEmpty, true);
     });
   });
 }

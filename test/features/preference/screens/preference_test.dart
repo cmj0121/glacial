@@ -1,15 +1,68 @@
 // Widget tests for SystemPreference and SystemPreferenceType.
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
 import '../../../helpers/test_helpers.dart';
 
+/// Creates a test widget with LocaleNames delegate for preference tests.
+Widget _createPreferenceTestWidget({
+  required Widget child,
+  SystemPreferenceSchema? preference,
+}) {
+  return ProviderScope(
+    overrides: [
+      accessStatusProvider.overrideWith((ref) => MockAccessStatus.anonymous()),
+      if (preference != null) preferenceProvider.overrideWith((ref) => preference),
+    ],
+    child: MaterialApp(
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        LocaleNamesLocalizationsDelegate(),
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('en'),
+      home: child,
+    ),
+  );
+}
+
 void main() {
   setupTestEnvironment();
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
+
+  setUpAll(() async {
+    // Mock PackageInfo method channel for Info().info to work.
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('dev.fluttercommunity.plus/package_info'),
+      (MethodCall methodCall) async => <String, String>{
+        'appName': 'glacial',
+        'packageName': 'com.example.glacial',
+        'version': '1.0.0',
+        'buildNumber': '1',
+      },
+    );
+    // Mock path_provider to avoid MissingPluginException from CachedNetworkImage.
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/path_provider'),
+      (MethodCall methodCall) async => '/tmp',
+    );
+    await Info.init();
+  });
 
   group('SystemPreference', () {
     test('is a ConsumerStatefulWidget', () {
@@ -28,9 +81,94 @@ void main() {
       expect(widget.key, key);
     });
 
-    // Note: SystemPreference widget tests are limited because buildAppInfo()
-    // requires PackageInfo which is unavailable in test environment.
-    // The SystemPreferenceType enum tests below cover the tab configuration.
+    testWidgets('renders with default preference', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(),
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byType(SystemPreference), findsOneWidget);
+      expect(find.byType(Scaffold), findsWidgets);
+    });
+
+    testWidgets('shows SwipeTabView for settings tabs', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(),
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byType(SwipeTabView), findsOneWidget);
+    });
+
+    testWidgets('shows reload button', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(),
+        ));
+        await tester.pump();
+      });
+
+      // Reload button has a refresh icon and "Reload" text
+      expect(find.byIcon(Icons.refresh), findsWidgets);
+      expect(find.text('Reload'), findsOneWidget);
+    });
+
+    testWidgets('shows theme tab with SwitchListTile', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(),
+        ));
+        await tester.pump();
+      });
+
+      // Default tab is theme, which has SwitchListTiles
+      expect(find.byType(SwitchListTile), findsWidgets);
+    });
+
+    testWidgets('shows dark mode icon when theme is dark', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(theme: ThemeMode.dark),
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byIcon(Icons.dark_mode), findsOneWidget);
+    });
+
+    testWidgets('shows light mode icon when theme is light', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(theme: ThemeMode.light),
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byIcon(Icons.light_mode), findsOneWidget);
+    });
+
+    testWidgets('shows visibility icon', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(),
+        ));
+        await tester.pump();
+      });
+
+      // Default visibility is public → shows public icon
+      expect(find.byIcon(Icons.public), findsOneWidget);
+    });
   });
 
   group('SystemPreferenceType', () {

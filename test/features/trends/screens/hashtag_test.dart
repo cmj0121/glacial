@@ -1,5 +1,6 @@
 // Widget tests for Hashtag components.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:glacial/features/trends/screens/hashtag.dart';
@@ -188,6 +189,23 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(HistoryLineChart), findsOneWidget);
+    });
+  });
+
+  group('FollowedHashtagButton', () {
+    test('is a ConsumerStatefulWidget', () {
+      const widget = FollowedHashtagButton(hashtag: 'test');
+      expect(widget, isA<ConsumerStatefulWidget>());
+    });
+
+    test('accepts hashtag parameter', () {
+      const widget = FollowedHashtagButton(hashtag: 'flutter');
+      expect(widget.hashtag, 'flutter');
+    });
+
+    test('accepts hashtag parameter', () {
+      const widget = FollowedHashtagButton(hashtag: 'flutter');
+      expect(widget.hashtag, 'flutter');
     });
   });
 }

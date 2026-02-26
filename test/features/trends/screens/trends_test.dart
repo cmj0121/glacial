@@ -127,6 +127,122 @@ void main() {
       expect(ExplorerResultType.hashtag.icon(active: true), Icons.tag);
     });
   });
+
+  group('Trends widget', () {
+    test('is a StatefulWidget', () {
+      final widget = Trends(
+        type: TrendsType.statuses,
+        status: const AccessStatusSchema(domain: null, accessToken: 'test'),
+      );
+      expect(widget, isA<StatefulWidget>());
+    });
+
+    test('accepts type and status parameters', () {
+      const status = AccessStatusSchema(domain: null, accessToken: 'test');
+      final widget = Trends(type: TrendsType.links, status: status);
+      expect(widget.type, TrendsType.links);
+    });
+
+    testWidgets('renders with no-domain status', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(
+            body: Trends(
+              type: TrendsType.statuses,
+              status: const AccessStatusSchema(domain: null, accessToken: 'test'),
+            ),
+          ),
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byType(Trends), findsOneWidget);
+    });
+
+    testWidgets('shows Align at topCenter', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(
+            body: Trends(
+              type: TrendsType.tags,
+              status: const AccessStatusSchema(domain: null, accessToken: 'test'),
+            ),
+          ),
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byType(Align), findsWidgets);
+      expect(find.byType(Column), findsWidgets);
+    });
+  });
+
+  group('TrendsTab empty domain', () {
+    testWidgets('shows SizedBox.shrink with empty domain', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: const Scaffold(body: TrendsTab()),
+          accessStatus: const AccessStatusSchema(domain: '', accessToken: 'test'),
+        ));
+        await tester.pump();
+      });
+
+      // Empty domain shows SizedBox.shrink
+      expect(find.byType(SizedBox), findsWidgets);
+    });
+  });
+
+  group('SuggestionSourceType', () {
+    test('fromString parses staff', () {
+      expect(SuggestionSourceType.fromString('staff'), SuggestionSourceType.staff);
+    });
+
+    test('fromString parses past_interactions', () {
+      expect(SuggestionSourceType.fromString('past_interactions'), SuggestionSourceType.pastInteractions);
+    });
+
+    test('fromString parses global', () {
+      expect(SuggestionSourceType.fromString('global'), SuggestionSourceType.global);
+    });
+
+    test('fromString throws on unknown', () {
+      expect(() => SuggestionSourceType.fromString('xyz'), throwsArgumentError);
+    });
+  });
+
+  group('SuggestionSchema', () {
+    test('fromJson parses all fields', () {
+      final json = {
+        'source': 'staff',
+        'sources': ['staff', 'global'],
+        'account': {
+          'id': '1',
+          'username': 'test',
+          'acct': 'test',
+          'display_name': 'Test',
+          'url': 'https://example.com/@test',
+          'note': '',
+          'avatar': '',
+          'avatar_static': '',
+          'header': '',
+          'header_static': '',
+          'locked': false,
+          'bot': false,
+          'indexable': false,
+          'created_at': '2024-01-01T00:00:00.000Z',
+          'followers_count': 0,
+          'following_count': 0,
+          'statuses_count': 0,
+          'emojis': <dynamic>[],
+          'fields': <dynamic>[],
+        },
+      };
+      final suggestion = SuggestionSchema.fromJson(json);
+      expect(suggestion.source, SuggestionSourceType.staff);
+      expect(suggestion.sources, ['staff', 'global']);
+      expect(suggestion.account.username, 'test');
+    });
+  });
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
