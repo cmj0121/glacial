@@ -136,6 +136,80 @@ void main() {
 
       expect(find.text('Test field'), findsOneWidget);
     });
+
+    testWidgets('initialText populates the text field', (tester) async {
+      final status = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AutoCompleteForm(
+          initialText: 'Hello @user',
+          builder: _defaultBuilder(),
+        ),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      expect(find.text('Hello @user'), findsOneWidget);
+    });
+
+    testWidgets('external controller text is shown in field', (tester) async {
+      final controller = TextEditingController(text: 'External text');
+      final status = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AutoCompleteForm(
+          controller: controller,
+          builder: _defaultBuilder(),
+        ),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      expect(find.text('External text'), findsOneWidget);
+      controller.dispose();
+    });
+
+    testWidgets('disposes internal controller safely', (tester) async {
+      final status = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AutoCompleteForm(builder: _defaultBuilder()),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      // Replacing widget tree should not throw
+      await tester.pumpWidget(createTestWidget(
+        child: const SizedBox.shrink(),
+        accessStatus: status,
+      ));
+      await tester.pump();
+    });
+
+    testWidgets('does not dispose external controller', (tester) async {
+      final controller = TextEditingController(text: 'Keep me');
+      final status = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AutoCompleteForm(
+          controller: controller,
+          builder: _defaultBuilder(),
+        ),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      // Replace widget tree
+      await tester.pumpWidget(createTestWidget(
+        child: const SizedBox.shrink(),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      // Controller should still be usable
+      expect(controller.text, 'Keep me');
+      controller.dispose();
+    });
   });
 }
 

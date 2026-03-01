@@ -476,6 +476,151 @@ void main() {
     });
   });
 
+  group('AccessStatusSchema getAPI with explicit headers covers header spread', () {
+    test('getAPI with explicit headers returns null on network error', () async {
+      // Passing explicit headers exercises the ...?headers spread (non-null branch).
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+      final result = await status.getAPI(
+        '/api/v1/timelines/home',
+        headers: {'X-Custom': 'value'},
+      );
+
+      expect(result, isNull);
+    });
+  });
+
+  group('AccessStatusSchema postAPI with valid domain exercises body', () {
+    test('postAPI throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.postAPI('/api/v1/test', body: {'key': 'value'}),
+        throwsA(anything),
+      );
+    });
+
+    test('postAPI with explicit headers throws on network error', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.postAPI('/api/v1/test', headers: {'X-Custom': 'header'}),
+        throwsA(anything),
+      );
+    });
+  });
+
+  group('AccessStatusSchema putAPI with valid domain exercises body', () {
+    test('putAPI throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.putAPI('/api/v1/test', body: {'key': 'value'}),
+        throwsA(anything),
+      );
+    });
+
+    test('putAPI without body throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.putAPI('/api/v1/test'),
+        throwsA(anything),
+      );
+    });
+  });
+
+  group('AccessStatusSchema patchAPI with valid domain exercises body', () {
+    test('patchAPI throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.patchAPI('/api/v1/test', body: {'key': 'value'}),
+        throwsA(anything),
+      );
+    });
+
+    test('patchAPI with explicit headers throws on network error', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.patchAPI('/api/v1/test', headers: {'Accept': 'application/json'}),
+        throwsA(anything),
+      );
+    });
+  });
+
+  group('AccessStatusSchema deleteAPI with valid domain exercises body', () {
+    test('deleteAPI throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.deleteAPI('/api/v1/test'),
+        throwsA(anything),
+      );
+    });
+
+    test('deleteAPI with body throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.deleteAPI('/api/v1/test', body: {'id': '123'}),
+        throwsA(anything),
+      );
+    });
+  });
+
+  group('AccessStatusSchema multipartsAPI with valid domain exercises body', () {
+    test('multipartsAPI throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.multipartsAPI(
+          '/api/v1/test',
+          method: 'POST',
+          files: {},
+          body: {'description': 'test'},
+        ),
+        throwsA(anything),
+      );
+    });
+
+    test('multipartsAPI with explicit headers throws on network error', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.multipartsAPI(
+          '/api/v1/test',
+          method: 'PUT',
+          files: {},
+          headers: {'X-Custom': 'value'},
+        ),
+        throwsA(anything),
+      );
+    });
+  });
+
   group('401 cleanup flow contract', () {
     test('anonymous status after cleanup has correct routing hints', () {
       // After 401 cleanup, status should be anonymous with server config available

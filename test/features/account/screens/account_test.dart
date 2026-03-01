@@ -1,11 +1,55 @@
 // Widget tests for account screens: Account, AccountAvatar, AccountLite.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
 import '../../../helpers/test_helpers.dart';
+
+/// Creates a GoRouter-wrapped test widget so that context.push() works.
+Widget createAccountTestWidgetWithRouter({
+  required Widget child,
+  AccessStatusSchema? accessStatus,
+}) {
+  final List<Override> overrides = [
+    accessStatusProvider.overrideWith(
+      (ref) => accessStatus ?? MockAccessStatus.anonymous(),
+    ),
+  ];
+
+  final GoRouter router = GoRouter(
+    initialLocation: '/',
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (_, __) => Scaffold(body: child),
+      ),
+      GoRoute(
+        path: '/home/profile',
+        builder: (_, __) => const Scaffold(body: Text('Profile Page')),
+      ),
+    ],
+  );
+
+  return ProviderScope(
+    overrides: overrides,
+    child: MaterialApp.router(
+      routerConfig: router,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('en'),
+    ),
+  );
+}
 
 void main() {
   setupTestEnvironment();
@@ -159,6 +203,22 @@ void main() {
       expect(find.byType(Account), findsOneWidget);
       expect(find.textContaining('User With Name'), findsOneWidget);
     });
+
+    testWidgets('tapping Account navigates to profile page', (tester) async {
+      final account = MockAccount.create(displayName: 'Tap User');
+
+      await tester.pumpWidget(createAccountTestWidgetWithRouter(
+        child: Account(schema: account),
+      ));
+      await tester.pump();
+
+      // Tap the InkWellDone which calls context.push(RoutePath.profile.path, ...)
+      await tester.tap(find.byType(InkWellDone));
+      await tester.pumpAndSettle();
+
+      // Should navigate to the profile page.
+      expect(find.text('Profile Page'), findsOneWidget);
+    });
   });
 
   group('AccountAvatar', () {
@@ -264,6 +324,21 @@ void main() {
 
       final tooltip = tester.widget<Tooltip>(find.byType(Tooltip));
       expect(tooltip.message, 'tooltipuser');
+    });
+
+    testWidgets('tapping AccountAvatar navigates to profile page', (tester) async {
+      final account = MockAccount.create(displayName: 'Avatar Tap User');
+
+      await tester.pumpWidget(createAccountTestWidgetWithRouter(
+        child: AccountAvatar(schema: account),
+      ));
+      await tester.pump();
+
+      // Tap the InkWellDone which calls context.push(RoutePath.profile.path, ...)
+      await tester.tap(find.byType(InkWellDone));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Profile Page'), findsOneWidget);
     });
   });
 
@@ -375,6 +450,21 @@ void main() {
       final semantics = tester.widgetList<Semantics>(find.byType(Semantics));
       final hasAcctLabel = semantics.any((s) => s.properties.label == 'litacct');
       expect(hasAcctLabel, isTrue);
+    });
+
+    testWidgets('tapping AccountLite without onTap navigates to profile page', (tester) async {
+      final account = MockAccount.create(displayName: 'Lite Nav User');
+
+      await tester.pumpWidget(createAccountTestWidgetWithRouter(
+        child: AccountLite(schema: account),
+      ));
+      await tester.pump();
+
+      // When onTap is null, AccountLite falls back to context.push(RoutePath.profile.path, ...)
+      await tester.tap(find.byType(ListTile));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Profile Page'), findsOneWidget);
     });
   });
 }

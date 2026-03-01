@@ -1,4 +1,5 @@
 // Tests for mastodon extensions: activeKeyMatchesDomain, token CRUD, saved accounts.
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/features/mastodon/extensions.dart';
 import 'package:glacial/features/models.dart';
@@ -176,6 +177,119 @@ void main() {
 
     // Note: removeSavedAccount uses FlutterSecureStorage (removeAccessToken)
     // which is not available in unit tests. Tested via widget/integration tests.
+  });
+
+  group('Storage token CRUD with FlutterSecureStorage', () {
+    setUp(() async {
+      FlutterSecureStorage.setMockInitialValues({});
+      SharedPreferences.setMockInitialValues({});
+      await Storage.init();
+    });
+
+    test('saveAccessToken and loadAccessToken round-trip', () async {
+      final storage = Storage();
+      await storage.saveAccessToken('example.com@42', 'my-secret-token');
+      final loaded = await storage.loadAccessToken('example.com@42');
+      expect(loaded, 'my-secret-token');
+    });
+
+    test('saveAccessToken overwrites existing token', () async {
+      final storage = Storage();
+      await storage.saveAccessToken('example.com@42', 'old-token');
+      await storage.saveAccessToken('example.com@42', 'new-token');
+      final loaded = await storage.loadAccessToken('example.com@42');
+      expect(loaded, 'new-token');
+    });
+
+    test('saveAccessToken with null removes the key', () async {
+      final storage = Storage();
+      await storage.saveAccessToken('example.com@42', 'my-token');
+      await storage.saveAccessToken('example.com@42', null);
+      final loaded = await storage.loadAccessToken('example.com@42');
+      expect(loaded, isNull);
+    });
+
+    test('saveAccessToken with empty string removes the key', () async {
+      final storage = Storage();
+      await storage.saveAccessToken('example.com@42', 'my-token');
+      await storage.saveAccessToken('example.com@42', '');
+      final loaded = await storage.loadAccessToken('example.com@42');
+      expect(loaded, isNull);
+    });
+
+    test('loadAccessToken returns null for unknown key', () async {
+      final storage = Storage();
+      final loaded = await storage.loadAccessToken('unknown.com@99');
+      expect(loaded, isNull);
+    });
+
+    test('removeAccessToken removes the token', () async {
+      final storage = Storage();
+      await storage.saveAccessToken('example.com@42', 'my-token');
+      await storage.removeAccessToken('example.com@42');
+      final loaded = await storage.loadAccessToken('example.com@42');
+      expect(loaded, isNull);
+    });
+
+    test('multiple tokens stored independently', () async {
+      final storage = Storage();
+      await storage.saveAccessToken('a.com@1', 'token-a');
+      await storage.saveAccessToken('b.com@2', 'token-b');
+      expect(await storage.loadAccessToken('a.com@1'), 'token-a');
+      expect(await storage.loadAccessToken('b.com@2'), 'token-b');
+    });
+
+    test('removeAccessToken only removes the specified key', () async {
+      final storage = Storage();
+      await storage.saveAccessToken('a.com@1', 'token-a');
+      await storage.saveAccessToken('b.com@2', 'token-b');
+      await storage.removeAccessToken('a.com@1');
+      expect(await storage.loadAccessToken('a.com@1'), isNull);
+      expect(await storage.loadAccessToken('b.com@2'), 'token-b');
+    });
+
+    test('removeSavedAccount removes account and its token', () async {
+      final storage = Storage();
+      await storage.saveAccessToken('example.com@42', 'my-token');
+      await storage.addSavedAccount(SavedAccountSchema(
+        domain: 'example.com',
+        accountId: '42',
+        username: 'user',
+        displayName: 'User',
+        avatar: 'https://example.com/avatar.png',
+        lastUsed: DateTime(2024, 1, 1),
+      ));
+      await storage.removeSavedAccount('example.com@42');
+      final accounts = await storage.loadSavedAccounts();
+      expect(accounts, isEmpty);
+      final token = await storage.loadAccessToken('example.com@42');
+      expect(token, isNull);
+    });
+
+    test('saveAccessStatus persists schema JSON', () async {
+      final storage = Storage();
+      final schema = const AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test-token',
+      );
+      await storage.saveAccessStatus(schema);
+      final String? raw = await storage.getString(AccessStatusSchema.key);
+      expect(raw, isNotNull);
+      expect(raw!, contains('example.com'));
+    });
+
+    test('logout with null schema completes without error', () async {
+      final storage = Storage();
+      await storage.logout(null);
+    });
+
+    test('logout with empty domain schema resets to explorer', () async {
+      final storage = Storage();
+      final schema = const AccessStatusSchema(domain: '');
+      await storage.logout(schema);
+      final String? raw = await storage.getString(AccessStatusSchema.key);
+      expect(raw, isNotNull);
+    });
   });
 }
 
