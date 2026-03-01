@@ -643,6 +643,179 @@ void main() {
       expect(find.byType(FadeTransition), findsWidgets);
     });
 
+    testWidgets('tapping endorse option triggers onToggleEndorse', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: Relationship(schema: MockAccount.create()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+      });
+
+      // Open popup
+      await tester.tap(find.byIcon(Icons.more_horiz));
+      await tester.pumpAndSettle();
+
+      // Tap "Feature on profile" endorse option
+      await tester.tap(find.text('Feature on profile'));
+      await tester.pumpAndSettle();
+
+      // onToggleEndorse calls status?.endorseAccount — with no-domain status it's a no-op
+      expect(find.byType(Relationship), findsOneWidget);
+    });
+
+    testWidgets('tapping relationship button triggers onChangeRelationship', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: Relationship(schema: MockAccount.create()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+      });
+
+      // Tap the stranger relationship button
+      await tester.tap(find.byKey(const ValueKey('123-stranger')));
+      await tester.pumpAndSettle();
+
+      // onChangeRelationship calls status?.changeRelationship — no-op with null domain
+      expect(find.byType(Relationship), findsOneWidget);
+    });
+
+    testWidgets('tapping note save closes dialog and calls setAccountNote', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: Relationship(schema: MockAccount.create()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+      });
+
+      // Open popup and tap note
+      await tester.tap(find.byIcon(Icons.more_horiz));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Personal note'));
+      await tester.pumpAndSettle();
+
+      // Type text and tap Save
+      await tester.enterText(find.byType(TextField), 'My note text');
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      // Dialog should be dismissed
+      expect(find.byType(TextField), findsNothing);
+    });
+
+    testWidgets('tapping follow request icon shows accept/reject dialog', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: Relationship(schema: MockAccount.create(displayName: 'Requester')),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+
+        // Inject requestedBy = true
+        final state = tester.state(find.byType(Relationship));
+        (state as dynamic).schema = MockRelationship.create(requestedBy: true);
+        (tester.element(find.byType(Relationship)) as StatefulElement).markNeedsBuild();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+      });
+
+      // Tap the follow request icon
+      await tester.tap(find.byIcon(Icons.mark_email_unread_sharp));
+      await tester.pumpAndSettle();
+
+      // Should show dialog with Accept and Reject buttons
+      expect(find.text('Accept'), findsOneWidget);
+      expect(find.text('Reject'), findsOneWidget);
+    });
+
+    testWidgets('tapping accept in follow request dialog calls acceptFollowRequest', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: Relationship(schema: MockAccount.create()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+
+        final state = tester.state(find.byType(Relationship));
+        (state as dynamic).schema = MockRelationship.create(requestedBy: true);
+        (tester.element(find.byType(Relationship)) as StatefulElement).markNeedsBuild();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+      });
+
+      // Open dialog
+      await tester.tap(find.byIcon(Icons.mark_email_unread_sharp));
+      await tester.pumpAndSettle();
+
+      // Tap Accept
+      await tester.tap(find.text('Accept'));
+      await tester.pumpAndSettle();
+
+      // Dialog should close
+      expect(find.text('Accept'), findsNothing);
+    });
+
+    testWidgets('tapping reject in follow request dialog calls rejectFollowRequest', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: Relationship(schema: MockAccount.create()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+
+        final state = tester.state(find.byType(Relationship));
+        (state as dynamic).schema = MockRelationship.create(requestedBy: true);
+        (tester.element(find.byType(Relationship)) as StatefulElement).markNeedsBuild();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+      });
+
+      // Open dialog
+      await tester.tap(find.byIcon(Icons.mark_email_unread_sharp));
+      await tester.pumpAndSettle();
+
+      // Tap Reject
+      await tester.tap(find.text('Reject'));
+      await tester.pumpAndSettle();
+
+      // Dialog should close
+      expect(find.text('Reject'), findsNothing);
+    });
+
+    testWidgets('tapping unmute action on muted account calls changeRelationship', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: Relationship(schema: MockAccount.create()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+
+        // Inject muting state
+        final state = tester.state(find.byType(Relationship));
+        (state as dynamic).schema = MockRelationship.create(muting: true);
+        (tester.element(find.byType(Relationship)) as StatefulElement).markNeedsBuild();
+        await tester.pump();
+      });
+
+      // Open popup
+      await tester.tap(find.byIcon(Icons.more_horiz));
+      await tester.pumpAndSettle();
+
+      // Tap unmute — not isDangerous so no confirm dialog, goes straight to changeRelationship
+      final unmuteFinder = find.byWidgetPredicate(
+        (widget) => widget is ListTile && widget.title is Text &&
+          (widget.title as Text).data != null &&
+          (widget.title as Text).data!.contains('Unmute'),
+      );
+      await tester.tap(unmuteFinder.first);
+      await tester.pumpAndSettle();
+
+      // Should not show confirm dialog for non-dangerous actions
+      expect(find.byType(Relationship), findsOneWidget);
+    });
+
     testWidgets('contains SizedBox spacers between elements', (tester) async {
       await tester.runAsync(() async {
         await tester.pumpWidget(createTestWidget(

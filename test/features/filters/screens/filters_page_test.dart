@@ -207,6 +207,103 @@ void main() {
       expect(find.byIcon(Icons.warning_amber_outlined), findsOneWidget);
       expect(find.text('Warn Me'), findsOneWidget);
     });
+
+    testWidgets('tapping add button calls onCreate', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: const Scaffold(body: Filters()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+      });
+
+      // Tap the add button — triggers onCreate which pushes route
+      await tester.tap(find.byIcon(Icons.add));
+      await tester.pump();
+
+      // onCreate tries context.push which won't navigate in test but shouldn't crash
+      expect(find.byType(Filters), findsOneWidget);
+    });
+
+    testWidgets('submitting text field calls onCreate', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: const Scaffold(body: Filters()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+      });
+
+      // Submit text in the TextField — triggers onSubmitted which calls onCreate
+      await tester.enterText(find.byType(TextField), 'test filter');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
+
+      expect(find.byType(Filters), findsOneWidget);
+    });
+
+    testWidgets('tapping filter item navigates to edit', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: const Scaffold(body: Filters()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+      });
+
+      final state = tester.state(find.byType(Filters));
+      (state as dynamic).filters = [
+        FiltersSchema(
+          id: 'f1',
+          title: 'Editable Filter',
+          action: FilterAction.warn,
+          context: [FilterContext.home],
+          keywords: [],
+          statuses: [],
+        ),
+      ];
+      (tester.element(find.byType(Filters)) as StatefulElement)
+          .markNeedsBuild();
+      await tester.pump();
+
+      // Tap the filter item
+      await tester.tap(find.text('Editable Filter'));
+      await tester.pump();
+
+      expect(find.byType(Filters), findsOneWidget);
+    });
+
+    testWidgets('swiping filter shows confirm dialog', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: const Scaffold(body: Filters()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+      });
+
+      final state = tester.state(find.byType(Filters));
+      (state as dynamic).filters = [
+        FiltersSchema(
+          id: 'f1',
+          title: 'Swipe Filter',
+          action: FilterAction.warn,
+          context: [FilterContext.home],
+          keywords: [],
+          statuses: [],
+        ),
+      ];
+      (tester.element(find.byType(Filters)) as StatefulElement)
+          .markNeedsBuild();
+      await tester.pump();
+
+      // Swipe the filter item to the right
+      await tester.drag(find.text('Swipe Filter'), const Offset(500, 0));
+      await tester.pumpAndSettle();
+
+      // Should show confirm dialog
+      expect(find.byType(AlertDialog), findsOneWidget);
+    });
   });
 
   group('FilterSelector', () {

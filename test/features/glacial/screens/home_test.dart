@@ -392,6 +392,79 @@ void main() {
         expect(find.byType(LayoutBuilder), findsWidgets);
       });
     });
+
+    group('onSelect navigation', () {
+      testWidgets('tapping trends icon does not throw', (tester) async {
+        await tester.pumpWidget(createHomeTestWidget(
+          accessStatus: MockAccessStatus.authenticated(),
+        ));
+        await tester.pump();
+        await tester.pump();
+
+        await tester.tap(find.byIcon(Icons.trending_up_outlined));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        // Navigation triggered without error
+        expect(find.byType(GlacialHome), findsOneWidget);
+      });
+
+      testWidgets('tapping conversations icon does not throw', (tester) async {
+        await tester.pumpWidget(createHomeTestWidget(
+          accessStatus: MockAccessStatus.authenticated(),
+        ));
+        await tester.pump();
+        await tester.pump();
+
+        await tester.tap(find.byIcon(Icons.mail_outline));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(find.byType(GlacialHome), findsOneWidget);
+      });
+
+      testWidgets('tapping notification badge does not throw', (tester) async {
+        await tester.pumpWidget(createHomeTestWidget(
+          accessStatus: MockAccessStatus.authenticated(),
+        ));
+        await tester.pump();
+        await tester.pump();
+
+        await tester.tap(find.byType(NotificationBadge));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(find.byType(GlacialHome), findsOneWidget);
+      });
+
+      testWidgets('tapping post button does not throw', (tester) async {
+        await tester.pumpWidget(createHomeTestWidget(
+          accessStatus: MockAccessStatus.authenticated(),
+        ));
+        await tester.pump();
+        await tester.pump();
+
+        await tester.tap(find.byIcon(Icons.chat_outlined));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(find.byType(Scaffold), findsWidgets);
+      });
+
+      testWidgets('tapping timeline icon again stays on page', (tester) async {
+        await tester.pumpWidget(createHomeTestWidget(
+          accessStatus: MockAccessStatus.authenticated(),
+        ));
+        await tester.pump();
+        await tester.pump();
+
+        await tester.tap(find.byIcon(Icons.view_timeline));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(find.text('Timeline Content'), findsOneWidget);
+      });
+    });
   });
 }
 

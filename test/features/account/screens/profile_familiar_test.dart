@@ -377,6 +377,38 @@ void main() {
       expect(find.text('#'), findsOneWidget);
     });
 
+    testWidgets('tapping delete icon on tag removes it from state', (tester) async {
+      final selfAccount = MockAccount.create(id: '123');
+      final status = MockAccessStatus.authenticated(account: selfAccount);
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: FeaturedTags(schema: selfAccount),
+          accessStatus: status,
+        ));
+        await tester.pump();
+
+        final state = tester.state(find.byType(FeaturedTags));
+        (state as dynamic).tags = [
+          MockFeaturedTag.create(id: 'ft-1', name: 'flutter'),
+          MockFeaturedTag.create(id: 'ft-2', name: 'dart'),
+        ];
+        (tester.element(find.byType(FeaturedTags)) as StatefulElement).markNeedsBuild();
+        await tester.pump();
+
+        // Should have 2 InputChips
+        expect(find.byType(InputChip), findsNWidgets(2));
+
+        // Tap the first delete icon to trigger onRemove
+        await tester.tap(find.byIcon(Icons.close).first);
+        await tester.pump();
+      });
+
+      // After removal, only 1 InputChip remains
+      expect(find.byType(InputChip), findsOneWidget);
+      expect(find.text('#dart'), findsOneWidget);
+    });
+
     testWidgets('uses Wrap for tag layout when tags exist', (tester) async {
       final selfAccount = MockAccount.create(id: '123');
       final status = MockAccessStatus.authenticated(account: selfAccount);

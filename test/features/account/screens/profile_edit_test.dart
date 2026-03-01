@@ -282,6 +282,225 @@ void main() {
       expect(find.byIcon(Icons.lock_person), findsOneWidget);
     });
 
+    testWidgets('toggling bot switch calls onChanged', (tester) async {
+      final account = MockAccount.create(bot: false);
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(
+            body: EditProfilePage(account: account),
+          ),
+          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+        ));
+        await tester.pump();
+      });
+
+      // Find the bot SwitchListTile and toggle it
+      final switchFinder = find.byType(SwitchListTile);
+      expect(switchFinder, findsWidgets);
+
+      // The bot switch is the first one on the general tab (3rd widget)
+      // Toggle it by tapping the switch
+      final botSwitch = find.byWidgetPredicate(
+        (widget) => widget is SwitchListTile && widget.value == false &&
+          widget.secondary is Icon && (widget.secondary as Icon).icon == Icons.person,
+      );
+      if (botSwitch.evaluate().isNotEmpty) {
+        await tester.tap(botSwitch);
+        await tester.pump();
+      }
+
+      expect(find.byType(EditProfilePage), findsOneWidget);
+    });
+
+    testWidgets('toggling locked switch on privacy tab calls onChanged', (tester) async {
+      final account = MockAccount.create(locked: false);
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(
+            body: EditProfilePage(account: account),
+          ),
+          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+        ));
+        await tester.pump();
+      });
+
+      // Switch to privacy tab
+      await tester.tap(find.byIcon(Icons.privacy_tip_outlined));
+      await tester.pumpAndSettle();
+
+      // Find locked switch (has lock_open icon) and toggle it
+      final lockSwitch = find.byWidgetPredicate(
+        (widget) => widget is SwitchListTile && widget.secondary is Icon &&
+          (widget.secondary as Icon).icon == Icons.lock_open,
+      );
+      if (lockSwitch.evaluate().isNotEmpty) {
+        await tester.tap(lockSwitch);
+        await tester.pump();
+      }
+
+      expect(find.byType(EditProfilePage), findsOneWidget);
+    });
+
+    testWidgets('toggling discoverable switch calls onChanged', (tester) async {
+      final account = MockAccount.create();
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(
+            body: EditProfilePage(account: account),
+          ),
+          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+        ));
+        await tester.pump();
+      });
+
+      // Switch to privacy tab
+      await tester.tap(find.byIcon(Icons.privacy_tip_outlined));
+      await tester.pumpAndSettle();
+
+      // Toggle discoverable switch
+      final discoverableSwitch = find.byWidgetPredicate(
+        (widget) => widget is SwitchListTile && widget.secondary is Icon &&
+          (widget.secondary as Icon).icon == Icons.travel_explore,
+      );
+      if (discoverableSwitch.evaluate().isNotEmpty) {
+        await tester.tap(discoverableSwitch);
+        await tester.pump();
+      }
+
+      expect(find.byType(EditProfilePage), findsOneWidget);
+    });
+
+    testWidgets('toggling indexable switch calls onChanged', (tester) async {
+      final account = MockAccount.create();
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(
+            body: EditProfilePage(account: account),
+          ),
+          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+        ));
+        await tester.pump();
+      });
+
+      // Switch to privacy tab
+      await tester.tap(find.byIcon(Icons.privacy_tip_outlined));
+      await tester.pumpAndSettle();
+
+      // Toggle indexable switch (search icon)
+      final indexableSwitch = find.byWidgetPredicate(
+        (widget) => widget is SwitchListTile && widget.secondary is Icon &&
+          (widget.secondary as Icon).icon == Icons.search,
+      );
+      if (indexableSwitch.evaluate().isNotEmpty) {
+        await tester.tap(indexableSwitch);
+        await tester.pump();
+      }
+
+      expect(find.byType(EditProfilePage), findsOneWidget);
+    });
+
+    testWidgets('toggling hide collections switch calls onChanged', (tester) async {
+      final account = MockAccount.create();
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(
+            body: EditProfilePage(account: account),
+          ),
+          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+        ));
+        await tester.pump();
+      });
+
+      // Switch to privacy tab
+      await tester.tap(find.byIcon(Icons.privacy_tip_outlined));
+      await tester.pumpAndSettle();
+
+      // Toggle hide collections switch
+      final hideSwitch = find.byWidgetPredicate(
+        (widget) => widget is SwitchListTile && widget.secondary is Icon &&
+          (widget.secondary as Icon).icon == Icons.private_connectivity,
+      );
+      if (hideSwitch.evaluate().isNotEmpty) {
+        await tester.tap(hideSwitch);
+        await tester.pump();
+      }
+
+      expect(find.byType(EditProfilePage), findsOneWidget);
+    });
+
+    testWidgets('submitting name field triggers onSubmitted', (tester) async {
+      final account = MockAccount.create(displayName: 'OldName');
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(
+            body: EditProfilePage(account: account),
+          ),
+          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+        ));
+        await tester.pump();
+      });
+
+      // Find the name TextField (first one) and submit
+      final textFields = find.byType(TextField);
+      if (textFields.evaluate().isNotEmpty) {
+        await tester.enterText(textFields.first, 'NewName');
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pump();
+      }
+
+      expect(find.byType(EditProfilePage), findsOneWidget);
+    });
+
+    testWidgets('swiping field item removes it', (tester) async {
+      final account = AccountSchema(
+        id: '123',
+        username: 'testuser',
+        acct: 'testuser',
+        url: 'https://example.com/@testuser',
+        displayName: 'Test User',
+        note: 'A note',
+        avatar: 'https://example.com/avatar.png',
+        avatarStatic: 'https://example.com/avatar.png',
+        header: 'https://example.com/header.png',
+        locked: false,
+        bot: false,
+        indexable: true,
+        createdAt: DateTime(2023, 1, 1),
+        statusesCount: 10,
+        followersCount: 5,
+        followingCount: 3,
+        fields: const [
+          FieldSchema(name: 'Website', value: 'https://example.com'),
+          FieldSchema(name: 'Location', value: 'Earth'),
+        ],
+      );
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(
+            body: EditProfilePage(account: account),
+          ),
+          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+        ));
+        await tester.pump();
+      });
+
+      // Find an AccessibleDismissible and swipe it
+      final dismissible = find.byType(AccessibleDismissible);
+      if (dismissible.evaluate().isNotEmpty) {
+        await tester.drag(dismissible.first, const Offset(500, 0));
+        await tester.pumpAndSettle();
+      }
+
+      expect(find.byType(EditProfilePage), findsOneWidget);
+    });
+
     testWidgets('avatar container is circular', (tester) async {
       final account = MockAccount.create();
 

@@ -164,6 +164,129 @@ void main() {
       expect(find.byType(DraftListSheet), findsOneWidget);
     });
 
+    testWidgets('shows quote indicator for drafts with quoteToId', (tester) async {
+      final account = MockAccount.create(id: '12345');
+      final status = MockAccessStatus.authenticated(account: account);
+      final storage = Storage();
+
+      await storage.saveDraft('mastodon.social@12345', DraftSchema(
+        id: 'draft-quote',
+        content: 'Quote post',
+        quoteToId: 'status-42',
+        updatedAt: DateTime.now(),
+      ));
+
+      await tester.pumpWidget(createTestWidget(
+        child: DraftListSheet(status: status),
+        accessStatus: status,
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byIcon(Icons.format_quote), findsOneWidget);
+    });
+
+    testWidgets('shows chevron trailing icon on draft tile', (tester) async {
+      final account = MockAccount.create(id: '12345');
+      final status = MockAccessStatus.authenticated(account: account);
+      final storage = Storage();
+
+      await storage.saveDraft('mastodon.social@12345', DraftSchema(
+        id: 'draft-chevron',
+        content: 'Some draft content',
+        updatedAt: DateTime.now(),
+      ));
+
+      await tester.pumpWidget(createTestWidget(
+        child: DraftListSheet(status: status),
+        accessStatus: status,
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+    });
+
+    testWidgets('uses spoiler as fallback when content is empty', (tester) async {
+      final account = MockAccount.create(id: '12345');
+      final status = MockAccessStatus.authenticated(account: account);
+      final storage = Storage();
+
+      await storage.saveDraft('mastodon.social@12345', DraftSchema(
+        id: 'draft-spoiler',
+        content: '',
+        spoiler: 'Content Warning',
+        updatedAt: DateTime.now(),
+      ));
+
+      await tester.pumpWidget(createTestWidget(
+        child: DraftListSheet(status: status),
+        accessStatus: status,
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Content Warning'), findsOneWidget);
+    });
+
+    testWidgets('draft tile has onTap callback for navigation', (tester) async {
+      final account = MockAccount.create(id: '12345');
+      final status = MockAccessStatus.authenticated(account: account);
+      final storage = Storage();
+
+      await storage.saveDraft('mastodon.social@12345', DraftSchema(
+        id: 'draft-nav',
+        content: 'Navigate draft',
+        updatedAt: DateTime.now(),
+      ));
+
+      await tester.pumpWidget(createTestWidget(
+        child: DraftListSheet(status: status),
+        accessStatus: status,
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      // Verify the ListTile with draft content has an onTap callback
+      final listTiles = tester.widgetList<ListTile>(find.byType(ListTile));
+      final draftTile = listTiles.firstWhere((tile) => tile.onTap != null);
+      expect(draftTile.onTap, isNotNull);
+    });
+
+    testWidgets('swiping draft removes it from list', (tester) async {
+      final account = MockAccount.create(id: '12345');
+      final status = MockAccessStatus.authenticated(account: account);
+      final storage = Storage();
+
+      await storage.saveDraft('mastodon.social@12345', DraftSchema(
+        id: 'draft-swipe1',
+        content: 'First draft to keep',
+        updatedAt: DateTime.now().subtract(const Duration(minutes: 10)),
+      ));
+      await storage.saveDraft('mastodon.social@12345', DraftSchema(
+        id: 'draft-swipe2',
+        content: 'Second draft to remove',
+        updatedAt: DateTime.now(),
+      ));
+
+      await tester.pumpWidget(createTestWidget(
+        child: DraftListSheet(status: status),
+        accessStatus: status,
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Second draft to remove'), findsOneWidget);
+
+      // Swipe to dismiss
+      await tester.drag(find.text('Second draft to remove'), const Offset(-500, 0));
+      await tester.pumpAndSettle();
+
+      // Should be removed from the list
+      expect(find.text('Second draft to remove'), findsNothing);
+      expect(find.text('First draft to keep'), findsOneWidget);
+    });
+
     testWidgets('renders multiple drafts', (tester) async {
       final account = MockAccount.create(id: '12345');
       final status = MockAccessStatus.authenticated(account: account);

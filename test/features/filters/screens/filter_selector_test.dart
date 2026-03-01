@@ -61,6 +61,93 @@ void main() {
 
       expect(find.byType(Divider), findsOneWidget);
     });
+
+    testWidgets('shows filter items when filters injected into state', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: FilterSelector(status: MockStatus.create()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+      });
+
+      // Inject filters into state
+      final state = tester.state(find.byType(FilterSelector));
+      (state as dynamic).filters = [
+        const FiltersSchema(
+          id: 'f1',
+          title: 'Test Filter',
+          context: [FilterContext.home],
+          action: FilterAction.warn,
+        ),
+      ];
+      (tester.element(find.byType(FilterSelector)) as StatefulElement)
+          .markNeedsBuild();
+      await tester.pump();
+
+      // Should show ListTile for the filter item
+      expect(find.text('Test Filter'), findsOneWidget);
+    });
+
+    testWidgets('shows tooltip for filter action icon', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: FilterSelector(status: MockStatus.create()),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+      });
+
+      final state = tester.state(find.byType(FilterSelector));
+      (state as dynamic).filters = [
+        const FiltersSchema(
+          id: 'f1',
+          title: 'Hide Filter',
+          context: [FilterContext.home],
+          action: FilterAction.hide,
+        ),
+      ];
+      (tester.element(find.byType(FilterSelector)) as StatefulElement)
+          .markNeedsBuild();
+      await tester.pump();
+
+      expect(find.byType(Tooltip), findsWidgets);
+      expect(find.byIcon(Icons.block_outlined), findsOneWidget);
+    });
+
+    testWidgets('calls onSelected when tapping unselected filter', (tester) async {
+      FiltersSchema? selectedFilter;
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: FilterSelector(
+            status: MockStatus.create(),
+            onSelected: (f) => selectedFilter = f,
+          ),
+          accessStatus: _noDomainAuth(),
+        ));
+        await tester.pump();
+      });
+
+      final state = tester.state(find.byType(FilterSelector));
+      (state as dynamic).filters = [
+        const FiltersSchema(
+          id: 'f1',
+          title: 'Tap Me',
+          context: [FilterContext.home],
+          action: FilterAction.warn,
+        ),
+      ];
+      (tester.element(find.byType(FilterSelector)) as StatefulElement)
+          .markNeedsBuild();
+      await tester.pump();
+
+      // Tap the filter ListTile
+      await tester.tap(find.text('Tap Me'));
+      await tester.pump();
+
+      expect(selectedFilter?.id, 'f1');
+    });
   });
 
   group('Filters', () {

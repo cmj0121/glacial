@@ -1,4 +1,6 @@
-// Tests for Debouncer and canonicalizeHtml utilities.
+// Tests for Debouncer, canonicalizeHtml, timeagoLocale, and showSnackbar utilities.
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/core.dart';
 
@@ -82,6 +84,82 @@ void main() {
 
     test('handles nested tags', () {
       expect(canonicalizeHtml('<div><p>Hello <em>world</em></p></div>'), 'Hello world');
+    });
+  });
+
+  group('timeagoLocale', () {
+    Widget buildLocaleApp(Locale locale, void Function(BuildContext) callback) {
+      return MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: locale,
+        home: Builder(builder: (context) {
+          callback(context);
+          return const SizedBox.shrink();
+        }),
+      );
+    }
+
+    testWidgets('returns en_short for English locale', (tester) async {
+      late String result;
+      await tester.pumpWidget(buildLocaleApp(const Locale('en'), (ctx) => result = timeagoLocale(ctx)));
+      await tester.pumpAndSettle();
+      expect(result, 'en_short');
+    });
+
+    testWidgets('returns ja for Japanese locale', (tester) async {
+      late String result;
+      await tester.pumpWidget(buildLocaleApp(const Locale('ja'), (ctx) => result = timeagoLocale(ctx)));
+      await tester.pumpAndSettle();
+      expect(result, 'ja');
+    });
+
+    testWidgets('returns ko for Korean locale', (tester) async {
+      late String result;
+      await tester.pumpWidget(buildLocaleApp(const Locale('ko'), (ctx) => result = timeagoLocale(ctx)));
+      await tester.pumpAndSettle();
+      expect(result, 'ko');
+    });
+
+    testWidgets('returns zh for Chinese locale', (tester) async {
+      late String result;
+      await tester.pumpWidget(buildLocaleApp(const Locale('zh'), (ctx) => result = timeagoLocale(ctx)));
+      await tester.pumpAndSettle();
+      expect(result, 'zh');
+    });
+  });
+
+  group('showSnackbar', () {
+    testWidgets('shows snackbar with message', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showSnackbar(context, 'Test message'),
+              child: const Text('Show'),
+            ),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Show'));
+      await tester.pump();
+
+      expect(find.text('Test message'), findsOneWidget);
+    });
+  });
+
+  group('Info', () {
+    test('info returns null before init', () {
+      final info = Info();
+      // Before init, _packageInfo is null
+      expect(info.info, isNull);
     });
   });
 }

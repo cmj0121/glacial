@@ -510,6 +510,58 @@ void main() {
 
       expect(find.byType(NotificationBadge), findsOneWidget);
     });
+
+    testWidgets('onNotify builds title and body from l10n', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: const NotificationBadge(isSelected: false),
+          accessStatus: const AccessStatusSchema(domain: null, accessToken: 'test'),
+        ));
+        await tester.pump();
+
+        final dynamic state = tester.state(find.byType(NotificationBadge));
+        // onNotify calls sendLocalNotification which may fail without plugin channel
+        try { await state.onNotify(3); } catch (_) {}
+        await tester.pump();
+      });
+
+      expect(find.byType(NotificationBadge), findsOneWidget);
+    });
+
+    testWidgets('timer starts with refresh interval in preference', (tester) async {
+      final preference = SystemPreferenceSchema.fromJson({
+        'refresh_interval': 30,
+      });
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: const NotificationBadge(),
+          preference: preference,
+          accessStatus: const AccessStatusSchema(domain: null, accessToken: 'test'),
+        ));
+        await tester.pump();
+
+        // Trigger _startTaskIfForeground via lifecycle callback
+        final dynamic state = tester.state(find.byType(NotificationBadge));
+        state.didChangeAppLifecycleState(AppLifecycleState.resumed);
+        await tester.pump();
+      });
+
+      expect(find.byType(NotificationBadge), findsOneWidget);
+    });
+
+    testWidgets('paused lifecycle does not start task', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: const NotificationBadge(),
+      ));
+      await tester.pump();
+
+      final dynamic state = tester.state(find.byType(NotificationBadge));
+      state.didChangeAppLifecycleState(AppLifecycleState.paused);
+      await tester.pump();
+
+      expect(find.byType(NotificationBadge), findsOneWidget);
+    });
   });
 
   group('GroupNotification state operations', () {

@@ -41,6 +41,13 @@ void main() {
       const schema = SharedContentSchema(imagePaths: paths);
       expect(schema.imagePaths, orderedEquals(paths));
     });
+
+    test('non-const constructor works', () {
+      // ignore: prefer_const_constructors
+      final schema = SharedContentSchema(text: 'dynamic');
+      expect(schema.text, 'dynamic');
+      expect(schema.imagePaths, isEmpty);
+    });
   });
 }
 
