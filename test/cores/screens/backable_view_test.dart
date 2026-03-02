@@ -1,5 +1,7 @@
 // Widget tests for BackableView component.
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:glacial/core.dart';
@@ -92,6 +94,54 @@ void main() {
       // Verify the Dismissible is configured for startToEnd swipe
       final dismissible = tester.widget<Dismissible>(find.byType(Dismissible));
       expect(dismissible.direction, DismissDirection.startToEnd);
+    });
+
+    testWidgets('swipe triggers confirmDismiss and sets isDisposed', (tester) async {
+      // Provide GoRouter so context.pop() works without throwing.
+      final router = GoRouter(
+        initialLocation: '/detail',
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const Scaffold(body: Text('Home')),
+            routes: [
+              GoRoute(
+                path: 'detail',
+                builder: (_, __) => const BackableView(child: Text('Swipe Content')),
+              ),
+            ],
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          accessStatusProvider.overrideWith((ref) => MockAccessStatus.anonymous()),
+        ],
+        child: MaterialApp.router(
+          routerConfig: router,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('en'),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      // Verify BackableView content is shown before swipe
+      expect(find.text('Swipe Content'), findsOneWidget);
+
+      // Perform a horizontal swipe (startToEnd) to trigger confirmDismiss
+      await tester.drag(find.byType(Dismissible), const Offset(500, 0));
+      await tester.pumpAndSettle();
+
+      // confirmDismiss sets isDisposed=true and calls context.pop(),
+      // which navigates back to the parent route '/'
+      expect(find.text('Home'), findsOneWidget);
     });
   });
 }

@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/cores/http.dart';
 import 'package:glacial/cores/misc.dart';
+
+import '../helpers/mock_http.dart';
 
 void main() {
   group('Constants', () {
@@ -527,6 +531,342 @@ void main() {
     test('userAgent returns Glacial fallback when PackageInfo is null', () {
       // Info().info is null in test environment, so userAgent should be the fallback
       expect(userAgent, 'Glacial/0.1.0');
+    });
+  });
+
+  group('HTTP integration with MockHttpOverrides', () {
+    late HttpOverrides? originalOverrides;
+
+    setUp(() {
+      originalOverrides = HttpOverrides.current;
+    });
+
+    tearDown(() {
+      HttpOverrides.global = originalOverrides;
+    });
+
+    // ---------------------------------------------------------------
+    // _parseRateLimitHeaders coverage (lines 134-158)
+    // ---------------------------------------------------------------
+
+    test('get throws RateLimitException on 429 with default headers', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (429, '{"error":"rate limited"}');
+      });
+
+      expect(
+        () => get(Uri.parse('https://example.com/api/test')),
+        throwsA(isA<RateLimitException>()),
+      );
+    });
+
+    test('get throws RateLimitException with parsed rate limit headers', () async {
+      final resetTime = DateTime.now().add(const Duration(minutes: 5)).toUtc().toIso8601String();
+      HttpOverrides.global = MockHttpOverrides(
+        handlerWithHeaders: (method, url) {
+          return (429, '{"error":"rate limited"}', {
+            'x-ratelimit-limit': '300',
+            'x-ratelimit-remaining': '0',
+            'x-ratelimit-reset': resetTime,
+            'retry-after': '120',
+          });
+        },
+      );
+
+      try {
+        await get(Uri.parse('https://example.com/api/test'));
+        fail('Expected RateLimitException');
+      } on RateLimitException catch (e) {
+        expect(e.limit, 300);
+        expect(e.remaining, 0);
+        expect(e.retryAfter.inSeconds, 120);
+      }
+    });
+
+    test('get throws RateLimitException with missing rate limit headers uses defaults', () async {
+      HttpOverrides.global = MockHttpOverrides(
+        handlerWithHeaders: (method, url) {
+          return (429, '{"error":"rate limited"}', {});
+        },
+      );
+
+      try {
+        await get(Uri.parse('https://example.com/api/test'));
+        fail('Expected RateLimitException');
+      } on RateLimitException catch (e) {
+        expect(e.limit, defaultRateLimit);
+        expect(e.remaining, 0);
+      }
+    });
+
+    test('get throws RateLimitException with unparseable header values uses defaults', () async {
+      HttpOverrides.global = MockHttpOverrides(
+        handlerWithHeaders: (method, url) {
+          return (429, '{"error":"rate limited"}', {
+            'x-ratelimit-limit': 'abc',
+            'x-ratelimit-remaining': 'xyz',
+            'x-ratelimit-reset': 'not-a-date',
+            'retry-after': 'invalid',
+          });
+        },
+      );
+
+      try {
+        await get(Uri.parse('https://example.com/api/test'));
+        fail('Expected RateLimitException');
+      } on RateLimitException catch (e) {
+        expect(e.limit, defaultRateLimit);
+        expect(e.remaining, 0);
+        expect(e.retryAfter.inSeconds, defaultRetryAfter.inSeconds);
+      }
+    });
+
+    // ---------------------------------------------------------------
+    // _validateResponse coverage (non-rate-limit errors)
+    // ---------------------------------------------------------------
+
+    test('get throws HttpException on 500 response without retry', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (500, '{"error":"internal server error"}');
+      });
+
+      expect(
+        () => get(Uri.parse('https://example.com/api/test')),
+        throwsA(isA<HttpException>()),
+      );
+    });
+
+    // ---------------------------------------------------------------
+    // _executeWithRetry: HttpException server error retry (lines 212-220)
+    // ---------------------------------------------------------------
+
+    test('get retries on 500 and succeeds on second attempt', () async {
+      int callCount = 0;
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        callCount++;
+        if (callCount == 1) return (500, '{"error":"server error"}');
+        return (200, '{"ok":true}');
+      });
+
+      final response = await get(
+        Uri.parse('https://example.com/api/test'),
+        retry: const RetryConfig(
+          maxRetries: 2,
+          baseDelay: Duration(milliseconds: 1),
+          backoffMultiplier: 1.0,
+          jitterFactor: 0.0,
+        ),
+      );
+
+      expect(response.statusCode, 200);
+      expect(callCount, 2);
+    });
+
+    test('get exhausts max retries on persistent 500', () async {
+      int callCount = 0;
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        callCount++;
+        return (500, '{"error":"server error"}');
+      });
+
+      expect(
+        () => get(
+          Uri.parse('https://example.com/api/test'),
+          retry: const RetryConfig(
+            maxRetries: 2,
+            baseDelay: Duration(milliseconds: 1),
+            backoffMultiplier: 1.0,
+            jitterFactor: 0.0,
+          ),
+        ),
+        throwsA(isA<HttpException>()),
+      );
+
+      // Allow async to complete
+      await Future.delayed(const Duration(milliseconds: 50));
+      // Initial call + 2 retries = 3
+      expect(callCount, 3);
+    });
+
+    // ---------------------------------------------------------------
+    // _executeWithRetry: client error no retry (lines 214-215)
+    // ---------------------------------------------------------------
+
+    test('get does not retry on 400 client error', () async {
+      int callCount = 0;
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        callCount++;
+        return (400, '{"error":"bad request"}');
+      });
+
+      expect(
+        () => get(
+          Uri.parse('https://example.com/api/test'),
+          retry: const RetryConfig(
+            maxRetries: 2,
+            baseDelay: Duration(milliseconds: 1),
+          ),
+        ),
+        throwsA(isA<HttpException>()),
+      );
+
+      // Should only be called once (no retry for client errors)
+      await Future.delayed(const Duration(milliseconds: 10));
+      expect(callCount, 1);
+    });
+
+    // ---------------------------------------------------------------
+    // _executeWithRetry: RateLimitException retry (lines 221-227)
+    // ---------------------------------------------------------------
+
+    test('get retries on 429 and succeeds on second attempt', () async {
+      int callCount = 0;
+      HttpOverrides.global = MockHttpOverrides(
+        handlerWithHeaders: (method, url) {
+          callCount++;
+          if (callCount == 1) {
+            return (429, '{"error":"rate limited"}', {
+              'x-ratelimit-limit': '300',
+              'x-ratelimit-remaining': '0',
+              'retry-after': '0',
+            });
+          }
+          return (200, '{"ok":true}', {});
+        },
+      );
+
+      final response = await get(
+        Uri.parse('https://example.com/api/test'),
+        retry: const RetryConfig(
+          maxRetries: 2,
+          baseDelay: Duration(milliseconds: 1),
+          backoffMultiplier: 1.0,
+          jitterFactor: 0.0,
+        ),
+      );
+
+      expect(response.statusCode, 200);
+      expect(callCount, 2);
+    });
+
+    test('get exhausts max retries on persistent 429', () async {
+      int callCount = 0;
+      HttpOverrides.global = MockHttpOverrides(
+        handlerWithHeaders: (method, url) {
+          callCount++;
+          return (429, '{"error":"rate limited"}', {
+            'retry-after': '0',
+          });
+        },
+      );
+
+      expect(
+        () => get(
+          Uri.parse('https://example.com/api/test'),
+          retry: const RetryConfig(
+            maxRetries: 1,
+            baseDelay: Duration(milliseconds: 1),
+            backoffMultiplier: 1.0,
+            jitterFactor: 0.0,
+          ),
+        ),
+        throwsA(isA<RateLimitException>()),
+      );
+
+      await Future.delayed(const Duration(milliseconds: 50));
+      // Initial call + 1 retry = 2
+      expect(callCount, 2);
+    });
+
+    // ---------------------------------------------------------------
+    // validateStatus: false bypasses validation
+    // ---------------------------------------------------------------
+
+    test('post with validateStatus false returns raw response', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (500, '{"error":"server error"}');
+      });
+
+      final response = await post(
+        Uri.parse('https://example.com/api/test'),
+        body: '{"key":"value"}',
+        validateStatus: false,
+      );
+
+      expect(response.statusCode, 500);
+    });
+
+    // ---------------------------------------------------------------
+    // Other HTTP methods
+    // ---------------------------------------------------------------
+
+    test('put sends request and validates response', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        expect(method, 'PUT');
+        return (200, '{"updated":true}');
+      });
+
+      final response = await put(
+        Uri.parse('https://example.com/api/test'),
+        body: '{"key":"value"}',
+      );
+
+      expect(response.statusCode, 200);
+    });
+
+    test('patch sends request and validates response', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        expect(method, 'PATCH');
+        return (200, '{"patched":true}');
+      });
+
+      final response = await patch(
+        Uri.parse('https://example.com/api/test'),
+        body: '{"key":"value"}',
+      );
+
+      expect(response.statusCode, 200);
+    });
+
+    test('delete sends request and validates response', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        expect(method, 'DELETE');
+        return (200, '{"deleted":true}');
+      });
+
+      final response = await delete(
+        Uri.parse('https://example.com/api/test'),
+      );
+
+      expect(response.statusCode, 200);
+    });
+
+    test('get sends GET request and validates response', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        expect(method, 'GET');
+        return (200, '{"data":"value"}');
+      });
+
+      final response = await get(
+        Uri.parse('https://example.com/api/test'),
+      );
+
+      expect(response.statusCode, 200);
+      expect(response.body, '{"data":"value"}');
+    });
+
+    test('post sends POST request and validates response', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        expect(method, 'POST');
+        return (200, '{"created":true}');
+      });
+
+      final response = await post(
+        Uri.parse('https://example.com/api/test'),
+        body: '{"key":"value"}',
+      );
+
+      expect(response.statusCode, 200);
     });
   });
 }

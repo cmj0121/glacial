@@ -6,25 +6,30 @@ import 'dart:io';
 /// Route handler type: given method + URL, return (statusCode, body).
 typedef MockRouteHandler = (int, String) Function(String method, Uri url);
 
+/// Extended route handler that also returns response headers.
+typedef MockRouteHandlerWithHeaders = (int, String, Map<String, String>) Function(String method, Uri url);
+
 /// Default handler that returns 200 with empty JSON object.
 (int, String) _defaultHandler(String method, Uri url) => (200, '{}');
 
 /// Mock HttpOverrides that intercepts all HTTP calls with configurable responses.
 class MockHttpOverrides extends HttpOverrides {
-  final MockRouteHandler handler;
+  final MockRouteHandler? handler;
+  final MockRouteHandlerWithHeaders? handlerWithHeaders;
 
-  MockHttpOverrides({this.handler = _defaultHandler});
+  MockHttpOverrides({this.handler = _defaultHandler, this.handlerWithHeaders});
 
   @override
   HttpClient createHttpClient(SecurityContext? context) =>
-      MockHttpClient(handler: handler);
+      MockHttpClient(handler: handler, handlerWithHeaders: handlerWithHeaders);
 }
 
 /// Mock HttpClient that delegates all methods to MockHttpClientRequest.
 class MockHttpClient implements HttpClient {
-  final MockRouteHandler handler;
+  final MockRouteHandler? handler;
+  final MockRouteHandlerWithHeaders? handlerWithHeaders;
 
-  MockHttpClient({required this.handler});
+  MockHttpClient({this.handler, this.handlerWithHeaders});
 
   @override bool autoUncompress = true;
   @override Duration? connectionTimeout;
@@ -42,7 +47,7 @@ class MockHttpClient implements HttpClient {
   @override set findProxy(String Function(Uri url)? f) {}
   @override set keyLog(Function(String line)? callback) {}
 
-  MockHttpClientRequest _req(String method, Uri url) => MockHttpClientRequest(method, url, handler);
+  MockHttpClientRequest _req(String method, Uri url) => MockHttpClientRequest(method, url, handler, handlerWithHeaders);
 
   @override Future<HttpClientRequest> delete(String host, int port, String path) async => _req('DELETE', Uri.parse('https://$host:$port$path'));
   @override Future<HttpClientRequest> deleteUrl(Uri url) async => _req('DELETE', url);
@@ -64,10 +69,11 @@ class MockHttpClient implements HttpClient {
 class MockHttpClientRequest extends Stream<List<int>> implements HttpClientRequest {
   final String _method;
   final Uri _uri;
-  final MockRouteHandler _handler;
+  final MockRouteHandler? _handler;
+  final MockRouteHandlerWithHeaders? _handlerWithHeaders;
   final FakeHttpHeaders _headers = FakeHttpHeaders();
 
-  MockHttpClientRequest(this._method, this._uri, this._handler);
+  MockHttpClientRequest(this._method, this._uri, this._handler, this._handlerWithHeaders);
 
   @override Encoding encoding = utf8;
   @override HttpHeaders get headers => _headers;
@@ -87,7 +93,11 @@ class MockHttpClientRequest extends Stream<List<int>> implements HttpClientReque
   @override void addError(Object error, [StackTrace? stackTrace]) {}
   @override Future addStream(Stream<List<int>> stream) async {}
   @override Future<HttpClientResponse> close() async {
-    final (statusCode, body) = _handler(_method, _uri);
+    if (_handlerWithHeaders != null) {
+      final (statusCode, body, headers) = _handlerWithHeaders(_method, _uri);
+      return MockHttpClientResponse(statusCode, body, responseHeaders: headers);
+    }
+    final (statusCode, body) = _handler!(_method, _uri);
     return MockHttpClientResponse(statusCode, body);
   }
   @override Future flush() async {}
@@ -109,8 +119,14 @@ class MockHttpClientRequest extends Stream<List<int>> implements HttpClientReque
 class MockHttpClientResponse extends Stream<List<int>> implements HttpClientResponse {
   final int _statusCode;
   final String _body;
+  final FakeHttpHeaders _fakeHeaders;
 
-  MockHttpClientResponse(this._statusCode, this._body);
+  MockHttpClientResponse(this._statusCode, this._body, {Map<String, String>? responseHeaders})
+      : _fakeHeaders = FakeHttpHeaders() {
+    responseHeaders?.forEach((key, value) {
+      _fakeHeaders.add(key, value);
+    });
+  }
 
   @override int get statusCode => _statusCode;
   @override String get reasonPhrase => _statusCode == 200 ? 'OK' : 'Error';
@@ -119,7 +135,7 @@ class MockHttpClientResponse extends Stream<List<int>> implements HttpClientResp
   @override bool get isRedirect => false;
   @override bool get persistentConnection => true;
   @override List<Cookie> get cookies => [];
-  @override HttpHeaders get headers => FakeHttpHeaders();
+  @override HttpHeaders get headers => _fakeHeaders;
   @override HttpConnectionInfo? get connectionInfo => null;
   @override X509Certificate? get certificate => null;
   @override List<RedirectInfo> get redirects => [];
@@ -149,6 +165,9 @@ class FakeHttpHeaders implements HttpHeaders {
   }
   @override String? value(String name) => _headers[name]?.first;
   @override List<String>? operator [](String name) => _headers[name];
+  @override void forEach(void Function(String name, List<String> values) action) {
+    _headers.forEach(action);
+  }
   @override dynamic noSuchMethod(Invocation invocation) => null;
 }
 
