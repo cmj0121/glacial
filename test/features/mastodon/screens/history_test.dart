@@ -1,6 +1,8 @@
 // Widget tests for history screens: HistoryDrawer.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
@@ -290,6 +292,118 @@ void main() {
       // ReorderableListView renders the history items (line 67-94)
       expect(find.byType(ReorderableListView), findsOneWidget);
       expect(find.byType(MastodonServerInfo), findsNWidgets(3));
+
+      FlutterError.onError = originalOnError;
+    });
+
+    testWidgets('onClearHistoryAll clears all history items', (tester) async {
+      final originalOnError = FlutterError.onError;
+      FlutterError.onError = (details) {
+        if (details.toString().contains('overflowed')) return;
+        if (details.toString().contains('pop')) return;
+        originalOnError?.call(details);
+      };
+
+      SharedPreferences.setMockInitialValues({});
+      FlutterSecureStorage.setMockInitialValues({});
+      await Storage.init();
+
+      final status = AccessStatusSchema(
+        domain: 'mastodon.social',
+        history: [
+          const ServerInfoSchema(domain: 'one.social', thumbnail: 'https://example.com/1.png'),
+          const ServerInfoSchema(domain: 'two.social', thumbnail: 'https://example.com/2.png'),
+        ],
+      );
+
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: Scaffold(
+          drawer: const HistoryDrawer(),
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      await tester.tap(find.text('Open'));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.byType(MastodonServerInfo), findsNWidgets(2));
+
+      // Call onClearHistoryAll directly (lines 116-120)
+      final dynamic state = tester.state(find.byType(HistoryDrawer));
+      try {
+        await state.onClearHistoryAll();
+      } catch (_) {
+        // context.pop() throws without GoRouter — expected
+      }
+      await tester.pump();
+
+      // After clearing, should have 0 items
+      expect(find.byType(MastodonServerInfo), findsNothing);
+
+      FlutterError.onError = originalOnError;
+    });
+
+    testWidgets('onRemoveHistory and onReorder update history list', (tester) async {
+      final originalOnError = FlutterError.onError;
+      FlutterError.onError = (details) {
+        if (details.toString().contains('overflowed')) return;
+        originalOnError?.call(details);
+      };
+
+      SharedPreferences.setMockInitialValues({});
+      FlutterSecureStorage.setMockInitialValues({});
+      await Storage.init();
+
+      final status = AccessStatusSchema(
+        domain: 'mastodon.social',
+        history: [
+          const ServerInfoSchema(domain: 'one.social', thumbnail: 'https://example.com/1.png'),
+          const ServerInfoSchema(domain: 'two.social', thumbnail: 'https://example.com/2.png'),
+          const ServerInfoSchema(domain: 'three.social', thumbnail: 'https://example.com/3.png'),
+        ],
+      );
+
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: Scaffold(
+          drawer: const HistoryDrawer(),
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      await tester.tap(find.text('Open'));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.byType(MastodonServerInfo), findsNWidgets(3));
+
+      // Access the state directly and call onReorder (lines 99-107)
+      final stateFinder = find.byType(HistoryDrawer);
+      final dynamic state = tester.state(stateFinder);
+
+      // Test reorder: move item 0 to position 2 (lines 99-107)
+      await state.onReorder(0, 2);
+      await tester.pump();
+
+      // Test remove: remove item (lines 110-112)
+      final item = state.history.first;
+      await state.onRemoveHistory(item);
+      await tester.pump();
+
+      // After removing one, should have 2 items
+      expect(find.byType(MastodonServerInfo), findsNWidgets(2));
 
       FlutterError.onError = originalOnError;
     });

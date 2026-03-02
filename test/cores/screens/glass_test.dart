@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:glacial/cores/platform.dart';
 import 'package:glacial/cores/screens/glass.dart';
 
 import '../../helpers/test_helpers.dart';
@@ -913,6 +914,150 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(result, isFalse);
+    });
+  });
+
+  // ── Material fallback tests (platformOverride = android) ──────────
+
+  group('AdaptiveGlassContainer Material fallback', () {
+    setUp(() => platformOverride = PlatformType.android);
+    tearDown(() => platformOverride = null);
+
+    testWidgets('renders Container without BackdropFilter on Android', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: const AdaptiveGlassContainer(
+          width: 100,
+          height: 50,
+          padding: EdgeInsets.all(8),
+          margin: EdgeInsets.all(4),
+          child: Text('Material Container'),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Material Container'), findsOneWidget);
+      expect(find.byType(BackdropFilter), findsNothing);
+      expect(find.byType(ClipRRect), findsNothing);
+    });
+  });
+
+  group('AdaptiveGlassCard Material fallback', () {
+    setUp(() => platformOverride = PlatformType.android);
+    tearDown(() => platformOverride = null);
+
+    testWidgets('renders Card with InkWell on Android', (tester) async {
+      bool tapped = false;
+
+      await tester.pumpWidget(createTestWidget(
+        child: AdaptiveGlassCard(
+          margin: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(12),
+          onTap: () => tapped = true,
+          child: const Text('Material Card'),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Material Card'), findsOneWidget);
+      expect(find.byType(Card), findsOneWidget);
+      expect(find.byType(BackdropFilter), findsNothing);
+
+      await tester.tap(find.text('Material Card'));
+      await tester.pump();
+      expect(tapped, isTrue);
+    });
+  });
+
+  group('AdaptiveGlassButton Material fallback', () {
+    setUp(() => platformOverride = PlatformType.android);
+    tearDown(() => platformOverride = null);
+
+    testWidgets('renders FilledButton when filled on Android', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: AdaptiveGlassButton(
+          filled: true,
+          onPressed: () {},
+          child: const Text('Filled'),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(FilledButton), findsOneWidget);
+      expect(find.byType(BackdropFilter), findsNothing);
+    });
+
+    testWidgets('renders TextButton when not filled on Android', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: AdaptiveGlassButton(
+          onPressed: () {},
+          child: const Text('Text'),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(TextButton), findsOneWidget);
+      expect(find.byType(BackdropFilter), findsNothing);
+    });
+  });
+
+  group('AdaptiveGlassIconButton Material fallback', () {
+    setUp(() => platformOverride = PlatformType.android);
+    tearDown(() => platformOverride = null);
+
+    testWidgets('renders IconButton on Android', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: AdaptiveGlassIconButton(
+          icon: Icons.settings,
+          onPressed: () {},
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(IconButton), findsOneWidget);
+      expect(find.byType(BackdropFilter), findsNothing);
+      expect(find.byType(ClipOval), findsNothing);
+    });
+  });
+
+  group('AdaptiveGlassBottomBar Material fallback', () {
+    setUp(() => platformOverride = PlatformType.android);
+    tearDown(() => platformOverride = null);
+
+    testWidgets('renders BottomAppBar on Android', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        child: const AdaptiveGlassBottomBar(
+          padding: EdgeInsets.all(8),
+          child: Text('Bottom Bar'),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bottom Bar'), findsOneWidget);
+      expect(find.byType(BottomAppBar), findsOneWidget);
+      expect(find.byType(BackdropFilter), findsNothing);
+    });
+  });
+
+  group('AdaptiveGlassAppBar Material fallback', () {
+    setUp(() => platformOverride = PlatformType.android);
+    tearDown(() => platformOverride = null);
+
+    testWidgets('renders AppBar on Android', (tester) async {
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: Scaffold(
+          appBar: AdaptiveGlassAppBar(
+            title: const Text('Title'),
+            actions: [IconButton(icon: const Icon(Icons.add), onPressed: () {})],
+            backgroundColor: Colors.blue,
+          ),
+          body: const Text('Body'),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AppBar), findsOneWidget);
+      expect(find.text('Title'), findsOneWidget);
+      expect(find.byType(BackdropFilter), findsNothing);
     });
   });
 }
