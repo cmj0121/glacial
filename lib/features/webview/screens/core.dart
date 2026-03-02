@@ -9,6 +9,36 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 
+/// Determines navigation decision for a given URL scheme.
+/// Returns `true` if the scheme is a deep link (e.g. 'glacial') that should be prevented.
+@visibleForTesting
+bool isDeepLinkScheme(String scheme) => scheme == 'glacial';
+
+/// Handles a navigation request by checking if the URL is a deep link.
+/// If it is a deep link (glacial://), performs OAuth token exchange and returns prevent.
+/// Otherwise, returns navigate to allow normal browsing.
+@visibleForTesting
+Future<NavigationDecision> handleNavigationRequest({
+  required String url,
+  required WidgetRef ref,
+  VoidCallback? onComplete,
+}) async {
+  final Uri uri = Uri.parse(url);
+
+  if (isDeepLinkScheme(uri.scheme)) {
+    final Storage storage = Storage();
+    final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
+
+    await storage.gainAccessToken(uri: uri, expectedServer: status.domain);
+    await storage.loadAccessStatus(ref: ref);
+
+    onComplete?.call();
+    return NavigationDecision.prevent;
+  }
+
+  return NavigationDecision.navigate;
+}
+
 class WebViewPage extends ConsumerStatefulWidget {
   final Uri url;
 
@@ -25,31 +55,18 @@ class _WebViewPageState extends ConsumerState<WebViewPage> {
   void initState() {
     super.initState();
 
-    // #docregion platform_features
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (NavigationRequest request) async {
-            final Uri uri = Uri.parse(request.url);
-
-            switch (uri.scheme) {
-              case 'glacial':
-                final Storage storage = Storage();
-                final AccessStatusSchema status = ref.read(accessStatusProvider) ?? AccessStatusSchema();
-
-                await storage.gainAccessToken(uri: uri, expectedServer: status.domain);
-                await storage.loadAccessStatus(ref: ref);
-
-                if (mounted) {
-                  // always back to the previous screen
-                  context.pop();
-                }
-
-                return NavigationDecision.prevent;
-              default:
-                return NavigationDecision.navigate;
-            }
+            return handleNavigationRequest(
+              url: request.url,
+              ref: ref,
+              onComplete: () {
+                if (mounted) context.pop();
+              },
+            );
           },
         ),
       )

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/features/account/models/account.dart';
 
@@ -282,14 +284,85 @@ void main() {
 
       final updated = original.copyWith(
         displayName: 'Updated',
+        note: 'New note',
         locked: true,
+        bot: true,
+        discoverable: false,
+        hideCollections: true,
+        indexable: false,
+        fields: [const FieldSchema(name: 'k', value: 'v')],
       );
 
       expect(updated.displayName, 'Updated');
+      expect(updated.note, 'New note');
       expect(updated.locked, true);
-      // Unchanged values
-      expect(updated.note, 'Original note');
-      expect(updated.bot, false);
+      expect(updated.bot, true);
+      expect(updated.discoverable, false);
+      expect(updated.hideCollections, true);
+      expect(updated.indexable, false);
+      expect(updated.fields.length, 1);
+    });
+
+    test('copyWith with no args returns identical values', () {
+      const original = AccountCredentialSchema(
+        displayName: 'Same',
+        note: 'Same note',
+        locked: true,
+        bot: true,
+        discoverable: false,
+        hideCollections: true,
+        indexable: false,
+      );
+
+      final copy = original.copyWith();
+
+      expect(copy.displayName, 'Same');
+      expect(copy.note, 'Same note');
+      expect(copy.locked, true);
+      expect(copy.bot, true);
+      expect(copy.discoverable, false);
+      expect(copy.hideCollections, true);
+      expect(copy.indexable, false);
+      expect(copy.fields, isEmpty);
+      expect(copy.avatar, isNull);
+      expect(copy.header, isNull);
+    });
+
+    test('toFiles returns empty map without files', () {
+      const cred = AccountCredentialSchema(
+        displayName: 'Test',
+        note: 'Bio',
+        locked: false,
+        bot: false,
+        discoverable: true,
+        hideCollections: false,
+        indexable: true,
+      );
+
+      final files = cred.toFiles();
+      expect(files, isEmpty);
+    });
+
+    test('toFiles returns avatar and header when set', () {
+      final avatar = File('/tmp/avatar.png');
+      final header = File('/tmp/header.png');
+
+      final cred = AccountCredentialSchema(
+        displayName: 'Test',
+        note: 'Bio',
+        locked: false,
+        bot: false,
+        discoverable: true,
+        hideCollections: false,
+        indexable: true,
+        avatar: avatar,
+        header: header,
+      );
+
+      final files = cred.toFiles();
+      expect(files.length, 2);
+      expect(files['avatar'], avatar);
+      expect(files['header'], header);
     });
   });
 }

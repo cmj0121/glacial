@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
 void main() {
@@ -221,6 +224,98 @@ void main() {
       expect(QuotePolicyType.public.next, QuotePolicyType.followers);
       expect(QuotePolicyType.followers.next, QuotePolicyType.nobody);
       expect(QuotePolicyType.nobody.next, QuotePolicyType.public);
+    });
+
+    test('icon returns correct icons for each value', () {
+      expect(QuotePolicyType.public.icon, Icons.format_quote_sharp);
+      expect(QuotePolicyType.followers.icon, Icons.group);
+      expect(QuotePolicyType.nobody.icon, Icons.lock);
+    });
+
+    testWidgets('title returns localized strings', (tester) async {
+      late String publicTitle, followersTitle, nobodyTitle;
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('en'),
+          home: Builder(builder: (context) {
+            publicTitle = QuotePolicyType.public.title(context);
+            followersTitle = QuotePolicyType.followers.title(context);
+            nobodyTitle = QuotePolicyType.nobody.title(context);
+            return const SizedBox.shrink();
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(publicTitle, isNotEmpty);
+      expect(followersTitle, isNotEmpty);
+      expect(nobodyTitle, isNotEmpty);
+    });
+
+    testWidgets('description returns localized strings', (tester) async {
+      late String publicDesc, followersDesc, nobodyDesc;
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('en'),
+          home: Builder(builder: (context) {
+            publicDesc = QuotePolicyType.public.description(context);
+            followersDesc = QuotePolicyType.followers.description(context);
+            nobodyDesc = QuotePolicyType.nobody.description(context);
+            return const SizedBox.shrink();
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(publicDesc, isNotEmpty);
+      expect(followersDesc, isNotEmpty);
+      expect(nobodyDesc, isNotEmpty);
+    });
+  });
+
+  group('QuoteApprovalType icon and tooltip', () {
+    test('icon returns correct icons for each value', () {
+      expect(QuoteApprovalType.public.icon, Icons.format_quote_sharp);
+      expect(QuoteApprovalType.followers.icon, Icons.group);
+      expect(QuoteApprovalType.following.icon, Icons.person_add);
+      expect(QuoteApprovalType.unsupportedPolicy.icon, Icons.cancel_outlined);
+    });
+
+    testWidgets('tooltip returns localized strings for all values', (tester) async {
+      late String publicTip, followersTip, followingTip, unsupportedTip;
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('en'),
+          home: Builder(builder: (context) {
+            publicTip = QuoteApprovalType.public.tooltip(context);
+            followersTip = QuoteApprovalType.followers.tooltip(context);
+            followingTip = QuoteApprovalType.following.tooltip(context);
+            unsupportedTip = QuoteApprovalType.unsupportedPolicy.tooltip(context);
+            return const SizedBox.shrink();
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(publicTip, isNotEmpty);
+      expect(followersTip, isNotEmpty);
+      expect(followingTip, isNotEmpty);
+      expect(unsupportedTip, isNotEmpty);
     });
   });
 }

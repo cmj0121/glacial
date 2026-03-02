@@ -148,13 +148,13 @@ class GroupNotificationSchema {
 
   factory GroupNotificationSchema.fromJson(Map<String, dynamic> json) {
     return GroupNotificationSchema(
-      accounts: (json['accounts'] as List<dynamic>).map((e) {
+      accounts: (json['accounts'] as List<dynamic>? ?? []).map((e) {
         return AccountSchema.fromJson(e as Map<String, dynamic>);
       }).toList(),
-      statuses: (json['statuses'] as List<dynamic>).map((e) {
+      statuses: (json['statuses'] as List<dynamic>? ?? []).map((e) {
         return StatusSchema.fromJson(e as Map<String, dynamic>);
       }).toList(),
-      groups: (json['notification_groups'] as List<dynamic>).map((e) {
+      groups: (json['notification_groups'] as List<dynamic>? ?? []).map((e) {
         return GroupSchema.fromJson(e as Map<String, dynamic>);
       }).toList(),
     );

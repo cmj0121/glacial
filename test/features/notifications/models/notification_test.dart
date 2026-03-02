@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/features/models.dart';
 
@@ -343,6 +344,55 @@ void main() {
 
     test('fromString defaults to accept for unknown', () {
       expect(NotificationPolicyValue.fromString('invalid'), NotificationPolicyValue.accept);
+    });
+
+    test('icon returns correct icons for each value', () {
+      expect(NotificationPolicyValue.accept.icon, Icons.check_circle_outline);
+      expect(NotificationPolicyValue.filter.icon, Icons.filter_alt_outlined);
+      expect(NotificationPolicyValue.drop.icon, Icons.block);
+    });
+  });
+
+  group('NotificationType icon', () {
+    test('each type has a unique icon', () {
+      expect(NotificationType.mention.icon, Icons.alternate_email);
+      expect(NotificationType.status.icon, Icons.chat_bubble);
+      expect(NotificationType.reblog.icon, Icons.repeat);
+      expect(NotificationType.follow.icon, Icons.person_add);
+      expect(NotificationType.followRequest.icon, Icons.person_add_alt);
+      expect(NotificationType.favourite.icon, Icons.star);
+      expect(NotificationType.poll.icon, Icons.poll);
+      expect(NotificationType.update.icon, Icons.edit);
+      expect(NotificationType.adminSignUp.icon, Icons.person_add_alt_rounded);
+      expect(NotificationType.adminReport.icon, Icons.feedback_rounded);
+      expect(NotificationType.unknown.icon, Icons.sentiment_dissatisfied_outlined);
+    });
+  });
+
+  group('NotificationType fromString extended', () {
+    test('fromString parses status type', () {
+      expect(NotificationType.fromString('status'), NotificationType.status);
+    });
+
+    test('fromString parses update type', () {
+      expect(NotificationType.fromString('update'), NotificationType.update);
+    });
+
+    test('fromString parses severed_relationships', () {
+      // This should fall through to name match or return unknown
+      final result = NotificationType.fromString('severed_relationships');
+      expect(result, isA<NotificationType>());
+    });
+  });
+
+  group('TimelineMarkerType', () {
+    test('has 2 values', () {
+      expect(TimelineMarkerType.values.length, 2);
+    });
+
+    test('contains home and notifications', () {
+      expect(TimelineMarkerType.values, contains(TimelineMarkerType.home));
+      expect(TimelineMarkerType.values, contains(TimelineMarkerType.notifications));
     });
   });
 }

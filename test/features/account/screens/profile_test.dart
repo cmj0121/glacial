@@ -118,6 +118,222 @@ void main() {
       await tester.tap(find.byIcon(Icons.visibility));
       expect(tapped, isTrue);
     });
+
+    testWidgets('fires onFollowingTap callback', (tester) async {
+      bool tapped = false;
+      final account = MockAccount.create();
+
+      await tester.pumpWidget(createTestWidget(
+        child: UserStatistics(
+          schema: account,
+          onFollowingTap: () => tapped = true,
+        ),
+      ));
+      await tester.pump();
+
+      await tester.tap(find.byIcon(Icons.star));
+      expect(tapped, isTrue);
+    });
+
+    testWidgets('shows discoverable icon when discoverable is true', (tester) async {
+      // Create an account with discoverable = true
+      final account = AccountSchema(
+        id: '123',
+        username: 'testuser',
+        acct: 'testuser',
+        url: 'https://example.com/@testuser',
+        displayName: 'Test User',
+        note: 'A note',
+        avatar: 'https://example.com/avatar.png',
+        avatarStatic: 'https://example.com/avatar.png',
+        header: 'https://example.com/header.png',
+        locked: false,
+        bot: false,
+        indexable: true,
+        discoverable: true,
+        createdAt: DateTime(2023, 1, 1),
+        statusesCount: 10,
+        followersCount: 5,
+        followingCount: 3,
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: UserStatistics(schema: account),
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.travel_explore), findsOneWidget);
+    });
+
+    testWidgets('hides discoverable icon when discoverable is false', (tester) async {
+      final account = AccountSchema(
+        id: '123',
+        username: 'testuser',
+        acct: 'testuser',
+        url: 'https://example.com/@testuser',
+        displayName: 'Test User',
+        note: 'A note',
+        avatar: 'https://example.com/avatar.png',
+        avatarStatic: 'https://example.com/avatar.png',
+        header: 'https://example.com/header.png',
+        locked: false,
+        bot: false,
+        indexable: true,
+        discoverable: false,
+        createdAt: DateTime(2023, 1, 1),
+        statusesCount: 10,
+        followersCount: 5,
+        followingCount: 3,
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: UserStatistics(schema: account),
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.travel_explore), findsNothing);
+    });
+
+    testWidgets('hides discoverable icon when discoverable is null', (tester) async {
+      final account = MockAccount.create(); // discoverable defaults to null
+
+      await tester.pumpWidget(createTestWidget(
+        child: UserStatistics(schema: account),
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.travel_explore), findsNothing);
+    });
+
+    testWidgets('shows search icon when indexable is true and noindex is false', (tester) async {
+      final account = AccountSchema(
+        id: '123',
+        username: 'testuser',
+        acct: 'testuser',
+        url: 'https://example.com/@testuser',
+        displayName: 'Test User',
+        note: 'A note',
+        avatar: 'https://example.com/avatar.png',
+        avatarStatic: 'https://example.com/avatar.png',
+        header: 'https://example.com/header.png',
+        locked: false,
+        bot: false,
+        indexable: true,
+        noindex: false,
+        createdAt: DateTime(2023, 1, 1),
+        statusesCount: 10,
+        followersCount: 5,
+        followingCount: 3,
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: UserStatistics(schema: account),
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.search), findsOneWidget);
+    });
+
+    testWidgets('hides search icon when indexable is false and noindex is true', (tester) async {
+      final account = AccountSchema(
+        id: '123',
+        username: 'testuser',
+        acct: 'testuser',
+        url: 'https://example.com/@testuser',
+        displayName: 'Test User',
+        note: 'A note',
+        avatar: 'https://example.com/avatar.png',
+        avatarStatic: 'https://example.com/avatar.png',
+        header: 'https://example.com/header.png',
+        locked: false,
+        bot: false,
+        indexable: false,
+        noindex: true,
+        createdAt: DateTime(2023, 1, 1),
+        statusesCount: 10,
+        followersCount: 5,
+        followingCount: 3,
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: UserStatistics(schema: account),
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.search), findsNothing);
+    });
+
+    testWidgets('uses Column layout at narrow width', (tester) async {
+      final account = MockAccount.create();
+
+      // Narrow width triggers Column layout
+      await tester.pumpWidget(createTestWidget(
+        child: SizedBox(
+          width: 300, // narrower than maxWidth 420
+          child: UserStatistics(schema: account),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.byType(Column), findsWidgets);
+    });
+
+    testWidgets('uses Row layout at wide width', (tester) async {
+      final account = MockAccount.create();
+
+      // Wide width triggers Row layout
+      await tester.pumpWidget(createTestWidget(
+        child: SizedBox(
+          width: 500, // wider than maxWidth 420
+          child: UserStatistics(schema: account),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.byType(Row), findsWidgets);
+    });
+
+    testWidgets('discoverable tooltip has correct text', (tester) async {
+      final account = AccountSchema(
+        id: '123',
+        username: 'testuser',
+        acct: 'testuser',
+        url: 'https://example.com/@testuser',
+        displayName: 'Test User',
+        note: 'A note',
+        avatar: 'https://example.com/avatar.png',
+        avatarStatic: 'https://example.com/avatar.png',
+        header: 'https://example.com/header.png',
+        locked: false,
+        bot: false,
+        indexable: true,
+        discoverable: true,
+        createdAt: DateTime(2023, 1, 1),
+        statusesCount: 10,
+        followersCount: 5,
+        followingCount: 3,
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: UserStatistics(schema: account),
+      ));
+      await tester.pump();
+
+      // Tooltip widget should exist
+      expect(find.byType(Tooltip), findsWidgets);
+    });
+
+    testWidgets('lock icon tooltip has correct text', (tester) async {
+      final account = MockAccount.create(locked: true);
+
+      await tester.pumpWidget(createTestWidget(
+        child: UserStatistics(schema: account),
+      ));
+      await tester.pump();
+
+      // Should have tooltip for locked icon
+      expect(find.byType(Tooltip), findsWidgets);
+    });
   });
 
   group('ProfilePage', () {

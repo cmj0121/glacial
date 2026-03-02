@@ -114,6 +114,91 @@ void main() {
       expect(find.byType(FilterChip), findsNWidgets(FilterContext.values.length));
       expect(find.byIcon(Icons.ballot_rounded), findsOneWidget);
     });
+
+    testWidgets('shows expiration field with schedule icon', (tester) async {
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: Scaffold(
+          body: FiltersForm(title: 'Expiration Test'),
+        ),
+        accessStatus: MockAccessStatus.authenticated(),
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.schedule_outlined), findsOneWidget);
+    });
+
+    testWidgets('action cycles on tap', (tester) async {
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: Scaffold(
+          body: FiltersForm(title: 'Action Cycle'),
+        ),
+        accessStatus: MockAccessStatus.authenticated(),
+      ));
+      await tester.pump();
+
+      // Default action is hide (block_outlined)
+      expect(find.byIcon(Icons.block_outlined), findsOneWidget);
+
+      // Tap the action ListTile to cycle
+      await tester.tap(find.byIcon(Icons.block_outlined));
+      await tester.pump();
+
+      // Should cycle to next action (blur → blur_on_outlined)
+      expect(find.byIcon(Icons.blur_on_outlined), findsOneWidget);
+    });
+
+    testWidgets('submit button disabled when no context selected', (tester) async {
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: Scaffold(
+          body: FiltersForm(title: 'No Context'),
+        ),
+        accessStatus: MockAccessStatus.authenticated(),
+      ));
+      await tester.pump();
+
+      // By default, no context is selected → save button should be present but disabled
+      expect(find.text('Save'), findsOneWidget);
+      expect(find.byIcon(Icons.save_outlined), findsOneWidget);
+
+      // Find the ancestor FilledButton via the save icon
+      final Finder buttonFinder = find.ancestor(
+        of: find.byIcon(Icons.save_outlined),
+        matching: find.bySubtype<ButtonStyleButton>(),
+      );
+      expect(buttonFinder, findsOneWidget);
+
+      final ButtonStyleButton button = tester.widget<ButtonStyleButton>(buttonFinder);
+      expect(button.onPressed, isNull);
+    });
+
+    testWidgets('submit button enabled when context is selected', (tester) async {
+      final schema = FiltersSchema(
+        id: 'f1',
+        title: 'Has Context',
+        context: [FilterContext.home],
+        action: FilterAction.warn,
+        keywords: [],
+        statuses: [],
+      );
+
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: Scaffold(
+          body: FiltersForm(title: schema.title, schema: schema),
+        ),
+        accessStatus: MockAccessStatus.authenticated(),
+      ));
+      await tester.pump();
+
+      // Find the ancestor FilledButton via the save icon
+      final Finder buttonFinder = find.ancestor(
+        of: find.byIcon(Icons.save_outlined),
+        matching: find.bySubtype<ButtonStyleButton>(),
+      );
+      expect(buttonFinder, findsOneWidget);
+
+      final ButtonStyleButton button = tester.widget<ButtonStyleButton>(buttonFinder);
+      expect(button.onPressed, isNotNull);
+    });
   });
 
   group('FilterKeywordForm', () {
@@ -200,6 +285,55 @@ void main() {
       await tester.pump();
 
       expect(find.byIcon(Icons.delete_outline), findsOneWidget);
+    });
+
+    testWidgets('toggles wholeWord on tap', (tester) async {
+      const schema = FilterKeywordFormSchema(
+        keyword: 'toggle',
+        wholeWord: false,
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: FilterKeywordForm(
+          schema: schema,
+          onDelete: () {},
+          onChanged: (_) {},
+        ),
+        accessStatus: MockAccessStatus.authenticated(),
+      ));
+      await tester.pump();
+
+      // Initially partial match
+      expect(find.byIcon(Icons.code_off_outlined), findsOneWidget);
+
+      // Tap the leading icon area to toggle wholeWord (tapping ListTile center hits TextField)
+      await tester.tap(find.byIcon(Icons.code_off_outlined));
+      await tester.pump();
+
+      // Should now show whole word icon
+      expect(find.byIcon(Icons.code_outlined), findsOneWidget);
+    });
+
+    testWidgets('calls onDelete when delete button pressed', (tester) async {
+      bool deleted = false;
+      const schema = FilterKeywordFormSchema(
+        keyword: 'test',
+        wholeWord: false,
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: FilterKeywordForm(
+          schema: schema,
+          onDelete: () => deleted = true,
+        ),
+        accessStatus: MockAccessStatus.authenticated(),
+      ));
+      await tester.pump();
+
+      await tester.tap(find.byIcon(Icons.delete_outline));
+      await tester.pump();
+
+      expect(deleted, isTrue);
     });
   });
 }

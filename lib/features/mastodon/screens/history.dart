@@ -75,6 +75,7 @@ class _HistoryDrawerState extends ConsumerState<HistoryDrawer> {
         );
 
         return AccessibleDismissible(
+          key: ValueKey(info.domain),
           dismissKey: ValueKey(info.domain),
           background: Container(
             alignment: Alignment.centerLeft,

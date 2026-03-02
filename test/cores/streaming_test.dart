@@ -319,6 +319,191 @@ void main() {
     });
   });
 
+  group('StreamingService disconnect', () {
+    late StreamingService service;
+    late MockWebSocketChannel mockChannel;
+
+    setUp(() {
+      mockChannel = MockWebSocketChannel();
+      service = StreamingService(
+        domain: 'mastodon.social',
+        accessToken: 'test-token',
+        channelFactory: (_) => mockChannel,
+      );
+    });
+
+    tearDown(() {
+      service.dispose();
+    });
+
+    test('disconnect clears state and resets attempts', () async {
+      service.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      expect(service.state, StreamingConnectionState.connected);
+
+      service.disconnect();
+
+      expect(service.state, StreamingConnectionState.disconnected);
+    });
+
+    test('disconnect is idempotent', () {
+      service.disconnect();
+      service.disconnect();
+
+      expect(service.state, StreamingConnectionState.disconnected);
+    });
+
+    test('connect while already connected is no-op', () async {
+      service.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      expect(service.state, StreamingConnectionState.connected);
+
+      // Second connect should be ignored
+      await service.connect();
+
+      expect(service.state, StreamingConnectionState.connected);
+    });
+  });
+
+  group('StreamingService error handling', () {
+    late StreamingService service;
+    late MockWebSocketChannel mockChannel;
+
+    setUp(() {
+      mockChannel = MockWebSocketChannel();
+      service = StreamingService(
+        domain: 'mastodon.social',
+        accessToken: 'test-token',
+        channelFactory: (_) => mockChannel,
+      );
+    });
+
+    tearDown(() {
+      service.dispose();
+    });
+
+    test('connection failure with throwing factory schedules reconnect', () async {
+      int callCount = 0;
+      final failService = StreamingService(
+        domain: 'fail.social',
+        channelFactory: (_) {
+          callCount++;
+          throw Exception('Connection refused');
+        },
+      );
+
+      failService.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      expect(failService.state, StreamingConnectionState.reconnecting);
+      expect(callCount, 1);
+
+      failService.dispose();
+    });
+  });
+
+  group('StreamingService _streamTypeFromKey', () {
+    late StreamingService service;
+    late MockWebSocketChannel mockChannel;
+
+    setUp(() {
+      mockChannel = MockWebSocketChannel();
+      service = StreamingService(
+        domain: 'mastodon.social',
+        accessToken: 'test-token',
+        channelFactory: (_) => mockChannel,
+      );
+    });
+
+    tearDown(() {
+      service.dispose();
+    });
+
+    test('subscribe sends re-subscribe messages on reconnect', () async {
+      // Subscribe to user stream
+      service.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      expect(service.state, StreamingConnectionState.connected);
+      // First subscribe message
+      expect(mockChannel.sentMessages.length, greaterThanOrEqualTo(1));
+
+      // Subscribe to hashtag stream
+      service.subscribe(StreamType.hashtag, tag: 'dart');
+      await Future.delayed(Duration.zero);
+
+      // Should have sent a subscribe for hashtag too
+      final lastMsg = jsonDecode(mockChannel.sentMessages.last);
+      expect(lastMsg['type'], 'subscribe');
+      expect(lastMsg['stream'], 'hashtag');
+      expect(lastMsg['tag'], 'dart');
+    });
+
+    test('subscribe with list sends list parameter on connected', () async {
+      service.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      service.subscribe(StreamType.list, listId: '42');
+      await Future.delayed(Duration.zero);
+
+      final listMsg = mockChannel.sentMessages
+          .map((s) => jsonDecode(s) as Map<String, dynamic>)
+          .where((m) => m['stream'] == 'list')
+          .first;
+      expect(listMsg['list'], '42');
+    });
+  });
+
+  group('StreamingService pause/resume edge cases', () {
+    test('resume without subscriptions does not connect', () {
+      final service = StreamingService(
+        domain: 'test.social',
+        channelFactory: (_) => MockWebSocketChannel(),
+      );
+
+      service.resume();
+
+      expect(service.state, StreamingConnectionState.disconnected);
+      expect(service.isPaused, isFalse);
+
+      service.dispose();
+    });
+
+    test('pause then resume reconnects subscriptions', () async {
+      int callCount = 0;
+      final channels = [MockWebSocketChannel(), MockWebSocketChannel()];
+
+      final service = StreamingService(
+        domain: 'test.social',
+        accessToken: 'token',
+        channelFactory: (_) {
+          final ch = channels[callCount.clamp(0, 1)];
+          callCount++;
+          return ch;
+        },
+      );
+
+      service.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      expect(service.state, StreamingConnectionState.connected);
+
+      service.pause();
+      expect(service.state, StreamingConnectionState.disconnected);
+      expect(service.isPaused, isTrue);
+
+      service.resume();
+      await Future.delayed(Duration.zero);
+
+      expect(service.state, StreamingConnectionState.connected);
+      expect(service.isPaused, isFalse);
+
+      service.dispose();
+    });
+  });
+
   group('Global streaming helpers', () {
     tearDown(() {
       disposeStreamingService('test.social');
@@ -362,6 +547,266 @@ void main() {
       final s1 = getStreamingService('test.social');
       final s2 = getStreamingService('test.social', accountId: 'user1');
       expect(identical(s1, s2), isFalse);
+    });
+  });
+
+  group('pauseAllStreaming and resumeAllStreaming', () {
+    tearDown(() {
+      disposeStreamingService('pause-test.social');
+      disposeStreamingService('pause-test.social@user1');
+    });
+
+    test('pauseAllStreaming pauses all registered services', () async {
+      final ch1 = MockWebSocketChannel();
+      final ch2 = MockWebSocketChannel();
+
+      final s1 = getStreamingService('pause-test.social',
+          accessToken: 'token', channelFactory: (_) => ch1);
+      final s2 = getStreamingService('pause-test.social',
+          accountId: 'user1', accessToken: 'token', channelFactory: (_) => ch2);
+
+      s1.subscribe(StreamType.user);
+      s2.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      expect(s1.state, StreamingConnectionState.connected);
+      expect(s2.state, StreamingConnectionState.connected);
+
+      pauseAllStreaming();
+
+      expect(s1.isPaused, isTrue);
+      expect(s2.isPaused, isTrue);
+      expect(s1.state, StreamingConnectionState.disconnected);
+      expect(s2.state, StreamingConnectionState.disconnected);
+    });
+
+    test('resumeAllStreaming resumes all paused services', () async {
+      final channels = <MockWebSocketChannel>[];
+      final s1 = getStreamingService('pause-test.social',
+          accessToken: 'token', channelFactory: (_) {
+        final ch = MockWebSocketChannel();
+        channels.add(ch);
+        return ch;
+      });
+
+      s1.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      pauseAllStreaming();
+      expect(s1.isPaused, isTrue);
+
+      resumeAllStreaming();
+      await Future.delayed(Duration.zero);
+
+      expect(s1.isPaused, isFalse);
+      expect(s1.state, StreamingConnectionState.connected);
+    });
+  });
+
+  group('StreamingService.buildKey edge cases', () {
+    test('builds key for hashtag without tag parameter', () {
+      expect(StreamingService.buildKey(StreamType.hashtag), 'hashtag:');
+    });
+
+    test('builds key for list without listId parameter', () {
+      expect(StreamingService.buildKey(StreamType.list), 'list:');
+    });
+
+    test('builds key for direct stream', () {
+      expect(StreamingService.buildKey(StreamType.direct), 'direct');
+    });
+  });
+
+  group('StreamingService unsubscribe edge cases', () {
+    late StreamingService service;
+    late MockWebSocketChannel mockChannel;
+
+    setUp(() {
+      mockChannel = MockWebSocketChannel();
+      service = StreamingService(
+        domain: 'mastodon.social',
+        accessToken: 'test-token',
+        channelFactory: (_) => mockChannel,
+      );
+    });
+
+    tearDown(() {
+      service.dispose();
+    });
+
+    test('unsubscribing sends unsubscribe message when other subs remain', () async {
+      // Subscribe to two streams so unsubscribing one doesn't trigger disconnect
+      final unsub = service.subscribe(StreamType.user);
+      service.subscribe(StreamType.direct);
+      await Future.delayed(Duration.zero);
+
+      unsub();
+      await Future.delayed(Duration.zero);
+
+      // Should find an unsubscribe message among sent messages
+      final unsubMsgs = mockChannel.sentMessages
+          .map((s) => jsonDecode(s) as Map<String, dynamic>)
+          .where((m) => m['type'] == 'unsubscribe')
+          .toList();
+      expect(unsubMsgs, isNotEmpty);
+      expect(unsubMsgs.first['stream'], 'user');
+    });
+
+    test('unsubscribing hashtag sends tag in unsubscribe message', () async {
+      // Keep user stream active so disconnect doesn't fire
+      service.subscribe(StreamType.user);
+      final unsub = service.subscribe(StreamType.hashtag, tag: 'flutter');
+      await Future.delayed(Duration.zero);
+
+      unsub();
+      await Future.delayed(Duration.zero);
+
+      final unsubMsgs = mockChannel.sentMessages
+          .map((s) => jsonDecode(s) as Map<String, dynamic>)
+          .where((m) => m['type'] == 'unsubscribe')
+          .toList();
+      expect(unsubMsgs, isNotEmpty);
+      expect(unsubMsgs.first['stream'], 'hashtag');
+      expect(unsubMsgs.first['tag'], 'flutter');
+    });
+
+    test('unsubscribing list sends listId in unsubscribe message', () async {
+      // Keep user stream active so disconnect doesn't fire
+      service.subscribe(StreamType.user);
+      final unsub = service.subscribe(StreamType.list, listId: '99');
+      await Future.delayed(Duration.zero);
+
+      unsub();
+      await Future.delayed(Duration.zero);
+
+      final unsubMsgs = mockChannel.sentMessages
+          .map((s) => jsonDecode(s) as Map<String, dynamic>)
+          .where((m) => m['type'] == 'unsubscribe')
+          .toList();
+      expect(unsubMsgs, isNotEmpty);
+      expect(unsubMsgs.first['stream'], 'list');
+      expect(unsubMsgs.first['list'], '99');
+    });
+  });
+
+  group('StreamingService events edge cases', () {
+    late StreamingService service;
+    late MockWebSocketChannel mockChannel;
+
+    setUp(() {
+      mockChannel = MockWebSocketChannel();
+      service = StreamingService(
+        domain: 'mastodon.social',
+        accessToken: 'test-token',
+        channelFactory: (_) => mockChannel,
+      );
+    });
+
+    tearDown(() {
+      service.dispose();
+    });
+
+    test('multiple event types are dispatched correctly', () async {
+      service.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      final events = <StreamingEvent>[];
+      service.events.listen(events.add);
+
+      // Send update event
+      mockChannel.addIncoming(jsonEncode({
+        'event': 'update',
+        'stream': ['user'],
+        'payload': '{}',
+      }));
+
+      // Send filters_changed event
+      mockChannel.addIncoming(jsonEncode({
+        'event': 'filters_changed',
+        'stream': ['user'],
+      }));
+
+      await Future.delayed(Duration.zero);
+
+      expect(events.length, 2);
+      expect(events[0].type, StreamingEventType.update);
+      expect(events[1].type, StreamingEventType.filtersChanged);
+    });
+
+    test('event with unknown type is parsed as unknown', () async {
+      service.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      final events = <StreamingEvent>[];
+      service.events.listen(events.add);
+
+      mockChannel.addIncoming(jsonEncode({
+        'event': 'some_new_event',
+        'stream': ['user'],
+      }));
+
+      await Future.delayed(Duration.zero);
+
+      expect(events.length, 1);
+      expect(events.first.type, StreamingEventType.unknown);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // Connection error and done handling
+  // ---------------------------------------------------------------------------
+
+  group('StreamingService connection lifecycle', () {
+    late MockWebSocketChannel mockChannel;
+    late StreamingService service;
+
+    setUp(() {
+      mockChannel = MockWebSocketChannel();
+      service = StreamingService(
+        domain: 'mastodon.social',
+        accessToken: 'test-token',
+        channelFactory: (_) => mockChannel,
+      );
+    });
+
+    tearDown(() {
+      service.dispose();
+    });
+
+    test('stream error triggers _handleDisconnect and reconnect', () async {
+      service.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      // Trigger an error on the stream
+      mockChannel._incomingController.addError(Exception('Connection lost'));
+      await Future.delayed(Duration.zero);
+
+      // After error, state should be reconnecting (since subscriptions exist)
+      expect(service.state, StreamingConnectionState.reconnecting);
+    });
+
+    test('stream done triggers _handleDisconnect', () async {
+      service.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      // Close the stream (triggers _onDone)
+      await mockChannel._incomingController.close();
+      await Future.delayed(Duration.zero);
+
+      // After done, state should be reconnecting (since subscriptions exist)
+      expect(service.state, StreamingConnectionState.reconnecting);
+    });
+
+    test('stream done without subscriptions stays disconnected', () async {
+      final unsub = service.subscribe(StreamType.user);
+      await Future.delayed(Duration.zero);
+
+      // Unsubscribe first, then trigger close
+      unsub();
+      await Future.delayed(Duration.zero);
+
+      // Service should be disconnected, not reconnecting
+      expect(service.state, StreamingConnectionState.disconnected);
     });
   });
 }

@@ -144,6 +144,483 @@ void main() {
     });
   });
 
+  group('AccessStatusSchema toString', () {
+    test('toString returns JSON-encoded string', () {
+      const status = AccessStatusSchema(
+        domain: 'mastodon.social',
+        history: [],
+      );
+      final str = status.toString();
+
+      expect(str, contains('"domain":"mastodon.social"'));
+      expect(str, contains('"history":[]'));
+    });
+
+    test('toString round-trips with fromString', () {
+      const status = AccessStatusSchema(
+        domain: 'example.com',
+        history: [],
+      );
+      final str = status.toString();
+      final restored = AccessStatusSchema.fromString(str);
+
+      expect(restored.domain, 'example.com');
+      expect(restored.history, isEmpty);
+    });
+  });
+
+  group('AccessStatusSchema fromString/fromJson', () {
+    test('fromString parses domain and history', () {
+      const jsonStr = '{"domain":"test.server","history":[{"domain":"old.server","thumbnail":"https://old.server/thumb.png"}]}';
+      final status = AccessStatusSchema.fromString(jsonStr);
+
+      expect(status.domain, 'test.server');
+      expect(status.history.length, 1);
+      expect(status.history.first.domain, 'old.server');
+    });
+
+    test('fromJson parses null domain', () {
+      final json = <String, dynamic>{
+        'domain': null,
+        'history': <dynamic>[],
+      };
+      final status = AccessStatusSchema.fromJson(json);
+
+      expect(status.domain, isNull);
+      expect(status.history, isEmpty);
+    });
+
+    test('fromJson parses multiple history entries', () {
+      final json = <String, dynamic>{
+        'domain': 'current.server',
+        'history': [
+          {'domain': 'server1.com', 'thumbnail': 'https://server1.com/t.png'},
+          {'domain': 'server2.com', 'thumbnail': 'https://server2.com/t.png'},
+        ],
+      };
+      final status = AccessStatusSchema.fromJson(json);
+
+      expect(status.domain, 'current.server');
+      expect(status.history.length, 2);
+      expect(status.history[0].domain, 'server1.com');
+      expect(status.history[1].domain, 'server2.com');
+    });
+  });
+
+  group('AccessStatusSchema toJson', () {
+    test('toJson includes domain and history', () {
+      const status = AccessStatusSchema(
+        domain: 'mastodon.social',
+        history: [],
+      );
+      final json = status.toJson();
+
+      expect(json['domain'], 'mastodon.social');
+      expect(json['history'], isEmpty);
+    });
+
+    test('toJson does not include accessToken, server, account, or emojis', () {
+      final status = const AccessStatusSchema(
+        domain: 'mastodon.social',
+      ).copyWith(accessToken: 'secret-token');
+      final json = status.toJson();
+
+      expect(json.containsKey('accessToken'), isFalse);
+      expect(json.containsKey('access_token'), isFalse);
+      expect(json.containsKey('server'), isFalse);
+      expect(json.containsKey('account'), isFalse);
+      expect(json.containsKey('emojis'), isFalse);
+    });
+  });
+
+  group('AccessStatusSchema copyWith', () {
+    test('copyWith preserves all fields when none overridden', () {
+      final original = const AccessStatusSchema(domain: 'test.com').copyWith(
+        accessToken: 'tok',
+        account: AccountSchema.fromJson(_accountJson()),
+        server: ServerSchema.fromJson(_serverJson()),
+      );
+      final copy = original.copyWith();
+
+      expect(copy.domain, original.domain);
+      expect(copy.accessToken, original.accessToken);
+      expect(copy.account?.id, original.account?.id);
+      expect(copy.server?.domain, original.server?.domain);
+    });
+
+    test('copyWith overrides specific fields', () {
+      const original = AccessStatusSchema(domain: 'old.com');
+      final updated = original.copyWith(domain: 'new.com', accessToken: 'new-token');
+
+      expect(updated.domain, 'new.com');
+      expect(updated.accessToken, 'new-token');
+    });
+
+    test('copyWith with emojis', () {
+      const original = AccessStatusSchema(domain: 'test.com');
+      final updated = original.copyWith(emojis: [
+        EmojiSchema(shortcode: 'blob', url: 'https://e.com/blob.png', staticUrl: 'https://e.com/blob.png', visible: true),
+      ]);
+
+      expect(updated.emojis.length, 1);
+      expect(updated.emojis.first.shortcode, 'blob');
+    });
+  });
+
+  group('AccessStatusSchema checkSignedIn', () {
+    test('throws when not signed in', () {
+      const status = AccessStatusSchema(domain: 'test.com');
+
+      expect(() => status.checkSignedIn(), throwsException);
+    });
+
+    test('does not throw when signed in', () {
+      final status = const AccessStatusSchema(domain: 'test.com').copyWith(
+        accessToken: 'valid-token',
+      );
+
+      expect(() => status.checkSignedIn(), returnsNormally);
+    });
+  });
+
+  group('AccessStatusSchema getMaxIDFromNextLink', () {
+    test('extracts max_id from next link', () {
+      const status = AccessStatusSchema();
+      final maxId = status.getMaxIDFromNextLink(
+        '<https://mastodon.social/api/v1/timelines/home?max_id=12345>; rel="next"',
+      );
+
+      expect(maxId, '12345');
+    });
+
+    test('returns null when no next link', () {
+      const status = AccessStatusSchema();
+      final maxId = status.getMaxIDFromNextLink(
+        '<https://mastodon.social/api/v1/timelines/home?since_id=99999>; rel="prev"',
+      );
+
+      expect(maxId, isNull);
+    });
+
+    test('returns null when nextLink is null', () {
+      const status = AccessStatusSchema();
+      final maxId = status.getMaxIDFromNextLink(null);
+
+      expect(maxId, isNull);
+    });
+
+    test('handles multiple links with prev and next', () {
+      const status = AccessStatusSchema();
+      final maxId = status.getMaxIDFromNextLink(
+        '<https://mastodon.social/api/v1/timelines/home?since_id=99999>; rel="prev", '
+        '<https://mastodon.social/api/v1/timelines/home?max_id=11111>; rel="next"',
+      );
+
+      expect(maxId, '11111');
+    });
+
+    test('returns null for empty string', () {
+      const status = AccessStatusSchema();
+      final maxId = status.getMaxIDFromNextLink('');
+
+      expect(maxId, isNull);
+    });
+  });
+
+  group('AccessStatusSchema getAPI domain guard', () {
+    test('returns null when domain is null', () async {
+      const status = AccessStatusSchema(domain: null);
+      final result = await status.getAPI('/api/v1/test');
+
+      expect(result, isNull);
+    });
+
+    test('returns null when domain is empty string', () async {
+      const status = AccessStatusSchema(domain: '');
+      final result = await status.getAPI('/api/v1/test');
+
+      expect(result, isNull);
+    });
+  });
+
+  group('AccessStatusSchema getAPIEx domain guard', () {
+    test('throws when domain is null', () async {
+      const status = AccessStatusSchema(domain: null);
+
+      expect(
+        () => status.getAPIEx('/api/v1/test'),
+        throwsException,
+      );
+    });
+
+    test('throws when domain is empty string', () async {
+      const status = AccessStatusSchema(domain: '');
+
+      expect(
+        () => status.getAPIEx('/api/v1/test'),
+        throwsException,
+      );
+    });
+  });
+
+  group('AccessStatusSchema postAPI domain guard', () {
+    test('returns null when domain is null', () async {
+      const status = AccessStatusSchema(domain: null);
+      final result = await status.postAPI('/api/v1/test');
+
+      expect(result, isNull);
+    });
+
+    test('returns null when domain is empty string', () async {
+      const status = AccessStatusSchema(domain: '');
+      final result = await status.postAPI('/api/v1/test');
+
+      expect(result, isNull);
+    });
+  });
+
+  group('AccessStatusSchema putAPI domain guard', () {
+    test('returns null when domain is null', () async {
+      const status = AccessStatusSchema(domain: null);
+      final result = await status.putAPI('/api/v1/test');
+
+      expect(result, isNull);
+    });
+
+    test('returns null when domain is empty string', () async {
+      const status = AccessStatusSchema(domain: '');
+      final result = await status.putAPI('/api/v1/test');
+
+      expect(result, isNull);
+    });
+  });
+
+  group('AccessStatusSchema patchAPI domain guard', () {
+    test('returns null when domain is null', () async {
+      const status = AccessStatusSchema(domain: null);
+      final result = await status.patchAPI('/api/v1/test');
+
+      expect(result, isNull);
+    });
+
+    test('returns null when domain is empty string', () async {
+      const status = AccessStatusSchema(domain: '');
+      final result = await status.patchAPI('/api/v1/test');
+
+      expect(result, isNull);
+    });
+  });
+
+  group('AccessStatusSchema deleteAPI domain guard', () {
+    test('returns null when domain is null', () async {
+      const status = AccessStatusSchema(domain: null);
+      final result = await status.deleteAPI('/api/v1/test');
+
+      expect(result, isNull);
+    });
+
+    test('returns null when domain is empty string', () async {
+      const status = AccessStatusSchema(domain: '');
+      final result = await status.deleteAPI('/api/v1/test');
+
+      expect(result, isNull);
+    });
+  });
+
+  group('AccessStatusSchema multipartsAPI domain guard', () {
+    test('returns null when domain is null', () async {
+      const status = AccessStatusSchema(domain: null);
+      final result = await status.multipartsAPI(
+        '/api/v1/test',
+        method: 'POST',
+        files: {},
+      );
+
+      expect(result, isNull);
+    });
+
+    test('returns null when domain is empty string', () async {
+      const status = AccessStatusSchema(domain: '');
+      final result = await status.multipartsAPI(
+        '/api/v1/test',
+        method: 'POST',
+        files: {},
+      );
+
+      expect(result, isNull);
+    });
+  });
+
+  group('AccessStatusSchema getAPI with valid domain catches errors', () {
+    test('getAPI returns null on network error (catches generic exception)', () async {
+      // Using a valid domain that will fail to connect exercises the catch block.
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+      final result = await status.getAPI('/api/v1/timelines/home');
+
+      expect(result, isNull);
+    });
+  });
+
+  group('AccessStatusSchema getAPIEx with valid domain catches errors', () {
+    test('getAPIEx throws on network error', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.getAPIEx('/api/v1/timelines/home'),
+        throwsException,
+      );
+    });
+  });
+
+  group('AccessStatusSchema getAPI with explicit headers covers header spread', () {
+    test('getAPI with explicit headers returns null on network error', () async {
+      // Passing explicit headers exercises the ...?headers spread (non-null branch).
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+      final result = await status.getAPI(
+        '/api/v1/timelines/home',
+        headers: {'X-Custom': 'value'},
+      );
+
+      expect(result, isNull);
+    });
+  });
+
+  group('AccessStatusSchema postAPI with valid domain exercises body', () {
+    test('postAPI throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.postAPI('/api/v1/test', body: {'key': 'value'}),
+        throwsA(anything),
+      );
+    });
+
+    test('postAPI with explicit headers throws on network error', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.postAPI('/api/v1/test', headers: {'X-Custom': 'header'}),
+        throwsA(anything),
+      );
+    });
+  });
+
+  group('AccessStatusSchema putAPI with valid domain exercises body', () {
+    test('putAPI throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.putAPI('/api/v1/test', body: {'key': 'value'}),
+        throwsA(anything),
+      );
+    });
+
+    test('putAPI without body throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.putAPI('/api/v1/test'),
+        throwsA(anything),
+      );
+    });
+  });
+
+  group('AccessStatusSchema patchAPI with valid domain exercises body', () {
+    test('patchAPI throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.patchAPI('/api/v1/test', body: {'key': 'value'}),
+        throwsA(anything),
+      );
+    });
+
+    test('patchAPI with explicit headers throws on network error', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.patchAPI('/api/v1/test', headers: {'Accept': 'application/json'}),
+        throwsA(anything),
+      );
+    });
+  });
+
+  group('AccessStatusSchema deleteAPI with valid domain exercises body', () {
+    test('deleteAPI throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.deleteAPI('/api/v1/test'),
+        throwsA(anything),
+      );
+    });
+
+    test('deleteAPI with body throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.deleteAPI('/api/v1/test', body: {'id': '123'}),
+        throwsA(anything),
+      );
+    });
+  });
+
+  group('AccessStatusSchema multipartsAPI with valid domain exercises body', () {
+    test('multipartsAPI throws on network error when domain is valid', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.multipartsAPI(
+          '/api/v1/test',
+          method: 'POST',
+          files: {},
+          body: {'description': 'test'},
+        ),
+        throwsA(anything),
+      );
+    });
+
+    test('multipartsAPI with explicit headers throws on network error', () async {
+      final status = const AccessStatusSchema(domain: 'nonexistent-server-12345.invalid').copyWith(
+        accessToken: 'test-token',
+      );
+
+      expect(
+        () => status.multipartsAPI(
+          '/api/v1/test',
+          method: 'PUT',
+          files: {},
+          headers: {'X-Custom': 'value'},
+        ),
+        throwsA(anything),
+      );
+    });
+  });
+
   group('401 cleanup flow contract', () {
     test('anonymous status after cleanup has correct routing hints', () {
       // After 401 cleanup, status should be anonymous with server config available

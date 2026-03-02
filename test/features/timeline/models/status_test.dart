@@ -404,6 +404,330 @@ void main() {
     });
   });
 
+  group('StatusSchema.filtered', () {
+    test('fromJson parses filtered array with FilterResultSchema', () {
+      final json = statusJson();
+      json['filtered'] = [
+        {
+          'filter': {
+            'id': 'f1',
+            'title': 'Test Filter',
+            'context': ['home'],
+            'filter_action': 'warn',
+          },
+          'keyword_matches': ['badword'],
+          'status_matches': null,
+        },
+      ];
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.filtered, isNotNull);
+      expect(status.filtered!.length, 1);
+      expect(status.filtered!.first.filter.title, 'Test Filter');
+      expect(status.filtered!.first.filter.action, FilterAction.warn);
+    });
+
+    test('fromJson parses filtered with hide action', () {
+      final json = statusJson();
+      json['filtered'] = [
+        {
+          'filter': {
+            'id': 'f2',
+            'title': 'Hide Filter',
+            'context': ['home', 'public'],
+            'filter_action': 'hide',
+          },
+        },
+      ];
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.filtered, isNotNull);
+      expect(status.filtered!.length, 1);
+      expect(status.filtered!.first.filter.action, FilterAction.hide);
+    });
+
+    test('filtered defaults to empty list when null in JSON', () {
+      final json = statusJson();
+      json.remove('filtered');
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.filtered, isEmpty);
+    });
+
+    test('filterAction returns first filter action when filtered is non-empty', () {
+      final json = statusJson();
+      json['filtered'] = [
+        {
+          'filter': {
+            'id': 'f3',
+            'title': 'Warn Filter',
+            'context': ['home'],
+            'filter_action': 'warn',
+          },
+        },
+      ];
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.filterAction, FilterAction.warn);
+    });
+
+    test('filterAction returns null when filtered is empty', () {
+      final json = statusJson();
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.filterAction, isNull);
+    });
+
+    test('filterAction returns null when filtered is null', () {
+      final status = StatusSchema(
+        id: '1',
+        content: 'test',
+        visibility: VisibilityType.public,
+        sensitive: false,
+        spoiler: '',
+        account: AccountSchema.fromJson(accountJson()),
+        uri: 'https://example.com/1',
+        reblogsCount: 0,
+        favouritesCount: 0,
+        repliesCount: 0,
+        createdAt: DateTime.now(),
+        filtered: null,
+      );
+
+      expect(status.filterAction, isNull);
+    });
+  });
+
+  group('StatusSchema.fromScheduleJson', () {
+    Map<String, dynamic> scheduleJson({
+      String id = 'sched-1',
+      String text = 'Scheduled post content',
+      String visibility = 'public',
+      bool sensitive = false,
+      String? spoilerText,
+      int? inReplyToId,
+      String? inReplyToAccountId,
+      List<Map<String, dynamic>>? mediaAttachments,
+    }) => {
+      'id': id,
+      'scheduled_at': '2025-01-01T12:00:00.000Z',
+      'params': {
+        'text': text,
+        'visibility': visibility,
+        'sensitive': sensitive,
+        if (spoilerText != null) 'spoiler_text': spoilerText,
+        if (inReplyToId != null) 'in_reply_to_id': inReplyToId,
+        if (inReplyToAccountId != null) 'in_reply_to_account_id': inReplyToAccountId,
+      },
+      'media_attachments': mediaAttachments ?? [],
+    };
+
+    test('parses minimal scheduled status', () {
+      final account = AccountSchema.fromJson(accountJson());
+      final json = scheduleJson();
+      final status = StatusSchema.fromScheduleJson(json, account);
+
+      expect(status.id, 'sched-1');
+      expect(status.content, 'Scheduled post content');
+      expect(status.visibility, VisibilityType.public);
+      expect(status.sensitive, false);
+      expect(status.spoiler, '');
+      expect(status.account.id, account.id);
+      expect(status.uri, '');
+      expect(status.reblogsCount, 0);
+      expect(status.favouritesCount, 0);
+      expect(status.repliesCount, 0);
+      expect(status.scheduledAt, DateTime.utc(2025, 1, 1, 12));
+      expect(status.createdAt, DateTime.utc(2025, 1, 1, 12));
+      expect(status.editedAt, isNull);
+    });
+
+    test('parses scheduled status with spoiler text', () {
+      final account = AccountSchema.fromJson(accountJson());
+      final json = scheduleJson(spoilerText: 'CW: Spoiler');
+      final status = StatusSchema.fromScheduleJson(json, account);
+
+      expect(status.spoiler, 'CW: Spoiler');
+    });
+
+    test('parses scheduled status with null spoiler_text defaults to empty', () {
+      final account = AccountSchema.fromJson(accountJson());
+      final json = scheduleJson();
+      // Ensure spoiler_text is not in params
+      final status = StatusSchema.fromScheduleJson(json, account);
+
+      expect(status.spoiler, '');
+    });
+
+    test('parses scheduled status with in_reply_to_id as int', () {
+      final account = AccountSchema.fromJson(accountJson());
+      final json = scheduleJson(inReplyToId: 42);
+      final status = StatusSchema.fromScheduleJson(json, account);
+
+      expect(status.inReplyToID, '42');
+    });
+
+    test('parses scheduled status with null in_reply_to_id', () {
+      final account = AccountSchema.fromJson(accountJson());
+      final json = scheduleJson();
+      final status = StatusSchema.fromScheduleJson(json, account);
+
+      expect(status.inReplyToID, isNull);
+    });
+
+    test('parses scheduled status with media attachments', () {
+      final account = AccountSchema.fromJson(accountJson());
+      final json = scheduleJson(mediaAttachments: [
+        {
+          'id': 'att-sched-1',
+          'type': 'image',
+          'url': 'https://example.com/scheduled-image.png',
+        },
+      ]);
+      final status = StatusSchema.fromScheduleJson(json, account);
+
+      expect(status.attachments.length, 1);
+      expect(status.attachments[0].id, 'att-sched-1');
+    });
+
+    test('parses scheduled status with private visibility', () {
+      final account = AccountSchema.fromJson(accountJson());
+      final json = scheduleJson(visibility: 'private');
+      final status = StatusSchema.fromScheduleJson(json, account);
+
+      expect(status.visibility, VisibilityType.private);
+    });
+
+    test('parses scheduled status with sensitive flag', () {
+      final account = AccountSchema.fromJson(accountJson());
+      final json = scheduleJson(sensitive: true);
+      final status = StatusSchema.fromScheduleJson(json, account);
+
+      expect(status.sensitive, true);
+    });
+
+    test('parses scheduled status optional fields default to null', () {
+      final account = AccountSchema.fromJson(accountJson());
+      final json = scheduleJson();
+      final status = StatusSchema.fromScheduleJson(json, account);
+
+      expect(status.url, isNull);
+      expect(status.reblog, isNull);
+      expect(status.poll, isNull);
+      expect(status.favourited, isNull);
+      expect(status.reblogged, isNull);
+      expect(status.muted, isNull);
+      expect(status.bookmarked, isNull);
+      expect(status.pinned, isNull);
+      expect(status.application, isNull);
+    });
+
+    test('parses scheduled status with empty mentions/tags/emojis', () {
+      final account = AccountSchema.fromJson(accountJson());
+      final json = scheduleJson();
+      final status = StatusSchema.fromScheduleJson(json, account);
+
+      expect(status.mentions, isEmpty);
+      expect(status.tags, isEmpty);
+      expect(status.emojis, isEmpty);
+    });
+  });
+
+  group('StatusSchema.application', () {
+    test('fromJson parses application field', () {
+      final json = statusJson();
+      json['application'] = {
+        'name': 'Glacial',
+        'website': 'https://glacial.app',
+      };
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.application, isNotNull);
+      expect(status.application!.name, 'Glacial');
+      expect(status.application!.website, 'https://glacial.app');
+    });
+
+    test('fromJson parses null application', () {
+      final json = statusJson();
+      json['application'] = null;
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.application, isNull);
+    });
+  });
+
+  group('StatusSchema.quote', () {
+    test('fromJson parses quote field', () {
+      final json = statusJson();
+      json['quote'] = {
+        'state': 'accepted',
+        'quoted_status': statusJson(id: '50', content: '<p>Quoted</p>'),
+        'quoted_status_id': '50',
+      };
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.quote, isNotNull);
+      expect(status.quote!.state, QuoteStateType.accepted);
+      expect(status.quote!.quotedStatus?.id, '50');
+    });
+
+    test('fromJson parses null quote', () {
+      final json = statusJson();
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.quote, isNull);
+    });
+  });
+
+  group('StatusSchema.quoteApproval', () {
+    test('fromJson parses quote_approval field', () {
+      final json = statusJson();
+      json['quote_approval'] = {
+        'automatic': ['public'],
+        'manual': ['followers'],
+        'current_user': 'automatic',
+      };
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.quoteApproval, isNotNull);
+      expect(status.quoteApproval!.currentUser, CurrentQuoteApprovalType.automatic);
+    });
+
+    test('fromJson parses null quote_approval', () {
+      final json = statusJson();
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.quoteApproval, isNull);
+    });
+  });
+
+  group('StatusSchema.quotesCount', () {
+    test('fromJson parses quotes_count', () {
+      final json = statusJson();
+      json['quotes_count'] = 5;
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.quotesCount, 5);
+    });
+
+    test('fromJson parses null quotes_count', () {
+      final json = statusJson();
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.quotesCount, isNull);
+    });
+  });
+
+  group('StatusSchema content fallback', () {
+    test('fromJson defaults content to empty string when null', () {
+      final json = statusJson();
+      json['content'] = null;
+      final status = StatusSchema.fromJson(json);
+
+      expect(status.content, '');
+    });
+  });
+
   group('PreviewCardSchema', () {
     test('fromJson parses all fields', () {
       final json = {

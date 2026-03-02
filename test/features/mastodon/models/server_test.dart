@@ -438,6 +438,16 @@ void main() {
 
       expect(server.config.translationEnabled, true);
     });
+
+    test('fetch returns null for null domain', () async {
+      final result = await ServerSchema.fetch(null);
+      expect(result, isNull);
+    });
+
+    test('fetch returns null for empty domain', () async {
+      final result = await ServerSchema.fetch('');
+      expect(result, isNull);
+    });
   });
 
   group('ReactionSchema', () {

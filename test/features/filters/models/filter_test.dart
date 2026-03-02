@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/features/models.dart';
 
@@ -322,6 +323,57 @@ void main() {
       for (final action in FilterAction.values) {
         expect(FilterAction.fromString(action.name), action);
       }
+    });
+
+    test('each has unique icon', () {
+      expect(FilterAction.warn.icon, Icons.warning_amber_outlined);
+      expect(FilterAction.hide.icon, Icons.block_outlined);
+      expect(FilterAction.blur.icon, Icons.blur_on_outlined);
+    });
+  });
+
+  group('FilterKeywordFormSchema icon', () {
+    test('returns check_box_outlined when wholeWord is true', () {
+      const schema = FilterKeywordFormSchema(keyword: 'test', wholeWord: true);
+      expect(schema.icon, Icons.check_box_outlined);
+    });
+
+    test('returns check_box_outline_blank when wholeWord is false', () {
+      const schema = FilterKeywordFormSchema(keyword: 'test', wholeWord: false);
+      expect(schema.icon, Icons.check_box_outline_blank);
+    });
+  });
+
+  group('FilterFormSchema toJson edge cases', () {
+    test('toJson includes expires_in when value is 0', () {
+      const form = FilterFormSchema(
+        title: 'Test',
+        context: [FilterContext.home],
+        action: FilterAction.warn,
+        expiresIn: 0,
+      );
+      final json = form.toJson();
+
+      // expiresIn == 0 is still included (only null is omitted)
+      expect(json['expires_in'], 0);
+    });
+
+    test('toJson includes keywords_attributes', () {
+      const form = FilterFormSchema(
+        title: 'Test',
+        context: [FilterContext.home],
+        action: FilterAction.warn,
+        keywords: [
+          FilterKeywordFormSchema(keyword: 'spam', wholeWord: true),
+          FilterKeywordFormSchema(keyword: 'ads', wholeWord: false),
+        ],
+      );
+      final json = form.toJson();
+
+      final attrs = json['keywords_attributes'] as List;
+      expect(attrs.length, 2);
+      expect((attrs[0] as Map)['keyword'], 'spam');
+      expect((attrs[1] as Map)['keyword'], 'ads');
     });
   });
 }
