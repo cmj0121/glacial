@@ -17,6 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/timeline/screens/interaction.dart';
 
+import '../../../helpers/mock_http.dart';
 import '../../../helpers/test_helpers.dart';
 
 // ---------------------------------------------------------------------------
@@ -886,6 +887,118 @@ void main() {
 
       expect(find.byType(Interaction), findsOneWidget);
       expect(deletedCalled, isFalse);
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Success-path tests with MockHttpOverrides
+  // Cover onReload callback lines (229, 308) that need successful HTTP.
+  // -----------------------------------------------------------------------
+  group('onPressed — success paths with mock HTTP', () {
+    late HttpOverrides? savedOverrides;
+
+    setUp(() {
+      savedOverrides = HttpOverrides.current;
+    });
+
+    tearDown(() {
+      HttpOverrides.global = savedOverrides;
+    });
+
+    testWidgets('reblog success calls onReload (line 229)', (tester) async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, statusJson(id: 'reblogged'));
+      });
+
+      StatusSchema? reloadedWith;
+      final status = MockStatus.create(reblogged: false, reblogsCount: 1);
+      final accessStatus = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(buildCompact(
+        schema: status,
+        accessStatus: accessStatus,
+        action: StatusInteraction.reblog,
+        onReload: (s) => reloadedWith = s,
+      ));
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await tester.runAsync(() async {
+        try {
+          // ignore: avoid_dynamic_calls
+          await (tester.state(find.byType(Interaction)) as dynamic).onPressed();
+        } catch (_) {}
+      });
+      await tester.pump();
+
+      expect(reloadedWith, isNotNull);
+      expect(reloadedWith!.id, 'reblogged');
+    });
+
+    testWidgets('mute success calls onReload (line 308)', (tester) async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, statusJson(id: 'muted'));
+      });
+
+      StatusSchema? reloadedWith;
+      final status = MockStatus.create(muted: false);
+      final accessStatus = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(buildCompact(
+        schema: status,
+        accessStatus: accessStatus,
+        action: StatusInteraction.mute,
+        onReload: (s) => reloadedWith = s,
+      ));
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await tester.runAsync(() async {
+        try {
+          // ignore: avoid_dynamic_calls
+          await (tester.state(find.byType(Interaction)) as dynamic).onPressed();
+        } catch (_) {}
+      });
+      await tester.pump();
+
+      expect(reloadedWith, isNotNull);
+    });
+
+    testWidgets('share clipboard fallback when Share.share throws (lines 265-268)', (tester) async {
+      // Remove the share_plus mock so Share.share throws MissingPluginException
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('dev.fluttercommunity.plus/share'),
+        null,
+      );
+
+      final status = MockStatus.create(
+        uri: 'https://example.com/statuses/fallback',
+        content: '<p>Fallback test</p>',
+      );
+      final accessStatus = MockAccessStatus.authenticated();
+
+      await tester.pumpWidget(buildCompact(
+        schema: status,
+        accessStatus: accessStatus,
+        action: StatusInteraction.share,
+      ));
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await tester.runAsync(() async {
+        try {
+          // ignore: avoid_dynamic_calls
+          await (tester.state(find.byType(Interaction)) as dynamic).onPressed();
+        } catch (_) {}
+      });
+      await tester.pump();
+
+      expect(find.byType(Interaction), findsOneWidget);
+
+      // Restore the share_plus mock for subsequent tests
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('dev.fluttercommunity.plus/share'),
+        (MethodCall methodCall) async => 'success',
+      );
     });
   });
 }

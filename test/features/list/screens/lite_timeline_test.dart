@@ -12,6 +12,7 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
+import '../../../helpers/mock_http.dart';
 import '../../../helpers/test_helpers.dart';
 
 void main() {
@@ -435,13 +436,23 @@ void main() {
 
     testWidgets('shows Timeline widget when status is provided (line 146)', (tester) async {
       final schema = MockListSchema.create(title: 'Timeline List');
-      final status = MockAccessStatus.authenticated(
+      // Use explicit domain 'example.com' with MockHttpOverrides so no real HTTP calls leak.
+      final status = AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test_token',
         server: MockServer.create(),
+        account: MockAccount.create(),
       );
+
+      final HttpOverrides? saved = HttpOverrides.current;
+      addTearDown(() => HttpOverrides.global = saved);
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) => (200, '[]'));
 
       await tester.runAsync(() async {
         await tester.pumpWidget(buildLiteTimeline(schema: schema, accessStatus: status));
         await tester.pump();
+        // Let the timeline HTTP future complete inside runAsync
+        await tester.pump(const Duration(milliseconds: 200));
       });
 
       // With valid status, buildTimeline should render Timeline widget
@@ -450,9 +461,17 @@ void main() {
 
     testWidgets('members mode with authenticated status triggers getListAccounts (lines 160-176)', (tester) async {
       final schema = MockListSchema.create(title: 'Auth Members');
-      final status = MockAccessStatus.authenticated(
+      // Use explicit domain 'example.com' with MockHttpOverrides so no real HTTP calls leak.
+      final status = AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test_token',
         server: MockServer.create(),
+        account: MockAccount.create(),
       );
+
+      final HttpOverrides? saved = HttpOverrides.current;
+      addTearDown(() => HttpOverrides.global = saved);
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) => (200, '[]'));
 
       await tester.runAsync(() async {
         await tester.pumpWidget(buildLiteTimeline(schema: schema, accessStatus: status));
@@ -461,11 +480,11 @@ void main() {
         // Toggle to showMembers — this triggers _membersFuture = status.getListAccounts()
         await tester.tap(find.byIcon(Icons.group));
         await tester.pump();
-        // Let the future complete (will error since no real server)
+        // Let the HTTP futures (timeline + getListAccounts) complete inside runAsync
         await tester.pump(const Duration(milliseconds: 500));
       });
 
-      // With the HTTP call failing, should show NoResult (error or null data path)
+      // With the HTTP call returning [] (empty), should show NoResult
       expect(find.byType(LiteTimeline), findsOneWidget);
     });
 
@@ -490,9 +509,17 @@ void main() {
 
     testWidgets('members mode shows FutureBuilder content with authenticated status', (tester) async {
       final schema = MockListSchema.create(title: 'Loading Members');
-      final status = MockAccessStatus.authenticated(
+      // Use explicit domain 'example.com' with MockHttpOverrides so no real HTTP calls leak.
+      final status = AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test_token',
         server: MockServer.create(),
+        account: MockAccount.create(),
       );
+
+      final HttpOverrides? saved = HttpOverrides.current;
+      addTearDown(() => HttpOverrides.global = saved);
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) => (200, '[]'));
 
       await tester.runAsync(() async {
         await tester.pumpWidget(buildLiteTimeline(schema: schema, accessStatus: status));
@@ -502,12 +529,167 @@ void main() {
         await tester.tap(find.byIcon(Icons.group));
         // Single pump to see the FutureBuilder in its initial/waiting state
         await tester.pump();
+        // Let timeline HTTP future resolve inside runAsync
+        await tester.pump(const Duration(milliseconds: 200));
       });
 
       // Should show the members view (not the timeline)
       // The FutureBuilder should be rendering (either loading, error, or data)
       expect(find.byType(LiteTimeline), findsOneWidget);
       expect(find.byIcon(Icons.group_add_sharp), findsOneWidget);
+    });
+
+    testWidgets('confirmDismiss callback calls context.pop and returns false (line 78)', (tester) async {
+      // This test triggers the confirmDismiss body: context.pop(); return false;
+      // context.pop() (GoRouter) throws without a GoRouter ancestor — expected.
+      final schema = MockListSchema.create(title: 'Swipe Pop');
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(buildLiteTimeline(schema: schema));
+        await tester.pump();
+      });
+
+      // Drag the AccessibleDismissible startToEnd to trigger confirmDismiss
+      await tester.drag(
+        find.byType(AccessibleDismissible),
+        const Offset(500, 0),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      // context.pop() throws without GoRouter — consume the expected error
+      tester.takeException();
+
+      // Widget is still present (confirmDismiss returned false, so no real dismiss)
+      expect(find.byType(LiteTimeline), findsOneWidget);
+    });
+
+    testWidgets('buildMembers shows accounts list when HTTP returns data (lines 160-176)', (tester) async {
+      final schema = MockListSchema.create(title: 'Members With Data');
+      // Use explicit domain 'example.com' so all HTTP calls go to example.com,
+      // which is handled cleanly by our MockHttpOverrides without real network access.
+      final status = AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test_token',
+        server: MockServer.create(),
+        account: MockAccount.create(),
+      );
+
+      // Route-aware handler: accounts endpoint returns one account,
+      // timeline endpoint returns empty array to avoid status-parse errors.
+      final HttpOverrides? saved = HttpOverrides.current;
+      addTearDown(() => HttpOverrides.global = saved);
+      HttpOverrides.global = MockHttpOverrides(
+        handler: (method, url) {
+          if (url.path.contains('/accounts')) {
+            return (200, '[${accountJson(id: 'm-1', username: 'member1', displayName: 'Member One')}]');
+          }
+          return (200, '[]');
+        },
+      );
+
+      // All pumps are inside runAsync to keep the MockHttpOverrides active for all
+      // async work and to prevent dangling futures from being detected by later tests.
+      await tester.runAsync(() async {
+        await tester.pumpWidget(buildLiteTimeline(schema: schema, accessStatus: status));
+        await tester.pump();
+
+        // Toggle to showMembers — triggers _membersFuture = status.getListAccounts(schema.id)
+        await tester.tap(find.byIcon(Icons.group));
+        await tester.pump();
+
+        // Allow both the getListAccounts and the timeline HTTP futures to resolve
+        await tester.pump(const Duration(milliseconds: 200));
+
+        // Final pump to let FutureBuilder rebuild with the resolved data
+        await tester.pump();
+      });
+
+      // AccountLite is rendered for the member account
+      expect(find.byType(AccountLite), findsOneWidget);
+      // The delete IconButton from buildMembers() (line 172-174) is rendered
+      expect(find.byIcon(Icons.delete_forever_rounded), findsOneWidget);
+      // At least one ListTile is present (the outer ListTile from buildMembers line 170)
+      expect(find.byType(ListTile), findsWidgets);
+    });
+
+    testWidgets('buildMembers shows empty NoResult when HTTP returns empty array (lines 160-163)', (tester) async {
+      final schema = MockListSchema.create(title: 'Members Empty');
+      // Use explicit domain 'example.com' for clean HTTP interception.
+      final status = AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test_token',
+        server: MockServer.create(),
+        account: MockAccount.create(),
+      );
+
+      // Return an empty JSON array for all routes
+      final HttpOverrides? saved = HttpOverrides.current;
+      addTearDown(() => HttpOverrides.global = saved);
+      HttpOverrides.global = MockHttpOverrides(
+        handler: (method, url) => (200, '[]'),
+      );
+
+      // All pumps inside runAsync to prevent dangling futures from leaking into later tests.
+      await tester.runAsync(() async {
+        await tester.pumpWidget(buildLiteTimeline(schema: schema, accessStatus: status));
+        await tester.pump();
+
+        // Toggle to showMembers
+        await tester.tap(find.byIcon(Icons.group));
+        await tester.pump();
+
+        // Allow HTTP futures to resolve
+        await tester.pump(const Duration(milliseconds: 200));
+
+        // Final pump to let FutureBuilder rebuild with empty list
+        await tester.pump();
+      });
+
+      // Empty list → NoResult with coffee icon (lines 161-163)
+      expect(find.byType(NoResult), findsOneWidget);
+      expect(find.byIcon(Icons.coffee), findsOneWidget);
+    });
+
+    testWidgets('onSearchAccount with non-empty name shows ListAccountWidget dialog (lines 190-196)', (tester) async {
+      final schema = MockListSchema.create(title: 'Search Members');
+      // Use null status:
+      // - buildTimeline() → SizedBox.shrink (no timeline HTTP calls)
+      // - dialog's ListAccountWidget: status is null → onLoad returns early → NoResult rendered
+      // - NoResult uses Icon + Text (no ListView), so no unbounded-height error in AlertDialog
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(buildLiteTimeline(schema: schema));
+        await tester.pump();
+
+        // Toggle to showMembers so the search TextField is enabled
+        await tester.tap(find.byIcon(Icons.group));
+        await tester.pump();
+        await tester.pump();
+      });
+
+      // Enter a non-empty search term and submit (triggers onSearchAccount with "alice")
+      await tester.enterText(find.byType(TextField), 'alice');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+
+      // Pump once to process the submission and open the dialog.
+      // The ListAccountWidget starts with isLoading=false, isCompleted=false, accounts=[].
+      // On first frame it shows LoadingOverlay(child: ListView(itemCount: 0)).
+      // A second pump triggers onLoad (via addPostFrameCallback) which with null status
+      // returns empty list → markLoadComplete(isEmpty:true) → isCompleted=true.
+      // After that, build() renders NoResult (no ListView) rather than the ListView.
+      await tester.pump();
+      // Consume any layout warning/error from the first ListView frame
+      tester.takeException();
+
+      // Pump again so ListAccountWidget completes onLoad and rebuilds to NoResult
+      await tester.runAsync(() async {
+        await tester.pump();
+      });
+      await tester.pump();
+
+      // onSearchAccount("alice") called showAdaptiveGlassDialog which shows ListAccountWidget
+      expect(find.byType(ListAccountWidget), findsOneWidget);
     });
   });
 
