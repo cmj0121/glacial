@@ -1,7 +1,11 @@
 // Unit tests for ShareReceiver.
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/timeline/models/shared_content.dart';
@@ -275,6 +279,166 @@ void main() {
         const MethodChannel('receive_sharing_intent/messages'),
         null,
       );
+    });
+
+    testWidgets('init stores pending content from cold launch initial media', (tester) async {
+      // Use setMockValues so getInitialMedia returns shared text content.
+      final streamController = StreamController<List<SharedMediaFile>>.broadcast();
+      ReceiveSharingIntent.setMockValues(
+        initialMedia: [
+          SharedMediaFile(
+            path: 'Cold launch text',
+            type: SharedMediaType.text,
+            mimeType: 'text/plain',
+          ),
+        ],
+        mediaStream: streamController.stream,
+      );
+
+      final key = GlobalKey<NavigatorState>();
+      ShareReceiver.init(key);
+
+      // Allow the Future from getInitialMedia to complete.
+      await tester.pump();
+
+      // The cold launch content should now be pending (line 37-38).
+      final pending = ShareReceiver.consumePendingContent();
+      expect(pending, isNotNull);
+      expect(pending!.text, 'Cold launch text');
+      expect(pending.hasContent, isTrue);
+
+      // Second consume should return null (already consumed).
+      expect(ShareReceiver.consumePendingContent(), isNull);
+
+      ShareReceiver.dispose();
+      await streamController.close();
+    });
+
+    testWidgets('warm launch stream listener invokes navigateToComposer', (tester) async {
+      // Use setMockValues with a controllable stream for warm-launch events.
+      final streamController = StreamController<List<SharedMediaFile>>.broadcast();
+      ReceiveSharingIntent.setMockValues(
+        initialMedia: [],
+        mediaStream: streamController.stream,
+      );
+
+      final navigatorKey = GlobalKey<NavigatorState>();
+
+      // Build a GoRouter widget tree so navigatorKey has a valid context.
+      bool routePushed = false;
+      final router = GoRouter(
+        navigatorKey: navigatorKey,
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, __) => const Scaffold(body: Text('Home'))),
+          GoRoute(
+            path: RoutePath.postShared.path,
+            builder: (_, GoRouterState state) {
+              routePushed = true;
+              return const Scaffold(body: Text('Compose'));
+            },
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      // Init with the navigator key that now has context (lines 18-32).
+      ShareReceiver.init(navigatorKey);
+      await tester.pump();
+
+      // Emit a warm-launch share event via the stream (lines 23-26).
+      streamController.add([
+        SharedMediaFile(
+          path: 'Warm launch text',
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      ]);
+      await tester.pumpAndSettle();
+
+      // The stream listener should have called navigateToComposer,
+      // which pushes the postShared route (lines 87, 90).
+      expect(routePushed, isTrue);
+
+      ShareReceiver.dispose();
+      await streamController.close();
+    });
+
+    testWidgets('stream error is handled gracefully', (tester) async {
+      // Use setMockValues with a controllable stream to emit an error.
+      final streamController = StreamController<List<SharedMediaFile>>.broadcast();
+      ReceiveSharingIntent.setMockValues(
+        initialMedia: [],
+        mediaStream: streamController.stream,
+      );
+
+      final key = GlobalKey<NavigatorState>();
+      ShareReceiver.init(key);
+      await tester.pump();
+
+      // Emit an error on the stream (lines 29-30).
+      streamController.addError('Test stream error');
+      await tester.pump();
+
+      // The error should be logged but not crash the app.
+      // Verify the receiver is still functional.
+      expect(ShareReceiver.consumePendingContent(), isNull);
+
+      ShareReceiver.dispose();
+      await streamController.close();
+    });
+  });
+
+  group('ShareReceiver.navigateToComposer with GoRouter', () {
+    testWidgets('pushes postShared route when context is available', (tester) async {
+      final streamController = StreamController<List<SharedMediaFile>>.broadcast();
+      ReceiveSharingIntent.setMockValues(
+        initialMedia: [],
+        mediaStream: streamController.stream,
+      );
+
+      final navigatorKey = GlobalKey<NavigatorState>();
+      SharedContentSchema? receivedContent;
+
+      final router = GoRouter(
+        navigatorKey: navigatorKey,
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, __) => const Scaffold(body: Text('Home'))),
+          GoRoute(
+            path: RoutePath.postShared.path,
+            builder: (_, GoRouterState state) {
+              receivedContent = state.extra as SharedContentSchema?;
+              return const Scaffold(body: Text('Compose'));
+            },
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      // Init sets _navigatorKey so navigateToComposer can find context.
+      ShareReceiver.init(navigatorKey);
+      await tester.pump();
+
+      // Directly call navigateToComposer with content (lines 87, 90).
+      const content = SharedContentSchema(
+        text: 'Shared via test',
+        imagePaths: ['/tmp/test.jpg'],
+      );
+      ShareReceiver.navigateToComposer(content);
+      await tester.pumpAndSettle();
+
+      // Verify the route was pushed with the correct extra data.
+      expect(receivedContent, isNotNull);
+      expect(receivedContent!.text, 'Shared via test');
+      expect(receivedContent!.imagePaths, ['/tmp/test.jpg']);
+
+      ShareReceiver.dispose();
+      await streamController.close();
     });
   });
 }
