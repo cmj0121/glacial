@@ -156,7 +156,7 @@ class _RelationshipState extends ConsumerState<Relationship> {
       },
       actions: [
         TextButton(
-          onPressed: () => context.pop(),
+          onPressed: () => Navigator.of(context).pop(),
           child: Text(AppLocalizations.of(context)?.btn_close ?? "Close"),
         ),
         AdaptiveGlassButton(
@@ -167,7 +167,8 @@ class _RelationshipState extends ConsumerState<Relationship> {
       ],
     );
 
-    controller.dispose();
+    // Delay disposal to avoid "used after being disposed" during dismiss animation.
+    WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
 
     if (result != null) {
       await status?.setAccountNote(accountId: widget.schema.id, comment: result);
@@ -211,7 +212,7 @@ class _RelationshipState extends ConsumerState<Relationship> {
                   foregroundColor: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () async {
-                  context.pop();
+                  Navigator.of(context).pop();
                   await status?.acceptFollowRequest(widget.schema.id);
                   onRefresh();
                 }
@@ -223,7 +224,7 @@ class _RelationshipState extends ConsumerState<Relationship> {
                   foregroundColor: Theme.of(context).colorScheme.error,
                 ),
                 onPressed: () async {
-                  context.pop();
+                  Navigator.of(context).pop();
                   await status?.rejectFollowRequest(widget.schema.id);
                   onRefresh();
                 }

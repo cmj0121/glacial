@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
@@ -13,6 +14,48 @@ import '../../../helpers/test_helpers.dart';
 // Use domain-null status so API calls short-circuit without HTTP.
 AccessStatusSchema _noDomainAuth() {
   return const AccessStatusSchema(domain: null, accessToken: 'test');
+}
+
+/// Wraps the Filters widget inside a GoRouter tree so that context.push()
+/// calls (used in onCreate and filter-item onTap) find a router ancestor.
+Widget _buildFiltersWithRouter({AccessStatusSchema? accessStatus}) {
+  final auth = accessStatus ?? _noDomainAuth();
+  final router = GoRouter(
+    initialLocation: '/',
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (_, __) => const Scaffold(body: Filters()),
+        routes: [
+          GoRoute(
+            path: 'home/filter/form',
+            builder: (_, __) => const Scaffold(body: Text('Create Filter')),
+          ),
+          GoRoute(
+            path: 'home/filter/form/edit',
+            builder: (_, __) => const Scaffold(body: Text('Edit Filter')),
+          ),
+        ],
+      ),
+    ],
+  );
+
+  return ProviderScope(
+    overrides: [
+      accessStatusProvider.overrideWith((ref) => auth),
+    ],
+    child: MaterialApp.router(
+      routerConfig: router,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('en'),
+    ),
+  );
 }
 
 void main() {
@@ -210,44 +253,36 @@ void main() {
 
     testWidgets('tapping add button calls onCreate', (tester) async {
       await tester.runAsync(() async {
-        await tester.pumpWidget(createTestWidgetRaw(
-          child: const Scaffold(body: Filters()),
-          accessStatus: _noDomainAuth(),
-        ));
+        await tester.pumpWidget(_buildFiltersWithRouter());
         await tester.pump();
       });
 
       // Tap the add button — triggers onCreate which pushes route
       await tester.tap(find.byIcon(Icons.add));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      // onCreate tries context.push which won't navigate in test but shouldn't crash
-      expect(find.byType(Filters), findsOneWidget);
+      // onCreate navigates to the create filter form route
+      expect(find.text('Create Filter'), findsOneWidget);
     });
 
     testWidgets('submitting text field calls onCreate', (tester) async {
       await tester.runAsync(() async {
-        await tester.pumpWidget(createTestWidgetRaw(
-          child: const Scaffold(body: Filters()),
-          accessStatus: _noDomainAuth(),
-        ));
+        await tester.pumpWidget(_buildFiltersWithRouter());
         await tester.pump();
       });
 
       // Submit text in the TextField — triggers onSubmitted which calls onCreate
       await tester.enterText(find.byType(TextField), 'test filter');
       await tester.testTextInput.receiveAction(TextInputAction.done);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(find.byType(Filters), findsOneWidget);
+      // onCreate navigates to the create filter form route
+      expect(find.text('Create Filter'), findsOneWidget);
     });
 
     testWidgets('tapping filter item navigates to edit', (tester) async {
       await tester.runAsync(() async {
-        await tester.pumpWidget(createTestWidgetRaw(
-          child: const Scaffold(body: Filters()),
-          accessStatus: _noDomainAuth(),
-        ));
+        await tester.pumpWidget(_buildFiltersWithRouter());
         await tester.pump();
       });
 
@@ -266,19 +301,16 @@ void main() {
           .markNeedsBuild();
       await tester.pump();
 
-      // Tap the filter item
+      // Tap the filter item — navigates to edit filter form route
       await tester.tap(find.text('Editable Filter'));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(find.byType(Filters), findsOneWidget);
+      expect(find.text('Edit Filter'), findsOneWidget);
     });
 
     testWidgets('swiping filter shows confirm dialog', (tester) async {
       await tester.runAsync(() async {
-        await tester.pumpWidget(createTestWidgetRaw(
-          child: const Scaffold(body: Filters()),
-          accessStatus: _noDomainAuth(),
-        ));
+        await tester.pumpWidget(_buildFiltersWithRouter());
         await tester.pump();
       });
 
@@ -301,8 +333,8 @@ void main() {
       await tester.drag(find.text('Swipe Filter'), const Offset(500, 0));
       await tester.pumpAndSettle();
 
-      // Should show confirm dialog
-      expect(find.byType(AlertDialog), findsOneWidget);
+      // Should show confirm dialog (Dialog on Apple/LiquidGlass, AlertDialog on Material)
+      expect(find.byType(Dialog), findsWidgets);
     });
   });
 

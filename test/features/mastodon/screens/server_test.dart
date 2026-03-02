@@ -229,7 +229,10 @@ void main() {
       // Tap the rules section (InkWellDone wrapping the rules ListTile)
       // The rules InkWellDone is the one containing the rule_outlined icon
       await tester.tap(find.byIcon(Icons.rule_outlined));
-      await tester.pumpAndSettle();
+      // Use pump() with duration instead of pumpAndSettle() because the outer
+      // MastodonServer InkWellDone has a Debouncer timer that prevents settling.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       // Should show the ServerRules dialog
       expect(find.byType(ServerRules), findsOneWidget);

@@ -285,6 +285,9 @@ void main() {
       // Should be removed from the list
       expect(find.text('Second draft to remove'), findsNothing);
       expect(find.text('First draft to keep'), findsOneWidget);
+
+      // Flush the 5-second timers from onRemoveDraft (SnackBar timer + storage delay).
+      await tester.pump(const Duration(seconds: 6));
     });
 
     testWidgets('renders multiple drafts', (tester) async {

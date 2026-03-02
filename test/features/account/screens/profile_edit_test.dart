@@ -495,7 +495,8 @@ void main() {
       final dismissible = find.byType(AccessibleDismissible);
       if (dismissible.evaluate().isNotEmpty) {
         await tester.drag(dismissible.first, const Offset(500, 0));
-        await tester.pumpAndSettle();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
       }
 
       expect(find.byType(EditProfilePage), findsOneWidget);

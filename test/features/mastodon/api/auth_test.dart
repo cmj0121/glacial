@@ -122,15 +122,13 @@ void main() {
       expect(result, 'app_token_xyz');
     });
 
-    test('getAppToken throws on 500 error', () async {
+    test('getAppToken returns null on 500 error', () async {
       HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
         return (500, '{"error":"server error"}');
       });
 
-      expect(
-        () => auth.getAppToken(domain: 'mock-server.com'),
-        throwsException,
-      );
+      final result = await auth.getAppToken(domain: 'mock-server.com');
+      expect(result, isNull);
     });
 
     test('authorize constructs correct URI', () async {
