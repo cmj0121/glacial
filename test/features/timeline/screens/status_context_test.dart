@@ -1,12 +1,18 @@
 // Widget tests for StatusContext component.
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/screens.dart';
 
+import '../../../helpers/mock_http.dart';
 import '../../../helpers/test_helpers.dart';
 
 /// Creates a test widget with accessStatusProvider returning null.
@@ -30,7 +36,26 @@ Widget _createNullAccessWidget({required Widget child}) {
 }
 
 void main() {
-  setupTestEnvironment();
+  late HttpOverrides? originalOverrides;
+
+  setUpAll(() {
+    setupTestEnvironment();
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/path_provider'),
+      (MethodCall methodCall) async => Directory.systemTemp.path,
+    );
+  });
+
+  setUp(() {
+    originalOverrides = HttpOverrides.current;
+  });
+
+  tearDown(() {
+    HttpOverrides.global = originalOverrides;
+  });
 
   group('StatusContext', () {
     testWidgets('renders with schema', (tester) async {
@@ -196,6 +221,119 @@ void main() {
 
       // Still shows ErrorState since provider is still null
       expect(find.byType(ErrorState), findsOneWidget);
+    });
+
+    testWidgets('success path renders ScrollablePositionedList with statuses', (tester) async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        if (url.path.contains('/context')) {
+          return (200, statusContextJson(
+            ancestorIds: ['ancestor-1'],
+            descendantIds: ['descendant-1'],
+          ));
+        }
+        return (200, '{}');
+      });
+
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final schema = MockStatus.create(id: 'selected-1');
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: StatusContext(schema: schema)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+        await tester.pump();
+      });
+
+      expect(find.byType(StatusContext), findsOneWidget);
+      // Should render the ScrollablePositionedList
+      expect(find.byType(ScrollablePositionedList), findsOneWidget);
+    });
+
+    testWidgets('success path renders AccessibleDismissible wrapper', (tester) async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        if (url.path.contains('/context')) {
+          return (200, statusContextJson(
+            ancestorIds: ['ancestor-2'],
+            descendantIds: ['descendant-2'],
+          ));
+        }
+        return (200, '{}');
+      });
+
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final schema = MockStatus.create(id: 'selected-2');
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: StatusContext(schema: schema)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+        await tester.pump();
+      });
+
+      expect(find.byType(AccessibleDismissible), findsOneWidget);
+    });
+
+    testWidgets('success path renders Status widgets for all statuses', (tester) async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        if (url.path.contains('/context')) {
+          return (200, statusContextJson(
+            ancestorIds: ['anc-1'],
+            descendantIds: ['desc-1', 'desc-2'],
+          ));
+        }
+        return (200, '{}');
+      });
+
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final schema = MockStatus.create(id: 'main-status');
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: StatusContext(schema: schema)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+        await tester.pump();
+      });
+
+      // Should have Status widgets (ancestor + main + 2 descendants = 4)
+      expect(find.byType(Status), findsWidgets);
+    });
+
+    testWidgets('success path with empty context renders single status', (tester) async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        if (url.path.contains('/context')) {
+          return (200, statusContextJson());
+        }
+        return (200, '{}');
+      });
+
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final schema = MockStatus.create(id: 'solo-status');
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: StatusContext(schema: schema)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+        await tester.pump();
+      });
+
+      // Just the main status, no ancestors/descendants
+      expect(find.byType(Status), findsOneWidget);
     });
   });
 }

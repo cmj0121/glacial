@@ -1,7 +1,11 @@
 // Tests for timeline API extensions.
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/mastodon/extensions.dart';
+
+import '../../../helpers/mock_http.dart';
 
 void main() {
   const auth = AccessStatusSchema(
@@ -113,6 +117,45 @@ void main() {
         () => auth.fetchLinkTimeline(url: 'https://example.com/article'),
         throwsA(anything),
       );
+    });
+  });
+
+  group('TimelineExtensions with mock HTTP (success paths)', () {
+    late HttpOverrides? originalOverrides;
+
+    setUp(() {
+      originalOverrides = HttpOverrides.current;
+    });
+
+    tearDown(() {
+      HttpOverrides.global = originalOverrides;
+    });
+
+    test('fetchTimeline home success returns parsed statuses', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, statusListJson(count: 2));
+      });
+
+      final mockAuth = const AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test-token',
+      );
+      final (statuses, _) = await mockAuth.fetchTimeline(TimelineType.home);
+      expect(statuses.length, 2);
+      expect(statuses.first.id, 'status-1');
+    });
+
+    test('fetchTimeline local success returns parsed statuses', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, '[]');
+      });
+
+      final mockAuth = const AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test-token',
+      );
+      final (statuses, _) = await mockAuth.fetchTimeline(TimelineType.local);
+      expect(statuses, isEmpty);
     });
   });
 }

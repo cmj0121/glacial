@@ -1,8 +1,11 @@
 // Tests for account API extensions (no-domain and valid-domain HTTP exercise).
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/mastodon/extensions.dart';
 
+import '../../../helpers/mock_http.dart';
 import '../../../helpers/test_helpers.dart';
 
 void main() {
@@ -172,6 +175,44 @@ void main() {
 
     test('unblockDomain throws on network error', () {
       expect(() => auth.unblockDomain('evil.com'), throwsA(anything));
+    });
+  });
+
+  group('AccountsExtensions with mock HTTP (success paths)', () {
+    late HttpOverrides? originalOverrides;
+
+    setUp(() {
+      originalOverrides = HttpOverrides.current;
+    });
+
+    tearDown(() {
+      HttpOverrides.global = originalOverrides;
+    });
+
+    test('getAccount success returns parsed account', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, accountJson(id: 'acc-99', username: 'alice'));
+      });
+
+      final mockAuth = const AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test-token',
+      );
+      final result = await mockAuth.getAccount('acc-99');
+      expect(result, isNotNull);
+      expect(result!.username, 'alice');
+    });
+
+    test('cacheAccount + lookupAccount round-trip works', () {
+      final mockAuth = const AccessStatusSchema(
+        domain: 'cache-test.com',
+        accessToken: 'token',
+      );
+      final account = MockAccount.create(id: 'cached-1', username: 'cached_user');
+      mockAuth.cacheAccount(account);
+      final result = mockAuth.lookupAccount('cached-1');
+      expect(result, isNotNull);
+      expect(result!.username, 'cached_user');
     });
   });
 }

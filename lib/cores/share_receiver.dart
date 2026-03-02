@@ -7,6 +7,8 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
+export 'package:receive_sharing_intent/receive_sharing_intent.dart' show SharedMediaFile, SharedMediaType;
+
 class ShareReceiver {
   static StreamSubscription<List<SharedMediaFile>>? _subscription;
   static SharedContentSchema? _pendingContent;
@@ -19,9 +21,9 @@ class ShareReceiver {
     // Listen for shares while the app is running (warm launch).
     _subscription = ReceiveSharingIntent.instance.getMediaStream().listen(
       (List<SharedMediaFile> files) {
-        final SharedContentSchema? content = _parseSharedMedia(files);
+        final SharedContentSchema? content = parseSharedMedia(files);
         if (content != null && content.hasContent) {
-          _navigateToComposer(content);
+          navigateToComposer(content);
         }
       },
       onError: (error) {
@@ -31,7 +33,7 @@ class ShareReceiver {
 
     // Check for shares that launched the app (cold launch).
     ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> files) {
-      final SharedContentSchema? content = _parseSharedMedia(files);
+      final SharedContentSchema? content = parseSharedMedia(files);
       if (content != null && content.hasContent) {
         _pendingContent = content;
       }
@@ -55,7 +57,8 @@ class ShareReceiver {
   }
 
   /// Parse shared media files into a SharedContentSchema.
-  static SharedContentSchema? _parseSharedMedia(List<SharedMediaFile> files) {
+  @visibleForTesting
+  static SharedContentSchema? parseSharedMedia(List<SharedMediaFile> files) {
     if (files.isEmpty) return null;
 
     String? text;
@@ -79,7 +82,8 @@ class ShareReceiver {
   }
 
   /// Navigate to the composer with the shared content.
-  static void _navigateToComposer(SharedContentSchema content) {
+  @visibleForTesting
+  static void navigateToComposer(SharedContentSchema content) {
     final BuildContext? context = _navigatorKey?.currentContext;
     if (context == null) return;
 

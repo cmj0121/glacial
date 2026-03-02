@@ -89,6 +89,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   sqflite_common_ffi: ^2.4.0+2
+  webview_flutter_platform_interface: ^2.10.0
 
 flutter_launcher_icons:
   image_path: "assets/images/logo.png"

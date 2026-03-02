@@ -2,6 +2,7 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart' show visibleForTesting;
 
 /// Platform type enumeration for UI adaptation.
 enum PlatformType {
@@ -10,12 +11,17 @@ enum PlatformType {
   other,   // Web, Windows, Linux - fallback
 }
 
+/// Override for testing platform-specific branches on non-native hosts.
+@visibleForTesting
+PlatformType? platformOverride;
+
 /// Detects the current platform for UI adaptation.
 ///
 /// Returns [PlatformType.apple] for iOS and macOS (Liquid Glass),
 /// [PlatformType.android] for Android (Material Design),
 /// and [PlatformType.other] for web and other platforms.
 PlatformType get currentPlatform {
+  if (platformOverride != null) return platformOverride!;
   if (kIsWeb) return PlatformType.other;
 
   if (Platform.isIOS || Platform.isMacOS) {

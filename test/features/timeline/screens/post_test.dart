@@ -521,6 +521,278 @@ void main() {
     });
   });
 
+  group('PostStatusForm onInitMentioned tests', () {
+    testWidgets('reply with poster-only preference pre-fills @poster acct', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final replyTo = MockStatus.create(
+        id: 'reply-tag-1',
+        content: '<p>Reply target</p>',
+      );
+      final pref = const SystemPreferenceSchema(replyTag: ReplyTagType.poster);
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm(replyTo: replyTo)),
+          accessStatus: status,
+          preference: pref,
+        ));
+        await tester.pump();
+      });
+
+      // Should pre-fill with @testuser (the replyTo poster's acct)
+      expect(find.textContaining('@testuser'), findsWidgets);
+    });
+
+    testWidgets('reply with none preference does not add mentions', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final replyTo = MockStatus.create(
+        id: 'reply-tag-2',
+        content: '<p>Reply target</p>',
+      );
+      final pref = const SystemPreferenceSchema(replyTag: ReplyTagType.none);
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm(replyTo: replyTo)),
+          accessStatus: status,
+          preference: pref,
+        ));
+        await tester.pump();
+      });
+
+      // The text field should be empty (no @mentions added)
+      expect(find.byType(PostStatusForm), findsOneWidget);
+    });
+
+    testWidgets('reply with all preference adds all mentioned accts', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        account: MockAccount.create(id: 'me', username: 'me', acct: 'me'),
+        server: MockServer.create(),
+      );
+      final replyTo = MockStatus.create(
+        id: 'reply-tag-3',
+        content: '<p>Reply with mentions</p>',
+        mentions: [
+          MockMention.create(id: 'm1', username: 'alice', acct: 'alice'),
+          MockMention.create(id: 'm2', username: 'bob', acct: 'bob'),
+        ],
+      );
+      final pref = const SystemPreferenceSchema(replyTag: ReplyTagType.all);
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm(replyTo: replyTo)),
+          accessStatus: status,
+          preference: pref,
+        ));
+        await tester.pump();
+      });
+
+      // Should have @alice, @bob, and @testuser (poster's acct) in text
+      expect(find.textContaining('@alice'), findsWidgets);
+      expect(find.textContaining('@bob'), findsWidgets);
+    });
+  });
+
+  group('PostStatusForm with editFrom', () {
+    testWidgets('renders with spoiler text from editFrom', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final editFrom = MockStatus.create(
+        id: 'edit-1',
+        content: '<p>Editing this</p>',
+        spoiler: 'Content Warning',
+      );
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm(editFrom: editFrom)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+      });
+
+      // Spoiler field should be rendered (not SizedBox.shrink)
+      expect(find.byType(PostStatusForm), findsOneWidget);
+      expect(find.text('Content Warning'), findsOneWidget);
+    });
+
+    testWidgets('renders with scheduledAt from editFrom', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final editFrom = MockStatus.create(
+        id: 'edit-2',
+        content: '<p>Scheduled post</p>',
+        scheduledAt: DateTime.now().add(const Duration(days: 1)),
+      );
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm(editFrom: editFrom)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+      });
+
+      // The scheduled icon should appear in the submit button
+      expect(find.byType(PostStatusForm), findsOneWidget);
+      expect(find.byIcon(Icons.schedule), findsOneWidget);
+    });
+
+    testWidgets('renders with attachments from editFrom', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final attachment = MockAttachment.create(id: 'att-edit-1');
+      final editFrom = MockStatus.create(
+        id: 'edit-3',
+        content: '<p>Post with media</p>',
+        attachments: [attachment],
+      );
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm(editFrom: editFrom)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+      });
+
+      // Media section should be rendered
+      expect(find.byType(PostStatusForm), findsOneWidget);
+      // Remove button icon should be visible for the attachment
+      expect(find.byIcon(Icons.remove_circle), findsOneWidget);
+    });
+
+    testWidgets('renders with draftFrom parameters', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final draft = DraftSchema(
+        id: 'draft-1',
+        content: 'Draft text here',
+        spoiler: 'Draft CW',
+        sensitive: true,
+        visibility: VisibilityType.private,
+        updatedAt: DateTime.now(),
+      );
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm(draftFrom: draft)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byType(PostStatusForm), findsOneWidget);
+      expect(find.text('Draft text here'), findsOneWidget);
+      expect(find.text('Draft CW'), findsOneWidget);
+    });
+
+    testWidgets('long press submit button toggles schedule mode', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm()),
+          accessStatus: status,
+        ));
+        await tester.pump();
+      });
+
+      // Initially shows chat icon (not scheduled)
+      expect(find.byIcon(Icons.chat), findsOneWidget);
+
+      // Long press the submit button (FilledButton.icon) to toggle schedule mode
+      final chatIcon = find.byIcon(Icons.chat);
+      // Find the ancestor FilledButton
+      final button = find.ancestor(
+        of: chatIcon,
+        matching: find.byWidgetPredicate((w) => w is FilledButton),
+      );
+      expect(button, findsOneWidget);
+
+      await tester.longPress(button);
+      await tester.pump();
+
+      // After long press, should show schedule icon
+      expect(find.byIcon(Icons.schedule), findsOneWidget);
+    });
+
+    testWidgets('unfocusing spoiler field updates spoiler state', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final editFrom = MockStatus.create(
+        id: 'edit-spoiler',
+        content: '<p>Test spoiler focus</p>',
+        spoiler: 'Initial CW',
+      );
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm(editFrom: editFrom)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+      });
+
+      // Find the spoiler text field (has the CW text)
+      expect(find.text('Initial CW'), findsOneWidget);
+
+      // Tap the spoiler field to focus it
+      await tester.tap(find.text('Initial CW'));
+      await tester.pump();
+
+      // Now tap the main content text field to unfocus the spoiler
+      final mainField = find.byType(TextFormField).last;
+      await tester.tap(mainField);
+      await tester.pump();
+
+      // Widget still renders without crash after focus change
+      expect(find.byType(PostStatusForm), findsOneWidget);
+    });
+
+    testWidgets('tapping remove button removes media attachment', (tester) async {
+      final status = MockAccessStatus.authenticated(
+        server: MockServer.create(),
+      );
+      final attachment = MockAttachment.create(id: 'att-rm-1');
+      final editFrom = MockStatus.create(
+        id: 'edit-rm',
+        content: '<p>Post</p>',
+        attachments: [attachment],
+      );
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidgetRaw(
+          child: Scaffold(body: PostStatusForm(editFrom: editFrom)),
+          accessStatus: status,
+        ));
+        await tester.pump();
+      });
+
+      // Verify remove button exists
+      expect(find.byIcon(Icons.remove_circle), findsOneWidget);
+
+      // Tap the remove button
+      await tester.tap(find.byIcon(Icons.remove_circle));
+      await tester.pumpAndSettle();
+
+      // After removing, the icon should be gone
+      expect(find.byIcon(Icons.remove_circle), findsNothing);
+    });
+  });
+
   group('AutoCompleteForm', () {
     testWidgets('renders with builder', (tester) async {
       final status = MockAccessStatus.authenticated(

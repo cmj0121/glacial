@@ -1,8 +1,11 @@
 // Tests for media API extensions.
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/mastodon/extensions.dart';
 
+import '../../../helpers/mock_http.dart';
 import '../../../helpers/test_helpers.dart';
 
 void main() {
@@ -76,6 +79,92 @@ void main() {
     // deleteMedia uses deleteAPI which throws
     test('deleteMedia throws on network error', () {
       expect(() => auth.deleteMedia(id: 'media-1'), throwsA(anything));
+    });
+  });
+
+  group('MediaExtensions with mock HTTP (success paths)', () {
+    late HttpOverrides? originalOverrides;
+
+    setUp(() {
+      originalOverrides = HttpOverrides.current;
+    });
+
+    tearDown(() {
+      HttpOverrides.global = originalOverrides;
+    });
+
+    test('fetchCustomEmojis success returns emojis', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, '[{"shortcode":"blobcat","url":"https://example.com/emoji/blobcat.png","static_url":"https://example.com/emoji/blobcat.png","visible_in_picker":true}]');
+      });
+
+      final mockAuth = const AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test-token',
+      );
+      final result = await mockAuth.fetchCustomEmojis();
+      expect(result.length, 1);
+      expect(result.first.shortcode, 'blobcat');
+    });
+
+    test('getMedia success returns attachment', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, attachmentJson(id: 'media-99'));
+      });
+
+      final mockAuth = const AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test-token',
+      );
+      final result = await mockAuth.getMedia(id: 'media-99');
+      expect(result, isNotNull);
+      expect(result!.id, 'media-99');
+    });
+
+    test('updateMedia success returns updated attachment', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, attachmentJson(id: 'media-99', description: 'Updated'));
+      });
+
+      final mockAuth = const AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test-token',
+      );
+      final result = await mockAuth.updateMedia(id: 'media-99', description: 'Updated', focus: '0.5,0.5');
+      expect(result.id, 'media-99');
+    });
+
+    test('deleteMedia success completes without error', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, '{}');
+      });
+
+      final mockAuth = const AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test-token',
+      );
+      await mockAuth.deleteMedia(id: 'media-99');
+    });
+
+    test('uploadMedia success returns attachment', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, attachmentJson(id: 'uploaded-1'));
+      });
+
+      // Create a temporary file to upload
+      final tempFile = File('${Directory.systemTemp.path}/test_upload.jpg');
+      tempFile.writeAsBytesSync([0xFF, 0xD8, 0xFF, 0xE0]); // minimal JPEG header
+
+      try {
+        final mockAuth = const AccessStatusSchema(
+          domain: 'example.com',
+          accessToken: 'test-token',
+        );
+        final result = await mockAuth.uploadMedia(tempFile.path);
+        expect(result.id, 'uploaded-1');
+      } finally {
+        if (tempFile.existsSync()) tempFile.deleteSync();
+      }
     });
   });
 }
