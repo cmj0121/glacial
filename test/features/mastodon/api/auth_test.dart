@@ -122,15 +122,13 @@ void main() {
       expect(result, 'app_token_xyz');
     });
 
-    test('getAppToken throws on 500 error', () async {
+    test('getAppToken returns null on 500 error', () async {
       HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
         return (500, '{"error":"server error"}');
       });
 
-      expect(
-        () => auth.getAppToken(domain: 'mock-server.com'),
-        throwsException,
-      );
+      final result = await auth.getAppToken(domain: 'mock-server.com');
+      expect(result, isNull);
     });
 
     test('authorize constructs correct URI', () async {
@@ -140,6 +138,37 @@ void main() {
       expect(uri.queryParameters['client_id'], 'test-client-id');
       expect(uri.queryParameters['response_type'], 'code');
       expect(uri.queryParameters['state'], 'test-state');
+    });
+
+    test('revokeAccessToken completes via POST to /oauth/revoke', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        expect(method, 'POST');
+        expect(url.path, '/oauth/revoke');
+        return (200, '{}');
+      });
+
+      await auth.revokeAccessToken(
+        domain: 'mock-server.com',
+        token: 'token-to-revoke',
+      );
+    });
+
+    test('getAppToken returns null on non-200 response', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (403, '{"error":"forbidden"}');
+      });
+
+      final result = await auth.getAppToken(domain: 'mock-server.com');
+      expect(result, isNull);
+    });
+
+    test('getAccessToken response without access_token returns null', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, '{"token_type":"bearer"}');
+      });
+
+      final result = await auth.getAccessToken(domain: 'mock-server.com', code: 'code');
+      expect(result, isNull);
     });
   });
 }

@@ -1,9 +1,28 @@
 // Tests for conversation API extensions.
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/mastodon/extensions.dart';
 
+import '../../../helpers/mock_http.dart';
 import '../../../helpers/test_helpers.dart';
+
+/// Build a JSON array of conversation objects.
+String conversationListJson({int count = 2}) {
+  final conversations = List.generate(count, (i) {
+    final accountData = jsonDecode(accountJson(id: 'acc-$i', username: 'user$i'));
+    final statusData = jsonDecode(statusJson(id: 'status-$i'));
+    return {
+      'id': 'conv-$i',
+      'accounts': [accountData],
+      'last_status': statusData,
+      'unread': false,
+    };
+  });
+  return jsonEncode(conversations);
+}
 
 void main() {
   AccessStatusSchema noDomainAuth() =>
@@ -71,6 +90,32 @@ void main() {
         () => auth.markConversationAsRead('conv-1'),
         throwsA(anything),
       );
+    });
+  });
+  group('ConversationExtensions with mock HTTP (success paths)', () {
+    late HttpOverrides? originalOverrides;
+
+    setUp(() {
+      originalOverrides = HttpOverrides.current;
+    });
+
+    tearDown(() {
+      HttpOverrides.global = originalOverrides;
+    });
+
+    test('fetchConversations parses conversations and caches accounts/statuses', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, conversationListJson(count: 2));
+      });
+
+      final mockAuth = const AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test-token',
+      );
+      final (conversations, _) = await mockAuth.fetchConversations();
+      expect(conversations.length, 2);
+      expect(conversations.first.id, 'conv-0');
+      expect(conversations.first.accounts, isNotEmpty);
     });
   });
 }

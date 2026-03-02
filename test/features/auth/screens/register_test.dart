@@ -12,6 +12,7 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
+import '../../../helpers/mock_http.dart';
 import '../../../helpers/test_helpers.dart';
 
 /// HttpOverrides that returns a 401 Unauthorized for all HTTP requests.
@@ -626,6 +627,137 @@ void main() {
 
       // Verify reason text was entered
       expect(find.text('I want to join'), findsOneWidget);
+    });
+
+    testWidgets('onRegister getAppToken returns null shows error message', (tester) async {
+      // Use MockHttpOverrides returning 200 with no access_token field,
+      // so getAppToken returns null (json['access_token'] is absent).
+      final previousOverrides = HttpOverrides.current;
+      HttpOverrides.global = MockHttpOverrides(
+        handler: (method, url) => (200, '{}'),
+      );
+
+      FlutterSecureStorage.setMockInitialValues({
+        'oauth_info': jsonEncode({
+          'example.com': {
+            'id': 'app-1',
+            'name': 'TestApp',
+            'scopes': ['read', 'write'],
+            'client_id': 'fake-client-id',
+            'client_secret': 'fake-client-secret',
+            'redirect_uri': 'glacial://auth',
+            'redirect_uris': ['glacial://auth'],
+          },
+        }),
+      });
+      SharedPreferences.setMockInitialValues({});
+      await Storage.init();
+
+      final status = AccessStatusSchema(
+        domain: 'example.com',
+        server: MockServer.create(domain: 'example.com'),
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: const RegisterPage(),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      // Fill all valid fields
+      await tester.enterText(find.widgetWithText(TextFormField, 'Username'), 'testuser');
+      await tester.enterText(find.widgetWithText(TextFormField, 'Email'), 'test@example.com');
+      await tester.enterText(find.widgetWithText(TextFormField, 'Password'), 'password123');
+      await tester.enterText(find.widgetWithText(TextFormField, 'Confirm Password'), 'password123');
+
+      // Check the agreement checkbox
+      await tester.tap(find.byType(CheckboxListTile));
+      await tester.pump();
+
+      // Tap register
+      await tester.tap(find.byType(FilledButton));
+      await tester.pump();
+
+      // Let async HTTP call complete
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+      });
+      await tester.pump();
+
+      // getAppToken returned null → should show "Registration failed"
+      expect(find.text('Registration failed'), findsOneWidget);
+
+      // Restore original HttpOverrides
+      HttpOverrides.global = previousOverrides;
+    });
+
+    testWidgets('onRegister registerAccount returns null shows email confirmation message', (tester) async {
+      // Route by URL path:
+      //   POST /oauth/token → 200 with access_token → getAppToken succeeds.
+      //   POST /api/v1/accounts → 200 with no access_token → registerAccount returns null.
+      final previousOverrides = HttpOverrides.current;
+      HttpOverrides.global = MockHttpOverrides(
+        handler: (method, url) {
+          if (url.path.contains('/oauth/token')) {
+            return (200, '{"access_token":"app_token"}');
+          }
+          // registerAccount call — 200 but no access_token field → returns null
+          return (200, '{}');
+        },
+      );
+
+      FlutterSecureStorage.setMockInitialValues({
+        'oauth_info': jsonEncode({
+          'example.com': {
+            'id': 'app-1',
+            'name': 'TestApp',
+            'scopes': ['read', 'write'],
+            'client_id': 'fake-client-id',
+            'client_secret': 'fake-client-secret',
+            'redirect_uri': 'glacial://auth',
+            'redirect_uris': ['glacial://auth'],
+          },
+        }),
+      });
+      SharedPreferences.setMockInitialValues({});
+      await Storage.init();
+
+      final status = AccessStatusSchema(
+        domain: 'example.com',
+        server: MockServer.create(domain: 'example.com'),
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        child: const RegisterPage(),
+        accessStatus: status,
+      ));
+      await tester.pump();
+
+      // Fill all valid fields
+      await tester.enterText(find.widgetWithText(TextFormField, 'Username'), 'testuser');
+      await tester.enterText(find.widgetWithText(TextFormField, 'Email'), 'test@example.com');
+      await tester.enterText(find.widgetWithText(TextFormField, 'Password'), 'password123');
+      await tester.enterText(find.widgetWithText(TextFormField, 'Confirm Password'), 'password123');
+
+      // Check the agreement checkbox
+      await tester.tap(find.byType(CheckboxListTile));
+      await tester.pump();
+
+      // Tap register
+      await tester.tap(find.byType(FilledButton));
+      await tester.pump();
+
+      // Let async HTTP calls complete
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+      });
+      await tester.pump();
+
+      // accessToken is null → email confirmation message
+      expect(find.textContaining('Check your email'), findsOneWidget);
+
+      // Restore original HttpOverrides
+      HttpOverrides.global = previousOverrides;
     });
   });
 

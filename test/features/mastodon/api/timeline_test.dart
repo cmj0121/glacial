@@ -6,6 +6,7 @@ import 'package:glacial/features/models.dart';
 import 'package:glacial/features/mastodon/extensions.dart';
 
 import '../../../helpers/mock_http.dart';
+import '../../../helpers/test_helpers.dart';
 
 void main() {
   const auth = AccessStatusSchema(
@@ -155,6 +156,33 @@ void main() {
         accessToken: 'test-token',
       );
       final (statuses, _) = await mockAuth.fetchTimeline(TimelineType.local);
+      expect(statuses, isEmpty);
+    });
+
+    test('fetchLinkTimeline success returns parsed statuses', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, statusListJson(count: 2));
+      });
+
+      final mockAuth = const AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test-token',
+      );
+      final (statuses, _) = await mockAuth.fetchLinkTimeline(url: 'https://example.com/article');
+      expect(statuses.length, 2);
+    });
+
+    test('fetchTimeline schedule delegates to fetchScheduledStatuses', () async {
+      HttpOverrides.global = MockHttpOverrides(handler: (method, url) {
+        return (200, '[]');
+      });
+
+      final mockAuth = const AccessStatusSchema(
+        domain: 'example.com',
+        accessToken: 'test-token',
+      );
+      final account = MockAccount.create();
+      final (statuses, _) = await mockAuth.fetchTimeline(TimelineType.schedule, account: account);
       expect(statuses, isEmpty);
     });
   });

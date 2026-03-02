@@ -1,4 +1,7 @@
 // Widget tests for account screens: Account, AccountAvatar, AccountLite.
+import 'dart:typed_data';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -465,6 +468,108 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Profile Page'), findsOneWidget);
+    });
+  });
+
+  group('CachedNetworkImage imageBuilder callbacks', () {
+    // A 1x1 transparent PNG for use as a fake ImageProvider.
+    final Uint8List kTransparentPng = Uint8List.fromList(<int>[
+      0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00,
+      0x0D, 0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
+      0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89,
+      0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x62,
+      0x00, 0x00, 0x00, 0x02, 0x00, 0x01, 0xE2, 0x21, 0xBC, 0x33, 0x00,
+      0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
+    ]);
+
+    testWidgets('Account.buildAvatar imageBuilder returns ClipRRect with Image', (tester) async {
+      final account = MockAccount.create();
+
+      await tester.pumpWidget(createTestWidget(
+        child: Account(schema: account),
+      ));
+      await tester.pump();
+
+      final cachedImages = tester.widgetList<CachedNetworkImage>(
+        find.byType(CachedNetworkImage),
+      );
+      expect(cachedImages, isNotEmpty);
+
+      final cni = cachedImages.first;
+      expect(cni.imageBuilder, isNotNull);
+
+      // Invoke the imageBuilder callback with a MemoryImage provider.
+      final provider = MemoryImage(kTransparentPng);
+      final element = tester.element(find.byType(Account));
+      final result = cni.imageBuilder!(element, provider);
+
+      // Account.buildAvatar imageBuilder returns a ClipRRect wrapping an Image.
+      expect(result, isA<ClipRRect>());
+      final clipRRect = result as ClipRRect;
+      expect(clipRRect.child, isA<Image>());
+      final image = clipRRect.child! as Image;
+      expect(image.image, same(provider));
+      expect(image.width, 48);
+      expect(image.height, 48);
+      expect(image.fit, BoxFit.cover);
+    });
+
+    testWidgets('AccountAvatar.buildContent imageBuilder returns Image', (tester) async {
+      final account = MockAccount.create();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AccountAvatar(schema: account),
+      ));
+      await tester.pump();
+
+      final cachedImages = tester.widgetList<CachedNetworkImage>(
+        find.byType(CachedNetworkImage),
+      );
+      expect(cachedImages, isNotEmpty);
+
+      final cni = cachedImages.first;
+      expect(cni.imageBuilder, isNotNull);
+
+      final provider = MemoryImage(kTransparentPng);
+      final element = tester.element(find.byType(AccountAvatar));
+      final result = cni.imageBuilder!(element, provider);
+
+      // AccountAvatar imageBuilder returns an Image directly.
+      expect(result, isA<Image>());
+      final image = result as Image;
+      expect(image.image, same(provider));
+      expect(image.width, 48);
+      expect(image.height, 48);
+      expect(image.fit, BoxFit.cover);
+    });
+
+    testWidgets('AccountLite.buildAvatar imageBuilder returns Image', (tester) async {
+      final account = MockAccount.create();
+
+      await tester.pumpWidget(createTestWidget(
+        child: AccountLite(schema: account),
+      ));
+      await tester.pump();
+
+      final cachedImages = tester.widgetList<CachedNetworkImage>(
+        find.byType(CachedNetworkImage),
+      );
+      expect(cachedImages, isNotEmpty);
+
+      final cni = cachedImages.first;
+      expect(cni.imageBuilder, isNotNull);
+
+      final provider = MemoryImage(kTransparentPng);
+      final element = tester.element(find.byType(AccountLite));
+      final result = cni.imageBuilder!(element, provider);
+
+      // AccountLite imageBuilder returns an Image directly.
+      expect(result, isA<Image>());
+      final image = result as Image;
+      expect(image.image, same(provider));
+      expect(image.width, 32); // AccountLite default size is 32
+      expect(image.height, 32);
+      expect(image.fit, BoxFit.cover);
     });
   });
 }

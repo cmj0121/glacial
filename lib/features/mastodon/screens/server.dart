@@ -240,6 +240,7 @@ class ServerRules extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      shrinkWrap: true,
       itemCount: rules.length,
       itemBuilder: (context, index) {
         final RuleSchema rule = rules[index];

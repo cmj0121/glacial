@@ -82,7 +82,7 @@ extension AuthExtensions on AccessStatusSchema {
     final Uri uri = UriEx.handle(domain, "/oauth/token");
     final response = await post(uri, body: jsonEncode(body), headers: {
       "Content-Type": "application/json",
-    });
+    }, validateStatus: false);
 
     if (response.statusCode != 200) {
       logger.w("failed to get app token from $domain: ${response.statusCode} ${response.body}");

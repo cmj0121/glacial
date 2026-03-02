@@ -339,7 +339,8 @@ extension AccountsExtensions on AccessStatusSchema {
         throw Exception("Unsupported relationship type: $type");
     }
 
-    final String body = await postAPI(endpoint) ?? '{}';
+    final String? body = await postAPI(endpoint);
+    if (body == null) return null;
     final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
     final RelationshipSchema relationship = RelationshipSchema.fromJson(json);
 
@@ -353,7 +354,8 @@ extension AccountsExtensions on AccessStatusSchema {
 
     final String endpoint = '/api/v1/accounts/$accountId/note';
     final Map<String, dynamic> body = {'comment': comment};
-    final String response = await postAPI(endpoint, body: body) ?? '{}';
+    final String? response = await postAPI(endpoint, body: body);
+    if (response == null) return null;
     final Map<String, dynamic> json = jsonDecode(response) as Map<String, dynamic>;
 
     return RelationshipSchema.fromJson(json);
@@ -363,7 +365,8 @@ extension AccountsExtensions on AccessStatusSchema {
   Future<RelationshipSchema?> endorseAccount({required String accountId}) async {
     checkSignedIn();
 
-    final String body = await postAPI('/api/v1/accounts/$accountId/endorse') ?? '{}';
+    final String? body = await postAPI('/api/v1/accounts/$accountId/endorse');
+    if (body == null) return null;
     final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
 
     return RelationshipSchema.fromJson(json);
@@ -373,7 +376,8 @@ extension AccountsExtensions on AccessStatusSchema {
   Future<RelationshipSchema?> unendorseAccount({required String accountId}) async {
     checkSignedIn();
 
-    final String body = await postAPI('/api/v1/accounts/$accountId/unendorse') ?? '{}';
+    final String? body = await postAPI('/api/v1/accounts/$accountId/unendorse');
+    if (body == null) return null;
     final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
 
     return RelationshipSchema.fromJson(json);
@@ -448,7 +452,8 @@ extension AccountsExtensions on AccessStatusSchema {
     }
 
     final String endpoint = '/api/v1/follow_requests/$accountID/authorize';
-    final String body = await postAPI(endpoint) ?? '{}';
+    final String? body = await postAPI(endpoint);
+    if (body == null) return null;
     final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
     final RelationshipSchema relationship = RelationshipSchema.fromJson(json);
 
@@ -463,7 +468,8 @@ extension AccountsExtensions on AccessStatusSchema {
     }
 
     final String endpoint = '/api/v1/follow_requests/$accountID/reject';
-    final String body = await postAPI(endpoint) ?? '{}';
+    final String? body = await postAPI(endpoint);
+    if (body == null) return null;
     final Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
     final RelationshipSchema relationship = RelationshipSchema.fromJson(json);
 
