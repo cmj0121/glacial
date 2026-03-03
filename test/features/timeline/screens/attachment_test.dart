@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/models.dart';
 import 'package:glacial/features/timeline/screens/attachment.dart';
 
 import '../../../helpers/test_helpers.dart';
@@ -368,6 +368,91 @@ void main() {
       expect(player.cover, isNull);
       expect(player.previewUrl, isNull);
       expect(player.blurhash, isNull);
+    });
+
+    testWidgets('shows error UI when initialization fails', (tester) async {
+      final url = Uri.parse('https://example.com/media/video.mp4');
+
+      // Use pump() to allow initialize() to fail and trigger error state.
+      await tester.pumpWidget(createTestWidget(
+        child: SizedBox(
+          width: 300,
+          height: 300,
+          child: MediaPlayer(url: url),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.byType(MediaPlayer), findsOneWidget);
+      expect(find.byIcon(Icons.error_outline), findsOneWidget);
+      expect(find.byIcon(Icons.refresh), findsOneWidget);
+      expect(find.text('Video failed to load'), findsOneWidget);
+      expect(find.text('Retry'), findsOneWidget);
+    });
+
+    testWidgets('retry button re-initializes the controller', (tester) async {
+      final url = Uri.parse('https://example.com/media/video.mp4');
+
+      await tester.pumpWidget(createTestWidget(
+        child: SizedBox(
+          width: 300,
+          height: 300,
+          child: MediaPlayer(url: url),
+        ),
+      ));
+      await tester.pump();
+
+      // Verify error state is showing
+      expect(find.byIcon(Icons.error_outline), findsOneWidget);
+
+      // Tap the retry button
+      await tester.tap(find.text('Retry'));
+      await tester.pump();
+
+      // After retry, the controller re-initializes and fails again in tests.
+      // The widget should still be present (either loading or error state).
+      expect(find.byType(MediaPlayer), findsOneWidget);
+    });
+  });
+
+  group('Attachment autoPlayVideo preference', () {
+    Widget wrapAttachment(AttachmentSchema schema) {
+      return SizedBox(
+        width: 300,
+        height: 300,
+        child: Attachment(schema: schema),
+      );
+    }
+
+    testWidgets('gifv uses autoPlay true when preference is true', (tester) async {
+      final attachment = MockAttachment.create(
+        type: MediaType.gifv,
+        url: 'https://example.com/media/anim.mp4',
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        preference: const SystemPreferenceSchema(autoPlayVideo: true),
+        child: wrapAttachment(attachment),
+      ));
+
+      // Find the MediaPlayer created by Attachment
+      final mediaPlayer = tester.widget<MediaPlayer>(find.byType(MediaPlayer));
+      expect(mediaPlayer.autoPlay, true);
+    });
+
+    testWidgets('gifv uses autoPlay false when preference is false', (tester) async {
+      final attachment = MockAttachment.create(
+        type: MediaType.gifv,
+        url: 'https://example.com/media/anim.mp4',
+      );
+
+      await tester.pumpWidget(createTestWidget(
+        preference: const SystemPreferenceSchema(autoPlayVideo: false),
+        child: wrapAttachment(attachment),
+      ));
+
+      final mediaPlayer = tester.widget<MediaPlayer>(find.byType(MediaPlayer));
+      expect(mediaPlayer.autoPlay, false);
     });
   });
 }

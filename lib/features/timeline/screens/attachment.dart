@@ -2,6 +2,7 @@
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:glacial/core.dart';
@@ -56,7 +57,7 @@ class Attachments extends StatelessWidget {
   }
 }
 
-class Attachment extends StatelessWidget {
+class Attachment extends ConsumerWidget {
   final AttachmentSchema schema;
   final List<AttachmentSchema>? schemas;
   final int initialIndex;
@@ -69,7 +70,7 @@ class Attachment extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ClipRRect(
       child: OverflowBox(
         alignment: Alignment.center,
@@ -78,13 +79,15 @@ class Attachment extends StatelessWidget {
         child: MediaHero(
           schemas: schemas ?? [schema],
           initialIndex: initialIndex,
-          child: buildContent(),
+          child: buildContent(ref),
         ),
       ),
     );
   }
 
-  Widget buildContent() {
+  Widget buildContent(WidgetRef ref) {
+    final bool autoPlayVideo = ref.read(preferenceProvider)?.autoPlayVideo ?? true;
+
     switch (schema.type) {
       case MediaType.image:
         return CachedNetworkImage(
@@ -100,7 +103,7 @@ class Attachment extends StatelessWidget {
           url: url,
           previewUrl: schema.previewUrl,
           blurhash: schema.blurhash,
-          autoPlay: true,
+          autoPlay: autoPlayVideo,
           showControls: false,
         );
       case MediaType.video:
