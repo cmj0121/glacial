@@ -338,6 +338,7 @@
   "btn_confirm": "Confirmar",
   "msg_loading_error": "Algo deu errado ao carregar. Por favor, tente novamente.",
   "btn_retry": "Tentar novamente",
+  "msg_video_error": "Falha ao carregar o vídeo",
   "msg_test_notification_pending": "A notificação de teste será enviada em 5 segundos...",
   "msg_test_notification_foreground": "Notificações não são enviadas enquanto o aplicativo está em primeiro plano.",
   "lbl_swipe_back": "Deslizar para voltar",

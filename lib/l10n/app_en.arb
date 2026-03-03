@@ -386,6 +386,7 @@
   "btn_confirm": "Confirm",
   "msg_loading_error": "Something went wrong while loading. Please try again.",
   "btn_retry": "Retry",
+  "msg_video_error": "Video failed to load",
   "msg_test_notification_pending": "Test notification will be sent in 5 seconds...",
   "msg_test_notification_foreground": "Notifications are not sent while the app is in the foreground.",
   "lbl_swipe_back": "Swipe to go back",

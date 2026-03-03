@@ -338,6 +338,7 @@
   "btn_confirm": "확인",
   "msg_loading_error": "로딩 중 오류가 발생했습니다. 다시 시도해 주세요.",
   "btn_retry": "다시 시도",
+  "msg_video_error": "동영상을 불러오지 못했습니다",
   "msg_test_notification_pending": "5초 후에 테스트 알림이 전송됩니다...",
   "msg_test_notification_foreground": "앱이 포그라운드에 있는 동안에는 알림이 전송되지 않습니다.",
   "lbl_swipe_back": "스와이프하여 뒤로 가기",

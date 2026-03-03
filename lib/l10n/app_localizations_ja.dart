@@ -1047,6 +1047,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_retry => '再試行';
 
   @override
+  String get msg_video_error => '動画の読み込みに失敗しました';
+
+  @override
   String get msg_test_notification_pending => '5秒後にテスト通知が送信されます...';
 
   @override

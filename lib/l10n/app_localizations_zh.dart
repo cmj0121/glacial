@@ -1047,6 +1047,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_retry => '重試';
 
   @override
+  String get msg_video_error => '影片載入失敗';
+
+  @override
   String get msg_test_notification_pending => '測試通知將在 5 秒後發送...';
 
   @override

@@ -1048,6 +1048,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_retry => '다시 시도';
 
   @override
+  String get msg_video_error => '동영상을 불러오지 못했습니다';
+
+  @override
   String get msg_test_notification_pending => '5초 후에 테스트 알림이 전송됩니다...';
 
   @override

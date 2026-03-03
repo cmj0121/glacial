@@ -338,6 +338,7 @@
   "btn_confirm": "確認",
   "msg_loading_error": "載入時發生錯誤，請重試。",
   "btn_retry": "重試",
+  "msg_video_error": "影片載入失敗",
   "msg_test_notification_pending": "測試通知將在 5 秒後發送...",
   "msg_test_notification_foreground": "應用程式在前景時不會發送通知。",
   "lbl_swipe_back": "滑動返回",

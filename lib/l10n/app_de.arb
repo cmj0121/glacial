@@ -338,6 +338,7 @@
   "btn_confirm": "Bestätigen",
   "msg_loading_error": "Beim Laden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
   "btn_retry": "Erneut versuchen",
+  "msg_video_error": "Video konnte nicht geladen werden",
   "msg_test_notification_pending": "Testbenachrichtigung wird in 5 Sekunden gesendet...",
   "msg_test_notification_foreground": "Benachrichtigungen werden nicht gesendet, während die App im Vordergrund ist.",
   "lbl_swipe_back": "Wischen, um zurückzugehen",

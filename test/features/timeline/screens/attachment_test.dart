@@ -144,8 +144,11 @@ void main() {
       expect(find.byType(CachedNetworkImage), findsOneWidget);
     });
 
-    testWidgets('shows CachedNetworkImage for gifv type', (tester) async {
-      final attachment = MockAttachment.create(type: MediaType.gifv);
+    testWidgets('shows MediaPlayer for gifv type (looping MP4)', (tester) async {
+      final attachment = MockAttachment.create(
+        type: MediaType.gifv,
+        url: 'https://example.com/media/anim.mp4',
+      );
 
       await tester.runAsync(() async {
         await tester.pumpWidget(createTestWidget(
@@ -155,7 +158,7 @@ void main() {
       });
 
       expect(find.byType(Attachment), findsOneWidget);
-      expect(find.byType(CachedNetworkImage), findsOneWidget);
+      expect(find.byType(MediaPlayer), findsOneWidget);
     });
 
     testWidgets('shows MediaPlayer for video type', (tester) async {
@@ -181,12 +184,10 @@ void main() {
         url: 'https://example.com/media/audio.mp3',
       );
 
-      await tester.runAsync(() async {
-        await tester.pumpWidget(createTestWidget(
-          child: wrapAttachment(attachment),
-        ));
-        await tester.pump();
-      });
+      // No runAsync/pump so MediaPlayer stays in loading state showing cover.
+      await tester.pumpWidget(createTestWidget(
+        child: wrapAttachment(attachment),
+      ));
 
       expect(find.byType(Attachment), findsOneWidget);
       expect(find.byType(MediaPlayer), findsOneWidget);
@@ -251,43 +252,39 @@ void main() {
     testWidgets('renders with url', (tester) async {
       final url = Uri.parse('https://example.com/media/video.mp4');
 
-      await tester.runAsync(() async {
-        await tester.pumpWidget(createTestWidget(
-          child: SizedBox(
-            width: 300,
-            height: 300,
-            child: MediaPlayer(url: url),
-          ),
-        ));
-        await tester.pump();
-      });
+      await tester.pumpWidget(createTestWidget(
+        child: SizedBox(
+          width: 300,
+          height: 300,
+          child: MediaPlayer(url: url),
+        ),
+      ));
+      await tester.pump();
 
       expect(find.byType(MediaPlayer), findsOneWidget);
     });
 
-    testWidgets('renders with cover widget', (tester) async {
+    testWidgets('renders with cover widget in loading state', (tester) async {
       final url = Uri.parse('https://example.com/media/audio.mp3');
       const cover = Icon(Icons.music_note_rounded, size: 64);
 
-      await tester.runAsync(() async {
-        await tester.pumpWidget(createTestWidget(
-          child: SizedBox(
-            width: 300,
-            height: 300,
-            child: MediaPlayer(url: url, cover: cover),
-          ),
-        ));
-        await tester.pump();
-      });
+      // No pump() after pumpWidget so controller stays in loading state.
+      await tester.pumpWidget(createTestWidget(
+        child: SizedBox(
+          width: 300,
+          height: 300,
+          child: MediaPlayer(url: url, cover: cover),
+        ),
+      ));
 
       expect(find.byType(MediaPlayer), findsOneWidget);
       expect(find.byIcon(Icons.music_note_rounded), findsOneWidget);
     });
 
-    testWidgets('shows shimmer while loading', (tester) async {
+    testWidgets('shows shimmer while loading without previewUrl', (tester) async {
       final url = Uri.parse('https://example.com/media/video.mp4');
 
-      // Pump without runAsync so the FutureBuilder stays in waiting state.
+      // Pump without runAsync so the controller stays in init state.
       await tester.pumpWidget(createTestWidget(
         child: SizedBox(
           width: 300,
@@ -306,6 +303,71 @@ void main() {
         ),
       );
       expect(sizedBoxFinder, findsOneWidget);
+    });
+
+    testWidgets('shows preview image while loading when previewUrl provided', (tester) async {
+      final url = Uri.parse('https://example.com/media/video.mp4');
+
+      // Pump without runAsync so the controller stays in init state.
+      await tester.pumpWidget(createTestWidget(
+        child: SizedBox(
+          width: 300,
+          height: 300,
+          child: MediaPlayer(
+            url: url,
+            previewUrl: 'https://example.com/media/preview.png',
+          ),
+        ),
+      ));
+
+      expect(find.byType(MediaPlayer), findsOneWidget);
+      // Should show CachedNetworkImage for the preview and CircularProgressIndicator
+      expect(find.byType(CachedNetworkImage), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('accepts autoPlay parameter', (tester) async {
+      final url = Uri.parse('https://example.com/media/video.mp4');
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: SizedBox(
+            width: 300,
+            height: 300,
+            child: MediaPlayer(url: url, autoPlay: true),
+          ),
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byType(MediaPlayer), findsOneWidget);
+    });
+
+    testWidgets('accepts showControls parameter', (tester) async {
+      final url = Uri.parse('https://example.com/media/video.mp4');
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(createTestWidget(
+          child: SizedBox(
+            width: 300,
+            height: 300,
+            child: MediaPlayer(url: url, showControls: false),
+          ),
+        ));
+        await tester.pump();
+      });
+
+      expect(find.byType(MediaPlayer), findsOneWidget);
+    });
+
+    test('MediaPlayer has correct default parameter values', () {
+      final url = Uri.parse('https://example.com/media/video.mp4');
+      final player = MediaPlayer(url: url);
+      expect(player.autoPlay, false);
+      expect(player.showControls, true);
+      expect(player.cover, isNull);
+      expect(player.previewUrl, isNull);
+      expect(player.blurhash, isNull);
     });
   });
 }
