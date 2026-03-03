@@ -1084,6 +1084,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_retry => 'Retry';
 
   @override
+  String get msg_video_error => 'Video failed to load';
+
+  @override
   String get msg_test_notification_pending =>
       'Test notification will be sent in 5 seconds...';
 

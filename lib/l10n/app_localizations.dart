@@ -2138,6 +2138,12 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get btn_retry;
 
+  /// No description provided for @msg_video_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Video failed to load'**
+  String get msg_video_error;
+
   /// No description provided for @msg_test_notification_pending.
   ///
   /// In en, this message translates to:

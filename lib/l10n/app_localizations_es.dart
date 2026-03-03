@@ -1098,6 +1098,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btn_retry => 'Reintentar';
 
   @override
+  String get msg_video_error => 'No se pudo cargar el video';
+
+  @override
   String get msg_test_notification_pending =>
       'La notificación de prueba se enviará en 5 segundos...';
 

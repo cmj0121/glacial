@@ -2,6 +2,7 @@
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:glacial/core.dart';
@@ -56,7 +57,7 @@ class Attachments extends StatelessWidget {
   }
 }
 
-class Attachment extends StatelessWidget {
+class Attachment extends ConsumerWidget {
   final AttachmentSchema schema;
   final List<AttachmentSchema>? schemas;
   final int initialIndex;
@@ -69,7 +70,7 @@ class Attachment extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ClipRRect(
       child: OverflowBox(
         alignment: Alignment.center,
@@ -78,13 +79,15 @@ class Attachment extends StatelessWidget {
         child: MediaHero(
           schemas: schemas ?? [schema],
           initialIndex: initialIndex,
-          child: buildContent(),
+          child: buildContent(ref),
         ),
       ),
     );
   }
 
-  Widget buildContent() {
+  Widget buildContent(WidgetRef ref) {
+    final bool autoPlayVideo = ref.read(preferenceProvider)?.autoPlayVideo ?? true;
+
     switch (schema.type) {
       case MediaType.image:
         return CachedNetworkImage(
@@ -94,15 +97,22 @@ class Attachment extends StatelessWidget {
           errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
         );
       case MediaType.gifv:
-        return CachedNetworkImage(
-          imageUrl: schema.previewUrl ?? schema.url,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => BlurhashPlaceholder(blurhash: schema.blurhash),
-          errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
+        // GIFV on Mastodon are short looping MP4 videos — play them as video.
+        final Uri url = Uri.parse(schema.url);
+        return MediaPlayer(
+          url: url,
+          previewUrl: schema.previewUrl,
+          blurhash: schema.blurhash,
+          autoPlay: autoPlayVideo,
+          showControls: false,
         );
       case MediaType.video:
         final Uri url = Uri.parse(schema.url);
-        return MediaPlayer(url: url);
+        return MediaPlayer(
+          url: url,
+          previewUrl: schema.previewUrl,
+          blurhash: schema.blurhash,
+        );
       case MediaType.audio:
         final Uri url = Uri.parse(schema.url);
         final Widget cover = Icon(Icons.music_note_rounded, size: 64);
@@ -117,11 +127,19 @@ class Attachment extends StatelessWidget {
 class MediaPlayer extends StatefulWidget {
   final Uri url;
   final Widget? cover;
+  final String? previewUrl;
+  final String? blurhash;
+  final bool autoPlay;
+  final bool showControls;
 
   const MediaPlayer({
     super.key,
     required this.url,
     this.cover,
+    this.previewUrl,
+    this.blurhash,
+    this.autoPlay = false,
+    this.showControls = true,
   });
 
   @override
@@ -129,49 +147,105 @@ class MediaPlayer extends StatefulWidget {
 }
 
 class _MediaPlayerState extends State<MediaPlayer> {
-  late final VideoPlayerController controller;
-  late Future<void> playerFuture;
+  VideoPlayerController? _controller;
+  bool _hasError = false;
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    controller = VideoPlayerController.networkUrl(widget.url)
-      ..setVolume(0.0) // Mute the video by default
-      ..setLooping(true);
+    _initController();
+  }
 
-    playerFuture = controller.initialize().then((_) {
-      setState(() {});
+  void _initController() {
+    _controller?.dispose();
+    _hasError = false;
+    _isInitialized = false;
+
+    final controller = VideoPlayerController.networkUrl(widget.url);
+    _controller = controller;
+
+    controller.initialize().then((_) {
+      if (!mounted) return;
+      controller.setVolume(0.0);
+      controller.setLooping(true);
+      setState(() => _isInitialized = true);
+      if (widget.autoPlay) controller.play();
+    }).catchError((Object error) {
+      logger.e("Failed to initialize video: $error");
+      if (!mounted) return;
+      setState(() => _hasError = true);
     });
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: playerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return Center(
-            child: SizedBox(
-              width: 50,
-              height: 50,
-              child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
-            ),
-          );
-        }
+    if (_hasError) return _buildError(context);
+    if (!_isInitialized) return _buildLoading(context);
+    return _buildPlayer();
+  }
 
-        return buildPlayer();
-      },
+  Widget _buildLoading(BuildContext context) {
+    // Show preview image while loading if available, otherwise shimmer.
+    if (widget.previewUrl != null) {
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          CachedNetworkImage(
+            imageUrl: widget.previewUrl!,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => BlurhashPlaceholder(blurhash: widget.blurhash),
+            errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
+          ),
+          const CircularProgressIndicator(),
+        ],
+      );
+    }
+    // Show cover widget (e.g. music note for audio) while loading.
+    if (widget.cover != null) {
+      return Center(child: widget.cover!);
+    }
+    return Center(
+      child: SizedBox(
+        width: 50,
+        height: 50,
+        child: ShimmerEffect(child: ColoredBox(color: Theme.of(context).colorScheme.surfaceContainerHighest)),
+      ),
+    );
+  }
+
+  Widget _buildError(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
+          const SizedBox(height: 8),
+          Text(
+            AppLocalizations.of(context)?.msg_video_error ?? 'Video failed to load',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 8),
+          TextButton.icon(
+            icon: const Icon(Icons.refresh, size: 18),
+            label: Text(AppLocalizations.of(context)?.btn_retry ?? 'Retry'),
+            onPressed: _initController,
+          ),
+        ],
+      ),
     );
   }
 
   // Build the video player with a progress indicator and controls.
-  Widget buildPlayer() {
+  Widget _buildPlayer() {
+    final controller = _controller!;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return ConstrainedBox(
@@ -182,13 +256,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              Center(child:widget.cover ?? const SizedBox.shrink()),
+              Center(child: widget.cover ?? const SizedBox.shrink()),
               AspectRatio(
                 aspectRatio: controller.value.aspectRatio,
                 child: VideoPlayer(controller),
               ),
-              buildControls(),
-              VideoProgressIndicator(controller, allowScrubbing: true),
+              if (widget.showControls) _buildControls(controller),
+              if (widget.showControls) VideoProgressIndicator(controller, allowScrubbing: true),
             ],
           ),
         );
@@ -197,7 +271,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   // Build the controls for the video player.
-  Widget buildControls() {
+  Widget _buildControls(VideoPlayerController controller) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [

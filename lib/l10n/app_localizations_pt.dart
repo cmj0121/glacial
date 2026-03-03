@@ -1098,6 +1098,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get btn_retry => 'Tentar novamente';
 
   @override
+  String get msg_video_error => 'Falha ao carregar o vídeo';
+
+  @override
   String get msg_test_notification_pending =>
       'A notificação de teste será enviada em 5 segundos...';
 
