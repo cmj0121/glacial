@@ -1517,6 +1517,52 @@ void main() {
       await tester.tap(switchFinder);
       await tester.pump();
     });
+
+    testWidgets('haptic toggle switch value reflects enabled state', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(hapticFeedback: true),
+        ));
+        await tester.pump();
+      });
+
+      final listViewFinder = find.byType(ListView);
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+
+      final switchTile = tester.widget<SwitchListTile>(
+        find.widgetWithIcon(SwitchListTile, Icons.vibration),
+      );
+      expect(switchTile.value, true);
+    });
+
+    testWidgets('haptic toggle switch value reflects disabled state', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(hapticFeedback: false),
+        ));
+        await tester.pump();
+      });
+
+      final listViewFinder = find.byType(ListView);
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+
+      final switchTile = tester.widget<SwitchListTile>(
+        find.widgetWithIcon(SwitchListTile, Icons.smartphone),
+      );
+      expect(switchTile.value, false);
+    });
   });
 
 }
