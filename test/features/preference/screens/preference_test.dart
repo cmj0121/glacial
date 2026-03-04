@@ -1284,6 +1284,199 @@ void main() {
     });
   });
 
+  group('OLED theme preference', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      await Storage.init();
+    });
+
+    testWidgets('OLED toggle is visible when dark theme is active', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(theme: ThemeMode.dark),
+        ));
+        await tester.pump();
+      });
+
+      // Scroll down multiple times to reveal the OLED toggle at the bottom
+      final listViewFinder = find.byType(ListView);
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+
+      expect(find.text('OLED Dark Theme'), findsOneWidget);
+    });
+
+    testWidgets('OLED toggle is hidden when light theme is active', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(theme: ThemeMode.light),
+        ));
+        await tester.pump();
+      });
+
+      // Scroll down fully
+      final listViewFinder = find.byType(ListView);
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+
+      expect(find.text('OLED Dark Theme'), findsNothing);
+    });
+
+    testWidgets('OLED toggle shows filled icon when enabled', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(theme: ThemeMode.dark, useOledTheme: true),
+        ));
+        await tester.pump();
+      });
+
+      final listViewFinder = find.byType(ListView);
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.brightness_1), findsOneWidget);
+    });
+
+    testWidgets('OLED toggle shows outlined icon when disabled', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(theme: ThemeMode.dark, useOledTheme: false),
+        ));
+        await tester.pump();
+      });
+
+      final listViewFinder = find.byType(ListView);
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.brightness_1_outlined), findsOneWidget);
+    });
+
+    testWidgets('tapping OLED toggle calls savePreference', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(theme: ThemeMode.dark, useOledTheme: false),
+        ));
+        await tester.pump();
+      });
+
+      final listViewFinder = find.byType(ListView);
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+
+      final switchFinder = find.widgetWithIcon(SwitchListTile, Icons.brightness_1_outlined);
+      expect(switchFinder, findsOneWidget);
+      await tester.tap(switchFinder);
+      await tester.pump();
+    });
+  });
+
+  group('Haptic feedback preference', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      await Storage.init();
+    });
+
+    testWidgets('haptic toggle is visible in Appearance section', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(),
+        ));
+        await tester.pump();
+      });
+
+      // Scroll down multiple times to reveal the haptic toggle (last item)
+      final listViewFinder = find.byType(ListView);
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+
+      expect(find.text('Haptic Feedback'), findsOneWidget);
+    });
+
+    testWidgets('haptic toggle shows vibration icon when enabled', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(hapticFeedback: true),
+        ));
+        await tester.pump();
+      });
+
+      final listViewFinder = find.byType(ListView);
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.vibration), findsOneWidget);
+    });
+
+    testWidgets('haptic toggle shows smartphone icon when disabled', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(hapticFeedback: false),
+        ));
+        await tester.pump();
+      });
+
+      final listViewFinder = find.byType(ListView);
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.smartphone), findsOneWidget);
+    });
+
+    testWidgets('tapping haptic toggle calls savePreference', (tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(_createPreferenceTestWidget(
+          child: const SystemPreference(),
+          preference: const SystemPreferenceSchema(hapticFeedback: true),
+        ));
+        await tester.pump();
+      });
+
+      final listViewFinder = find.byType(ListView);
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+      await tester.drag(listViewFinder, const Offset(0, -500));
+      await tester.pump();
+
+      final switchFinder = find.widgetWithIcon(SwitchListTile, Icons.vibration);
+      expect(switchFinder, findsOneWidget);
+      await tester.tap(switchFinder);
+      await tester.pump();
+    });
+  });
+
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
