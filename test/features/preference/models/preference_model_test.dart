@@ -168,6 +168,38 @@ void main() {
       expect(updated.hapticFeedback, false);
       expect(updated.theme, ThemeMode.light);
     });
+
+    test('fromString parses useOledTheme and hapticFeedback', () {
+      final json = jsonEncode({
+        'use_oled_theme': true,
+        'haptic_feedback': false,
+      });
+      final pref = SystemPreferenceSchema.fromString(json);
+      expect(pref.useOledTheme, true);
+      expect(pref.hapticFeedback, false);
+    });
+
+    test('fromJson handles null useOledTheme and hapticFeedback gracefully', () {
+      final pref = SystemPreferenceSchema.fromJson({
+        'use_oled_theme': null,
+        'haptic_feedback': null,
+      });
+      expect(pref.useOledTheme, false);
+      expect(pref.hapticFeedback, true);
+    });
+
+    test('toJson and fromJson round-trip preserves all new fields', () {
+      const pref = SystemPreferenceSchema(
+        useOledTheme: true,
+        hapticFeedback: false,
+        theme: ThemeMode.dark,
+      );
+      final json = pref.toJson();
+      final restored = SystemPreferenceSchema.fromJson(json);
+      expect(restored.useOledTheme, pref.useOledTheme);
+      expect(restored.hapticFeedback, pref.hapticFeedback);
+      expect(restored.theme, pref.theme);
+    });
   });
 
   group('ReplyTagType', () {
