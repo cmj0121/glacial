@@ -621,6 +621,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_preference_font_scale => '字體大小';
 
   @override
+  String get txt_preference_oled_theme => 'OLED 深色主題';
+
+  @override
+  String get desc_preference_oled_theme => '適用於 OLED 螢幕的純黑背景';
+
+  @override
+  String get txt_preference_haptic => '觸覺回饋';
+
+  @override
+  String get desc_preference_haptic => '在按讚、轉嘟等互動操作時震動';
+
+  @override
   String get desc_profile_bot => '該帳號可能會自動化操作且未受人為監控';
 
   @override

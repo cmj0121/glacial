@@ -23,6 +23,8 @@ void main() {
       expect(pref.autoPlayVideo, true);
       expect(pref.timelineLimit, 40);
       expect(pref.imageQuality, ImageQualityType.medium);
+      expect(pref.useOledTheme, false);
+      expect(pref.hapticFeedback, true);
     });
 
     test('toJson and fromJson round-trip', () {
@@ -41,6 +43,8 @@ void main() {
         autoPlayVideo: false,
         timelineLimit: 80,
         imageQuality: ImageQualityType.high,
+        useOledTheme: true,
+        hapticFeedback: false,
       );
       final json = pref.toJson();
       final restored = SystemPreferenceSchema.fromJson(json);
@@ -58,6 +62,8 @@ void main() {
       expect(restored.autoPlayVideo, false);
       expect(restored.timelineLimit, 80);
       expect(restored.imageQuality, ImageQualityType.high);
+      expect(restored.useOledTheme, true);
+      expect(restored.hapticFeedback, false);
     });
 
     test('fromString parses JSON string', () {
@@ -80,6 +86,8 @@ void main() {
       expect(pref.visibility, VisibilityType.public);
       expect(pref.fontScale, 1.0);
       expect(pref.autoPlayVideo, true);
+      expect(pref.useOledTheme, false);
+      expect(pref.hapticFeedback, true);
     });
 
     test('copyWith creates new instance with updated values', () {
@@ -125,6 +133,72 @@ void main() {
       const pref = SystemPreferenceSchema();
       final json = pref.toJson();
       expect(json['locale'], isNull);
+    });
+
+    test('toJson serializes useOledTheme and hapticFeedback', () {
+      const pref = SystemPreferenceSchema(useOledTheme: true, hapticFeedback: false);
+      final json = pref.toJson();
+      expect(json['use_oled_theme'], true);
+      expect(json['haptic_feedback'], false);
+    });
+
+    test('fromJson parses useOledTheme and hapticFeedback', () {
+      final pref = SystemPreferenceSchema.fromJson({
+        'use_oled_theme': true,
+        'haptic_feedback': false,
+      });
+      expect(pref.useOledTheme, true);
+      expect(pref.hapticFeedback, false);
+    });
+
+    test('copyWith updates useOledTheme and hapticFeedback', () {
+      const pref = SystemPreferenceSchema();
+      final updated = pref.copyWith(useOledTheme: true, hapticFeedback: false);
+      expect(updated.useOledTheme, true);
+      expect(updated.hapticFeedback, false);
+      // Other fields unchanged
+      expect(updated.theme, ThemeMode.dark);
+      expect(updated.fontScale, 1.0);
+    });
+
+    test('copyWith preserves useOledTheme and hapticFeedback when not specified', () {
+      const pref = SystemPreferenceSchema(useOledTheme: true, hapticFeedback: false);
+      final updated = pref.copyWith(theme: ThemeMode.light);
+      expect(updated.useOledTheme, true);
+      expect(updated.hapticFeedback, false);
+      expect(updated.theme, ThemeMode.light);
+    });
+
+    test('fromString parses useOledTheme and hapticFeedback', () {
+      final json = jsonEncode({
+        'use_oled_theme': true,
+        'haptic_feedback': false,
+      });
+      final pref = SystemPreferenceSchema.fromString(json);
+      expect(pref.useOledTheme, true);
+      expect(pref.hapticFeedback, false);
+    });
+
+    test('fromJson handles null useOledTheme and hapticFeedback gracefully', () {
+      final pref = SystemPreferenceSchema.fromJson({
+        'use_oled_theme': null,
+        'haptic_feedback': null,
+      });
+      expect(pref.useOledTheme, false);
+      expect(pref.hapticFeedback, true);
+    });
+
+    test('toJson and fromJson round-trip preserves all new fields', () {
+      const pref = SystemPreferenceSchema(
+        useOledTheme: true,
+        hapticFeedback: false,
+        theme: ThemeMode.dark,
+      );
+      final json = pref.toJson();
+      final restored = SystemPreferenceSchema.fromJson(json);
+      expect(restored.useOledTheme, pref.useOledTheme);
+      expect(restored.hapticFeedback, pref.hapticFeedback);
+      expect(restored.theme, pref.theme);
     });
   });
 

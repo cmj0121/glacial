@@ -644,6 +644,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_preference_font_scale => 'Taille de police';
 
   @override
+  String get txt_preference_oled_theme => 'Thème OLED sombre';
+
+  @override
+  String get desc_preference_oled_theme => 'Fond noir pur pour les écrans OLED';
+
+  @override
+  String get txt_preference_haptic => 'Retour haptique';
+
+  @override
+  String get desc_preference_haptic =>
+      'Vibrer lors des interactions comme favori et partage';
+
+  @override
   String get desc_profile_bot =>
       'Compte pouvant effectuer des actions automatisées sans supervision humaine';
 
