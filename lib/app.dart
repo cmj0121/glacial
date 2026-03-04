@@ -22,6 +22,33 @@ final IconButtonThemeData _iconButtonTheme = IconButtonThemeData(
   ),
 );
 
+// Build the dark theme, optionally using pure black for OLED screens.
+ThemeData _buildDarkTheme(SystemPreferenceSchema? schema) {
+  if (schema?.useOledTheme != true) {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      iconButtonTheme: _iconButtonTheme,
+    );
+  }
+
+  final ColorScheme oledScheme = ColorScheme.fromSeed(
+    seedColor: Colors.blue,
+    brightness: Brightness.dark,
+  ).copyWith(
+    surface: Colors.black,
+    onSurface: Colors.white,
+  );
+
+  return ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    colorScheme: oledScheme,
+    scaffoldBackgroundColor: Colors.black,
+    iconButtonTheme: _iconButtonTheme,
+  );
+}
+
 // The main application widget that contains the router and the theme.
 class CoreApp extends ConsumerStatefulWidget {
   final SystemPreferenceSchema? schema;
@@ -67,11 +94,7 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         brightness: Brightness.light,
         iconButtonTheme: _iconButtonTheme,
       ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        iconButtonTheme: _iconButtonTheme,
-      ),
+      darkTheme: _buildDarkTheme(schema),
 
       // Localizations support for the app.
       locale: schema?.locale,

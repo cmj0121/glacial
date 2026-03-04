@@ -120,6 +120,8 @@ class SystemPreferenceSchema {
   final bool autoPlayVideo;         // Auto-play videos in timeline
   final int timelineLimit;          // Max items to load in timeline (20-100)
   final ImageQualityType imageQuality; // Image quality preference
+  final bool useOledTheme;          // Pure black OLED theme (only applies in dark mode)
+  final bool hapticFeedback;        // Haptic feedback on interactions
 
   const SystemPreferenceSchema({
     this.server,
@@ -137,6 +139,8 @@ class SystemPreferenceSchema {
     this.autoPlayVideo = true,
     this.timelineLimit = 40,
     this.imageQuality = ImageQualityType.medium,
+    this.useOledTheme = false,
+    this.hapticFeedback = true,
   });
 
   // Convert the JSON string to a SystemPreferenceSchema object.
@@ -176,6 +180,8 @@ class SystemPreferenceSchema {
         (q) => q.name == json["image_quality"],
         orElse: () => ImageQualityType.medium,
       ),
+      useOledTheme: json["use_oled_theme"] as bool? ?? false,
+      hapticFeedback: json["haptic_feedback"] as bool? ?? true,
     );
   }
 
@@ -197,6 +203,8 @@ class SystemPreferenceSchema {
       "auto_play_video": autoPlayVideo,
       "timeline_limit": timelineLimit,
       "image_quality": imageQuality.name,
+      "use_oled_theme": useOledTheme,
+      "haptic_feedback": hapticFeedback,
     };
   }
 
@@ -217,6 +225,8 @@ class SystemPreferenceSchema {
     bool? autoPlayVideo,
     int? timelineLimit,
     ImageQualityType? imageQuality,
+    bool? useOledTheme,
+    bool? hapticFeedback,
   }) {
     return SystemPreferenceSchema(
       server: server ?? this.server,
@@ -234,6 +244,8 @@ class SystemPreferenceSchema {
       autoPlayVideo: autoPlayVideo ?? this.autoPlayVideo,
       timelineLimit: timelineLimit ?? this.timelineLimit,
       imageQuality: imageQuality ?? this.imageQuality,
+      useOledTheme: useOledTheme ?? this.useOledTheme,
+      hapticFeedback: hapticFeedback ?? this.hapticFeedback,
     );
   }
 }

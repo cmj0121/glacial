@@ -2,6 +2,7 @@
 // may disable the button if the action is not supported for now.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:glacial/core.dart';
@@ -9,7 +10,7 @@ import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
-class Interaction extends StatefulWidget {
+class Interaction extends ConsumerStatefulWidget {
   final StatusSchema schema;
   final AccessStatusSchema status;
   final StatusInteraction action;
@@ -30,10 +31,10 @@ class Interaction extends StatefulWidget {
   });
 
   @override
-  State<Interaction> createState() => _InteractionState();
+  ConsumerState<Interaction> createState() => _InteractionState();
 }
 
-class _InteractionState extends State<Interaction> {
+class _InteractionState extends ConsumerState<Interaction> {
   @override
   Widget build(BuildContext context) {
     return widget.isCompact ? buildCompactIcon() : buildFullButton(context);
@@ -219,7 +220,7 @@ class _InteractionState extends State<Interaction> {
       case StatusInteraction.favourite:
       case StatusInteraction.bookmark:
       case StatusInteraction.pin:
-        HapticFeedback.lightImpact();
+        _haptic();
         final StatusSchema updatedStatus = await widget.status.interactWithStatus(
           widget.schema,
           widget.action,
@@ -255,7 +256,7 @@ class _InteractionState extends State<Interaction> {
         widget.onDeleted?.call();
         return;
       case StatusInteraction.share:
-        HapticFeedback.lightImpact();
+        _haptic();
         try {
           final String uri = widget.schema.uri;
           final String plainText = widget.schema.plainText;
@@ -298,7 +299,7 @@ class _InteractionState extends State<Interaction> {
         );
         return;
       case StatusInteraction.mute:
-        HapticFeedback.lightImpact();
+        _haptic();
         final StatusSchema mutedStatus = await widget.status.interactWithStatus(
           widget.schema,
           widget.action,
@@ -328,6 +329,11 @@ class _InteractionState extends State<Interaction> {
         );
         return;
     }
+  }
+
+  void _haptic() {
+    final bool enabled = ref.read(preferenceProvider)?.hapticFeedback ?? true;
+    if (enabled) HapticFeedback.lightImpact();
   }
 
   bool get isSignedIn => widget.status.accessToken?.isNotEmpty == true;

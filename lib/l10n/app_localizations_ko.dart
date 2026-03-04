@@ -621,6 +621,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_preference_font_scale => '글꼴 크기';
 
   @override
+  String get txt_preference_oled_theme => 'OLED 다크 테마';
+
+  @override
+  String get desc_preference_oled_theme => 'OLED 화면을 위한 순수한 검정 배경';
+
+  @override
+  String get txt_preference_haptic => '햅틱 피드백';
+
+  @override
+  String get desc_preference_haptic => '좋아요, 부스트 등의 상호작용 시 진동';
+
+  @override
   String get desc_profile_bot => '자동으로 동작하는 계정, 인간의 감시는 없음';
 
   @override

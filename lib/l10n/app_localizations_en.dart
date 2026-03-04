@@ -634,6 +634,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_preference_font_scale => 'Font Size';
 
   @override
+  String get txt_preference_oled_theme => 'OLED Dark Theme';
+
+  @override
+  String get desc_preference_oled_theme =>
+      'Pure black background for OLED screens';
+
+  @override
+  String get txt_preference_haptic => 'Haptic Feedback';
+
+  @override
+  String get desc_preference_haptic =>
+      'Vibrate on interactions like favourite and boost';
+
+  @override
   String get desc_profile_bot =>
       'The account may perform automated actions and not monitored by humans';
 

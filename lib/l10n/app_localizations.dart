@@ -1310,6 +1310,30 @@ abstract class AppLocalizations {
   /// **'Font Size'**
   String get txt_preference_font_scale;
 
+  /// No description provided for @txt_preference_oled_theme.
+  ///
+  /// In en, this message translates to:
+  /// **'OLED Dark Theme'**
+  String get txt_preference_oled_theme;
+
+  /// No description provided for @desc_preference_oled_theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Pure black background for OLED screens'**
+  String get desc_preference_oled_theme;
+
+  /// No description provided for @txt_preference_haptic.
+  ///
+  /// In en, this message translates to:
+  /// **'Haptic Feedback'**
+  String get txt_preference_haptic;
+
+  /// No description provided for @desc_preference_haptic.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibrate on interactions like favourite and boost'**
+  String get desc_preference_haptic;
+
   /// No description provided for @desc_profile_bot.
   ///
   /// In en, this message translates to:

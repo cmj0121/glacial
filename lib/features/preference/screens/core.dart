@@ -308,6 +308,32 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           ),
           leading: Icon(Icons.format_size, size: iconSize),
         ),
+        if (schema.theme == ThemeMode.dark)
+          SwitchListTile(
+            title: Text(AppLocalizations.of(context)?.txt_preference_oled_theme ?? "OLED Dark Theme"),
+            subtitle: Text(
+              AppLocalizations.of(context)?.desc_preference_oled_theme ?? "Pure black background for OLED screens.",
+              style: labelStyle,
+            ),
+            value: schema.useOledTheme,
+            secondary: Icon(schema.useOledTheme ? Icons.brightness_1 : Icons.brightness_1_outlined, size: iconSize),
+            onChanged: (bool value) {
+              Storage().savePreference(schema.copyWith(useOledTheme: value), ref: ref);
+              ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
+            },
+          ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_haptic ?? "Haptic Feedback"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_haptic ?? "Vibrate on interactions like favourite and boost.",
+            style: labelStyle,
+          ),
+          value: schema.hapticFeedback,
+          secondary: Icon(schema.hapticFeedback ? Icons.vibration : Icons.smartphone, size: iconSize),
+          onChanged: (bool value) {
+            Storage().savePreference(schema.copyWith(hapticFeedback: value), ref: ref);
+          },
+        ),
       ],
     );
   }
