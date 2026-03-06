@@ -107,6 +107,7 @@ enum DrawerButtonType {
   switchServer,
   directory,
   announcement,
+  instanceInfo,
   preference,
   logout;
 
@@ -123,6 +124,8 @@ enum DrawerButtonType {
         return Icons.groups;
       case announcement:
         return Icons.campaign;
+      case instanceInfo:
+        return Icons.info_outline;
       case preference:
         return Icons.settings;
       case logout:
@@ -143,6 +146,8 @@ enum DrawerButtonType {
         return AppLocalizations.of(context)?.btn_drawer_directory ?? "Directory";
       case announcement:
         return AppLocalizations.of(context)?.btn_drawer_announcement ?? "Announcements";
+      case instanceInfo:
+        return AppLocalizations.of(context)?.btn_drawer_instance_info ?? "About This Server";
       case preference:
         return AppLocalizations.of(context)?.btn_drawer_preference ?? "Preference";
       case logout:
@@ -162,6 +167,8 @@ enum DrawerButtonType {
         return RoutePath.directory;
       case announcement:
         return RoutePath.timeline; // Announcement does not navigate, it opens a bottom sheet.
+      case instanceInfo:
+        return RoutePath.timeline; // Instance info opens a bottom sheet, not a route.
       case preference:
         return RoutePath.preference;
       case logout:

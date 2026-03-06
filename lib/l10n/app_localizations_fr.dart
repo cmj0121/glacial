@@ -1182,4 +1182,31 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get msg_share_not_signed_in =>
       'Connectez-vous pour partager du contenu';
+
+  @override
+  String get btn_drawer_instance_info => 'À propos de ce serveur';
+
+  @override
+  String get txt_instance_version => 'Version';
+
+  @override
+  String get txt_instance_active_users => 'Utilisateurs actifs (Mensuel)';
+
+  @override
+  String get txt_instance_contact => 'Contact';
+
+  @override
+  String get txt_instance_languages => 'Langues';
+
+  @override
+  String get txt_instance_registration => 'Inscription';
+
+  @override
+  String get txt_instance_approval_required => 'Approbation requise';
+
+  @override
+  String get txt_instance_open => 'Ouvert';
+
+  @override
+  String get txt_instance_closed => 'Fermé';
 }

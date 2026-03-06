@@ -361,5 +361,14 @@
   "msg_server_unreachable": "Servidor inaccesible. Verifica tu conexión o prueba con otro servidor.",
   "msg_share_upload_failed": "Error al subir la imagen compartida",
   "msg_share_received": "Contenido compartido recibido",
-  "msg_share_not_signed_in": "Inicia sesión para compartir contenido"
+  "msg_share_not_signed_in": "Inicia sesión para compartir contenido",
+  "btn_drawer_instance_info": "Sobre este servidor",
+  "txt_instance_version": "Versión",
+  "txt_instance_active_users": "Usuarios activos (Mensual)",
+  "txt_instance_contact": "Contacto",
+  "txt_instance_languages": "Idiomas",
+  "txt_instance_registration": "Registro",
+  "txt_instance_approval_required": "Requiere aprobación",
+  "txt_instance_open": "Abierto",
+  "txt_instance_closed": "Cerrado"
 }

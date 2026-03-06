@@ -1121,4 +1121,31 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get msg_share_not_signed_in => 'コンテンツを共有するにはサインインしてください';
+
+  @override
+  String get btn_drawer_instance_info => 'このサーバーについて';
+
+  @override
+  String get txt_instance_version => 'バージョン';
+
+  @override
+  String get txt_instance_active_users => 'アクティブユーザー（月間）';
+
+  @override
+  String get txt_instance_contact => '連絡先';
+
+  @override
+  String get txt_instance_languages => '言語';
+
+  @override
+  String get txt_instance_registration => '登録';
+
+  @override
+  String get txt_instance_approval_required => '承認が必要';
+
+  @override
+  String get txt_instance_open => 'オープン';
+
+  @override
+  String get txt_instance_closed => '受付停止';
 }

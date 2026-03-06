@@ -435,5 +435,17 @@
   },
   "msg_share_upload_failed": "Failed to upload shared image",
   "msg_share_received": "Shared content received",
-  "msg_share_not_signed_in": "Sign in to share content"
+  "msg_share_not_signed_in": "Sign in to share content",
+  "btn_drawer_instance_info": "About This Server",
+  "@btn_drawer_instance_info": {
+    "description": "Drawer button label for viewing server instance information"
+  },
+  "txt_instance_version": "Version",
+  "txt_instance_active_users": "Active Users (Monthly)",
+  "txt_instance_contact": "Contact",
+  "txt_instance_languages": "Languages",
+  "txt_instance_registration": "Registration",
+  "txt_instance_approval_required": "Approval Required",
+  "txt_instance_open": "Open",
+  "txt_instance_closed": "Closed"
 }
