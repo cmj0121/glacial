@@ -1,5 +1,6 @@
 // The customized tab view that can be used to show the active and inactive
 // tabs and slide the content to trigger the animation.
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
@@ -27,6 +28,13 @@ class SwipeTabView extends StatefulWidget {
 }
 
 class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMixin {
+  static const Set<PointerDeviceKind> _dragDevices = {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.stylus,
+    PointerDeviceKind.trackpad,
+  };
+
   late final TabController tabController;
   late final PageController pageController;
 
@@ -78,7 +86,9 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
           itemCount: widget.itemCount,
           tabBuilder: widget.tabBuilder,
           onTabTappable: widget.onTabTappable,
-          onDoubleTap: () => widget.onDoubleTap?.call(tabController.index),
+          onDoubleTap: widget.onDoubleTap != null
+              ? () => widget.onDoubleTap!.call(tabController.index)
+              : null,
         ),
         const SizedBox(height: 8),
         Flexible(child: buildContent()),
@@ -110,16 +120,21 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
 
         return false;
       },
-      child: PageView(
-        controller: pageController,
-        children: List.generate(visibleCount, (index) {
-          final int realIndex = visibleIndexes[index];
-          return widget.itemBuilder(context, realIndex);
-        }),
-        onPageChanged: (index) => setState(() {
-          final int realIndex = visibleIndexes[index];
-          tabController.animateTo(realIndex);
-        }),
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(
+          dragDevices: _dragDevices,
+        ),
+        child: PageView(
+          controller: pageController,
+          children: List.generate(visibleCount, (index) {
+            final int realIndex = visibleIndexes[index];
+            return widget.itemBuilder(context, realIndex);
+          }),
+          onPageChanged: (index) => setState(() {
+            final int realIndex = visibleIndexes[index];
+            tabController.animateTo(realIndex);
+          }),
+        ),
       ),
     );
   }
