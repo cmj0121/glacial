@@ -37,6 +37,7 @@ class StatusSchema {
   final List<FilterResultSchema>? filtered; // If the current token has an authorized user: The filter and keywords that matched this status.
   final ApplicationSchema? application;     // The application used to post the status.
   final String? language;                    // Primary language of the status (ISO 639-1).
+  final List<ReactionSchema> reactions;      // Emoji reactions on this status.
   final DateTime createdAt;                 // The date when this status was created.
   final DateTime? editedAt;                 // Timestamp of when the status was last edited.
   final DateTime? scheduledAt;              // Timestamp of when the status is scheduled to be posted.
@@ -74,6 +75,7 @@ class StatusSchema {
     this.filtered,
     this.application,
     this.language,
+    this.reactions = const [],
     required this.createdAt,
     this.editedAt,
     this.scheduledAt,
@@ -127,6 +129,9 @@ class StatusSchema {
         .toList() ?? [],
       application: json['application'] == null ? null : ApplicationSchema.fromJson(json['application'] as Map<String, dynamic>),
       language: json['language'] as String?,
+      reactions: (json['reactions'] as List<dynamic>?)
+        ?.map((e) => ReactionSchema.fromJson(e as Map<String, dynamic>))
+        .toList() ?? [],
       createdAt: DateTime.parse(json['created_at'] as String),
       editedAt: json['edited_at'] == null ? null : DateTime.parse(json['edited_at'] as String),
     );

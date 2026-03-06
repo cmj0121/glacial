@@ -6,6 +6,7 @@ import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
+import 'package:glacial/features/timeline/screens/reaction_chips.dart';
 
 /// The single Status widget that contains the status information.
 class Status extends ConsumerStatefulWidget {
@@ -57,6 +58,11 @@ class _StatusState extends ConsumerState<Status> {
               onReload(updatedStatus);
             },
             onLinkTap: onLinkTap,
+          ),
+
+          ReactionChips(
+            schema: schema,
+            onReload: onReload,
           ),
 
           const SizedBox(height: 8),

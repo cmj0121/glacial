@@ -23,6 +23,8 @@
 //    - [+] PUT    /api/v1/statuses/:id
 //    - [+] GET    /api/v1/statuses/:id/history
 //    - [+] GET    /api/v1/statuses/:id/source
+//    - [+] PUT    /api/v1/statuses/:id/react/:emoji
+//    - [+] DELETE /api/v1/statuses/:id/react/:emoji
 //    - [-] GET    /api/v1/statuses/:id/card            (deprecated in 3.0.0)
 //
 // ## Scheduled Status APIs
@@ -303,6 +305,28 @@ extension StatusExtensions on AccessStatusSchema {
     }
     logger.d("complete fetch statuses by IDs, count: ${statuses.length}");
     return statuses;
+  }
+
+  // Add an emoji reaction to a status.
+  Future<StatusSchema> addStatusReaction(StatusSchema status, String emoji) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/statuses/${status.id}/react/${Uri.encodeComponent(emoji)}';
+    final String body = await putAPI(endpoint) ?? '{}';
+    final StatusSchema updated = StatusSchema.fromString(body);
+    saveStatusToCache(updated);
+    return updated;
+  }
+
+  // Remove an emoji reaction from a status.
+  Future<StatusSchema> removeStatusReaction(StatusSchema status, String emoji) async {
+    checkSignedIn();
+
+    final String endpoint = '/api/v1/statuses/${status.id}/react/${Uri.encodeComponent(emoji)}';
+    final String body = await deleteAPI(endpoint) ?? '{}';
+    final StatusSchema updated = StatusSchema.fromString(body);
+    saveStatusToCache(updated);
+    return updated;
   }
 
   // Obtain the source properties for a status so that it can be edited.
