@@ -1124,4 +1124,31 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get msg_share_not_signed_in => '콘텐츠를 공유하려면 로그인하세요';
+
+  @override
+  String get btn_drawer_instance_info => '이 서버 정보';
+
+  @override
+  String get txt_instance_version => '버전';
+
+  @override
+  String get txt_instance_active_users => '활성 사용자 (월간)';
+
+  @override
+  String get txt_instance_contact => '연락처';
+
+  @override
+  String get txt_instance_languages => '언어';
+
+  @override
+  String get txt_instance_registration => '가입';
+
+  @override
+  String get txt_instance_approval_required => '승인 필요';
+
+  @override
+  String get txt_instance_open => '개방';
+
+  @override
+  String get txt_instance_closed => '폐쇄';
 }

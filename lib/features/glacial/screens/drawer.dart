@@ -146,6 +146,14 @@ class _GlacialDrawerState extends ConsumerState<GlacialDrawer> {
           );
         }
         return;
+      case DrawerButtonType.instanceInfo:
+        if (mounted) {
+          showAdaptiveGlassSheet(
+            context: context,
+            builder: (_) => InstanceInfoSheet(status: status),
+          );
+        }
+        return;
       case DrawerButtonType.logout:
         await storage.logout(status, ref: ref);
         // always force reload the app after logout

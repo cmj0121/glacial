@@ -144,8 +144,8 @@ void main() {
   });
 
   group('DrawerButtonType', () {
-    test('has 7 values', () {
-      expect(DrawerButtonType.values.length, 7);
+    test('has 8 values', () {
+      expect(DrawerButtonType.values.length, 8);
     });
 
     test('returns correct icons', () {

@@ -2281,6 +2281,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in to share content'**
   String get msg_share_not_signed_in;
+
+  /// Drawer button label for viewing server instance information
+  ///
+  /// In en, this message translates to:
+  /// **'About This Server'**
+  String get btn_drawer_instance_info;
+
+  /// No description provided for @txt_instance_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get txt_instance_version;
+
+  /// No description provided for @txt_instance_active_users.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Users (Monthly)'**
+  String get txt_instance_active_users;
+
+  /// No description provided for @txt_instance_contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get txt_instance_contact;
+
+  /// No description provided for @txt_instance_languages.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get txt_instance_languages;
+
+  /// No description provided for @txt_instance_registration.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration'**
+  String get txt_instance_registration;
+
+  /// No description provided for @txt_instance_approval_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval Required'**
+  String get txt_instance_approval_required;
+
+  /// No description provided for @txt_instance_open.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get txt_instance_open;
+
+  /// No description provided for @txt_instance_closed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get txt_instance_closed;
 }
 
 class _AppLocalizationsDelegate

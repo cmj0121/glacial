@@ -1180,4 +1180,31 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get msg_share_not_signed_in =>
       'Inicia sesión para compartir contenido';
+
+  @override
+  String get btn_drawer_instance_info => 'Sobre este servidor';
+
+  @override
+  String get txt_instance_version => 'Versión';
+
+  @override
+  String get txt_instance_active_users => 'Usuarios activos (Mensual)';
+
+  @override
+  String get txt_instance_contact => 'Contacto';
+
+  @override
+  String get txt_instance_languages => 'Idiomas';
+
+  @override
+  String get txt_instance_registration => 'Registro';
+
+  @override
+  String get txt_instance_approval_required => 'Requiere aprobación';
+
+  @override
+  String get txt_instance_open => 'Abierto';
+
+  @override
+  String get txt_instance_closed => 'Cerrado';
 }

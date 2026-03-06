@@ -361,5 +361,14 @@
   "msg_server_unreachable": "無法連線至伺服器。請檢查連線或嘗試其他伺服器。",
   "msg_share_upload_failed": "上傳分享圖片失敗",
   "msg_share_received": "已接收分享內容",
-  "msg_share_not_signed_in": "登入以分享內容"
+  "msg_share_not_signed_in": "登入以分享內容",
+  "btn_drawer_instance_info": "關於此伺服器",
+  "txt_instance_version": "版本",
+  "txt_instance_active_users": "活躍使用者（每月）",
+  "txt_instance_contact": "聯絡方式",
+  "txt_instance_languages": "語言",
+  "txt_instance_registration": "註冊",
+  "txt_instance_approval_required": "需要審核",
+  "txt_instance_open": "開放",
+  "txt_instance_closed": "已關閉"
 }

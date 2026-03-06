@@ -1121,4 +1121,31 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_share_not_signed_in => '登入以分享內容';
+
+  @override
+  String get btn_drawer_instance_info => '關於此伺服器';
+
+  @override
+  String get txt_instance_version => '版本';
+
+  @override
+  String get txt_instance_active_users => '活躍使用者（每月）';
+
+  @override
+  String get txt_instance_contact => '聯絡方式';
+
+  @override
+  String get txt_instance_languages => '語言';
+
+  @override
+  String get txt_instance_registration => '註冊';
+
+  @override
+  String get txt_instance_approval_required => '需要審核';
+
+  @override
+  String get txt_instance_open => '開放';
+
+  @override
+  String get txt_instance_closed => '已關閉';
 }

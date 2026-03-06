@@ -1164,4 +1164,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get msg_share_not_signed_in => 'Sign in to share content';
+
+  @override
+  String get btn_drawer_instance_info => 'About This Server';
+
+  @override
+  String get txt_instance_version => 'Version';
+
+  @override
+  String get txt_instance_active_users => 'Active Users (Monthly)';
+
+  @override
+  String get txt_instance_contact => 'Contact';
+
+  @override
+  String get txt_instance_languages => 'Languages';
+
+  @override
+  String get txt_instance_registration => 'Registration';
+
+  @override
+  String get txt_instance_approval_required => 'Approval Required';
+
+  @override
+  String get txt_instance_open => 'Open';
+
+  @override
+  String get txt_instance_closed => 'Closed';
 }
