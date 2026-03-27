@@ -482,7 +482,7 @@ void main() {
         SharedPreferences.setMockInitialValues({});
         await Storage.init();
 
-        dotenv.testLoad(fileInput: '''
+        dotenv.loadFromString(envString: '''
 OAUTH_CLIENT_NAME=glacial-test
 OAUTH_REDIRECT_URI=glacial://auth
 OAUTH_SCOPES=read write
@@ -504,7 +504,7 @@ OAUTH_WEBSITE_URL=https://test.example.com
         SharedPreferences.setMockInitialValues({});
         await Storage.init();
 
-        dotenv.testLoad(fileInput: '''
+        dotenv.loadFromString(envString: '''
 OAUTH_CLIENT_NAME=glacial-test
 OAUTH_REDIRECT_URI=glacial://auth
 OAUTH_SCOPES=read write
@@ -547,7 +547,7 @@ OAUTH_WEBSITE_URL=https://test.example.com
       FlutterSecureStorage.setMockInitialValues({});
       await Storage.init();
       // Load dotenv for register() which accesses dotenv.env
-      dotenv.testLoad(fileInput: '''
+      dotenv.loadFromString(envString: '''
 OAUTH_CLIENT_NAME=glacial-test
 OAUTH_REDIRECT_URI=glacial://auth
 OAUTH_SCOPES=read write

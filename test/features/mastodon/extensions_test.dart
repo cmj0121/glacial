@@ -406,7 +406,7 @@ void main() {
       FlutterSecureStorage.setMockInitialValues({});
       SharedPreferences.setMockInitialValues({});
       await Storage.init();
-      dotenv.testLoad(fileInput: '''
+      dotenv.loadFromString(envString: '''
 OAUTH_CLIENT_NAME=glacial-test
 OAUTH_REDIRECT_URI=glacial://auth
 OAUTH_SCOPES=read write
