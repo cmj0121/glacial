@@ -261,7 +261,7 @@ class _InteractionState extends ConsumerState<Interaction> {
           final String uri = widget.schema.uri;
           final String plainText = widget.schema.plainText;
           final String content = plainText.isNotEmpty ? '$plainText\n$uri' : uri;
-          await Share.share(content);
+          await SharePlus.instance.share(ShareParams(text: content));
         } catch (_) {
           if (!mounted) return;
           Clipboard.setData(ClipboardData(text: widget.schema.uri));
