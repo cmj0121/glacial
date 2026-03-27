@@ -80,7 +80,7 @@ Future<void> sendLocalNotification(String title, String body, {int? uid, int? ba
     macOS: darwinNotificationDetails,
   );
 
-  await flutterLocalNotificationsPlugin.show(uid ?? 0, title, body, platformChannelSpecifics, payload: payload);
+  await flutterLocalNotificationsPlugin.show(id: uid ?? 0, title: title, body: body, notificationDetails: platformChannelSpecifics, payload: payload);
   AppBadgePlus.updateBadge(badgeNumber ?? 0);
 }
 
