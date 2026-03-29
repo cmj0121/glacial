@@ -62,7 +62,7 @@ Future<void> prologue() async {
     iOS: initializationSettingsDarwin,
     macOS: initializationSettingsDarwin,
   );
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
   await init();
 
   logger.d("completely preloaded system-wise settings ...");

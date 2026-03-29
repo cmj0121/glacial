@@ -1,6 +1,8 @@
 // Widget tests for GlacialHome — covers lines 29-222 of home.dart.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_riverpod/src/internals.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -41,31 +43,31 @@ Widget createHomeTestWidget({
         routes: [
           GoRoute(
             path: '/home/timeline',
-            builder: (_, __) => const Text('Timeline Content'),
+            builder: (_, _) => const Text('Timeline Content'),
           ),
           GoRoute(
             path: '/home/trends',
-            builder: (_, __) => const Text('Trends Content'),
+            builder: (_, _) => const Text('Trends Content'),
           ),
           GoRoute(
             path: '/home/notifications',
-            builder: (_, __) => const Text('Notifications Content'),
+            builder: (_, _) => const Text('Notifications Content'),
           ),
           GoRoute(
             path: '/home/conversations',
-            builder: (_, __) => const Text('Conversations Content'),
+            builder: (_, _) => const Text('Conversations Content'),
           ),
           GoRoute(
             path: '/home/admin',
-            builder: (_, __) => const Text('Admin Content'),
+            builder: (_, _) => const Text('Admin Content'),
           ),
           GoRoute(
             path: '/home/list',
-            builder: (_, __) => const Text('List Content'),
+            builder: (_, _) => const Text('List Content'),
           ),
           GoRoute(
             path: '/home/post',
-            builder: (_, __) => const Text('Post Content'),
+            builder: (_, _) => const Text('Post Content'),
           ),
         ],
       ),

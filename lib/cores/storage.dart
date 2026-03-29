@@ -1,7 +1,7 @@
 // The shared library to access the data in local storage, which may be the shared preferences
 // or security storage.
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:glacial/features/models.dart';

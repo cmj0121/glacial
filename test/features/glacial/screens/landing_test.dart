@@ -5,6 +5,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_riverpod/src/internals.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -194,23 +196,23 @@ Widget createLandingTestWidget({
     routes: [
       GoRoute(
         path: '/',
-        builder: (_, __) => LandingPage(size: size),
+        builder: (_, _) => LandingPage(size: size),
       ),
       GoRoute(
         path: '/home/timeline',
-        builder: (_, __) => const Scaffold(body: Text('Timeline')),
+        builder: (_, _) => const Scaffold(body: Text('Timeline')),
       ),
       GoRoute(
         path: '/home/trends',
-        builder: (_, __) => const Scaffold(body: Text('Trends')),
+        builder: (_, _) => const Scaffold(body: Text('Trends')),
       ),
       GoRoute(
         path: '/explorer',
-        builder: (_, __) => const Scaffold(body: Text('Explorer')),
+        builder: (_, _) => const Scaffold(body: Text('Explorer')),
       ),
       GoRoute(
         path: '/home/post/shared',
-        builder: (_, __) => const Scaffold(body: Text('Post Shared')),
+        builder: (_, _) => const Scaffold(body: Text('Post Shared')),
       ),
     ],
   );

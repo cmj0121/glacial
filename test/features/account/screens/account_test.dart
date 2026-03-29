@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_riverpod/src/internals.dart' show Override;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -29,11 +31,11 @@ Widget createAccountTestWidgetWithRouter({
     routes: [
       GoRoute(
         path: '/',
-        builder: (_, __) => Scaffold(body: child),
+        builder: (_, _) => Scaffold(body: child),
       ),
       GoRoute(
         path: '/home/profile',
-        builder: (_, __) => const Scaffold(body: Text('Profile Page')),
+        builder: (_, _) => const Scaffold(body: Text('Profile Page')),
       ),
     ],
   );
