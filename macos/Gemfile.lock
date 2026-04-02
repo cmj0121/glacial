@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    CFPropertyList (3.0.9)
+    CFPropertyList (3.0.8)
     abbrev (0.1.2)
     addressable (2.8.8)
       public_suffix (>= 2.0.2, < 8.0)
@@ -169,7 +169,7 @@ GEM
     httpclient (2.9.0)
       mutex_m
     jmespath (1.6.2)
-    json (2.18.1)
+    json (2.19.3)
     jwt (2.10.2)
       base64
     logger (1.7.0)
@@ -237,4 +237,4 @@ DEPENDENCIES
   fastlane (>= 2.231.0)
 
 BUNDLED WITH
-   2.3.27
+   2.7.2
