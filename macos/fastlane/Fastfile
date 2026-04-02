@@ -76,8 +76,8 @@ platform :mac do
     # Fix ITMS-90291: objective_c.framework has Resources -> Versions/A/Resources
     # but Apple requires Resources -> Versions/Current/Resources.
     # Must run after build_app since xcodebuild re-copies frameworks.
-    app_path = File.expand_path("glacial.app")
-    pkg_path = File.expand_path("glacial.pkg")
+    app_path = File.expand_path("../glacial.app", __dir__)
+    pkg_path = File.expand_path("../glacial.pkg", __dir__)
     fixed = false
     Dir.glob("#{app_path}/Contents/Frameworks/*.framework").each do |fw|
       res_link = File.join(fw, "Resources")
