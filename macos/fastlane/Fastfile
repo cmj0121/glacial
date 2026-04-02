@@ -66,6 +66,17 @@ platform :mac do
       sh("flutter pub get")
       sh("flutter clean")
       sh("flutter build macos --release --split-debug-info=build/debug-info --obfuscate")
+
+      # Fix ITMS-90291: objective_c.framework has Resources -> Versions/A/Resources
+      # but Apple requires Resources -> Versions/Current/Resources
+      app_path = "build/macos/Build/Products/Release/glacial.app"
+      Dir.glob("#{app_path}/Contents/Frameworks/*.framework").each do |fw|
+        res_link = File.join(fw, "Resources")
+        next unless File.symlink?(res_link) && File.readlink(res_link) != "Versions/Current/Resources"
+        File.delete(res_link)
+        File.symlink("Versions/Current/Resources", res_link)
+        UI.message("🔧 Fixed Resources symlink in #{File.basename(fw)}")
+      end
     end
 
     build_app(
