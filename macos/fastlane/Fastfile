@@ -76,24 +76,26 @@ platform :mac do
     # Fix ITMS-90291: objective_c.framework has Resources -> Versions/A/Resources
     # but Apple requires Resources -> Versions/Current/Resources.
     # Must run after build_app since xcodebuild re-copies frameworks.
-    app_path = lane_context[SharedValues::APP_OUTPUT_PATH] || "glacial.app"
+    app_path = File.expand_path("glacial.app")
+    pkg_path = File.expand_path("glacial.pkg")
+    fixed = false
     Dir.glob("#{app_path}/Contents/Frameworks/*.framework").each do |fw|
       res_link = File.join(fw, "Resources")
       next unless File.symlink?(res_link) && File.readlink(res_link) != "Versions/Current/Resources"
       File.delete(res_link)
       File.symlink("Versions/Current/Resources", res_link)
-      # Re-sign the framework after modifying symlinks
       sh("codesign", "--force", "--sign", "Apple Distribution: CHIAHAO TSAI (J83AK3D9HB)",
          "--preserve-metadata=identifier,entitlements", fw)
       UI.message("🔧 Fixed and re-signed Resources symlink in #{File.basename(fw)}")
+      fixed = true
     end
-    # Re-sign the app bundle after framework changes
-    sh("codesign", "--force", "--sign", "Apple Distribution: CHIAHAO TSAI (J83AK3D9HB)",
-       "--preserve-metadata=identifier,entitlements", app_path)
-    # Re-create the .pkg with the fixed app
-    pkg_path = lane_context[SharedValues::PKG_OUTPUT_PATH] || "glacial.pkg"
-    sh("productbuild", "--component", app_path, "/Applications",
-       "--sign", "3rd Party Mac Developer Installer: CHIAHAO TSAI (J83AK3D9HB)", pkg_path)
+    if fixed
+      sh("codesign", "--force", "--sign", "Apple Distribution: CHIAHAO TSAI (J83AK3D9HB)",
+         "--preserve-metadata=identifier,entitlements", app_path)
+      sh("productbuild", "--component", app_path, "/Applications",
+         "--sign", "3rd Party Mac Developer Installer: CHIAHAO TSAI (J83AK3D9HB)", pkg_path)
+      UI.message("🔧 Re-signed app and re-created pkg")
+    end
   end
 
   desc "Upload the build to AppStore Connect"
