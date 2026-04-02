@@ -42,7 +42,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -58,7 +58,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -77,7 +77,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -93,7 +93,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -109,7 +109,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -125,7 +125,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -142,7 +142,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -179,7 +179,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -196,7 +196,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -212,7 +212,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -231,7 +231,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -252,7 +252,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -271,7 +271,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -290,7 +290,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -321,7 +321,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -351,7 +351,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -381,7 +381,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -411,7 +411,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -441,7 +441,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -486,7 +486,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });
@@ -510,7 +510,7 @@ void main() {
           child: Scaffold(
             body: EditProfilePage(account: account),
           ),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
       });

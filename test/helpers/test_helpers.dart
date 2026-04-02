@@ -34,11 +34,13 @@ class _MockHttpOverrides extends HttpOverrides {}
 Widget createTestWidget({
   required Widget child,
   AccessStatusSchema? accessStatus,
+  bool noAccessStatus = false,
   SystemPreferenceSchema? preference,
   List<Override> overrides = const [],
 }) {
   final List<Override> allOverrides = [
-    accessStatusProvider.overrideWith((ref) => accessStatus ?? MockAccessStatus.anonymous()),
+    if (!noAccessStatus)
+      accessStatusProvider.overrideWith((ref) => accessStatus ?? MockAccessStatus.anonymous()),
     if (preference != null) preferenceProvider.overrideWith((ref) => preference),
     ...overrides,
   ];
@@ -65,11 +67,13 @@ Widget createTestWidget({
 Widget createTestWidgetRaw({
   required Widget child,
   AccessStatusSchema? accessStatus,
+  bool noAccessStatus = false,
   SystemPreferenceSchema? preference,
   List<Override> overrides = const [],
 }) {
   final List<Override> allOverrides = [
-    accessStatusProvider.overrideWith((ref) => accessStatus ?? MockAccessStatus.anonymous()),
+    if (!noAccessStatus)
+      accessStatusProvider.overrideWith((ref) => accessStatus ?? MockAccessStatus.anonymous()),
     if (preference != null) preferenceProvider.overrideWith((ref) => preference),
     ...overrides,
   ];
