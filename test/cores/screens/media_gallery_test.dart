@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:glacial/cores/screens/media_gallery.dart';
 import 'package:glacial/cores/screens/media_viewer.dart';
 import 'package:glacial/features/models.dart';
+import 'package:glacial/features/timeline/screens/attachment.dart';
 
 import '../../helpers/test_helpers.dart';
 
@@ -190,7 +191,7 @@ void main() {
       expect(find.byIcon(Icons.image_not_supported), findsNothing);
     });
 
-    testWidgets('renders CachedNetworkImage for gifv type', (tester) async {
+    testWidgets('renders MediaPlayer for gifv type', (tester) async {
       final schemas = [MockAttachment.create(type: MediaType.gifv)];
 
       await tester.pumpWidget(createTestWidgetRaw(
@@ -198,10 +199,10 @@ void main() {
       ));
       await tester.pump();
 
-      expect(find.byIcon(Icons.image_not_supported), findsNothing);
+      expect(find.byType(MediaPlayer), findsOneWidget);
     });
 
-    testWidgets('renders unsupported icon for video type', (tester) async {
+    testWidgets('renders MediaPlayer for video type', (tester) async {
       final schemas = [MockAttachment.create(type: MediaType.video)];
 
       await tester.pumpWidget(createTestWidgetRaw(
@@ -209,10 +210,11 @@ void main() {
       ));
       await tester.pump();
 
-      expect(find.byIcon(Icons.image_not_supported), findsOneWidget);
+      expect(find.byType(MediaPlayer), findsOneWidget);
+      expect(find.byIcon(Icons.image_not_supported), findsNothing);
     });
 
-    testWidgets('renders unsupported icon for audio type', (tester) async {
+    testWidgets('renders MediaPlayer for audio type', (tester) async {
       final schemas = [MockAttachment.create(type: MediaType.audio)];
 
       await tester.pumpWidget(createTestWidgetRaw(
@@ -220,7 +222,8 @@ void main() {
       ));
       await tester.pump();
 
-      expect(find.byIcon(Icons.image_not_supported), findsOneWidget);
+      expect(find.byType(MediaPlayer), findsOneWidget);
+      expect(find.byIcon(Icons.image_not_supported), findsNothing);
     });
 
     testWidgets('renders unsupported icon for unknown type', (tester) async {
@@ -232,6 +235,28 @@ void main() {
       await tester.pump();
 
       expect(find.byIcon(Icons.image_not_supported), findsOneWidget);
+    });
+
+    testWidgets('info button is hidden for video type', (tester) async {
+      final schemas = [MockAttachment.create(type: MediaType.video)];
+
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: MediaGallery(schemas: schemas),
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.info_outline), findsNothing);
+    });
+
+    testWidgets('info button is shown for image type', (tester) async {
+      final schemas = [MockAttachment.create(type: MediaType.image)];
+
+      await tester.pumpWidget(createTestWidgetRaw(
+        child: MediaGallery(schemas: schemas),
+      ));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.info_outline), findsOneWidget);
     });
   });
 

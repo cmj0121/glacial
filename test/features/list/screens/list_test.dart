@@ -313,7 +313,7 @@ void main() {
       await tester.runAsync(() async {
         await tester.pumpWidget(createTestWidgetRaw(
           child: const Scaffold(body: ListTimelineTab()),
-          overrides: [accessStatusProvider.overrideWith((ref) => null)],
+          noAccessStatus: true,
         ));
         await tester.pump();
 
