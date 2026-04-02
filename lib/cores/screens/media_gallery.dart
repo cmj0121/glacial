@@ -11,6 +11,7 @@ import 'package:glacial/cores/screens/blurhash_placeholder.dart';
 import 'package:glacial/cores/screens/media_viewer.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/timeline/models/core.dart';
+import 'package:glacial/features/timeline/screens/attachment.dart';
 import 'package:glacial/l10n/app_localizations.dart';
 
 // The gallery viewer for swiping between multiple media attachments.
@@ -127,13 +128,16 @@ class _MediaGalleryState extends State<MediaGallery> {
       },
       itemBuilder: (context, index) {
         final schema = widget.schemas[index];
-        return MediaViewer(
-          onDismiss: () => Navigator.of(context).maybePop(),
-          onZoomChanged: onZoomChanged,
-          onDragUpdate: onDragUpdate,
-          onDragEnd: onDragEnd,
-          child: buildMediaContent(schema),
-        );
+        if (schema.type == MediaType.image) {
+          return MediaViewer(
+            onDismiss: () => Navigator.of(context).maybePop(),
+            onZoomChanged: onZoomChanged,
+            onDragUpdate: onDragUpdate,
+            onDragEnd: onDragEnd,
+            child: buildMediaContent(schema),
+          );
+        }
+        return buildMediaContent(schema);
       },
     );
   }
@@ -141,7 +145,6 @@ class _MediaGalleryState extends State<MediaGallery> {
   Widget buildMediaContent(AttachmentSchema schema) {
     switch (schema.type) {
       case MediaType.image:
-      case MediaType.gifv:
         return CachedNetworkImage(
           imageUrl: schema.url,
           fit: BoxFit.contain,
@@ -153,6 +156,26 @@ class _MediaGalleryState extends State<MediaGallery> {
             Icons.error,
             color: Colors.white,
           ),
+        );
+      case MediaType.gifv:
+        return MediaPlayer(
+          url: Uri.parse(schema.url),
+          previewUrl: schema.previewUrl,
+          blurhash: schema.blurhash,
+          autoPlay: true,
+          showControls: false,
+        );
+      case MediaType.video:
+        return MediaPlayer(
+          url: Uri.parse(schema.url),
+          previewUrl: schema.previewUrl,
+          blurhash: schema.blurhash,
+          showControls: true,
+        );
+      case MediaType.audio:
+        return MediaPlayer(
+          url: Uri.parse(schema.url),
+          cover: const Icon(Icons.music_note_rounded, size: 64, color: Colors.white),
         );
       default:
         return const Icon(Icons.image_not_supported, color: Colors.white);
@@ -185,13 +208,14 @@ class _MediaGalleryState extends State<MediaGallery> {
                 '${currentIndex + 1} / ${widget.schemas.length}',
                 style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
-            IconButton(
-              icon: Icon(
-                showInfo ? Icons.info : Icons.info_outline,
-                color: Colors.white,
+            if (currentSchema.type == MediaType.image)
+              IconButton(
+                icon: Icon(
+                  showInfo ? Icons.info : Icons.info_outline,
+                  color: Colors.white,
+                ),
+                onPressed: onToggleInfo,
               ),
-              onPressed: onToggleInfo,
-            ),
           ],
         ),
       ),
