@@ -370,5 +370,7 @@
   "txt_instance_registration": "가입",
   "txt_instance_approval_required": "승인 필요",
   "txt_instance_open": "개방",
-  "txt_instance_closed": "폐쇄"
+  "txt_instance_closed": "폐쇄",
+  "txt_preference_new_ui": "새로운 UI 디자인",
+  "desc_preference_new_ui": "개선된 레이아웃과 탐색 기능의 새로운 인터페이스를 사용해 보세요."
 }

@@ -1151,4 +1151,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_instance_closed => '폐쇄';
+
+  @override
+  String get txt_preference_new_ui => '새로운 UI 디자인';
+
+  @override
+  String get desc_preference_new_ui => '개선된 레이아웃과 탐색 기능의 새로운 인터페이스를 사용해 보세요.';
 }

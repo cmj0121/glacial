@@ -370,5 +370,7 @@
   "txt_instance_registration": "登録",
   "txt_instance_approval_required": "承認が必要",
   "txt_instance_open": "オープン",
-  "txt_instance_closed": "受付停止"
+  "txt_instance_closed": "受付停止",
+  "txt_preference_new_ui": "新しいUIデザイン",
+  "desc_preference_new_ui": "レイアウトとナビゲーションが改善された新しいインターフェースをお試しください。"
 }

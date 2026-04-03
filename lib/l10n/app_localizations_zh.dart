@@ -1148,4 +1148,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_instance_closed => '已關閉';
+
+  @override
+  String get txt_preference_new_ui => '新介面設計';
+
+  @override
+  String get desc_preference_new_ui => '體驗重新設計的介面，改善佈局與導覽。';
 }

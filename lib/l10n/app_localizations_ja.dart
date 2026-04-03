@@ -1148,4 +1148,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_instance_closed => '受付停止';
+
+  @override
+  String get txt_preference_new_ui => '新しいUIデザイン';
+
+  @override
+  String get desc_preference_new_ui =>
+      'レイアウトとナビゲーションが改善された新しいインターフェースをお試しください。';
 }

@@ -370,5 +370,7 @@
   "txt_instance_registration": "註冊",
   "txt_instance_approval_required": "需要審核",
   "txt_instance_open": "開放",
-  "txt_instance_closed": "已關閉"
+  "txt_instance_closed": "已關閉",
+  "txt_preference_new_ui": "新介面設計",
+  "desc_preference_new_ui": "體驗重新設計的介面，改善佈局與導覽。"
 }

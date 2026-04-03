@@ -2335,6 +2335,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Closed'**
   String get txt_instance_closed;
+
+  /// No description provided for @txt_preference_new_ui.
+  ///
+  /// In en, this message translates to:
+  /// **'New UI Design'**
+  String get txt_preference_new_ui;
+
+  /// No description provided for @desc_preference_new_ui.
+  ///
+  /// In en, this message translates to:
+  /// **'Try the redesigned interface with improved layout and navigation.'**
+  String get desc_preference_new_ui;
 }
 
 class _AppLocalizationsDelegate

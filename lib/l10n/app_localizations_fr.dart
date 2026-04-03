@@ -1209,4 +1209,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_instance_closed => 'Fermé';
+
+  @override
+  String get txt_preference_new_ui => 'Nouveau design';
+
+  @override
+  String get desc_preference_new_ui =>
+      'Essayez l\'interface repensée avec une meilleure disposition et navigation.';
 }

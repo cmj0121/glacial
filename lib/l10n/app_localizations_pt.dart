@@ -1205,4 +1205,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_instance_closed => 'Fechado';
+
+  @override
+  String get txt_preference_new_ui => 'Novo design de interface';
+
+  @override
+  String get desc_preference_new_ui =>
+      'Experimente a interface redesenhada com melhor layout e navegação.';
 }

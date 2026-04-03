@@ -334,6 +334,19 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             Storage().savePreference(schema.copyWith(hapticFeedback: value), ref: ref);
           },
         ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)?.txt_preference_new_ui ?? "New UI Design"),
+          subtitle: Text(
+            AppLocalizations.of(context)?.desc_preference_new_ui ?? "Try the redesigned interface with improved layout and navigation.",
+            style: labelStyle,
+          ),
+          value: schema.useNewUI,
+          secondary: Icon(schema.useNewUI ? Icons.auto_awesome : Icons.auto_awesome_outlined, size: iconSize),
+          onChanged: (bool value) {
+            Storage().savePreference(schema.copyWith(useNewUI: value), ref: ref);
+            ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
+          },
+        ),
       ],
     );
   }

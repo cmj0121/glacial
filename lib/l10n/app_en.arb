@@ -447,5 +447,7 @@
   "txt_instance_registration": "Registration",
   "txt_instance_approval_required": "Approval Required",
   "txt_instance_open": "Open",
-  "txt_instance_closed": "Closed"
+  "txt_instance_closed": "Closed",
+  "txt_preference_new_ui": "New UI Design",
+  "desc_preference_new_ui": "Try the redesigned interface with improved layout and navigation."
 }

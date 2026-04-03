@@ -370,5 +370,7 @@
   "txt_instance_registration": "Registrierung",
   "txt_instance_approval_required": "Genehmigung erforderlich",
   "txt_instance_open": "Offen",
-  "txt_instance_closed": "Geschlossen"
+  "txt_instance_closed": "Geschlossen",
+  "txt_preference_new_ui": "Neues UI-Design",
+  "desc_preference_new_ui": "Testen Sie die neu gestaltete Oberfläche mit verbessertem Layout und Navigation."
 }

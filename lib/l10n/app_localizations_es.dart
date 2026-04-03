@@ -1207,4 +1207,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_instance_closed => 'Cerrado';
+
+  @override
+  String get txt_preference_new_ui => 'Nuevo diseño de interfaz';
+
+  @override
+  String get desc_preference_new_ui =>
+      'Prueba la interfaz rediseñada con mejor disposición y navegación.';
 }
