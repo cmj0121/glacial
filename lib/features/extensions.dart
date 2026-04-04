@@ -2,6 +2,7 @@
 
 export 'auth/extensions.dart';
 export 'mastodon/extensions.dart';
+export 'mastodon/server_selection.dart';
 export 'preference/extensions.dart';
 export 'timeline/extensions.dart';
 

@@ -1,10 +1,10 @@
 // The Mastodon server explorer and find a server to connect to.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
+import 'package:glacial/features/mastodon/server_selection.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
 
@@ -140,36 +140,8 @@ class _ServerExplorerState extends ConsumerState<ServerExplorer> {
 
   // The callback when user clicks the mastodon server.
   Future<void> onSelect(ServerSchema schema) async {
-    final AccessStatusSchema current = ref.read(accessStatusProvider) ?? AccessStatusSchema();
-    List<ServerInfoSchema> history = current.history.toList();
-
-    // If the server not already in the history, add it.
-    if (!history.any((ServerInfoSchema info) => info.domain == schema.domain)) {
-      history.add(schema.toInfo());
-    }
-
-    // Build a clean status without carrying over stale accessToken from
-    // the previous server — prevents isSignedIn from being wrong.
-    final AccessStatusSchema clean = AccessStatusSchema(domain: schema.domain)
-        .copyWith(history: history, server: schema);
-
-    logger.i("onTap: ${schema.domain}");
-    await storage.saveAccessStatus(clean, ref: ref);
-    await storage.loadAccessStatus(ref: ref);
-
-    Sentry.configureScope((scope) {
-      scope.setTag('mastodon.server', schema.domain);
-    });
-
-    if (mounted) {
-      final AccessStatusSchema? updated = ref.read(accessStatusProvider);
-      final bool isSignedIn = updated?.isSignedIn == true;
-      final timelinesAccess = schema.config.timelinesAccess;
-      final bool hasTimeline = SidebarButtonType.timeline.isAccessible(
-        isSignedIn: isSignedIn, access: timelinesAccess,
-      );
-      context.go(hasTimeline ? RoutePath.timeline.path : RoutePath.trends.path);
-    }
+    final route = await selectServer(schema: schema, ref: ref);
+    if (mounted) context.go(route.path);
   }
 
   // Clear the search text field and reset the search results.
