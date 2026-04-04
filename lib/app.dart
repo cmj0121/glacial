@@ -7,6 +7,7 @@ import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 import 'package:glacial/features/screens.dart';
+import 'package:glacial/v2/core.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -130,11 +131,17 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             return const LandingPage();
           },
         ),
-        // The mastodon server explorer page
+        // V2 routes — onboarding flow (outside shell)
         GoRoute(
-          path: RoutePath.explorer.path,
+          path: RoutePath.v2Welcome.path,
           builder: (BuildContext context, GoRouterState state) {
-            return const ServerExplorer();
+            return const V2LandingScreen();
+          },
+        ),
+        GoRoute(
+          path: RoutePath.v2Servers.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return const V2ServerPicker();
           },
         ),
         // The system preference page to view or edit the app settings
@@ -175,13 +182,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
   RouteBase homeRoutes() {
     return ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        final RoutePath path = RoutePath.values.where((p) => p.path == state.uri.path).first;
+        final RoutePath? path = RoutePath.values.where((p) => p.path == state.uri.path).firstOrNull;
 
         Widget? title;
         bool backable = false;
         List<Widget> actions = [];
 
-        switch (path) {
+        switch (path ?? RoutePath.timeline) {
           case RoutePath.post:
           case RoutePath.postQuote:
           case RoutePath.postDraft:
@@ -229,9 +236,6 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             backable = true;
             break;
           case RoutePath.createFilterForm:
-            title = Text(AppLocalizations.of(context)?.btn_profile_filter ?? 'Filters');
-            backable = true;
-            break;
           case RoutePath.editFilterForm:
             title = Text(AppLocalizations.of(context)?.btn_profile_filter ?? 'Filters');
             backable = true;
@@ -240,8 +244,8 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             break;
         }
 
-        return GlacialHome(
-          key: UniqueKey(),
+        return V2HomeShell(
+          key: ValueKey(state.uri.path),
           backable: backable,
           title: title,
           actions: actions,

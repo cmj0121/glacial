@@ -55,7 +55,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
         setState(() => error = null);
         onLoading();
       },
-      onSecondaryAction: () => context.go(RoutePath.explorer.path),
+      onSecondaryAction: () => context.go(RoutePath.v2Servers.path),
       secondaryLabel: changeServer,
     );
   }
@@ -75,18 +75,25 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final bool hasDomain = status?.domain?.isNotEmpty == true;
     final bool isSignedIn = status?.isSignedIn == true;
+
+    if (!hasDomain) {
+      if (mounted) {
+        logger.i("preloading completed, no domain → v2 welcome");
+        context.go(RoutePath.v2Welcome.path);
+      }
+      return;
+    }
+
     final timelinesAccess = status?.server?.config.timelinesAccess;
     final bool hasTimeline = SidebarButtonType.timeline.isAccessible(
       isSignedIn: isSignedIn, access: timelinesAccess,
     );
-    final RoutePath route = !hasDomain ? RoutePath.explorer :
-        hasTimeline ? RoutePath.timeline : RoutePath.trends;
+    final RoutePath route = hasTimeline ? RoutePath.timeline : RoutePath.trends;
 
     if (mounted) {
-      logger.i("preloading completed, navigating to the ${route.path} page (${status?.domain}) ...");
+      logger.i("preloading completed, navigating to ${route.path} (${status?.domain})");
       context.go(route.path);
 
-      // Check for shared content from a cold launch.
       final SharedContentSchema? shared = ShareReceiver.consumePendingContent();
       if (shared != null && shared.hasContent && isSignedIn) {
         context.push(RoutePath.postShared.path, extra: shared);
