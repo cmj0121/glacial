@@ -2347,6 +2347,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try the redesigned interface with improved layout and navigation.'**
   String get desc_preference_new_ui;
+
+  /// No description provided for @txt_v2_tagline.
+  ///
+  /// In en, this message translates to:
+  /// **'A calm space for social conversations'**
+  String get txt_v2_tagline;
+
+  /// No description provided for @btn_v2_get_started.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get btn_v2_get_started;
+
+  /// No description provided for @txt_v2_choose_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your server'**
+  String get txt_v2_choose_server;
+
+  /// No description provided for @txt_v2_server_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search or enter server URL'**
+  String get txt_v2_server_hint;
+
+  /// No description provided for @txt_v2_popular_servers.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular Servers'**
+  String get txt_v2_popular_servers;
+
+  /// No description provided for @txt_v2_tap_to_select.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to select this server'**
+  String get txt_v2_tap_to_select;
+
+  /// No description provided for @txt_v2_no_match.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching servers'**
+  String get txt_v2_no_match;
 }
 
 class _AppLocalizationsDelegate

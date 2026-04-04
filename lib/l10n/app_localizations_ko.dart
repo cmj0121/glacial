@@ -1157,4 +1157,25 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get desc_preference_new_ui => '개선된 레이아웃과 탐색 기능의 새로운 인터페이스를 사용해 보세요.';
+
+  @override
+  String get txt_v2_tagline => '소셜 대화를 위한 조용한 공간';
+
+  @override
+  String get btn_v2_get_started => '시작하기';
+
+  @override
+  String get txt_v2_choose_server => '서버 선택';
+
+  @override
+  String get txt_v2_server_hint => '서버 검색 또는 URL 입력';
+
+  @override
+  String get txt_v2_popular_servers => '인기 서버';
+
+  @override
+  String get txt_v2_tap_to_select => '이 서버를 선택하려면 탭하세요';
+
+  @override
+  String get txt_v2_no_match => '일치하는 서버가 없습니다';
 }

@@ -449,5 +449,12 @@
   "txt_instance_open": "Open",
   "txt_instance_closed": "Closed",
   "txt_preference_new_ui": "New UI Design",
-  "desc_preference_new_ui": "Try the redesigned interface with improved layout and navigation."
+  "desc_preference_new_ui": "Try the redesigned interface with improved layout and navigation.",
+  "txt_v2_tagline": "A calm space for social conversations",
+  "btn_v2_get_started": "Get Started",
+  "txt_v2_choose_server": "Choose your server",
+  "txt_v2_server_hint": "Search or enter server URL",
+  "txt_v2_popular_servers": "Popular Servers",
+  "txt_v2_tap_to_select": "Tap to select this server",
+  "txt_v2_no_match": "No matching servers"
 }

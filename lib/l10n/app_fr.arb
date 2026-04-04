@@ -372,5 +372,12 @@
   "txt_instance_open": "Ouvert",
   "txt_instance_closed": "Fermé",
   "txt_preference_new_ui": "Nouveau design",
-  "desc_preference_new_ui": "Essayez l'interface repensée avec une meilleure disposition et navigation."
+  "desc_preference_new_ui": "Essayez l'interface repensée avec une meilleure disposition et navigation.",
+  "txt_v2_tagline": "Un espace calme pour les conversations sociales",
+  "btn_v2_get_started": "Commencer",
+  "txt_v2_choose_server": "Choisis ton serveur",
+  "txt_v2_server_hint": "Rechercher ou entrer l'URL du serveur",
+  "txt_v2_popular_servers": "Serveurs populaires",
+  "txt_v2_tap_to_select": "Appuyez pour sélectionner ce serveur",
+  "txt_v2_no_match": "Aucun serveur correspondant"
 }

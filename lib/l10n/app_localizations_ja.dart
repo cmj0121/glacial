@@ -1155,4 +1155,25 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get desc_preference_new_ui =>
       'レイアウトとナビゲーションが改善された新しいインターフェースをお試しください。';
+
+  @override
+  String get txt_v2_tagline => 'ソーシャルな会話のための落ち着いた空間';
+
+  @override
+  String get btn_v2_get_started => 'はじめる';
+
+  @override
+  String get txt_v2_choose_server => 'サーバーを選択';
+
+  @override
+  String get txt_v2_server_hint => 'サーバーを検索またはURLを入力';
+
+  @override
+  String get txt_v2_popular_servers => '人気のサーバー';
+
+  @override
+  String get txt_v2_tap_to_select => 'タップしてこのサーバーを選択';
+
+  @override
+  String get txt_v2_no_match => '一致するサーバーがありません';
 }

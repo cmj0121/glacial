@@ -35,7 +35,10 @@ enum RoutePath {
   register,          // The account registration page.
   postDraft,         // The post page pre-filled from a saved draft.
   postShared,        // The post page pre-filled from shared content.
-  wip;               // The work-in-progress page of the app.
+  wip,               // The work-in-progress page of the app.
+  // V2 routes
+  v2Welcome,         // The v2 welcome/landing screen.
+  v2Servers;         // The v2 server picker screen.
 
   // Get the string path for the route.
   String get path {
@@ -104,6 +107,10 @@ enum RoutePath {
         return '/home/post/shared';
       case RoutePath.wip:
         return '/wip';
+      case RoutePath.v2Welcome:
+        return '/v2/welcome';
+      case RoutePath.v2Servers:
+        return '/v2/servers';
     }
   }
 }
