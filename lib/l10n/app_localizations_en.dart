@@ -1198,4 +1198,25 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get desc_preference_new_ui =>
       'Try the redesigned interface with improved layout and navigation.';
+
+  @override
+  String get txt_v2_tagline => 'A calm space for social conversations';
+
+  @override
+  String get btn_v2_get_started => 'Get Started';
+
+  @override
+  String get txt_v2_choose_server => 'Choose your server';
+
+  @override
+  String get txt_v2_server_hint => 'Search or enter server URL';
+
+  @override
+  String get txt_v2_popular_servers => 'Popular Servers';
+
+  @override
+  String get txt_v2_tap_to_select => 'Tap to select this server';
+
+  @override
+  String get txt_v2_no_match => 'No matching servers';
 }

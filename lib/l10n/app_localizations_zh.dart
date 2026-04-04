@@ -1154,4 +1154,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get desc_preference_new_ui => '體驗重新設計的介面，改善佈局與導覽。';
+
+  @override
+  String get txt_v2_tagline => '社交對話的寧靜空間';
+
+  @override
+  String get btn_v2_get_started => '開始使用';
+
+  @override
+  String get txt_v2_choose_server => '選擇你的伺服器';
+
+  @override
+  String get txt_v2_server_hint => '搜尋或輸入伺服器網址';
+
+  @override
+  String get txt_v2_popular_servers => '熱門伺服器';
+
+  @override
+  String get txt_v2_tap_to_select => '點擊以選擇此伺服器';
+
+  @override
+  String get txt_v2_no_match => '沒有符合的伺服器';
 }
