@@ -869,6 +869,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_no_notifications => '還沒有通知';
 
   @override
+  String txt_notification_others(int count) {
+    return '及其他 $count 位';
+  }
+
+  @override
   String get txt_conversation_unread => '未讀';
 
   @override

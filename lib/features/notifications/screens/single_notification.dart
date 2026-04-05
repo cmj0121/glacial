@@ -9,12 +9,10 @@ import 'package:glacial/features/screens.dart';
 
 class SingleNotification extends ConsumerStatefulWidget {
   final GroupSchema schema;
-  final double iconSize;
 
   const SingleNotification({
     super.key,
     required this.schema,
-    this.iconSize = 18,
   });
 
   @override
@@ -22,108 +20,144 @@ class SingleNotification extends ConsumerStatefulWidget {
 }
 
 class _SingleNotificationState extends ConsumerState<SingleNotification> {
+  static const double _avatarSize = 44;
+
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
-  Widget? child;
-  List<AccountSchema> accounts = [];
+  Widget? _body;
+  List<AccountSchema> _accounts = [];
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) => onLoad());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _load());
   }
 
   @override
   Widget build(BuildContext context) {
-    if (child == null) {
-      return const LoadingOverlay(isLoading: true, child: SizedBox(height: 100));
+    if (_body == null) {
+      return const LoadingOverlay(isLoading: true, child: SizedBox(height: 96));
     }
 
     return Container(
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16, bottom: 8),
-        child: Align(
-          alignment: Alignment.topLeft,
-          child: buildContent(),
+        border: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+          ),
         ),
       ),
-    );
-  }
-
-  Widget buildContent() {
-    switch (widget.schema.type) {
-      case NotificationType.mention:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildHeader(),
-            const SizedBox(height: 8),
-            child ?? const SizedBox.shrink(),
-          ],
-        );
-      case NotificationType.status:
-      case NotificationType.reblog:
-      case NotificationType.favourite:
-      case NotificationType.poll:
-      case NotificationType.update:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildHeader(),
-            const SizedBox(height: 8),
-            ColorFiltered(
-              colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
-              child: child ?? const SizedBox.shrink(),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildAvatarBadge(context),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildHeader(context),
+                if (_body != const SizedBox.shrink()) ...[
+                  const SizedBox(height: 8),
+                  _body!,
+                ],
+              ],
             ),
-          ],
-        );
-      case NotificationType.follow:
-      case NotificationType.followRequest:
-      case NotificationType.adminSignUp:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildHeader(),
-            const SizedBox(height: 8),
-            child ?? const SizedBox.shrink(),
-          ],
-        );
-      case NotificationType.adminReport:
-      case NotificationType.unknown:
-        logger.d("Unknown notification type: ${widget.schema.type}");
-        return buildHeader();
-    }
-  }
-
-  // Build the optional header for the notification, which shows the accounts involved in the notification.
-  Widget buildHeader() {
-    final TextStyle? style = Theme.of(context).textTheme.labelMedium;
-    final Color color = widget.schema.type.isAdminOnly ? Theme.of(context).colorScheme.error : Theme.of(context).disabledColor;
-
-    final List<Widget> icons = [
-      Icon(widget.schema.type.icon, size: widget.iconSize - 2, color: color),
-      const SizedBox(width: 4),
-      Text(widget.schema.type.tooltip(context), style: style?.copyWith(color: color)),
-    ];
-
-    return Row(
-      children: [
-        ...accounts.map((a) => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: AccountAvatar(schema: a, size: widget.iconSize),
-        )),
-        ...icons,
-      ],
+          ),
+        ],
+      ),
     );
   }
 
-  Future<void> onLoad() async {
-    if (child != null) { return; }
+  // Primary avatar with a small circular badge overlay carrying the
+  // notification type icon in its accent color. Matches Mastodon web.
+  Widget _buildAvatarBadge(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final Color accent = widget.schema.type.accentColor(context);
+    final AccountSchema? primary = _accounts.isNotEmpty ? _accounts.first : null;
 
+    return SizedBox(
+      width: _avatarSize,
+      height: _avatarSize,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          if (primary != null)
+            AccountAvatar(schema: primary, size: _avatarSize)
+          else
+            Container(
+              width: _avatarSize,
+              height: _avatarSize,
+              decoration: BoxDecoration(
+                color: scheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(_avatarSize / 2),
+              ),
+            ),
+          Positioned(
+            bottom: -2,
+            right: -2,
+            child: Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                color: accent,
+                shape: BoxShape.circle,
+                border: Border.all(color: scheme.surface, width: 2),
+              ),
+              child: Icon(
+                widget.schema.type.icon,
+                size: 11,
+                color: _onAccent(context, accent),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _onAccent(BuildContext context, Color accent) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    if (accent == scheme.error) return scheme.onError;
+    if (accent == scheme.tertiary) return scheme.onTertiary;
+    return scheme.onPrimary;
+  }
+
+  // Renders: "<Name>[, <Name>] [and N others] <action label>" with the
+  // action label in onSurfaceVariant.
+  Widget _buildHeader(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme scheme = theme.colorScheme;
+    final TextStyle? nameStyle = theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600);
+    final TextStyle? labelStyle = theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant);
+
+    if (_accounts.isEmpty) {
+      return Text(widget.schema.type.tooltip(context), style: labelStyle);
+    }
+
+    final String primaryName = _accounts.first.displayName;
+    final int extras = widget.schema.count - 1;
+    final String othersSuffix = extras > 0
+        ? ' ${AppLocalizations.of(context)?.txt_notification_others(extras) ?? '+ $extras others'}'
+        : '';
+
+    return RichText(
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        children: [
+          TextSpan(text: primaryName, style: nameStyle),
+          if (othersSuffix.isNotEmpty)
+            TextSpan(text: othersSuffix, style: labelStyle),
+          const TextSpan(text: '  '),
+          TextSpan(text: widget.schema.type.tooltip(context).toLowerCase(), style: labelStyle),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _load() async {
     late final Widget content;
     switch (widget.schema.type) {
       case NotificationType.status:
@@ -133,8 +167,12 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
       case NotificationType.update:
       case NotificationType.mention:
         final StatusSchema? schema = await status?.getStatus(widget.schema.statusID, loadCache: true);
-
-        content = schema == null ? const SizedBox.shrink() : StatusLite(schema: schema);
+        content = schema == null
+            ? const SizedBox.shrink()
+            : Opacity(
+                opacity: widget.schema.type == NotificationType.mention ? 1.0 : 0.75,
+                child: StatusLite(schema: schema),
+              );
         break;
       case NotificationType.follow:
       case NotificationType.followRequest:
@@ -144,39 +182,25 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: accounts.map((a) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Account(schema: a),
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Account(schema: a),
           )).toList(),
         );
         break;
       case NotificationType.adminReport:
       case NotificationType.unknown:
-        content = const NoResult();
+        logger.d('Unknown or admin-report notification: ${widget.schema.type}');
+        content = const SizedBox.shrink();
         break;
     }
 
-    await onLoadAccounts();
-    if (mounted) { setState(() => child = content ); }
+    await _loadAccounts();
+    if (mounted) setState(() => _body = content);
   }
 
-  // Load the accounts involved in the notification.
-  Future<void> onLoadAccounts() async {
-    switch (widget.schema.type) {
-      case NotificationType.status:
-      case NotificationType.reblog:
-      case NotificationType.favourite:
-      case NotificationType.poll:
-      case NotificationType.update:
-        final List<AccountSchema> accounts = await status?.getAccounts(widget.schema.accounts) ?? [];
-        if (mounted) { setState(() => this.accounts = accounts); }
-        return;
-      case NotificationType.mention:
-      case NotificationType.follow:
-      case NotificationType.followRequest:
-      case NotificationType.adminSignUp:
-      case NotificationType.adminReport:
-      case NotificationType.unknown:
-    }
+  Future<void> _loadAccounts() async {
+    final List<AccountSchema> accounts = await status?.getAccounts(widget.schema.accounts) ?? [];
+    if (mounted) setState(() => _accounts = accounts);
   }
 }
 

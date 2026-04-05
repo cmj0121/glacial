@@ -869,6 +869,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_no_notifications => '通知はまだありません';
 
   @override
+  String txt_notification_others(int count) {
+    return '他$count人';
+  }
+
+  @override
   String get txt_conversation_unread => '未読';
 
   @override

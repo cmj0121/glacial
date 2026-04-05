@@ -92,6 +92,21 @@ enum NotificationType {
   bool get isAdminOnly {
     return this == NotificationType.adminSignUp || this == NotificationType.adminReport;
   }
+
+  // Accent color used for the type badge on the avatar overlay.
+  Color accentColor(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    switch (this) {
+      case NotificationType.favourite:
+      case NotificationType.adminReport:
+        return scheme.error;
+      case NotificationType.poll:
+      case NotificationType.update:
+        return scheme.tertiary;
+      default:
+        return scheme.primary;
+    }
+  }
 }
 
 // The grouped notifications themselves

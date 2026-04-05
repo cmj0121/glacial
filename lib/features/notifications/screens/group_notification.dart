@@ -66,13 +66,16 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
 
     return Align(
       alignment: Alignment.topCenter,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildToolbar(),
-          buildLoadingIndicator(),
-          Flexible(child: buildContent()),
-        ],
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 680),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildToolbar(),
+            buildLoadingIndicator(),
+            Flexible(child: buildContent()),
+          ],
+        ),
       ),
     );
   }

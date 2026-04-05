@@ -1790,6 +1790,12 @@ abstract class AppLocalizations {
   /// **'No notifications yet'**
   String get txt_no_notifications;
 
+  /// No description provided for @txt_notification_others.
+  ///
+  /// In en, this message translates to:
+  /// **'and {count} others'**
+  String txt_notification_others(int count);
+
   /// No description provided for @txt_conversation_unread.
   ///
   /// In en, this message translates to:

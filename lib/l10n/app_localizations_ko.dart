@@ -870,6 +870,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_no_notifications => '아직 알림이 없습니다';
 
   @override
+  String txt_notification_others(int count) {
+    return '외 $count명';
+  }
+
+  @override
   String get txt_conversation_unread => '읽지 않음';
 
   @override

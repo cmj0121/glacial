@@ -904,6 +904,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_no_notifications => 'No notifications yet';
 
   @override
+  String txt_notification_others(int count) {
+    return 'and $count others';
+  }
+
+  @override
   String get txt_conversation_unread => 'Unread';
 
   @override
