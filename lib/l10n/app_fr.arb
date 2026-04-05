@@ -394,5 +394,8 @@
   "txt_shortcut_boost": "Partager la publication ciblée",
   "txt_shortcut_reply": "Répondre à la publication ciblée",
   "txt_shortcut_bookmark": "Marquer la publication ciblée",
-  "txt_shortcut_escape": "Fermer la recherche ou retirer le focus"
+  "txt_shortcut_escape": "Fermer la recherche ou retirer le focus",
+  "txt_shortcut_section_navigation": "NAVIGATION",
+  "txt_shortcut_section_actions": "ACTIONS",
+  "txt_shortcut_section_general": "GÉNÉRAL"
 }

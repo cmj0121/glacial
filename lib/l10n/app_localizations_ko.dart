@@ -1223,4 +1223,13 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_shortcut_escape => '검색 닫기 또는 입력 포커스 해제';
+
+  @override
+  String get txt_shortcut_section_navigation => '내비게이션';
+
+  @override
+  String get txt_shortcut_section_actions => '작업';
+
+  @override
+  String get txt_shortcut_section_general => '일반';
 }

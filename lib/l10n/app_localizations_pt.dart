@@ -1278,4 +1278,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_shortcut_escape => 'Fechar pesquisa ou remover foco';
+
+  @override
+  String get txt_shortcut_section_navigation => 'NAVEGAÇÃO';
+
+  @override
+  String get txt_shortcut_section_actions => 'AÇÕES';
+
+  @override
+  String get txt_shortcut_section_general => 'GERAL';
 }

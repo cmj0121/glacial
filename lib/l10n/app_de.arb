@@ -394,5 +394,8 @@
   "txt_shortcut_boost": "Fokussierten Beitrag teilen",
   "txt_shortcut_reply": "Auf fokussierten Beitrag antworten",
   "txt_shortcut_bookmark": "Fokussierten Beitrag mit Lesezeichen versehen",
-  "txt_shortcut_escape": "Suche schließen oder Eingabe verlassen"
+  "txt_shortcut_escape": "Suche schließen oder Eingabe verlassen",
+  "txt_shortcut_section_navigation": "NAVIGATION",
+  "txt_shortcut_section_actions": "AKTIONEN",
+  "txt_shortcut_section_general": "ALLGEMEIN"
 }

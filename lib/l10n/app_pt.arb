@@ -394,5 +394,8 @@
   "txt_shortcut_boost": "Impulsionar publicação em foco",
   "txt_shortcut_reply": "Responder à publicação em foco",
   "txt_shortcut_bookmark": "Salvar publicação em foco",
-  "txt_shortcut_escape": "Fechar pesquisa ou remover foco"
+  "txt_shortcut_escape": "Fechar pesquisa ou remover foco",
+  "txt_shortcut_section_navigation": "NAVEGAÇÃO",
+  "txt_shortcut_section_actions": "AÇÕES",
+  "txt_shortcut_section_general": "GERAL"
 }

@@ -223,22 +223,28 @@ class _Binding {
   const _Binding(this.physical, {this.shift = false, required this.run});
 }
 
-/// Rows rendered in the `?` cheatsheet.
-const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
-  _ShortcutRow(keys: <String>['?'], labelKey: _HelpLabel.help),
-  _ShortcutRow(keys: <String>['.'], labelKey: _HelpLabel.refresh),
-  _ShortcutRow(keys: <String>['j'], labelKey: _HelpLabel.nextPost),
-  _ShortcutRow(keys: <String>['k'], labelKey: _HelpLabel.prevPost),
-  _ShortcutRow(keys: <String>['Tab'], labelKey: _HelpLabel.nextTab),
-  _ShortcutRow(keys: <String>['Shift', 'Tab'], labelKey: _HelpLabel.prevTab),
-  _ShortcutRow(keys: <String>['/'], labelKey: _HelpLabel.focusSearch),
-  _ShortcutRow(keys: <String>['n'], labelKey: _HelpLabel.composePost),
-  _ShortcutRow(keys: <String>['o'], labelKey: _HelpLabel.openStatus),
-  _ShortcutRow(keys: <String>['f'], labelKey: _HelpLabel.favourite),
-  _ShortcutRow(keys: <String>['b'], labelKey: _HelpLabel.boost),
-  _ShortcutRow(keys: <String>['r'], labelKey: _HelpLabel.reply),
-  _ShortcutRow(keys: <String>['e'], labelKey: _HelpLabel.bookmark),
-  _ShortcutRow(keys: <String>['Esc'], labelKey: _HelpLabel.escape),
+/// Shortcut rows grouped by purpose so the cheatsheet is scannable.
+const List<_ShortcutSection> _shortcutSections = <_ShortcutSection>[
+  _ShortcutSection(_SectionLabel.navigation, <_ShortcutRow>[
+    _ShortcutRow(keys: <String>['j'], labelKey: _HelpLabel.nextPost),
+    _ShortcutRow(keys: <String>['k'], labelKey: _HelpLabel.prevPost),
+    _ShortcutRow(keys: <String>['Tab'], labelKey: _HelpLabel.nextTab),
+    _ShortcutRow(keys: <String>['Shift', 'Tab'], labelKey: _HelpLabel.prevTab),
+    _ShortcutRow(keys: <String>['o'], labelKey: _HelpLabel.openStatus),
+    _ShortcutRow(keys: <String>['/'], labelKey: _HelpLabel.focusSearch),
+  ]),
+  _ShortcutSection(_SectionLabel.actions, <_ShortcutRow>[
+    _ShortcutRow(keys: <String>['n'], labelKey: _HelpLabel.composePost),
+    _ShortcutRow(keys: <String>['r'], labelKey: _HelpLabel.reply),
+    _ShortcutRow(keys: <String>['f'], labelKey: _HelpLabel.favourite),
+    _ShortcutRow(keys: <String>['b'], labelKey: _HelpLabel.boost),
+    _ShortcutRow(keys: <String>['e'], labelKey: _HelpLabel.bookmark),
+  ]),
+  _ShortcutSection(_SectionLabel.general, <_ShortcutRow>[
+    _ShortcutRow(keys: <String>['.'], labelKey: _HelpLabel.refresh),
+    _ShortcutRow(keys: <String>['?'], labelKey: _HelpLabel.help),
+    _ShortcutRow(keys: <String>['Esc'], labelKey: _HelpLabel.escape),
+  ]),
 ];
 
 class _ShortcutHelpSheet extends StatelessWidget {
@@ -247,29 +253,62 @@ class _ShortcutHelpSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations? l10n = AppLocalizations.of(context);
+    final ThemeData theme = Theme.of(context);
     final String title = l10n?.txt_shortcuts_title ?? 'Keyboard shortcuts';
 
     return SafeArea(
       top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 16),
-            ..._shortcutRows.map((row) => _buildRow(context, row)),
+            Text(title, style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+            )),
+            const SizedBox(height: 4),
+            Container(
+              width: 32,
+              height: 2,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+            const SizedBox(height: 20),
+            for (int i = 0; i < _shortcutSections.length; i++) ...[
+              if (i > 0) const SizedBox(height: 20),
+              _buildSection(context, _shortcutSections[i], l10n),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildRow(BuildContext context, _ShortcutRow row) {
-    final AppLocalizations? l10n = AppLocalizations.of(context);
+  Widget _buildSection(BuildContext context, _ShortcutSection section, AppLocalizations? l10n) {
+    final ThemeData theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          section.label.resolve(l10n),
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 10),
+        ...section.rows.map((row) => _buildRow(context, row, l10n)),
+      ],
+    );
+  }
+
+  Widget _buildRow(BuildContext context, _ShortcutRow row, AppLocalizations? l10n) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
           for (final key in row.keys) ...[
@@ -277,10 +316,40 @@ class _ShortcutHelpSheet extends StatelessWidget {
             const SizedBox(width: 6),
           ],
           const SizedBox(width: 8),
-          Expanded(child: Text(row.labelKey.resolve(l10n))),
+          Expanded(
+            child: Text(
+              row.labelKey.resolve(l10n),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+}
+
+class _ShortcutSection {
+  final _SectionLabel label;
+  final List<_ShortcutRow> rows;
+  const _ShortcutSection(this.label, this.rows);
+}
+
+enum _SectionLabel {
+  navigation,
+  actions,
+  general;
+
+  String resolve(AppLocalizations? l10n) {
+    switch (this) {
+      case _SectionLabel.navigation:
+        return l10n?.txt_shortcut_section_navigation ?? 'NAVIGATION';
+      case _SectionLabel.actions:
+        return l10n?.txt_shortcut_section_actions ?? 'ACTIONS';
+      case _SectionLabel.general:
+        return l10n?.txt_shortcut_section_general ?? 'GENERAL';
+    }
   }
 }
 

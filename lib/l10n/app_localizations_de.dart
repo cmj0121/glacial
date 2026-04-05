@@ -1278,4 +1278,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_shortcut_escape => 'Suche schließen oder Eingabe verlassen';
+
+  @override
+  String get txt_shortcut_section_navigation => 'NAVIGATION';
+
+  @override
+  String get txt_shortcut_section_actions => 'AKTIONEN';
+
+  @override
+  String get txt_shortcut_section_general => 'ALLGEMEIN';
 }

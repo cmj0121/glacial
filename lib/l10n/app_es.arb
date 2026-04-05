@@ -394,5 +394,8 @@
   "txt_shortcut_boost": "Impulsar publicación enfocada",
   "txt_shortcut_reply": "Responder a la publicación enfocada",
   "txt_shortcut_bookmark": "Guardar publicación enfocada",
-  "txt_shortcut_escape": "Cerrar búsqueda o quitar foco"
+  "txt_shortcut_escape": "Cerrar búsqueda o quitar foco",
+  "txt_shortcut_section_navigation": "NAVEGACIÓN",
+  "txt_shortcut_section_actions": "ACCIONES",
+  "txt_shortcut_section_general": "GENERAL"
 }

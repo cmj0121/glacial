@@ -394,5 +394,8 @@
   "txt_shortcut_boost": "포커스된 게시물 부스트",
   "txt_shortcut_reply": "포커스된 게시물에 답글",
   "txt_shortcut_bookmark": "포커스된 게시물 북마크",
-  "txt_shortcut_escape": "검색 닫기 또는 입력 포커스 해제"
+  "txt_shortcut_escape": "검색 닫기 또는 입력 포커스 해제",
+  "txt_shortcut_section_navigation": "내비게이션",
+  "txt_shortcut_section_actions": "작업",
+  "txt_shortcut_section_general": "일반"
 }

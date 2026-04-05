@@ -1264,4 +1264,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_shortcut_escape => 'Close search or blur input';
+
+  @override
+  String get txt_shortcut_section_navigation => 'NAVIGATION';
+
+  @override
+  String get txt_shortcut_section_actions => 'ACTIONS';
+
+  @override
+  String get txt_shortcut_section_general => 'GENERAL';
 }

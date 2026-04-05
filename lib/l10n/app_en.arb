@@ -471,5 +471,8 @@
   "txt_shortcut_boost": "Boost focused post",
   "txt_shortcut_reply": "Reply to focused post",
   "txt_shortcut_bookmark": "Bookmark focused post",
-  "txt_shortcut_escape": "Close search or blur input"
+  "txt_shortcut_escape": "Close search or blur input",
+  "txt_shortcut_section_navigation": "NAVIGATION",
+  "txt_shortcut_section_actions": "ACTIONS",
+  "txt_shortcut_section_general": "GENERAL"
 }

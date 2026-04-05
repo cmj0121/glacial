@@ -394,5 +394,8 @@
   "txt_shortcut_boost": "選択中の投稿をブースト",
   "txt_shortcut_reply": "選択中の投稿に返信",
   "txt_shortcut_bookmark": "選択中の投稿をブックマーク",
-  "txt_shortcut_escape": "検索を閉じるか入力をブラー"
+  "txt_shortcut_escape": "検索を閉じるか入力をブラー",
+  "txt_shortcut_section_navigation": "ナビゲーション",
+  "txt_shortcut_section_actions": "アクション",
+  "txt_shortcut_section_general": "一般"
 }

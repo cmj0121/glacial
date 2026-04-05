@@ -1284,4 +1284,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_shortcut_escape => 'Fermer la recherche ou retirer le focus';
+
+  @override
+  String get txt_shortcut_section_navigation => 'NAVIGATION';
+
+  @override
+  String get txt_shortcut_section_actions => 'ACTIONS';
+
+  @override
+  String get txt_shortcut_section_general => 'GÉNÉRAL';
 }

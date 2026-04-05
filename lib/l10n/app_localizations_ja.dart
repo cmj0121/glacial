@@ -1221,4 +1221,13 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_escape => '検索を閉じるか入力をブラー';
+
+  @override
+  String get txt_shortcut_section_navigation => 'ナビゲーション';
+
+  @override
+  String get txt_shortcut_section_actions => 'アクション';
+
+  @override
+  String get txt_shortcut_section_general => '一般';
 }

@@ -1220,4 +1220,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_shortcut_escape => '關閉搜尋或取消輸入焦點';
+
+  @override
+  String get txt_shortcut_section_navigation => '導覽';
+
+  @override
+  String get txt_shortcut_section_actions => '動作';
+
+  @override
+  String get txt_shortcut_section_general => '一般';
 }

@@ -2479,6 +2479,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close search or blur input'**
   String get txt_shortcut_escape;
+
+  /// No description provided for @txt_shortcut_section_navigation.
+  ///
+  /// In en, this message translates to:
+  /// **'NAVIGATION'**
+  String get txt_shortcut_section_navigation;
+
+  /// No description provided for @txt_shortcut_section_actions.
+  ///
+  /// In en, this message translates to:
+  /// **'ACTIONS'**
+  String get txt_shortcut_section_actions;
+
+  /// No description provided for @txt_shortcut_section_general.
+  ///
+  /// In en, this message translates to:
+  /// **'GENERAL'**
+  String get txt_shortcut_section_general;
 }
 
 class _AppLocalizationsDelegate
