@@ -30,6 +30,9 @@ class GlacialHome extends ConsumerStatefulWidget {
   // When set, viewport-based auto-focus is suppressed until this instant
   // so j/k moves aren't stomped by the in-flight scroll animation.
   static DateTime? suppressAutoFocusUntil;
+  // Label of the active sub-tab (e.g. "Home", "Public") — shown
+  // in the app bar as a subtitle next to the route title.
+  static final ValueNotifier<String?> activeTabLabel = ValueNotifier<String?>(null);
 
   final bool backable;
   final Widget? title;

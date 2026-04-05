@@ -240,6 +240,28 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             title = Text(AppLocalizations.of(context)?.btn_profile_filter ?? 'Filters');
             backable = true;
             break;
+          case RoutePath.timeline:
+            title = _TimelineTitle();
+            break;
+          case RoutePath.list:
+            title = Text(AppLocalizations.of(context)?.btn_sidebar_lists ?? 'Lists');
+            break;
+          case RoutePath.trends:
+            title = Text(AppLocalizations.of(context)?.btn_sidebar_trendings ?? 'Trendings');
+            break;
+          case RoutePath.notifications:
+            title = Text(AppLocalizations.of(context)?.btn_sidebar_notifications ?? 'Notifications');
+            break;
+          case RoutePath.conversations:
+            title = Text(AppLocalizations.of(context)?.btn_sidebar_conversations ?? 'Conversations');
+            break;
+          case RoutePath.admin:
+            title = Text(AppLocalizations.of(context)?.btn_sidebar_management ?? 'Management');
+            break;
+          case RoutePath.followRequests:
+            title = Text(AppLocalizations.of(context)?.btn_notification_follow_request ?? 'Follow Requests');
+            backable = true;
+            break;
           default:
             break;
         }
@@ -433,6 +455,24 @@ class _CoreAppState extends ConsumerState<CoreApp> {
           },
         ),
       ],
+    );
+  }
+}
+
+// Reactive app-bar title for the timeline tab. Listens to
+// GlacialHome.activeTabLabel so it updates when the user swipes or
+// uses Tab/Shift+Tab to switch between Home / Local / Public / etc.
+class _TimelineTitle extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final String base = AppLocalizations.of(context)?.btn_sidebar_timelines ?? 'Timelines';
+
+    return ValueListenableBuilder<String?>(
+      valueListenable: GlacialHome.activeTabLabel,
+      builder: (context, label, _) {
+        if (label == null || label.isEmpty) return Text(base);
+        return Text('$base ($label)');
+      },
     );
   }
 }
