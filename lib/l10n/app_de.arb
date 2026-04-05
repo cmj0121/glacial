@@ -387,5 +387,6 @@
   "txt_shortcut_prev_post": "Vorheriger Beitrag",
   "txt_shortcut_next_tab": "Nächster Tab",
   "txt_shortcut_prev_tab": "Vorheriger Tab",
-  "txt_shortcut_focus_search": "Suche fokussieren"
+  "txt_shortcut_focus_search": "Suche fokussieren",
+  "txt_shortcut_compose_post": "Neuen Beitrag verfassen"
 }

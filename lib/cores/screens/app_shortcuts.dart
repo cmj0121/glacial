@@ -8,22 +8,26 @@
 // to the `?` cheatsheet.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:glacial/cores/routes.dart';
 import 'package:glacial/cores/screens/glass_sheets.dart';
+import 'package:glacial/cores/storage.dart';
 import 'package:glacial/features/glacial/screens/home.dart';
 import 'package:glacial/l10n/app_localizations.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-class AppShortcuts extends StatefulWidget {
+class AppShortcuts extends ConsumerStatefulWidget {
   final Widget child;
 
   const AppShortcuts({super.key, required this.child});
 
   @override
-  State<AppShortcuts> createState() => _AppShortcutsState();
+  ConsumerState<AppShortcuts> createState() => _AppShortcutsState();
 }
 
-class _AppShortcutsState extends State<AppShortcuts> {
+class _AppShortcutsState extends ConsumerState<AppShortcuts> {
   final FocusNode _focusNode = FocusNode(debugLabel: 'AppShortcuts');
 
   @override
@@ -61,7 +65,15 @@ class _AppShortcutsState extends State<AppShortcuts> {
         if (_textInputHasFocus) return;
         GlacialHome.onFocusSearch?.call();
       },
+      const SingleActivator(LogicalKeyboardKey.keyN): _composeNewPost,
     };
+  }
+
+  void _composeNewPost() {
+    if (_textInputHasFocus) return;
+    final bool isSignedIn = ref.read(accessStatusProvider)?.accessToken?.isNotEmpty == true;
+    if (!isSignedIn) return;
+    context.push(RoutePath.post.path);
   }
 
   void _switchTab(int delta) {
@@ -153,6 +165,7 @@ const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
   _ShortcutRow(keys: <String>['Tab'], labelKey: _HelpLabel.nextTab),
   _ShortcutRow(keys: <String>['Shift', 'Tab'], labelKey: _HelpLabel.prevTab),
   _ShortcutRow(keys: <String>['/'], labelKey: _HelpLabel.focusSearch),
+  _ShortcutRow(keys: <String>['n'], labelKey: _HelpLabel.composePost),
 ];
 
 class _ShortcutHelpSheet extends StatelessWidget {
@@ -236,7 +249,8 @@ enum _HelpLabel {
   prevPost,
   nextTab,
   prevTab,
-  focusSearch;
+  focusSearch,
+  composePost;
 
   String resolve(AppLocalizations? l10n) {
     switch (this) {
@@ -254,6 +268,8 @@ enum _HelpLabel {
         return l10n?.txt_shortcut_prev_tab ?? 'Previous tab';
       case _HelpLabel.focusSearch:
         return l10n?.txt_shortcut_focus_search ?? 'Focus search';
+      case _HelpLabel.composePost:
+        return l10n?.txt_shortcut_compose_post ?? 'Compose new post';
     }
   }
 }

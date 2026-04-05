@@ -2437,6 +2437,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Focus search'**
   String get txt_shortcut_focus_search;
+
+  /// No description provided for @txt_shortcut_compose_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Compose new post'**
+  String get txt_shortcut_compose_post;
 }
 
 class _AppLocalizationsDelegate

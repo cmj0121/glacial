@@ -1200,4 +1200,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_focus_search => '検索にフォーカス';
+
+  @override
+  String get txt_shortcut_compose_post => '新規投稿を作成';
 }

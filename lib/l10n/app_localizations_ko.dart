@@ -1202,4 +1202,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_shortcut_focus_search => '검색창으로 포커스';
+
+  @override
+  String get txt_shortcut_compose_post => '새 게시물 작성';
 }

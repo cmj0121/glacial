@@ -1199,4 +1199,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_shortcut_focus_search => '聚焦搜尋框';
+
+  @override
+  String get txt_shortcut_compose_post => '撰寫新貼文';
 }

@@ -1257,4 +1257,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_shortcut_focus_search => 'Focar pesquisa';
+
+  @override
+  String get txt_shortcut_compose_post => 'Escrever nova publicação';
 }

@@ -1262,4 +1262,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_shortcut_focus_search => 'Activer la recherche';
+
+  @override
+  String get txt_shortcut_compose_post => 'Rédiger une publication';
 }

@@ -1260,4 +1260,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_shortcut_focus_search => 'Enfocar búsqueda';
+
+  @override
+  String get txt_shortcut_compose_post => 'Redactar nueva publicación';
 }
