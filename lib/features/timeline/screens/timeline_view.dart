@@ -309,6 +309,10 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
           itemCount: statuses.length,
           itemBuilder: (context, index) {
             final StatusSchema status = statuses[index];
+            final bool isReplyToAbove = index > 0 &&
+                status.inReplyToID != null &&
+                status.inReplyToID == statuses[index - 1].id;
+
             final Widget child = Status(
               key: ValueKey('status_${status.id}'),
               schema: status,
@@ -324,7 +328,19 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
                   color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
                 )),
               ),
-              child: child,
+              child: isReplyToAbove
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 2,
+                          margin: const EdgeInsets.only(left: 35),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                        ),
+                        Expanded(child: child),
+                      ],
+                    )
+                  : child,
             );
           },
         ),
