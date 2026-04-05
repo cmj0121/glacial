@@ -382,5 +382,7 @@
   "txt_v2_no_match": "沒有符合的伺服器",
   "txt_shortcuts_title": "鍵盤快捷鍵",
   "txt_shortcut_help": "顯示鍵盤快捷鍵",
-  "txt_shortcut_refresh": "重新整理並捲動至頂端"
+  "txt_shortcut_refresh": "重新整理並捲動至頂端",
+  "txt_shortcut_next_post": "下一則貼文",
+  "txt_shortcut_prev_post": "上一則貼文"
 }

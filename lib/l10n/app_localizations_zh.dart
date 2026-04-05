@@ -1184,4 +1184,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_shortcut_refresh => '重新整理並捲動至頂端';
+
+  @override
+  String get txt_shortcut_next_post => '下一則貼文';
+
+  @override
+  String get txt_shortcut_prev_post => '上一則貼文';
 }

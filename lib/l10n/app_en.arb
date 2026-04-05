@@ -459,5 +459,7 @@
   "txt_v2_no_match": "No matching servers",
   "txt_shortcuts_title": "Keyboard shortcuts",
   "txt_shortcut_help": "Show keyboard shortcuts",
-  "txt_shortcut_refresh": "Refresh and scroll to top"
+  "txt_shortcut_refresh": "Refresh and scroll to top",
+  "txt_shortcut_next_post": "Next post",
+  "txt_shortcut_prev_post": "Previous post"
 }

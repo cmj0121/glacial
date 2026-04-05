@@ -2407,6 +2407,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Refresh and scroll to top'**
   String get txt_shortcut_refresh;
+
+  /// No description provided for @txt_shortcut_next_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Next post'**
+  String get txt_shortcut_next_post;
+
+  /// No description provided for @txt_shortcut_prev_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous post'**
+  String get txt_shortcut_prev_post;
 }
 
 class _AppLocalizationsDelegate

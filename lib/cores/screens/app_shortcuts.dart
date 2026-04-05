@@ -49,7 +49,41 @@ class _AppShortcutsState extends State<AppShortcuts> {
         _showHelpSheet();
       },
       const SingleActivator(LogicalKeyboardKey.period): _refreshAndScrollTop,
+      const SingleActivator(LogicalKeyboardKey.keyJ): () => _moveFocus(1),
+      const SingleActivator(LogicalKeyboardKey.arrowDown): () => _moveFocus(1),
+      const SingleActivator(LogicalKeyboardKey.keyK): () => _moveFocus(-1),
+      const SingleActivator(LogicalKeyboardKey.arrowUp): () => _moveFocus(-1),
     };
+  }
+
+  void _moveFocus(int delta) {
+    if (_textInputHasFocus) return;
+    final List<dynamic>? statuses = GlacialHome.getStatuses?.call();
+    if (statuses == null || statuses.isEmpty) return;
+
+    final int current = GlacialHome.focusedStatusIndex.value ?? -1;
+    int next;
+    if (current < 0) {
+      // First press selects the first visible item (or 0 as a fallback).
+      final positions = GlacialHome.itemPositions?.itemPositions.value;
+      next = (positions != null && positions.isNotEmpty)
+          ? positions.first.index
+          : 0;
+    } else {
+      next = current + delta;
+    }
+    next = next.clamp(0, statuses.length - 1);
+    GlacialHome.focusedStatusIndex.value = next;
+
+    final ItemScrollController? scroll = GlacialHome.itemScrollToTop;
+    if (scroll?.isAttached == true) {
+      scroll!.scrollTo(
+        index: next,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        alignment: 0.1,
+      );
+    }
   }
 
   Future<void> _refreshAndScrollTop() async {
@@ -91,6 +125,8 @@ class _AppShortcutsState extends State<AppShortcuts> {
 const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
   _ShortcutRow(keys: <String>['?'], labelKey: _HelpLabel.help),
   _ShortcutRow(keys: <String>['.'], labelKey: _HelpLabel.refresh),
+  _ShortcutRow(keys: <String>['j'], labelKey: _HelpLabel.nextPost),
+  _ShortcutRow(keys: <String>['k'], labelKey: _HelpLabel.prevPost),
 ];
 
 class _ShortcutHelpSheet extends StatelessWidget {
@@ -169,7 +205,9 @@ class _ShortcutRow {
 
 enum _HelpLabel {
   help,
-  refresh;
+  refresh,
+  nextPost,
+  prevPost;
 
   String resolve(AppLocalizations? l10n) {
     switch (this) {
@@ -177,6 +215,10 @@ enum _HelpLabel {
         return l10n?.txt_shortcut_help ?? 'Show keyboard shortcuts';
       case _HelpLabel.refresh:
         return l10n?.txt_shortcut_refresh ?? 'Refresh and scroll to top';
+      case _HelpLabel.nextPost:
+        return l10n?.txt_shortcut_next_post ?? 'Next post';
+      case _HelpLabel.prevPost:
+        return l10n?.txt_shortcut_prev_post ?? 'Previous post';
     }
   }
 }

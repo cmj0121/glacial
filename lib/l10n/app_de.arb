@@ -382,5 +382,7 @@
   "txt_v2_no_match": "Keine passenden Server",
   "txt_shortcuts_title": "Tastaturkürzel",
   "txt_shortcut_help": "Tastaturkürzel anzeigen",
-  "txt_shortcut_refresh": "Aktualisieren und nach oben scrollen"
+  "txt_shortcut_refresh": "Aktualisieren und nach oben scrollen",
+  "txt_shortcut_next_post": "Nächster Beitrag",
+  "txt_shortcut_prev_post": "Vorheriger Beitrag"
 }

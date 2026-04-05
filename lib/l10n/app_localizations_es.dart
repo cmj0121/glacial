@@ -1245,4 +1245,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_shortcut_refresh => 'Actualizar y desplazar al inicio';
+
+  @override
+  String get txt_shortcut_next_post => 'Publicación siguiente';
+
+  @override
+  String get txt_shortcut_prev_post => 'Publicación anterior';
 }

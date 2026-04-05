@@ -160,6 +160,9 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
   @override
   void dispose() {
     itemPositionsListener.itemPositions.removeListener(_onPositionChange);
+    if (GlacialHome.focusedStatusIndex.value != null) {
+      GlacialHome.focusedStatusIndex.value = null;
+    }
     _streamSubscription?.cancel();
     _streamingUnsubscribe?.call();
     timer?.cancel();
@@ -327,27 +330,44 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
               }
             );
 
-            return Container(
-              decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
-                )),
-              ),
-              child: isReplyToAbove
-                  ? IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Container(
-                            width: 2,
-                            margin: const EdgeInsets.only(left: 35),
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                          ),
-                          Expanded(child: child),
-                        ],
+            final Widget body = isReplyToAbove
+                ? IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          width: 2,
+                          margin: const EdgeInsets.only(left: 35),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                        ),
+                        Expanded(child: child),
+                      ],
+                    ),
+                  )
+                : child;
+
+            return ValueListenableBuilder<int?>(
+              valueListenable: GlacialHome.focusedStatusIndex,
+              builder: (context, focusedIdx, inner) {
+                final bool isFocused = focusedIdx == index;
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
                       ),
-                    )
-                  : child,
+                      left: BorderSide(
+                        color: isFocused
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.transparent,
+                        width: 3,
+                      ),
+                    ),
+                  ),
+                  child: inner,
+                );
+              },
+              child: body,
             );
           },
         ),

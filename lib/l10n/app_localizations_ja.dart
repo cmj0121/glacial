@@ -1185,4 +1185,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_refresh => '更新して最上部にスクロール';
+
+  @override
+  String get txt_shortcut_next_post => '次の投稿';
+
+  @override
+  String get txt_shortcut_prev_post => '前の投稿';
 }

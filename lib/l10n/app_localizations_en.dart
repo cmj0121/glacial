@@ -1228,4 +1228,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_shortcut_refresh => 'Refresh and scroll to top';
+
+  @override
+  String get txt_shortcut_next_post => 'Next post';
+
+  @override
+  String get txt_shortcut_prev_post => 'Previous post';
 }

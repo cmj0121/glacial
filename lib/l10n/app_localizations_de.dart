@@ -1241,4 +1241,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_shortcut_refresh => 'Aktualisieren und nach oben scrollen';
+
+  @override
+  String get txt_shortcut_next_post => 'Nächster Beitrag';
+
+  @override
+  String get txt_shortcut_prev_post => 'Vorheriger Beitrag';
 }

@@ -1242,4 +1242,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_shortcut_refresh => 'Atualizar e rolar para o topo';
+
+  @override
+  String get txt_shortcut_next_post => 'Próxima publicação';
+
+  @override
+  String get txt_shortcut_prev_post => 'Publicação anterior';
 }
