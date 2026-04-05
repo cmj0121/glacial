@@ -59,9 +59,10 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     );
 
     // Esc stays active everywhere: blur text input / close sheet, and
-    // on a compose route it also pops back to the previous screen.
+    // when focus is already clear it pops any backable subroute (post
+    // compose, status detail/thread, profile, etc.).
     if (event.physicalKey == PhysicalKeyboardKey.escape) {
-      _handleEscape(onComposeRoute: onComposeRoute);
+      _handleEscape();
       return true;
     }
 
@@ -84,15 +85,15 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     return false;
   }
 
-  void _handleEscape({bool onComposeRoute = false}) {
+  void _handleEscape() {
     GlacialHome.onCloseSearch?.call();
     final FocusNode? primary = FocusManager.instance.primaryFocus;
     final bool hadTextFocus = primary?.context?.widget is EditableText;
     primary?.unfocus();
-    // If the user was typing, one Esc blurs; a second Esc closes the
-    // composer. If nothing was focused and we're on a compose route,
-    // pop straight away.
-    if (!hadTextFocus && onComposeRoute && context.canPop()) {
+    // If the user was typing, one Esc blurs; a second Esc (nothing
+    // focused) pops back. Works uniformly for compose screens, status
+    // threads, profiles, and any other backable subroute.
+    if (!hadTextFocus && context.canPop()) {
       context.pop();
     }
   }
