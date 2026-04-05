@@ -20,16 +20,12 @@ class SingleNotification extends ConsumerStatefulWidget {
 }
 
 class _SingleNotificationState extends ConsumerState<SingleNotification> {
-  // Mentions use the larger avatar since the mention itself is the
-  // primary content; for aggregated user actions (reblog, favourite,
-  // follow, poll, etc.) a smaller avatar keeps the list compact and
-  // visually secondary to the status card being referenced.
-  double get _avatarSize => widget.schema.type == NotificationType.mention ? 44 : 32;
-
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
   Widget? _body;
   List<AccountSchema> _accounts = [];
+
+  bool get _isMention => widget.schema.type == NotificationType.mention;
 
   @override
   void initState() {
@@ -40,7 +36,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
   @override
   Widget build(BuildContext context) {
     if (_body == null) {
-      return const LoadingOverlay(isLoading: true, child: SizedBox(height: 96));
+      return const LoadingOverlay(isLoading: true, child: SizedBox(height: 72));
     }
 
     return Container(
@@ -51,114 +47,133 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
           ),
         ),
       ),
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildAvatarBadge(context),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildHeader(context),
-                if (_body != const SizedBox.shrink()) ...[
-                  const SizedBox(height: 8),
-                  _body!,
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+      child: _isMention ? _buildMention(context) : _buildAction(context),
     );
   }
 
-  // Primary avatar with a small circular badge overlay carrying the
-  // notification type icon in its accent color. Matches Mastodon web.
-  Widget _buildAvatarBadge(BuildContext context) {
-    final ColorScheme scheme = Theme.of(context).colorScheme;
+  // Layout for aggregated user actions (reblog / favourite / follow /
+  // poll / update): a compact single-row header with a small accent
+  // type icon, overlapping chip-scale avatars of the actors, the
+  // action verb, and the referenced content indented below.
+  Widget _buildAction(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme scheme = theme.colorScheme;
+    final Color accent = widget.schema.type.accentColor(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _TypeBadge(icon: widget.schema.type.icon, accent: accent, size: 22),
+            const SizedBox(width: 10),
+            _AvatarStack(accounts: _accounts, size: 20, overlap: 8),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                _headerText(context),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: scheme.onSurface,
+                  height: 1.25,
+                ),
+              ),
+            ),
+          ],
+        ),
+        if (_body != const SizedBox.shrink()) ...[
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(left: 32),
+            child: Opacity(opacity: 0.75, child: _body!),
+          ),
+        ],
+      ],
+    );
+  }
+
+  // Layout for mentions: larger 44px avatar since the mention itself
+  // is primary content, and the status renders at full opacity.
+  Widget _buildMention(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme scheme = theme.colorScheme;
     final Color accent = widget.schema.type.accentColor(context);
     final AccountSchema? primary = _accounts.isNotEmpty ? _accounts.first : null;
 
-    return SizedBox(
-      width: _avatarSize,
-      height: _avatarSize,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          if (primary != null)
-            AccountAvatar(schema: primary, size: _avatarSize)
-          else
-            Container(
-              width: _avatarSize,
-              height: _avatarSize,
-              decoration: BoxDecoration(
-                color: scheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(_avatarSize / 2),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 44,
+          height: 44,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              if (primary != null)
+                AccountAvatar(schema: primary, size: 44)
+              else
+                Container(
+                  decoration: BoxDecoration(
+                    color: scheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                ),
+              Positioned(
+                bottom: -2,
+                right: -2,
+                child: _TypeBadge(
+                  icon: widget.schema.type.icon,
+                  accent: accent,
+                  size: 18,
+                  borderColor: scheme.surface,
+                ),
               ),
-            ),
-          Positioned(
-            bottom: -2,
-            right: -2,
-            child: Container(
-              padding: EdgeInsets.all(_avatarSize >= 44 ? 3 : 2),
-              decoration: BoxDecoration(
-                color: accent,
-                shape: BoxShape.circle,
-                border: Border.all(color: scheme.surface, width: 2),
-              ),
-              child: Icon(
-                widget.schema.type.icon,
-                size: _avatarSize >= 44 ? 11 : 9,
-                color: _onAccent(context, accent),
-              ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _headerText(context),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: scheme.onSurface,
+                  height: 1.25,
+                ),
+              ),
+              if (_body != const SizedBox.shrink()) ...[
+                const SizedBox(height: 8),
+                _body!,
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 
-  Color _onAccent(BuildContext context, Color accent) {
-    final ColorScheme scheme = Theme.of(context).colorScheme;
-    if (accent == scheme.error) return scheme.onError;
-    if (accent == scheme.tertiary) return scheme.onTertiary;
-    return scheme.onPrimary;
-  }
-
-  // Renders: "<Name>[, <Name>] [and N others] <action label>" with the
-  // action label in onSurfaceVariant.
-  Widget _buildHeader(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme scheme = theme.colorScheme;
-    final TextStyle? nameStyle = theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600);
-    final TextStyle? labelStyle = theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant);
-
-    if (_accounts.isEmpty) {
-      return Text(widget.schema.type.tooltip(context), style: labelStyle);
-    }
+  // "Alice and N others <verb>" — returns a plain-string header.
+  // Keeping it as a single string lets Flutter handle RTL wrapping and
+  // avoids brittle TextSpan math just to bold a single name.
+  String _headerText(BuildContext context) {
+    final String verb = widget.schema.type.tooltip(context).toLowerCase();
+    if (_accounts.isEmpty) return verb;
 
     final String primaryName = _accounts.first.displayName;
     final int extras = widget.schema.count - 1;
-    final String othersSuffix = extras > 0
-        ? ' ${AppLocalizations.of(context)?.txt_notification_others(extras) ?? '+ $extras others'}'
-        : '';
+    if (extras <= 0) return '$primaryName  $verb';
 
-    return RichText(
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-      text: TextSpan(
-        children: [
-          TextSpan(text: primaryName, style: nameStyle),
-          if (othersSuffix.isNotEmpty)
-            TextSpan(text: othersSuffix, style: labelStyle),
-          const TextSpan(text: '  '),
-          TextSpan(text: widget.schema.type.tooltip(context).toLowerCase(), style: labelStyle),
-        ],
-      ),
-    );
+    final String others = AppLocalizations.of(context)?.txt_notification_others(extras) ?? '+ $extras others';
+    return '$primaryName $others  $verb';
   }
 
   Future<void> _load() async {
@@ -171,12 +186,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
       case NotificationType.update:
       case NotificationType.mention:
         final StatusSchema? schema = await status?.getStatus(widget.schema.statusID, loadCache: true);
-        content = schema == null
-            ? const SizedBox.shrink()
-            : Opacity(
-                opacity: widget.schema.type == NotificationType.mention ? 1.0 : 0.75,
-                child: StatusLite(schema: schema),
-              );
+        content = schema == null ? const SizedBox.shrink() : StatusLite(schema: schema);
         break;
       case NotificationType.follow:
       case NotificationType.followRequest:
@@ -205,6 +215,88 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
   Future<void> _loadAccounts() async {
     final List<AccountSchema> accounts = await status?.getAccounts(widget.schema.accounts) ?? [];
     if (mounted) setState(() => _accounts = accounts);
+  }
+}
+
+// Circular accent-colored badge carrying a type icon.
+class _TypeBadge extends StatelessWidget {
+  final IconData icon;
+  final Color accent;
+  final double size;
+  final Color? borderColor;
+
+  const _TypeBadge({
+    required this.icon,
+    required this.accent,
+    required this.size,
+    this.borderColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final Color onAccent = accent == scheme.error
+        ? scheme.onError
+        : (accent == scheme.tertiary ? scheme.onTertiary : scheme.onPrimary);
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: accent,
+        shape: BoxShape.circle,
+        border: borderColor != null
+            ? Border.all(color: borderColor!, width: 2)
+            : null,
+      ),
+      child: Icon(icon, size: size * 0.55, color: onAccent),
+    );
+  }
+}
+
+// Horizontal overlapping stack of small round avatars, used inline in
+// the action notification header to identify who triggered it.
+class _AvatarStack extends StatelessWidget {
+  static const int _maxCount = 3;
+
+  final List<AccountSchema> accounts;
+  final double size;
+  final double overlap;
+
+  const _AvatarStack({
+    required this.accounts,
+    required this.size,
+    required this.overlap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (accounts.isEmpty) return SizedBox(width: size, height: size);
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final List<AccountSchema> shown = accounts.take(_maxCount).toList();
+    final double width = size + (shown.length - 1) * (size - overlap);
+
+    return SizedBox(
+      width: width.clamp(size, double.infinity),
+      height: size,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          for (int i = 0; i < shown.length; i++)
+            Positioned(
+              left: i * (size - overlap),
+              child: Container(
+                padding: const EdgeInsets.all(1),
+                decoration: BoxDecoration(
+                  color: scheme.surface,
+                  shape: BoxShape.circle,
+                ),
+                child: AccountAvatar(schema: shown[i], size: size - 2),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
 
