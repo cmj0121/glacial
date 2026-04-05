@@ -1,6 +1,8 @@
 // The Status widget to show the toots from user.
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart'; // ignore: deprecated_member_use
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -28,7 +30,7 @@ class Status extends ConsumerStatefulWidget {
 }
 
 class _StatusState extends ConsumerState<Status> {
-  final double headerHeight = 48.0;
+  final double headerHeight = 40.0;
   final double metadataHeight = 22.0;
   final double iconSize = 16.0;
 
@@ -36,28 +38,42 @@ class _StatusState extends ConsumerState<Status> {
   late final SystemPreferenceSchema? pref = ref.read(preferenceProvider);
   late StatusSchema schema = widget.schema.reblog ?? widget.schema;
 
+  bool _showHeartOverlay = false;
+
   @override
   Widget build(BuildContext context) {
     final bool sensitive = (pref?.sensitive ?? true) && schema.sensitive && schema.spoiler.isEmpty == true;
+    final bool isSignedIn = status?.isSignedIn == true;
 
     return Padding(
-      padding: const EdgeInsets.only(top: 16, bottom: 8),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           buildMetadata(),
-          StatusLite(
-            schema: schema,
-            indent: widget.indent,
-            spoiler: schema.spoiler.isEmpty ? null : schema.spoiler,
-            sensitive: sensitive,
-            iconSize: iconSize,
-            headerHeight: headerHeight,
-            onPollVote: (_) async {
-              final StatusSchema updatedStatus = await status?.getStatus(schema.id) ?? schema;
-              onReload(updatedStatus);
-            },
-            onLinkTap: onLinkTap,
+          GestureDetector(
+            onDoubleTap: isSignedIn ? _onDoubleTapFavourite : null,
+            onLongPress: isSignedIn ? () => _showContextMenu(context) : null,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                StatusLite(
+                  schema: schema,
+                  indent: widget.indent,
+                  spoiler: schema.spoiler.isEmpty ? null : schema.spoiler,
+                  sensitive: sensitive,
+                  iconSize: iconSize,
+                  headerHeight: headerHeight,
+                  onPollVote: (_) async {
+                    final StatusSchema updatedStatus = await status?.getStatus(schema.id) ?? schema;
+                    onReload(updatedStatus);
+                  },
+                  onLinkTap: onLinkTap,
+                ),
+                if (_showHeartOverlay)
+                  Icon(Icons.favorite, size: 80, color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7)),
+              ],
+            ),
           ),
 
           ReactionChips(
@@ -75,6 +91,65 @@ class _StatusState extends ConsumerState<Status> {
         ],
       ),
     );
+  }
+
+  Future<void> _showContextMenu(BuildContext context) async {
+    HapticFeedback.mediumImpact();
+
+    final l10n = AppLocalizations.of(context);
+    final RenderBox box = context.findRenderObject() as RenderBox;
+    final Offset offset = box.localToGlobal(Offset.zero);
+
+    final action = await showMenu<StatusInteraction>(
+      context: context,
+      position: RelativeRect.fromLTRB(offset.dx, offset.dy + box.size.height / 2, offset.dx + box.size.width, 0),
+      items: [
+        PopupMenuItem(value: StatusInteraction.reply, child: ListTile(leading: Icon(StatusInteraction.reply.icon()), title: Text(l10n?.btn_interaction_reply ?? 'Reply'), dense: true)),
+        PopupMenuItem(value: StatusInteraction.reblog, child: ListTile(leading: Icon(StatusInteraction.reblog.icon(active: schema.reblogged ?? false)), title: Text(l10n?.btn_interaction_reblog ?? 'Boost'), dense: true)),
+        PopupMenuItem(value: StatusInteraction.favourite, child: ListTile(leading: Icon(StatusInteraction.favourite.icon(active: schema.favourited ?? false)), title: Text(l10n?.btn_interaction_favourite ?? 'Favourite'), dense: true)),
+        PopupMenuItem(value: StatusInteraction.bookmark, child: ListTile(leading: Icon(StatusInteraction.bookmark.icon(active: schema.bookmarked ?? false)), title: Text(l10n?.btn_interaction_bookmark ?? 'Bookmark'), dense: true)),
+        PopupMenuItem(value: StatusInteraction.share, child: ListTile(leading: Icon(StatusInteraction.share.icon()), title: Text(l10n?.btn_interaction_share ?? 'Share'), dense: true)),
+      ],
+    );
+
+    if (action == null || status == null || !mounted) return;
+
+    if (action == StatusInteraction.reply) {
+      if (mounted) this.context.push(RoutePath.post.path, extra: schema);
+      return;
+    }
+
+    if (action == StatusInteraction.share) {
+      if (schema.url != null) SharePlus.instance.share(ShareParams(text: schema.url!));
+      return;
+    }
+
+    if (action == StatusInteraction.reblog || action == StatusInteraction.favourite || action == StatusInteraction.bookmark) {
+      final updatedStatus = await status!.interactWithStatus(
+        schema, action,
+        negative: action == StatusInteraction.reblog ? (schema.reblogged ?? false)
+            : action == StatusInteraction.favourite ? (schema.favourited ?? false)
+            : (schema.bookmarked ?? false),
+      );
+      onReload(updatedStatus);
+    }
+  }
+
+  Future<void> _onDoubleTapFavourite() async {
+    if (status == null) return;
+
+    setState(() => _showHeartOverlay = true);
+    HapticFeedback.mediumImpact();
+
+    final updatedStatus = await status!.interactWithStatus(
+      schema,
+      StatusInteraction.favourite,
+      negative: schema.favourited ?? false,
+    );
+    onReload(updatedStatus);
+
+    await Future.delayed(const Duration(milliseconds: 600));
+    if (mounted) setState(() => _showHeartOverlay = false);
   }
 
   /// The optional metadata of the status, including the status reply or reblog
@@ -106,15 +181,26 @@ class _StatusState extends ConsumerState<Status> {
       action = StatusInteraction.reblog;
     }
 
+    final String label = account.displayName;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Icon(action.icon(active: true), color: Theme.of(context).hintColor, size: metadataHeight),
-          const SizedBox(width: 4),
+          const SizedBox(width: 8),
           AccountAvatar(schema: account, size: metadataHeight),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).hintColor,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );
