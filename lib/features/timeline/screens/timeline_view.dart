@@ -367,6 +367,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   // Clean-up and refresh the timeline when the user pulls down the list.
   Future<void> onRefresh() async {
+    HapticFeedback.mediumImpact();
     setState(() {
       unreaded.clear();
       maxId = null;
