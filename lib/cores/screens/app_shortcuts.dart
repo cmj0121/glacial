@@ -47,6 +47,10 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
   bool _handleKey(KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) return false;
     if (!mounted) return false;
+    // Disable all shortcuts when the shell is not the topmost route
+    // (e.g. compose post, status detail, quote). Esc is the single
+    // exception — it still works to blur inputs and close sheets.
+    final bool isTopmost = ModalRoute.of(context)?.isCurrent ?? false;
 
     // Esc is special: it works even from inside a text input, where it
     // blurs the field (and closes the search bar).
@@ -55,6 +59,7 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
       return true;
     }
 
+    if (!isTopmost) return false;
     if (_textInputHasFocus) return false;
 
     final bool shift = HardwareKeyboard.instance.isShiftPressed;
