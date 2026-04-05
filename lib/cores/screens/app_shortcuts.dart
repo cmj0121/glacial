@@ -1,8 +1,10 @@
 // Global keyboard shortcuts wrapper for the GlacialHome shell.
 //
-// Wraps its child in a `Focus` + `CallbackShortcuts` chain so single-key
-// shortcuts work across all shell tabs. Key events are ignored while a
-// text field (or any widget requesting raw keyboard input) owns focus.
+// Uses a `HardwareKeyboard` handler so single-key shortcuts are detected
+// app-wide on desktop regardless of which widget currently owns focus
+// (mirrors Mastodon web's document-level listener). Key events are
+// ignored while a text field owns focus so typing in composers, search
+// boxes, etc. is never hijacked.
 //
 // Each shortcut commit adds one entry to `_buildBindings()` and one row
 // to the `?` cheatsheet.
@@ -29,12 +31,37 @@ class AppShortcuts extends ConsumerStatefulWidget {
 }
 
 class _AppShortcutsState extends ConsumerState<AppShortcuts> {
-  final FocusNode _focusNode = FocusNode(debugLabel: 'AppShortcuts');
+  @override
+  void initState() {
+    super.initState();
+    HardwareKeyboard.instance.addHandler(_handleKey);
+  }
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    HardwareKeyboard.instance.removeHandler(_handleKey);
     super.dispose();
+  }
+
+  bool _handleKey(KeyEvent event) {
+    if (event is! KeyDownEvent) return false;
+    if (_textInputHasFocus) return false;
+    if (!mounted) return false;
+
+    final bool shift = HardwareKeyboard.instance.isShiftPressed;
+    final bool meta = HardwareKeyboard.instance.isMetaPressed;
+    final bool ctrl = HardwareKeyboard.instance.isControlPressed;
+    final bool alt = HardwareKeyboard.instance.isAltPressed;
+    // Don't swallow OS-level chords like Cmd+A, Ctrl+C, etc.
+    if (meta || ctrl || alt) return false;
+
+    final match = _bindings.firstWhere(
+      (b) => b.key == event.logicalKey && b.shift == shift,
+      orElse: () => _NullBinding.instance,
+    );
+    if (identical(match, _NullBinding.instance)) return false;
+    match.run(this);
+    return true;
   }
 
   // Skip shortcuts while a text field owns focus so typing in composers,
@@ -47,37 +74,28 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     return ctx.widget is EditableText;
   }
 
-  Map<ShortcutActivator, VoidCallback> _buildBindings() {
-    return <ShortcutActivator, VoidCallback>{
-      const SingleActivator(LogicalKeyboardKey.slash, shift: true): () {
-        if (_textInputHasFocus) return;
-        _showHelpSheet();
-      },
-      const SingleActivator(LogicalKeyboardKey.period): _refreshAndScrollTop,
-      const SingleActivator(LogicalKeyboardKey.keyJ): () => _moveFocus(1),
-      const SingleActivator(LogicalKeyboardKey.arrowDown): () => _moveFocus(1),
-      const SingleActivator(LogicalKeyboardKey.keyK): () => _moveFocus(-1),
-      const SingleActivator(LogicalKeyboardKey.arrowUp): () => _moveFocus(-1),
-      const SingleActivator(LogicalKeyboardKey.tab): () => _switchTab(1),
-      const SingleActivator(LogicalKeyboardKey.tab, shift: true): () => _switchTab(-1),
-      const SingleActivator(LogicalKeyboardKey.arrowRight): () => _switchTab(1),
-      const SingleActivator(LogicalKeyboardKey.arrowLeft): () => _switchTab(-1),
-      const SingleActivator(LogicalKeyboardKey.slash): () {
-        if (_textInputHasFocus) return;
-        GlacialHome.onFocusSearch?.call();
-      },
-      const SingleActivator(LogicalKeyboardKey.keyN): _composeNewPost,
-      const SingleActivator(LogicalKeyboardKey.keyO): _openFocusedStatus,
-      const SingleActivator(LogicalKeyboardKey.enter): _openFocusedStatus,
-      const SingleActivator(LogicalKeyboardKey.keyF): () => _interactFocused(StatusInteraction.favourite),
-      const SingleActivator(LogicalKeyboardKey.keyB): () => _interactFocused(StatusInteraction.reblog),
-      const SingleActivator(LogicalKeyboardKey.keyR): _replyToFocused,
-      const SingleActivator(LogicalKeyboardKey.keyE): () => _interactFocused(StatusInteraction.bookmark),
-    };
-  }
+  static final List<_Binding> _bindings = <_Binding>[
+    _Binding(LogicalKeyboardKey.slash, shift: true, run: (s) => s._showHelpSheet()),
+    _Binding(LogicalKeyboardKey.slash, run: (s) => GlacialHome.onFocusSearch?.call()),
+    _Binding(LogicalKeyboardKey.period, run: (s) => s._refreshAndScrollTop()),
+    _Binding(LogicalKeyboardKey.keyJ, run: (s) => s._moveFocus(1)),
+    _Binding(LogicalKeyboardKey.arrowDown, run: (s) => s._moveFocus(1)),
+    _Binding(LogicalKeyboardKey.keyK, run: (s) => s._moveFocus(-1)),
+    _Binding(LogicalKeyboardKey.arrowUp, run: (s) => s._moveFocus(-1)),
+    _Binding(LogicalKeyboardKey.tab, run: (s) => s._switchTab(1)),
+    _Binding(LogicalKeyboardKey.tab, shift: true, run: (s) => s._switchTab(-1)),
+    _Binding(LogicalKeyboardKey.arrowRight, run: (s) => s._switchTab(1)),
+    _Binding(LogicalKeyboardKey.arrowLeft, run: (s) => s._switchTab(-1)),
+    _Binding(LogicalKeyboardKey.keyN, run: (s) => s._composeNewPost()),
+    _Binding(LogicalKeyboardKey.keyO, run: (s) => s._openFocusedStatus()),
+    _Binding(LogicalKeyboardKey.enter, run: (s) => s._openFocusedStatus()),
+    _Binding(LogicalKeyboardKey.keyF, run: (s) => s._interactFocused(StatusInteraction.favourite)),
+    _Binding(LogicalKeyboardKey.keyB, run: (s) => s._interactFocused(StatusInteraction.reblog)),
+    _Binding(LogicalKeyboardKey.keyR, run: (s) => s._replyToFocused()),
+    _Binding(LogicalKeyboardKey.keyE, run: (s) => s._interactFocused(StatusInteraction.bookmark)),
+  ];
 
   void _replyToFocused() {
-    if (_textInputHasFocus) return;
     final int? idx = GlacialHome.focusedStatusIndex.value;
     final List<dynamic>? statuses = GlacialHome.getStatuses?.call();
     if (idx == null || statuses == null || idx < 0 || idx >= statuses.length) return;
@@ -87,14 +105,12 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
   }
 
   void _interactFocused(StatusInteraction action) {
-    if (_textInputHasFocus) return;
     final int? idx = GlacialHome.focusedStatusIndex.value;
     if (idx == null) return;
     GlacialHome.onInteractStatus?.call(idx, action);
   }
 
   void _openFocusedStatus() {
-    if (_textInputHasFocus) return;
     final int? idx = GlacialHome.focusedStatusIndex.value;
     final List<dynamic>? statuses = GlacialHome.getStatuses?.call();
     if (idx == null || statuses == null || idx < 0 || idx >= statuses.length) return;
@@ -102,14 +118,12 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
   }
 
   void _composeNewPost() {
-    if (_textInputHasFocus) return;
     final bool isSignedIn = ref.read(accessStatusProvider)?.accessToken?.isNotEmpty == true;
     if (!isSignedIn) return;
     context.push(RoutePath.post.path);
   }
 
   void _switchTab(int delta) {
-    if (_textInputHasFocus) return;
     final TabController? controller = GlacialHome.activeTabController;
     final List<int>? visible = GlacialHome.activeVisibleIndexes?.call();
     if (controller == null || visible == null || visible.isEmpty) return;
@@ -124,7 +138,6 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
   }
 
   void _moveFocus(int delta) {
-    if (_textInputHasFocus) return;
     final List<dynamic>? statuses = GlacialHome.getStatuses?.call();
     if (statuses == null || statuses.isEmpty) return;
 
@@ -154,7 +167,6 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
   }
 
   Future<void> _refreshAndScrollTop() async {
-    if (_textInputHasFocus) return;
     final ItemScrollController? scroll = GlacialHome.itemScrollToTop;
     if (scroll?.isAttached == true) {
       await scroll!.scrollTo(
@@ -176,15 +188,22 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
 
   @override
   Widget build(BuildContext context) {
-    return Focus(
-      focusNode: _focusNode,
-      autofocus: true,
-      child: CallbackShortcuts(
-        bindings: _buildBindings(),
-        child: widget.child,
-      ),
-    );
+    return widget.child;
   }
+}
+
+/// Static binding row for the app-wide key handler.
+class _Binding {
+  final LogicalKeyboardKey key;
+  final bool shift;
+  final void Function(_AppShortcutsState state) run;
+  const _Binding(this.key, {this.shift = false, required this.run});
+}
+
+class _NullBinding extends _Binding {
+  static final _NullBinding instance = _NullBinding();
+  _NullBinding() : super(LogicalKeyboardKey.escape, run: _noop);
+  static void _noop(_AppShortcutsState _) {}
 }
 
 /// Rows rendered in the `?` cheatsheet. Each shortcut commit appends to
