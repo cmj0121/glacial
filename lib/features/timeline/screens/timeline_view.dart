@@ -385,17 +385,16 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
               valueListenable: GlacialHome.focusedStatusIndex,
               builder: (context, focusedIdx, inner) {
                 final bool isFocused = focusedIdx == index;
-                return Container(
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeOut,
                   decoration: BoxDecoration(
+                    color: isFocused
+                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.08)
+                        : Colors.transparent,
                     border: Border(
                       bottom: BorderSide(
                         color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
-                      ),
-                      left: BorderSide(
-                        color: isFocused
-                            ? Theme.of(context).colorScheme.primary
-                            : Colors.transparent,
-                        width: 3,
                       ),
                     ),
                   ),
