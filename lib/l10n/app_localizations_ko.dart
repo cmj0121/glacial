@@ -1178,4 +1178,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => '일치하는 서버가 없습니다';
+
+  @override
+  String get txt_shortcuts_title => '키보드 단축키';
+
+  @override
+  String get txt_shortcut_help => '키보드 단축키 표시';
 }

@@ -2389,6 +2389,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No matching servers'**
   String get txt_v2_no_match;
+
+  /// No description provided for @txt_shortcuts_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard shortcuts'**
+  String get txt_shortcuts_title;
+
+  /// No description provided for @txt_shortcut_help.
+  ///
+  /// In en, this message translates to:
+  /// **'Show keyboard shortcuts'**
+  String get txt_shortcut_help;
 }
 
 class _AppLocalizationsDelegate

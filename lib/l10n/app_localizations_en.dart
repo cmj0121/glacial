@@ -1219,4 +1219,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => 'No matching servers';
+
+  @override
+  String get txt_shortcuts_title => 'Keyboard shortcuts';
+
+  @override
+  String get txt_shortcut_help => 'Show keyboard shortcuts';
 }

@@ -1176,4 +1176,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => '一致するサーバーがありません';
+
+  @override
+  String get txt_shortcuts_title => 'キーボードショートカット';
+
+  @override
+  String get txt_shortcut_help => 'キーボードショートカットを表示';
 }

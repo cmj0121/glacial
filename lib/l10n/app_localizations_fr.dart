@@ -1238,4 +1238,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => 'Aucun serveur correspondant';
+
+  @override
+  String get txt_shortcuts_title => 'Raccourcis clavier';
+
+  @override
+  String get txt_shortcut_help => 'Afficher les raccourcis clavier';
 }

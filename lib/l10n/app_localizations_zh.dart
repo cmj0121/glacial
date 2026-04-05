@@ -1175,4 +1175,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => '沒有符合的伺服器';
+
+  @override
+  String get txt_shortcuts_title => '鍵盤快捷鍵';
+
+  @override
+  String get txt_shortcut_help => '顯示鍵盤快捷鍵';
 }

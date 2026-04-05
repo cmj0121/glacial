@@ -379,5 +379,7 @@
   "txt_v2_server_hint": "搜尋或輸入伺服器網址",
   "txt_v2_popular_servers": "熱門伺服器",
   "txt_v2_tap_to_select": "點擊以選擇此伺服器",
-  "txt_v2_no_match": "沒有符合的伺服器"
+  "txt_v2_no_match": "沒有符合的伺服器",
+  "txt_shortcuts_title": "鍵盤快捷鍵",
+  "txt_shortcut_help": "顯示鍵盤快捷鍵"
 }

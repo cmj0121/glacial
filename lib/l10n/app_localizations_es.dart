@@ -1236,4 +1236,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => 'No hay servidores coincidentes';
+
+  @override
+  String get txt_shortcuts_title => 'Atajos de teclado';
+
+  @override
+  String get txt_shortcut_help => 'Mostrar atajos de teclado';
 }

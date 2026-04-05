@@ -1232,4 +1232,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => 'Keine passenden Server';
+
+  @override
+  String get txt_shortcuts_title => 'Tastaturkürzel';
+
+  @override
+  String get txt_shortcut_help => 'Tastaturkürzel anzeigen';
 }

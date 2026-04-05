@@ -379,5 +379,7 @@
   "txt_v2_server_hint": "サーバーを検索またはURLを入力",
   "txt_v2_popular_servers": "人気のサーバー",
   "txt_v2_tap_to_select": "タップしてこのサーバーを選択",
-  "txt_v2_no_match": "一致するサーバーがありません"
+  "txt_v2_no_match": "一致するサーバーがありません",
+  "txt_shortcuts_title": "キーボードショートカット",
+  "txt_shortcut_help": "キーボードショートカットを表示"
 }

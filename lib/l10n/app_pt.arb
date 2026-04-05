@@ -379,5 +379,7 @@
   "txt_v2_server_hint": "Pesquisar ou digitar URL do servidor",
   "txt_v2_popular_servers": "Servidores populares",
   "txt_v2_tap_to_select": "Toque para selecionar este servidor",
-  "txt_v2_no_match": "Nenhum servidor correspondente"
+  "txt_v2_no_match": "Nenhum servidor correspondente",
+  "txt_shortcuts_title": "Atalhos de teclado",
+  "txt_shortcut_help": "Mostrar atalhos de teclado"
 }

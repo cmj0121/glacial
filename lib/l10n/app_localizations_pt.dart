@@ -1233,4 +1233,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => 'Nenhum servidor correspondente';
+
+  @override
+  String get txt_shortcuts_title => 'Atalhos de teclado';
+
+  @override
+  String get txt_shortcut_help => 'Mostrar atalhos de teclado';
 }

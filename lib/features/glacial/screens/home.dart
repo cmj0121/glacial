@@ -76,10 +76,12 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
               SearchExplorer(size: sidebarSize),
             ],
           ),
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: buildContent(isMobile: isMobile),
+          body: AppShortcuts(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: buildContent(isMobile: isMobile),
+              ),
             ),
           ),
           drawer: GlacialDrawer(),
