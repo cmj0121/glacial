@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart'; // ignore: deprecated_member_use
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -52,6 +53,7 @@ class _StatusState extends ConsumerState<Status> {
           buildMetadata(),
           GestureDetector(
             onDoubleTap: isSignedIn ? _onDoubleTapFavourite : null,
+            onLongPress: isSignedIn ? () => _showContextMenu(context) : null,
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -89,6 +91,48 @@ class _StatusState extends ConsumerState<Status> {
         ],
       ),
     );
+  }
+
+  Future<void> _showContextMenu(BuildContext context) async {
+    HapticFeedback.mediumImpact();
+
+    final l10n = AppLocalizations.of(context);
+    final RenderBox box = context.findRenderObject() as RenderBox;
+    final Offset offset = box.localToGlobal(Offset.zero);
+
+    final action = await showMenu<StatusInteraction>(
+      context: context,
+      position: RelativeRect.fromLTRB(offset.dx, offset.dy + box.size.height / 2, offset.dx + box.size.width, 0),
+      items: [
+        PopupMenuItem(value: StatusInteraction.reply, child: ListTile(leading: Icon(StatusInteraction.reply.icon()), title: Text(l10n?.btn_interaction_reply ?? 'Reply'), dense: true)),
+        PopupMenuItem(value: StatusInteraction.reblog, child: ListTile(leading: Icon(StatusInteraction.reblog.icon(active: schema.reblogged ?? false)), title: Text(l10n?.btn_interaction_reblog ?? 'Boost'), dense: true)),
+        PopupMenuItem(value: StatusInteraction.favourite, child: ListTile(leading: Icon(StatusInteraction.favourite.icon(active: schema.favourited ?? false)), title: Text(l10n?.btn_interaction_favourite ?? 'Favourite'), dense: true)),
+        PopupMenuItem(value: StatusInteraction.bookmark, child: ListTile(leading: Icon(StatusInteraction.bookmark.icon(active: schema.bookmarked ?? false)), title: Text(l10n?.btn_interaction_bookmark ?? 'Bookmark'), dense: true)),
+        PopupMenuItem(value: StatusInteraction.share, child: ListTile(leading: Icon(StatusInteraction.share.icon()), title: Text(l10n?.btn_interaction_share ?? 'Share'), dense: true)),
+      ],
+    );
+
+    if (action == null || status == null || !mounted) return;
+
+    if (action == StatusInteraction.reply) {
+      if (mounted) this.context.push(RoutePath.post.path, extra: schema);
+      return;
+    }
+
+    if (action == StatusInteraction.share) {
+      if (schema.url != null) SharePlus.instance.share(ShareParams(text: schema.url!));
+      return;
+    }
+
+    if (action == StatusInteraction.reblog || action == StatusInteraction.favourite || action == StatusInteraction.bookmark) {
+      final updatedStatus = await status!.interactWithStatus(
+        schema, action,
+        negative: action == StatusInteraction.reblog ? (schema.reblogged ?? false)
+            : action == StatusInteraction.favourite ? (schema.favourited ?? false)
+            : (schema.bookmarked ?? false),
+      );
+      onReload(updatedStatus);
+    }
   }
 
   Future<void> _onDoubleTapFavourite() async {
