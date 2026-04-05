@@ -61,9 +61,9 @@ class StatusLite extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildHeader(context, isSelfPost: isSelfPost),
-
+        const SizedBox(height: 12),
         Indent(
-        indent: indent,
+          indent: indent,
           child: Column(
             children:[
               buildStatusContent(context, status),
@@ -119,21 +119,76 @@ class StatusLite extends ConsumerWidget {
     );
   }
 
+  List<IconData> get _contentTypeIcons {
+    final List<IconData> icons = [];
+    if (schema.attachments.isNotEmpty) icons.add(Icons.image_outlined);
+    if (schema.poll != null) icons.add(Icons.bar_chart);
+    if (schema.card != null) icons.add(Icons.link);
+    if (schema.quote != null) icons.add(Icons.format_quote);
+    return icons;
+  }
+
   Widget buildHeader(BuildContext context, {bool isSelfPost = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+    final icons = _contentTypeIcons;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Column(
           children: [
-            Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
-            const Spacer(),
-            buildMeta(context, isSelfPost: isSelfPost),
+            Semantics(
+              label: schema.account.displayName,
+              button: true,
+              child: GestureDetector(
+                onTap: () => context.push(RoutePath.profile.path, extra: schema.account),
+                child: AccountAvatar(schema: schema.account, size: headerHeight),
+              ),
+            ),
+            if (icons.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              ...icons.map((icon) => Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Icon(icon, size: 12, color: Theme.of(context).hintColor),
+              )),
+            ],
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: buildTimeInfo(context),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      schema.account.displayName.isNotEmpty ? schema.account.displayName : schema.account.username,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  buildTimeInfo(context),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '@${schema.account.acct}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).hintColor,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  buildMeta(context, isSelfPost: isSelfPost),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -141,15 +196,13 @@ class StatusLite extends ConsumerWidget {
 
   Widget buildMeta(BuildContext context, {bool isSelfPost = false}) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisSize: MainAxisSize.min,
       children: [
         buildEditLog(context),
         isSelfPost ? buildQuote(context) : const SizedBox.shrink(),
         StatusVisibility(type: schema.visibility, size: iconSize),
-
         buildLikes(context),
         buildFiltered(context),
-        const SizedBox(width: 4),
       ],
     );
   }
@@ -166,7 +219,7 @@ class StatusLite extends ConsumerWidget {
 
     return Tooltip(
       message: schema.createdAt.toLocal().toString(),
-      child: Text(duration, style: TextStyle(color: Theme.of(context).hintColor)),
+      child: Text(duration, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).hintColor)),
     );
   }
 

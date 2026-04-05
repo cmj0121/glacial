@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -127,6 +128,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
         if (status == null) return;
         final existingIds = {...statuses.map((s) => s.id), ...unreaded.map((s) => s.id)};
         if (existingIds.contains(status.id)) return;
+        HapticFeedback.selectionClick();
         setState(() => unreaded.insert(0, status));
 
       case StreamingEventType.delete:
@@ -228,38 +230,56 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
     return Align(
       alignment: Alignment.topCenter,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
         children: [
-          if (statuses.isNotEmpty) buildLoadingIndicator(),
-          if (statuses.isNotEmpty) buildErrorIndicator(onLoad),
-          OfflineBanner(isOffline: _isOffline),
-          buildUnreadedBanner(),
-          Flexible(child: buildContent()),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (statuses.isNotEmpty) buildLoadingIndicator(),
+              if (statuses.isNotEmpty) buildErrorIndicator(onLoad),
+              OfflineBanner(isOffline: _isOffline),
+              Flexible(child: buildContent()),
+            ],
+          ),
+          if (unreaded.isNotEmpty) buildUnreadedPill(),
         ],
       ),
     );
   }
 
-  // Build the unreaded count widget and the list of statuses.
-  Widget buildUnreadedBanner() {
-    final TextStyle? style = Theme.of(context).textTheme.labelLarge;
+  Widget buildUnreadedPill() {
+    final String text = AppLocalizations.of(context)?.btn_timeline_unread(unreaded.length) ?? "${unreaded.length} new";
 
-    if (unreaded.isEmpty) return const SizedBox.shrink();
-    final String text = AppLocalizations.of(context)?.btn_timeline_unread(unreaded.length) ?? "Unreaded ${unreaded.length}";
-
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        icon: const Icon(Icons.mark_email_unread, size: tabSize),
-        label: Text(text, style: style),
-        style: FilledButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-          foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+    return Positioned(
+      top: 8,
+      left: 0,
+      right: 0,
+      child: Center(
+        child: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(24),
+          color: Theme.of(context).colorScheme.primaryContainer,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(24),
+            onTap: onClickUnreaded,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.arrow_upward, size: 16, color: Theme.of(context).colorScheme.onPrimaryContainer),
+                  const SizedBox(width: 6),
+                  Text(
+                    text,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        onPressed: onClickUnreaded,
       ),
     );
   }
@@ -279,15 +299,22 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     return CustomMaterialIndicator(
       onRefresh: onRefresh,
       indicatorBuilder: ClockProgressIndicator.refreshBuilder,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: ScrollablePositionedList.builder(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 680),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: ScrollablePositionedList.builder(
           itemScrollController: itemScrollController,
           itemPositionsListener: itemPositionsListener,
           shrinkWrap: true,
           itemCount: statuses.length,
           itemBuilder: (context, index) {
             final StatusSchema status = statuses[index];
+            final bool isReplyToAbove = index > 0 &&
+                status.inReplyToID != null &&
+                status.inReplyToID == statuses[index - 1].id;
+
             final Widget child = Status(
               key: ValueKey('status_${status.id}'),
               schema: status,
@@ -299,14 +326,30 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
             return Container(
               decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+                border: Border(bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+                )),
               ),
-              child: child,
+              child: isReplyToAbove
+                  ? IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            width: 2,
+                            margin: const EdgeInsets.only(left: 35),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                          ),
+                          Expanded(child: child),
+                        ],
+                      ),
+                    )
+                  : child,
             );
           },
         ),
       ),
-    );
+    ),),);
   }
 
   // Show the unreaded statuses when the user taps on the unreaded banner and keep the current
@@ -326,6 +369,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   // Clean-up and refresh the timeline when the user pulls down the list.
   Future<void> onRefresh() async {
+    HapticFeedback.mediumImpact();
     setState(() {
       unreaded.clear();
       maxId = null;
@@ -367,24 +411,20 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
         });
         markLoadComplete(isEmpty: isRepeat || schemas.isEmpty);
       }
-    } on SocketException {
-      if (mounted) {
-        setState(() => _isOffline = true);
-        if (statuses.isEmpty) {
-          markLoadError();
-        } else {
-          markLoadComplete(isEmpty: false);
-        }
-      }
-    } on HttpTimeoutException {
-      if (mounted) {
-        setState(() => _isOffline = true);
-        if (statuses.isEmpty) {
-          markLoadError();
-        } else {
-          markLoadComplete(isEmpty: false);
-        }
-      }
+    } on SocketException catch (_) {
+      _handleOffline();
+    } on HttpTimeoutException catch (_) {
+      _handleOffline();
+    }
+  }
+
+  void _handleOffline() {
+    if (!mounted) return;
+    setState(() => _isOffline = true);
+    if (statuses.isEmpty) {
+      markLoadError();
+    } else {
+      markLoadComplete(isEmpty: false);
     }
   }
 

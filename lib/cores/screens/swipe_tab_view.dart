@@ -72,13 +72,13 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
   void _onTabControllerChange() {
     if (tabController.indexIsChanging) {
       final int pageIndex = visibleIndexes.indexOf(tabController.index);
-      pageController.jumpToPage(pageIndex);
+      pageController.animateToPage(pageIndex, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final Widget content = Column(
+    return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         SwipeTabBar(
@@ -94,8 +94,6 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
         Flexible(child: buildContent()),
       ],
     );
-
-    return content;
   }
 
   // Build the customized PageView that controls which content to show
