@@ -161,7 +161,7 @@ class _InteractionState extends ConsumerState<Interaction> {
         final QuotePolicyType policy = widget.schema.quoteApproval?.toUser ?? QuotePolicyType.nobody;
         return policy.icon;
       default:
-        return widget.action.icon(active: isActive); // Replace with actual logic to determine active state
+        return widget.action.icon(active: isActive);
     }
   }
 
@@ -195,19 +195,14 @@ class _InteractionState extends ConsumerState<Interaction> {
       case StatusInteraction.block:
       case StatusInteraction.edit:
       case StatusInteraction.delete:
-        return Theme.of(context).colorScheme.error;
-      case StatusInteraction.mute:
-        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
-      case StatusInteraction.reblog:
-        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
-      case StatusInteraction.favourite:
-        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
-      case StatusInteraction.bookmark:
-        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
-      case StatusInteraction.pin:
-        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
       case StatusInteraction.report:
         return Theme.of(context).colorScheme.error;
+      case StatusInteraction.mute:
+      case StatusInteraction.reblog:
+      case StatusInteraction.favourite:
+      case StatusInteraction.bookmark:
+      case StatusInteraction.pin:
+        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
       default:
         return defaultColor;
     }

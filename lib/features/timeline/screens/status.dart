@@ -181,9 +181,7 @@ class _StatusState extends ConsumerState<Status> {
       action = StatusInteraction.reblog;
     }
 
-    final String label = action == StatusInteraction.reblog
-        ? account.displayName
-        : account.displayName;
+    final String label = account.displayName;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),

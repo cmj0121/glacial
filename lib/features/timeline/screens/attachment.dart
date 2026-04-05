@@ -33,8 +33,6 @@ class Attachments extends StatelessWidget {
   }
 
   Widget buildContent(BuildContext context) {
-    if (schemas.isEmpty) return const SizedBox.shrink();
-
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: ClipRRect(
@@ -56,25 +54,14 @@ class Attachments extends StatelessWidget {
   }
 
   Widget _buildGrid() {
-    switch (schemas.length) {
-      case 1:
-        return _buildAttachment(0);
-      case 2:
-        return Row(
-          children: [
-            Expanded(child: _buildAttachment(0)),
-            Expanded(child: _buildAttachment(1)),
-          ],
-        );
-      default:
-        // 3+: equal-width row (same as 2-image layout)
-        return Row(
-          children: List.generate(
-            schemas.length.clamp(0, 4),
-            (i) => Expanded(child: _buildAttachment(i)),
-          ),
-        );
-    }
+    if (schemas.length == 1) return _buildAttachment(0);
+
+    return Row(
+      children: List.generate(
+        schemas.length.clamp(0, 4),
+        (i) => Expanded(child: _buildAttachment(i)),
+      ),
+    );
   }
 }
 

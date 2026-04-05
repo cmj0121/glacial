@@ -78,7 +78,7 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    final Widget content = Column(
+    return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         SwipeTabBar(
@@ -94,8 +94,6 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
         Flexible(child: buildContent()),
       ],
     );
-
-    return content;
   }
 
   // Build the customized PageView that controls which content to show

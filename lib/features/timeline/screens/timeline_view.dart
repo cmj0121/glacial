@@ -331,16 +331,18 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
                 )),
               ),
               child: isReplyToAbove
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 2,
-                          margin: const EdgeInsets.only(left: 35),
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                        ),
-                        Expanded(child: child),
-                      ],
+                  ? IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            width: 2,
+                            margin: const EdgeInsets.only(left: 35),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                          ),
+                          Expanded(child: child),
+                        ],
+                      ),
                     )
                   : child,
             );
@@ -409,24 +411,20 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
         });
         markLoadComplete(isEmpty: isRepeat || schemas.isEmpty);
       }
-    } on SocketException {
-      if (mounted) {
-        setState(() => _isOffline = true);
-        if (statuses.isEmpty) {
-          markLoadError();
-        } else {
-          markLoadComplete(isEmpty: false);
-        }
-      }
-    } on HttpTimeoutException {
-      if (mounted) {
-        setState(() => _isOffline = true);
-        if (statuses.isEmpty) {
-          markLoadError();
-        } else {
-          markLoadComplete(isEmpty: false);
-        }
-      }
+    } on SocketException catch (_) {
+      _handleOffline();
+    } on HttpTimeoutException catch (_) {
+      _handleOffline();
+    }
+  }
+
+  void _handleOffline() {
+    if (!mounted) return;
+    setState(() => _isOffline = true);
+    if (statuses.isEmpty) {
+      markLoadError();
+    } else {
+      markLoadComplete(isEmpty: false);
     }
   }
 

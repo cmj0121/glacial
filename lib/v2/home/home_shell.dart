@@ -209,19 +209,11 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
       color = Theme.of(context).colorScheme.primary;
     }
 
-    final button = IconButton(
+    return IconButton(
       icon: Icon(item.icon(active: isSelected), size: iconSize, color: color),
-      tooltip: accessible ? item.tooltip(context) : null,
+      tooltip: item.tooltip(context),
       onPressed: accessible ? () => _onNavTap(item) : null,
     );
-
-    if (!accessible) {
-      return Tooltip(
-        message: item.tooltip(context),
-        child: button,
-      );
-    }
-    return button;
   }
 
   Widget _buildSidebar(

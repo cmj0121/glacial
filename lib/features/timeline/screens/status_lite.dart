@@ -129,18 +129,24 @@ class StatusLite extends ConsumerWidget {
   }
 
   Widget buildHeader(BuildContext context, {bool isSelfPost = false}) {
+    final icons = _contentTypeIcons;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(
           children: [
-            GestureDetector(
-              onTap: () => context.push(RoutePath.profile.path, extra: schema.account),
-              child: AccountAvatar(schema: schema.account, size: headerHeight),
+            Semantics(
+              label: schema.account.displayName,
+              button: true,
+              child: GestureDetector(
+                onTap: () => context.push(RoutePath.profile.path, extra: schema.account),
+                child: AccountAvatar(schema: schema.account, size: headerHeight),
+              ),
             ),
-            if (_contentTypeIcons.isNotEmpty) ...[
+            if (icons.isNotEmpty) ...[
               const SizedBox(height: 4),
-              ..._contentTypeIcons.map((icon) => Padding(
+              ...icons.map((icon) => Padding(
                 padding: const EdgeInsets.only(bottom: 2),
                 child: Icon(icon, size: 12, color: Theme.of(context).hintColor),
               )),
