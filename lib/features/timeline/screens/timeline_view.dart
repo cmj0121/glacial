@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -127,6 +128,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
         if (status == null) return;
         final existingIds = {...statuses.map((s) => s.id), ...unreaded.map((s) => s.id)};
         if (existingIds.contains(status.id)) return;
+        HapticFeedback.selectionClick();
         setState(() => unreaded.insert(0, status));
 
       case StreamingEventType.delete:
