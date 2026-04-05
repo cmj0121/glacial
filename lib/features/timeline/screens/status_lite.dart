@@ -119,13 +119,33 @@ class StatusLite extends ConsumerWidget {
     );
   }
 
+  List<IconData> get _contentTypeIcons {
+    final List<IconData> icons = [];
+    if (schema.attachments.isNotEmpty) icons.add(Icons.image_outlined);
+    if (schema.poll != null) icons.add(Icons.bar_chart);
+    if (schema.card != null) icons.add(Icons.link);
+    if (schema.quote != null) icons.add(Icons.format_quote);
+    return icons;
+  }
+
   Widget buildHeader(BuildContext context, {bool isSelfPost = false}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        GestureDetector(
-          onTap: () => context.push(RoutePath.profile.path, extra: schema.account),
-          child: AccountAvatar(schema: schema.account, size: headerHeight),
+        Column(
+          children: [
+            GestureDetector(
+              onTap: () => context.push(RoutePath.profile.path, extra: schema.account),
+              child: AccountAvatar(schema: schema.account, size: headerHeight),
+            ),
+            if (_contentTypeIcons.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              ..._contentTypeIcons.map((icon) => Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Icon(icon, size: 12, color: Theme.of(context).hintColor),
+              )),
+            ],
+          ],
         ),
         const SizedBox(width: 12),
         Expanded(
