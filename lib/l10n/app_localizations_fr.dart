@@ -1238,4 +1238,59 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => 'Aucun serveur correspondant';
+
+  @override
+  String get txt_shortcuts_title => 'Raccourcis clavier';
+
+  @override
+  String get txt_shortcut_help => 'Afficher les raccourcis clavier';
+
+  @override
+  String get txt_shortcut_refresh => 'Actualiser et faire défiler en haut';
+
+  @override
+  String get txt_shortcut_next_post => 'Publication suivante';
+
+  @override
+  String get txt_shortcut_prev_post => 'Publication précédente';
+
+  @override
+  String get txt_shortcut_next_tab => 'Onglet suivant';
+
+  @override
+  String get txt_shortcut_prev_tab => 'Onglet précédent';
+
+  @override
+  String get txt_shortcut_focus_search => 'Activer la recherche';
+
+  @override
+  String get txt_shortcut_compose_post => 'Rédiger une publication';
+
+  @override
+  String get txt_shortcut_open_status => 'Ouvrir la publication ciblée';
+
+  @override
+  String get txt_shortcut_favourite =>
+      'Ajouter aux favoris la publication ciblée';
+
+  @override
+  String get txt_shortcut_boost => 'Partager la publication ciblée';
+
+  @override
+  String get txt_shortcut_reply => 'Répondre à la publication ciblée';
+
+  @override
+  String get txt_shortcut_bookmark => 'Marquer la publication ciblée';
+
+  @override
+  String get txt_shortcut_escape => 'Fermer la recherche ou retirer le focus';
+
+  @override
+  String get txt_shortcut_section_navigation => 'NAVIGATION';
+
+  @override
+  String get txt_shortcut_section_actions => 'ACTIONS';
+
+  @override
+  String get txt_shortcut_section_general => 'GÉNÉRAL';
 }

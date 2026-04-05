@@ -1176,4 +1176,58 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => '一致するサーバーがありません';
+
+  @override
+  String get txt_shortcuts_title => 'キーボードショートカット';
+
+  @override
+  String get txt_shortcut_help => 'キーボードショートカットを表示';
+
+  @override
+  String get txt_shortcut_refresh => '更新して最上部にスクロール';
+
+  @override
+  String get txt_shortcut_next_post => '次の投稿';
+
+  @override
+  String get txt_shortcut_prev_post => '前の投稿';
+
+  @override
+  String get txt_shortcut_next_tab => '次のタブ';
+
+  @override
+  String get txt_shortcut_prev_tab => '前のタブ';
+
+  @override
+  String get txt_shortcut_focus_search => '検索にフォーカス';
+
+  @override
+  String get txt_shortcut_compose_post => '新規投稿を作成';
+
+  @override
+  String get txt_shortcut_open_status => '選択中の投稿を開く';
+
+  @override
+  String get txt_shortcut_favourite => '選択中の投稿をお気に入り';
+
+  @override
+  String get txt_shortcut_boost => '選択中の投稿をブースト';
+
+  @override
+  String get txt_shortcut_reply => '選択中の投稿に返信';
+
+  @override
+  String get txt_shortcut_bookmark => '選択中の投稿をブックマーク';
+
+  @override
+  String get txt_shortcut_escape => '検索を閉じるか入力をブラー';
+
+  @override
+  String get txt_shortcut_section_navigation => 'ナビゲーション';
+
+  @override
+  String get txt_shortcut_section_actions => 'アクション';
+
+  @override
+  String get txt_shortcut_section_general => '一般';
 }

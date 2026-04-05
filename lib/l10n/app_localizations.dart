@@ -2389,6 +2389,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No matching servers'**
   String get txt_v2_no_match;
+
+  /// No description provided for @txt_shortcuts_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard shortcuts'**
+  String get txt_shortcuts_title;
+
+  /// No description provided for @txt_shortcut_help.
+  ///
+  /// In en, this message translates to:
+  /// **'Show keyboard shortcuts'**
+  String get txt_shortcut_help;
+
+  /// No description provided for @txt_shortcut_refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh and scroll to top'**
+  String get txt_shortcut_refresh;
+
+  /// No description provided for @txt_shortcut_next_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Next post'**
+  String get txt_shortcut_next_post;
+
+  /// No description provided for @txt_shortcut_prev_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous post'**
+  String get txt_shortcut_prev_post;
+
+  /// No description provided for @txt_shortcut_next_tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Next tab'**
+  String get txt_shortcut_next_tab;
+
+  /// No description provided for @txt_shortcut_prev_tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous tab'**
+  String get txt_shortcut_prev_tab;
+
+  /// No description provided for @txt_shortcut_focus_search.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus search'**
+  String get txt_shortcut_focus_search;
+
+  /// No description provided for @txt_shortcut_compose_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Compose new post'**
+  String get txt_shortcut_compose_post;
+
+  /// No description provided for @txt_shortcut_open_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Open focused post'**
+  String get txt_shortcut_open_status;
+
+  /// No description provided for @txt_shortcut_favourite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite focused post'**
+  String get txt_shortcut_favourite;
+
+  /// No description provided for @txt_shortcut_boost.
+  ///
+  /// In en, this message translates to:
+  /// **'Boost focused post'**
+  String get txt_shortcut_boost;
+
+  /// No description provided for @txt_shortcut_reply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply to focused post'**
+  String get txt_shortcut_reply;
+
+  /// No description provided for @txt_shortcut_bookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark focused post'**
+  String get txt_shortcut_bookmark;
+
+  /// No description provided for @txt_shortcut_escape.
+  ///
+  /// In en, this message translates to:
+  /// **'Close search or blur input'**
+  String get txt_shortcut_escape;
+
+  /// No description provided for @txt_shortcut_section_navigation.
+  ///
+  /// In en, this message translates to:
+  /// **'NAVIGATION'**
+  String get txt_shortcut_section_navigation;
+
+  /// No description provided for @txt_shortcut_section_actions.
+  ///
+  /// In en, this message translates to:
+  /// **'ACTIONS'**
+  String get txt_shortcut_section_actions;
+
+  /// No description provided for @txt_shortcut_section_general.
+  ///
+  /// In en, this message translates to:
+  /// **'GENERAL'**
+  String get txt_shortcut_section_general;
 }
 
 class _AppLocalizationsDelegate

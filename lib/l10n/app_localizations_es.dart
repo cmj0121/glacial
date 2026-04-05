@@ -1236,4 +1236,59 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => 'No hay servidores coincidentes';
+
+  @override
+  String get txt_shortcuts_title => 'Atajos de teclado';
+
+  @override
+  String get txt_shortcut_help => 'Mostrar atajos de teclado';
+
+  @override
+  String get txt_shortcut_refresh => 'Actualizar y desplazar al inicio';
+
+  @override
+  String get txt_shortcut_next_post => 'Publicación siguiente';
+
+  @override
+  String get txt_shortcut_prev_post => 'Publicación anterior';
+
+  @override
+  String get txt_shortcut_next_tab => 'Pestaña siguiente';
+
+  @override
+  String get txt_shortcut_prev_tab => 'Pestaña anterior';
+
+  @override
+  String get txt_shortcut_focus_search => 'Enfocar búsqueda';
+
+  @override
+  String get txt_shortcut_compose_post => 'Redactar nueva publicación';
+
+  @override
+  String get txt_shortcut_open_status => 'Abrir publicación enfocada';
+
+  @override
+  String get txt_shortcut_favourite =>
+      'Marcar como favorita la publicación enfocada';
+
+  @override
+  String get txt_shortcut_boost => 'Impulsar publicación enfocada';
+
+  @override
+  String get txt_shortcut_reply => 'Responder a la publicación enfocada';
+
+  @override
+  String get txt_shortcut_bookmark => 'Guardar publicación enfocada';
+
+  @override
+  String get txt_shortcut_escape => 'Cerrar búsqueda o quitar foco';
+
+  @override
+  String get txt_shortcut_section_navigation => 'NAVEGACIÓN';
+
+  @override
+  String get txt_shortcut_section_actions => 'ACCIONES';
+
+  @override
+  String get txt_shortcut_section_general => 'GENERAL';
 }

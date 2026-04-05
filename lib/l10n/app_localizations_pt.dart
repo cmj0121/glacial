@@ -1233,4 +1233,58 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => 'Nenhum servidor correspondente';
+
+  @override
+  String get txt_shortcuts_title => 'Atalhos de teclado';
+
+  @override
+  String get txt_shortcut_help => 'Mostrar atalhos de teclado';
+
+  @override
+  String get txt_shortcut_refresh => 'Atualizar e rolar para o topo';
+
+  @override
+  String get txt_shortcut_next_post => 'Próxima publicação';
+
+  @override
+  String get txt_shortcut_prev_post => 'Publicação anterior';
+
+  @override
+  String get txt_shortcut_next_tab => 'Próxima aba';
+
+  @override
+  String get txt_shortcut_prev_tab => 'Aba anterior';
+
+  @override
+  String get txt_shortcut_focus_search => 'Focar pesquisa';
+
+  @override
+  String get txt_shortcut_compose_post => 'Escrever nova publicação';
+
+  @override
+  String get txt_shortcut_open_status => 'Abrir publicação em foco';
+
+  @override
+  String get txt_shortcut_favourite => 'Favoritar publicação em foco';
+
+  @override
+  String get txt_shortcut_boost => 'Impulsionar publicação em foco';
+
+  @override
+  String get txt_shortcut_reply => 'Responder à publicação em foco';
+
+  @override
+  String get txt_shortcut_bookmark => 'Salvar publicação em foco';
+
+  @override
+  String get txt_shortcut_escape => 'Fechar pesquisa ou remover foco';
+
+  @override
+  String get txt_shortcut_section_navigation => 'NAVEGAÇÃO';
+
+  @override
+  String get txt_shortcut_section_actions => 'AÇÕES';
+
+  @override
+  String get txt_shortcut_section_general => 'GERAL';
 }

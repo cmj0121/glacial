@@ -1175,4 +1175,58 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => '沒有符合的伺服器';
+
+  @override
+  String get txt_shortcuts_title => '鍵盤快捷鍵';
+
+  @override
+  String get txt_shortcut_help => '顯示鍵盤快捷鍵';
+
+  @override
+  String get txt_shortcut_refresh => '重新整理並捲動至頂端';
+
+  @override
+  String get txt_shortcut_next_post => '下一則貼文';
+
+  @override
+  String get txt_shortcut_prev_post => '上一則貼文';
+
+  @override
+  String get txt_shortcut_next_tab => '下一個分頁';
+
+  @override
+  String get txt_shortcut_prev_tab => '上一個分頁';
+
+  @override
+  String get txt_shortcut_focus_search => '聚焦搜尋框';
+
+  @override
+  String get txt_shortcut_compose_post => '撰寫新貼文';
+
+  @override
+  String get txt_shortcut_open_status => '開啟聚焦的貼文';
+
+  @override
+  String get txt_shortcut_favourite => '將聚焦貼文加入最愛';
+
+  @override
+  String get txt_shortcut_boost => '轉發聚焦貼文';
+
+  @override
+  String get txt_shortcut_reply => '回覆聚焦貼文';
+
+  @override
+  String get txt_shortcut_bookmark => '將聚焦貼文加入書籤';
+
+  @override
+  String get txt_shortcut_escape => '關閉搜尋或取消輸入焦點';
+
+  @override
+  String get txt_shortcut_section_navigation => '導覽';
+
+  @override
+  String get txt_shortcut_section_actions => '動作';
+
+  @override
+  String get txt_shortcut_section_general => '一般';
 }

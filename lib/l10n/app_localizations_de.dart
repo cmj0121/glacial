@@ -1232,4 +1232,59 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => 'Keine passenden Server';
+
+  @override
+  String get txt_shortcuts_title => 'Tastaturkürzel';
+
+  @override
+  String get txt_shortcut_help => 'Tastaturkürzel anzeigen';
+
+  @override
+  String get txt_shortcut_refresh => 'Aktualisieren und nach oben scrollen';
+
+  @override
+  String get txt_shortcut_next_post => 'Nächster Beitrag';
+
+  @override
+  String get txt_shortcut_prev_post => 'Vorheriger Beitrag';
+
+  @override
+  String get txt_shortcut_next_tab => 'Nächster Tab';
+
+  @override
+  String get txt_shortcut_prev_tab => 'Vorheriger Tab';
+
+  @override
+  String get txt_shortcut_focus_search => 'Suche fokussieren';
+
+  @override
+  String get txt_shortcut_compose_post => 'Neuen Beitrag verfassen';
+
+  @override
+  String get txt_shortcut_open_status => 'Fokussierten Beitrag öffnen';
+
+  @override
+  String get txt_shortcut_favourite => 'Fokussierten Beitrag favorisieren';
+
+  @override
+  String get txt_shortcut_boost => 'Fokussierten Beitrag teilen';
+
+  @override
+  String get txt_shortcut_reply => 'Auf fokussierten Beitrag antworten';
+
+  @override
+  String get txt_shortcut_bookmark =>
+      'Fokussierten Beitrag mit Lesezeichen versehen';
+
+  @override
+  String get txt_shortcut_escape => 'Suche schließen oder Eingabe verlassen';
+
+  @override
+  String get txt_shortcut_section_navigation => 'NAVIGATION';
+
+  @override
+  String get txt_shortcut_section_actions => 'AKTIONEN';
+
+  @override
+  String get txt_shortcut_section_general => 'ALLGEMEIN';
 }

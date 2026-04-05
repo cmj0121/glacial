@@ -72,13 +72,15 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
             ],
           ),
           drawer: widget.backable ? null : _buildDrawer(status),
-          body: SafeArea(
-            child: Row(
-              children: [
-                if (isWide && showNav)
-                  _buildSidebar(allItems, isSignedIn: isSignedIn, access: timelinesAccess),
-                Expanded(child: widget.child),
-              ],
+          body: AppShortcuts(
+            child: SafeArea(
+              child: Row(
+                children: [
+                  if (isWide && showNav)
+                    _buildSidebar(allItems, isSignedIn: isSignedIn, access: timelinesAccess),
+                  Expanded(child: widget.child),
+                ],
+              ),
             ),
           ),
           bottomNavigationBar: isWide || !showNav

@@ -12,6 +12,24 @@ import 'package:glacial/features/screens.dart';
 class GlacialHome extends ConsumerStatefulWidget {
   // The global scroll-to-top controller callback
   static ItemScrollController? itemScrollToTop;
+  static ItemPositionsListener? itemPositions;
+  static List<StatusSchema> Function()? getStatuses;
+  static TabController? activeTabController;
+  static List<int> Function()? activeVisibleIndexes;
+  // Cycle the active SwipeTabView forward (delta=1) or backward (delta=-1).
+  static void Function(int delta)? onTabSwitch;
+  static VoidCallback? onFocusSearch;
+  // Collapse/clear the search bar when Esc is pressed.
+  static VoidCallback? onCloseSearch;
+  static Future<void> Function()? onRefresh;
+  // Toggle a reblog/favourite/bookmark interaction on the status at index.
+  static Future<void> Function(int index, StatusInteraction action)? onInteractStatus;
+  // Index of the status currently focused by keyboard navigation (j/k).
+  // null means no selection; timelines observe this to render a highlight.
+  static final ValueNotifier<int?> focusedStatusIndex = ValueNotifier<int?>(null);
+  // When set, viewport-based auto-focus is suppressed until this instant
+  // so j/k moves aren't stomped by the in-flight scroll animation.
+  static DateTime? suppressAutoFocusUntil;
 
   final bool backable;
   final Widget? title;
@@ -70,10 +88,12 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
               SearchExplorer(size: sidebarSize),
             ],
           ),
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: buildContent(isMobile: isMobile),
+          body: AppShortcuts(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: buildContent(isMobile: isMobile),
+              ),
             ),
           ),
           drawer: GlacialDrawer(),

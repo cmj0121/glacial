@@ -1219,4 +1219,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => 'No matching servers';
+
+  @override
+  String get txt_shortcuts_title => 'Keyboard shortcuts';
+
+  @override
+  String get txt_shortcut_help => 'Show keyboard shortcuts';
+
+  @override
+  String get txt_shortcut_refresh => 'Refresh and scroll to top';
+
+  @override
+  String get txt_shortcut_next_post => 'Next post';
+
+  @override
+  String get txt_shortcut_prev_post => 'Previous post';
+
+  @override
+  String get txt_shortcut_next_tab => 'Next tab';
+
+  @override
+  String get txt_shortcut_prev_tab => 'Previous tab';
+
+  @override
+  String get txt_shortcut_focus_search => 'Focus search';
+
+  @override
+  String get txt_shortcut_compose_post => 'Compose new post';
+
+  @override
+  String get txt_shortcut_open_status => 'Open focused post';
+
+  @override
+  String get txt_shortcut_favourite => 'Favourite focused post';
+
+  @override
+  String get txt_shortcut_boost => 'Boost focused post';
+
+  @override
+  String get txt_shortcut_reply => 'Reply to focused post';
+
+  @override
+  String get txt_shortcut_bookmark => 'Bookmark focused post';
+
+  @override
+  String get txt_shortcut_escape => 'Close search or blur input';
+
+  @override
+  String get txt_shortcut_section_navigation => 'NAVIGATION';
+
+  @override
+  String get txt_shortcut_section_actions => 'ACTIONS';
+
+  @override
+  String get txt_shortcut_section_general => 'GENERAL';
 }

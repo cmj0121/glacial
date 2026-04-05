@@ -12,6 +12,7 @@ export 'cores/streaming.dart';
 export 'cores/timeline_cache.dart';
 export 'cores/screens/accessibility.dart';
 export 'cores/screens/animations.dart';
+export 'cores/screens/app_shortcuts.dart';
 export 'cores/screens/blurhash_placeholder.dart';
 export 'cores/screens/glass.dart';
 export 'cores/screens/loading_overlay.dart';

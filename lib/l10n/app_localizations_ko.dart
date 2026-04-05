@@ -1178,4 +1178,58 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_v2_no_match => '일치하는 서버가 없습니다';
+
+  @override
+  String get txt_shortcuts_title => '키보드 단축키';
+
+  @override
+  String get txt_shortcut_help => '키보드 단축키 표시';
+
+  @override
+  String get txt_shortcut_refresh => '새로고침 후 맨 위로 스크롤';
+
+  @override
+  String get txt_shortcut_next_post => '다음 게시물';
+
+  @override
+  String get txt_shortcut_prev_post => '이전 게시물';
+
+  @override
+  String get txt_shortcut_next_tab => '다음 탭';
+
+  @override
+  String get txt_shortcut_prev_tab => '이전 탭';
+
+  @override
+  String get txt_shortcut_focus_search => '검색창으로 포커스';
+
+  @override
+  String get txt_shortcut_compose_post => '새 게시물 작성';
+
+  @override
+  String get txt_shortcut_open_status => '포커스된 게시물 열기';
+
+  @override
+  String get txt_shortcut_favourite => '포커스된 게시물 즐겨찾기';
+
+  @override
+  String get txt_shortcut_boost => '포커스된 게시물 부스트';
+
+  @override
+  String get txt_shortcut_reply => '포커스된 게시물에 답글';
+
+  @override
+  String get txt_shortcut_bookmark => '포커스된 게시물 북마크';
+
+  @override
+  String get txt_shortcut_escape => '검색 닫기 또는 입력 포커스 해제';
+
+  @override
+  String get txt_shortcut_section_navigation => '내비게이션';
+
+  @override
+  String get txt_shortcut_section_actions => '작업';
+
+  @override
+  String get txt_shortcut_section_general => '일반';
 }
