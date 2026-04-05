@@ -211,12 +211,37 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
     if (lastIndex != null && lastIndex > statuses.length - 5) onLoad();
 
+    // Track the topmost visible status as the "current" one so the
+    // highlight follows normal scrolling on mobile too, not just j/k.
+    _updateFocusedFromViewport(positions);
+
     // Save read position for home timeline with debouncing.
     if (widget.type == TimelineType.home && widget.status.isSignedIn) {
       final int? firstIndex = positions.isNotEmpty ? positions.first.index : null;
       if (firstIndex != null && firstIndex < statuses.length) {
         _saveMarkerDebounced(statuses[firstIndex].id);
       }
+    }
+  }
+
+  // Pick the topmost visible item and publish it as the focused index.
+  // Prefers items whose leading edge sits at or just below the viewport
+  // top; if nothing is, picks the one closest to the top from above.
+  void _updateFocusedFromViewport(List<ItemPosition> positions) {
+    if (positions.isEmpty) return;
+    int? primary;
+    double bestScore = double.infinity;
+    for (final ItemPosition pos in positions) {
+      final double score = pos.itemLeadingEdge >= 0
+          ? pos.itemLeadingEdge
+          : -pos.itemLeadingEdge + 1.0;
+      if (score < bestScore) {
+        bestScore = score;
+        primary = pos.index;
+      }
+    }
+    if (primary != null && primary != GlacialHome.focusedStatusIndex.value) {
+      GlacialHome.focusedStatusIndex.value = primary;
     }
   }
 
@@ -385,16 +410,21 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
               valueListenable: GlacialHome.focusedStatusIndex,
               builder: (context, focusedIdx, inner) {
                 final bool isFocused = focusedIdx == index;
+                final ColorScheme scheme = Theme.of(context).colorScheme;
                 return AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
+                  duration: const Duration(milliseconds: 180),
                   curve: Curves.easeOut,
                   decoration: BoxDecoration(
                     color: isFocused
-                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.08)
+                        ? scheme.primary.withValues(alpha: 0.14)
                         : Colors.transparent,
                     border: Border(
                       bottom: BorderSide(
-                        color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+                        color: scheme.outlineVariant.withValues(alpha: 0.3),
+                      ),
+                      left: BorderSide(
+                        color: isFocused ? scheme.primary : Colors.transparent,
+                        width: 3,
                       ),
                     ),
                   ),
