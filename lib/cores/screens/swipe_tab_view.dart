@@ -59,6 +59,22 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
     tabController.addListener(_onTabControllerChange);
     GlacialHome.activeTabController = tabController;
     GlacialHome.activeVisibleIndexes = () => visibleIndexes;
+    GlacialHome.onTabSwitch = _cycleTab;
+  }
+
+  // Cycle tabs by [delta] among visibleIndexes, wrapping at both ends.
+  // Updates the TabController and the PageView in one pass to avoid the
+  // onPageChanged feedback loop that happens with animateToPage.
+  void _cycleTab(int delta) {
+    final List<int> visible = visibleIndexes;
+    if (visible.isEmpty) return;
+    final int curPos = visible.indexOf(tabController.index);
+    if (curPos < 0) return;
+    int nextPos = (curPos + delta) % visible.length;
+    if (nextPos < 0) nextPos += visible.length;
+    final int target = visible[nextPos];
+    tabController.animateTo(target);
+    pageController.jumpToPage(nextPos);
   }
 
   @override
@@ -66,6 +82,7 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
     if (GlacialHome.activeTabController == tabController) {
       GlacialHome.activeTabController = null;
       GlacialHome.activeVisibleIndexes = null;
+      GlacialHome.onTabSwitch = null;
     }
     tabController.removeListener(_onTabControllerChange);
     if (widget.tabController == null) {

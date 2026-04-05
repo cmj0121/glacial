@@ -129,20 +129,10 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
   }
 
   void _switchTab(int delta) {
-    final TabController? controller = GlacialHome.activeTabController;
-    final List<int>? visible = GlacialHome.activeVisibleIndexes?.call();
-    logger.d('[shortcut] _switchTab delta=$delta controller=$controller '
-        'visible=$visible curIndex=${controller?.index}');
-    if (controller == null || visible == null || visible.isEmpty) return;
-
-    final int current = controller.index;
-    final int pos = visible.indexOf(current);
-    if (pos < 0) return;
-    final int nextPos = (pos + delta) % visible.length;
-    final int wrapped = nextPos < 0 ? nextPos + visible.length : nextPos;
-    final int target = visible[wrapped];
-    logger.d('[shortcut] _switchTab target=$target');
-    controller.animateTo(target);
+    final cycler = GlacialHome.onTabSwitch;
+    logger.d('[shortcut] _switchTab delta=$delta cycler=$cycler');
+    if (cycler == null) return;
+    cycler(delta);
     GlacialHome.focusedStatusIndex.value = null;
   }
 
