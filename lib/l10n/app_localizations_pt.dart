@@ -1275,4 +1275,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_shortcut_bookmark => 'Salvar publicação em foco';
+
+  @override
+  String get txt_shortcut_escape => 'Fechar pesquisa ou remover foco';
 }

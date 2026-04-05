@@ -19,6 +19,8 @@ class GlacialHome extends ConsumerStatefulWidget {
   // Cycle the active SwipeTabView forward (delta=1) or backward (delta=-1).
   static void Function(int delta)? onTabSwitch;
   static VoidCallback? onFocusSearch;
+  // Collapse/clear the search bar when Esc is pressed.
+  static VoidCallback? onCloseSearch;
   static Future<void> Function()? onRefresh;
   // Toggle a reblog/favourite/bookmark interaction on the status at index.
   static Future<void> Function(int index, StatusInteraction action)? onInteractStatus;

@@ -1218,4 +1218,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_bookmark => '選択中の投稿をブックマーク';
+
+  @override
+  String get txt_shortcut_escape => '検索を閉じるか入力をブラー';
 }

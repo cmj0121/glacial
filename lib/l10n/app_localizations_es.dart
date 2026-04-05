@@ -1279,4 +1279,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_shortcut_bookmark => 'Guardar publicación enfocada';
+
+  @override
+  String get txt_shortcut_escape => 'Cerrar búsqueda o quitar foco';
 }

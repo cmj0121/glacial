@@ -2473,6 +2473,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bookmark focused post'**
   String get txt_shortcut_bookmark;
+
+  /// No description provided for @txt_shortcut_escape.
+  ///
+  /// In en, this message translates to:
+  /// **'Close search or blur input'**
+  String get txt_shortcut_escape;
 }
 
 class _AppLocalizationsDelegate

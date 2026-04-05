@@ -1275,4 +1275,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get txt_shortcut_bookmark =>
       'Fokussierten Beitrag mit Lesezeichen versehen';
+
+  @override
+  String get txt_shortcut_escape => 'Suche schließen oder Eingabe verlassen';
 }

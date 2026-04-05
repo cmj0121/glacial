@@ -1217,4 +1217,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_shortcut_bookmark => '將聚焦貼文加入書籤';
+
+  @override
+  String get txt_shortcut_escape => '關閉搜尋或取消輸入焦點';
 }

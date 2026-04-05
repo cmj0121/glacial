@@ -46,8 +46,16 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
 
   bool _handleKey(KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) return false;
-    if (_textInputHasFocus) return false;
     if (!mounted) return false;
+
+    // Esc is special: it works even from inside a text input, where it
+    // blurs the field (and closes the search bar).
+    if (event.physicalKey == PhysicalKeyboardKey.escape) {
+      _handleEscape();
+      return true;
+    }
+
+    if (_textInputHasFocus) return false;
 
     final bool shift = HardwareKeyboard.instance.isShiftPressed;
     final bool meta = HardwareKeyboard.instance.isMetaPressed;
@@ -66,6 +74,11 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     if (identical(match, _NullBinding.instance)) return false;
     match.run(this);
     return true;
+  }
+
+  void _handleEscape() {
+    GlacialHome.onCloseSearch?.call();
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
   // Skip shortcuts while a text field owns focus so typing in composers,
@@ -224,6 +237,7 @@ const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
   _ShortcutRow(keys: <String>['b'], labelKey: _HelpLabel.boost),
   _ShortcutRow(keys: <String>['r'], labelKey: _HelpLabel.reply),
   _ShortcutRow(keys: <String>['e'], labelKey: _HelpLabel.bookmark),
+  _ShortcutRow(keys: <String>['Esc'], labelKey: _HelpLabel.escape),
 ];
 
 class _ShortcutHelpSheet extends StatelessWidget {
@@ -313,7 +327,8 @@ enum _HelpLabel {
   favourite,
   boost,
   reply,
-  bookmark;
+  bookmark,
+  escape;
 
   String resolve(AppLocalizations? l10n) {
     switch (this) {
@@ -343,6 +358,8 @@ enum _HelpLabel {
         return l10n?.txt_shortcut_reply ?? 'Reply to focused post';
       case _HelpLabel.bookmark:
         return l10n?.txt_shortcut_bookmark ?? 'Bookmark focused post';
+      case _HelpLabel.escape:
+        return l10n?.txt_shortcut_escape ?? 'Close search or blur input';
     }
   }
 }

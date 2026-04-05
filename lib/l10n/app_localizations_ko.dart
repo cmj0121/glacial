@@ -1220,4 +1220,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_shortcut_bookmark => '포커스된 게시물 북마크';
+
+  @override
+  String get txt_shortcut_escape => '검색 닫기 또는 입력 포커스 해제';
 }

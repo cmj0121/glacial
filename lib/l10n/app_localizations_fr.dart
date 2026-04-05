@@ -1281,4 +1281,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_shortcut_bookmark => 'Marquer la publication ciblée';
+
+  @override
+  String get txt_shortcut_escape => 'Fermer la recherche ou retirer le focus';
 }

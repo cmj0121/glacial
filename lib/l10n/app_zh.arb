@@ -393,5 +393,6 @@
   "txt_shortcut_favourite": "將聚焦貼文加入最愛",
   "txt_shortcut_boost": "轉發聚焦貼文",
   "txt_shortcut_reply": "回覆聚焦貼文",
-  "txt_shortcut_bookmark": "將聚焦貼文加入書籤"
+  "txt_shortcut_bookmark": "將聚焦貼文加入書籤",
+  "txt_shortcut_escape": "關閉搜尋或取消輸入焦點"
 }
