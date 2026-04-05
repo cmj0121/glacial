@@ -72,7 +72,7 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
   void _onTabControllerChange() {
     if (tabController.indexIsChanging) {
       final int pageIndex = visibleIndexes.indexOf(tabController.index);
-      pageController.jumpToPage(pageIndex);
+      pageController.animateToPage(pageIndex, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
     }
   }
 
