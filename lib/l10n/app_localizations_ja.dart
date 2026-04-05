@@ -510,6 +510,27 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_list_short_inclusive => '包括的';
 
   @override
+  String get btn_list_timeline => 'タイムライン';
+
+  @override
+  String get btn_list_members => 'メンバー';
+
+  @override
+  String get txt_list_settings => 'リスト設定';
+
+  @override
+  String get txt_list_reply_policy => '返信ポリシー';
+
+  @override
+  String get txt_list_exclusivity => 'ホーム';
+
+  @override
+  String get desc_list_exclusive_on => 'メンバーの投稿をホームから隠す';
+
+  @override
+  String get desc_list_exclusive_off => 'メンバーの投稿をホームに表示';
+
+  @override
   String get txt_list_exclusive => 'ホームタイムラインから除外';
 
   @override

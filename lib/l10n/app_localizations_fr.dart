@@ -519,6 +519,29 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_list_short_inclusive => 'Inclusive';
 
   @override
+  String get btn_list_timeline => 'Fil';
+
+  @override
+  String get btn_list_members => 'Membres';
+
+  @override
+  String get txt_list_settings => 'Paramètres de la liste';
+
+  @override
+  String get txt_list_reply_policy => 'Politique de réponses';
+
+  @override
+  String get txt_list_exclusivity => 'Accueil';
+
+  @override
+  String get desc_list_exclusive_on =>
+      'Masquer les publications des membres du fil Accueil';
+
+  @override
+  String get desc_list_exclusive_off =>
+      'Afficher les publications des membres dans le fil Accueil';
+
+  @override
   String get txt_list_exclusive => 'Retirer de la timeline d’accueil';
 
   @override

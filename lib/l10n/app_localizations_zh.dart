@@ -510,6 +510,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_list_short_inclusive => '包含';
 
   @override
+  String get btn_list_timeline => '時間軸';
+
+  @override
+  String get btn_list_members => '成員';
+
+  @override
+  String get txt_list_settings => '清單設定';
+
+  @override
+  String get txt_list_reply_policy => '回覆政策';
+
+  @override
+  String get txt_list_exclusivity => '首頁動態';
+
+  @override
+  String get desc_list_exclusive_on => '從首頁時間軸隱藏成員貼文';
+
+  @override
+  String get desc_list_exclusive_off => '在首頁時間軸顯示成員貼文';
+
+  @override
   String get txt_list_exclusive => '從首頁時間軸移除';
 
   @override

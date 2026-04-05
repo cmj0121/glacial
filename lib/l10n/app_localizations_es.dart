@@ -518,6 +518,29 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_list_short_inclusive => 'Inclusiva';
 
   @override
+  String get btn_list_timeline => 'Cronología';
+
+  @override
+  String get btn_list_members => 'Miembros';
+
+  @override
+  String get txt_list_settings => 'Configuración de la lista';
+
+  @override
+  String get txt_list_reply_policy => 'Política de respuestas';
+
+  @override
+  String get txt_list_exclusivity => 'Inicio';
+
+  @override
+  String get desc_list_exclusive_on =>
+      'Ocultar publicaciones de miembros en la cronología de Inicio';
+
+  @override
+  String get desc_list_exclusive_off =>
+      'Mostrar publicaciones de miembros en la cronología de Inicio';
+
+  @override
   String get txt_list_exclusive => 'Eliminar del feed principal';
 
   @override

@@ -1088,6 +1088,48 @@ abstract class AppLocalizations {
   /// **'Inclusive'**
   String get txt_list_short_inclusive;
 
+  /// No description provided for @btn_list_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get btn_list_timeline;
+
+  /// No description provided for @btn_list_members.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get btn_list_members;
+
+  /// No description provided for @txt_list_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'List settings'**
+  String get txt_list_settings;
+
+  /// No description provided for @txt_list_reply_policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply policy'**
+  String get txt_list_reply_policy;
+
+  /// No description provided for @txt_list_exclusivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Home feed'**
+  String get txt_list_exclusivity;
+
+  /// No description provided for @desc_list_exclusive_on.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide members\' posts from Home timeline'**
+  String get desc_list_exclusive_on;
+
+  /// No description provided for @desc_list_exclusive_off.
+  ///
+  /// In en, this message translates to:
+  /// **'Show members\' posts on Home timeline'**
+  String get desc_list_exclusive_off;
+
   /// No description provided for @txt_list_exclusive.
   ///
   /// In en, this message translates to:

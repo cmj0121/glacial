@@ -518,6 +518,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_list_short_inclusive => 'Inklusiv';
 
   @override
+  String get btn_list_timeline => 'Timeline';
+
+  @override
+  String get btn_list_members => 'Mitglieder';
+
+  @override
+  String get txt_list_settings => 'Listen-Einstellungen';
+
+  @override
+  String get txt_list_reply_policy => 'Antwort-Richtlinie';
+
+  @override
+  String get txt_list_exclusivity => 'Home-Feed';
+
+  @override
+  String get desc_list_exclusive_on =>
+      'Beiträge der Mitglieder aus der Home-Timeline ausblenden';
+
+  @override
+  String get desc_list_exclusive_off =>
+      'Beiträge der Mitglieder in der Home-Timeline anzeigen';
+
+  @override
   String get txt_list_exclusive => 'Aus Home-Timeline entfernen';
 
   @override

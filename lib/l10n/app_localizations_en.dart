@@ -514,6 +514,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_list_short_inclusive => 'Inclusive';
 
   @override
+  String get btn_list_timeline => 'Timeline';
+
+  @override
+  String get btn_list_members => 'Members';
+
+  @override
+  String get txt_list_settings => 'List settings';
+
+  @override
+  String get txt_list_reply_policy => 'Reply policy';
+
+  @override
+  String get txt_list_exclusivity => 'Home feed';
+
+  @override
+  String get desc_list_exclusive_on =>
+      'Hide members\' posts from Home timeline';
+
+  @override
+  String get desc_list_exclusive_off => 'Show members\' posts on Home timeline';
+
+  @override
   String get txt_list_exclusive => 'Removed from the Home timeline feed';
 
   @override

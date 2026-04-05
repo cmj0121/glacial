@@ -510,6 +510,27 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_list_short_inclusive => '포함';
 
   @override
+  String get btn_list_timeline => '타임라인';
+
+  @override
+  String get btn_list_members => '멤버';
+
+  @override
+  String get txt_list_settings => '리스트 설정';
+
+  @override
+  String get txt_list_reply_policy => '답글 정책';
+
+  @override
+  String get txt_list_exclusivity => '홈 피드';
+
+  @override
+  String get desc_list_exclusive_on => '홈 타임라인에서 멤버 게시물 숨기기';
+
+  @override
+  String get desc_list_exclusive_off => '홈 타임라인에 멤버 게시물 표시';
+
+  @override
   String get txt_list_exclusive => '홈 타임라인에서 제외';
 
   @override

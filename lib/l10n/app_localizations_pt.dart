@@ -518,6 +518,29 @@ class AppLocalizationsPt extends AppLocalizations {
   String get txt_list_short_inclusive => 'Inclusiva';
 
   @override
+  String get btn_list_timeline => 'Linha do tempo';
+
+  @override
+  String get btn_list_members => 'Membros';
+
+  @override
+  String get txt_list_settings => 'Configurações da lista';
+
+  @override
+  String get txt_list_reply_policy => 'Política de respostas';
+
+  @override
+  String get txt_list_exclusivity => 'Início';
+
+  @override
+  String get desc_list_exclusive_on =>
+      'Ocultar publicações dos membros da linha do tempo Início';
+
+  @override
+  String get desc_list_exclusive_off =>
+      'Mostrar publicações dos membros na linha do tempo Início';
+
+  @override
   String get txt_list_exclusive => 'Removido do feed principal';
 
   @override
