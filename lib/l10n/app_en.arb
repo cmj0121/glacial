@@ -461,5 +461,7 @@
   "txt_shortcut_help": "Show keyboard shortcuts",
   "txt_shortcut_refresh": "Refresh and scroll to top",
   "txt_shortcut_next_post": "Next post",
-  "txt_shortcut_prev_post": "Previous post"
+  "txt_shortcut_prev_post": "Previous post",
+  "txt_shortcut_next_tab": "Next tab",
+  "txt_shortcut_prev_tab": "Previous tab"
 }

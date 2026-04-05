@@ -53,7 +53,26 @@ class _AppShortcutsState extends State<AppShortcuts> {
       const SingleActivator(LogicalKeyboardKey.arrowDown): () => _moveFocus(1),
       const SingleActivator(LogicalKeyboardKey.keyK): () => _moveFocus(-1),
       const SingleActivator(LogicalKeyboardKey.arrowUp): () => _moveFocus(-1),
+      const SingleActivator(LogicalKeyboardKey.tab): () => _switchTab(1),
+      const SingleActivator(LogicalKeyboardKey.tab, shift: true): () => _switchTab(-1),
+      const SingleActivator(LogicalKeyboardKey.arrowRight): () => _switchTab(1),
+      const SingleActivator(LogicalKeyboardKey.arrowLeft): () => _switchTab(-1),
     };
+  }
+
+  void _switchTab(int delta) {
+    if (_textInputHasFocus) return;
+    final TabController? controller = GlacialHome.activeTabController;
+    final List<int>? visible = GlacialHome.activeVisibleIndexes?.call();
+    if (controller == null || visible == null || visible.isEmpty) return;
+
+    final int current = controller.index;
+    final int pos = visible.indexOf(current);
+    if (pos < 0) return;
+    final int nextPos = (pos + delta) % visible.length;
+    final int wrapped = nextPos < 0 ? nextPos + visible.length : nextPos;
+    controller.animateTo(visible[wrapped]);
+    GlacialHome.focusedStatusIndex.value = null;
   }
 
   void _moveFocus(int delta) {
@@ -127,6 +146,8 @@ const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
   _ShortcutRow(keys: <String>['.'], labelKey: _HelpLabel.refresh),
   _ShortcutRow(keys: <String>['j'], labelKey: _HelpLabel.nextPost),
   _ShortcutRow(keys: <String>['k'], labelKey: _HelpLabel.prevPost),
+  _ShortcutRow(keys: <String>['Tab'], labelKey: _HelpLabel.nextTab),
+  _ShortcutRow(keys: <String>['Shift', 'Tab'], labelKey: _HelpLabel.prevTab),
 ];
 
 class _ShortcutHelpSheet extends StatelessWidget {
@@ -207,7 +228,9 @@ enum _HelpLabel {
   help,
   refresh,
   nextPost,
-  prevPost;
+  prevPost,
+  nextTab,
+  prevTab;
 
   String resolve(AppLocalizations? l10n) {
     switch (this) {
@@ -219,6 +242,10 @@ enum _HelpLabel {
         return l10n?.txt_shortcut_next_post ?? 'Next post';
       case _HelpLabel.prevPost:
         return l10n?.txt_shortcut_prev_post ?? 'Previous post';
+      case _HelpLabel.nextTab:
+        return l10n?.txt_shortcut_next_tab ?? 'Next tab';
+      case _HelpLabel.prevTab:
+        return l10n?.txt_shortcut_prev_tab ?? 'Previous tab';
     }
   }
 }

@@ -1193,4 +1193,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_shortcut_prev_post => '이전 게시물';
+
+  @override
+  String get txt_shortcut_next_tab => '다음 탭';
+
+  @override
+  String get txt_shortcut_prev_tab => '이전 탭';
 }

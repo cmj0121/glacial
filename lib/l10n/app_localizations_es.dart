@@ -1251,4 +1251,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_shortcut_prev_post => 'Publicación anterior';
+
+  @override
+  String get txt_shortcut_next_tab => 'Pestaña siguiente';
+
+  @override
+  String get txt_shortcut_prev_tab => 'Pestaña anterior';
 }

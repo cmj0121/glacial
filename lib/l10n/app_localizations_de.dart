@@ -1247,4 +1247,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_shortcut_prev_post => 'Vorheriger Beitrag';
+
+  @override
+  String get txt_shortcut_next_tab => 'Nächster Tab';
+
+  @override
+  String get txt_shortcut_prev_tab => 'Vorheriger Tab';
 }

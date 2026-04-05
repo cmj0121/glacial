@@ -1190,4 +1190,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_shortcut_prev_post => '上一則貼文';
+
+  @override
+  String get txt_shortcut_next_tab => '下一個分頁';
+
+  @override
+  String get txt_shortcut_prev_tab => '上一個分頁';
 }

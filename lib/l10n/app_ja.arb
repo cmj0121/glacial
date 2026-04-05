@@ -384,5 +384,7 @@
   "txt_shortcut_help": "キーボードショートカットを表示",
   "txt_shortcut_refresh": "更新して最上部にスクロール",
   "txt_shortcut_next_post": "次の投稿",
-  "txt_shortcut_prev_post": "前の投稿"
+  "txt_shortcut_prev_post": "前の投稿",
+  "txt_shortcut_next_tab": "次のタブ",
+  "txt_shortcut_prev_tab": "前のタブ"
 }

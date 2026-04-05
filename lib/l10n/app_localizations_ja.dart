@@ -1191,4 +1191,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_prev_post => '前の投稿';
+
+  @override
+  String get txt_shortcut_next_tab => '次のタブ';
+
+  @override
+  String get txt_shortcut_prev_tab => '前のタブ';
 }

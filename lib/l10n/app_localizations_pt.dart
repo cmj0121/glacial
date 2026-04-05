@@ -1248,4 +1248,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_shortcut_prev_post => 'Publicação anterior';
+
+  @override
+  String get txt_shortcut_next_tab => 'Próxima aba';
+
+  @override
+  String get txt_shortcut_prev_tab => 'Aba anterior';
 }

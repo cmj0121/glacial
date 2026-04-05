@@ -384,5 +384,7 @@
   "txt_shortcut_help": "Mostrar atalhos de teclado",
   "txt_shortcut_refresh": "Atualizar e rolar para o topo",
   "txt_shortcut_next_post": "Próxima publicação",
-  "txt_shortcut_prev_post": "Publicação anterior"
+  "txt_shortcut_prev_post": "Publicação anterior",
+  "txt_shortcut_next_tab": "Próxima aba",
+  "txt_shortcut_prev_tab": "Aba anterior"
 }

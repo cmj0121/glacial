@@ -2419,6 +2419,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Previous post'**
   String get txt_shortcut_prev_post;
+
+  /// No description provided for @txt_shortcut_next_tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Next tab'**
+  String get txt_shortcut_next_tab;
+
+  /// No description provided for @txt_shortcut_prev_tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous tab'**
+  String get txt_shortcut_prev_tab;
 }
 
 class _AppLocalizationsDelegate

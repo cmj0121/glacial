@@ -1253,4 +1253,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_shortcut_prev_post => 'Publication précédente';
+
+  @override
+  String get txt_shortcut_next_tab => 'Onglet suivant';
+
+  @override
+  String get txt_shortcut_prev_tab => 'Onglet précédent';
 }
