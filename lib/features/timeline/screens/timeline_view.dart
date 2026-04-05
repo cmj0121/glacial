@@ -224,24 +224,44 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     }
   }
 
-  // Pick the topmost visible item and publish it as the focused index.
-  // Prefers items whose leading edge sits at or just below the viewport
-  // top; if nothing is, picks the one closest to the top from above.
+  // Pick the status that dominates the viewport and publish it as the
+  // focused index. A status is considered focused when at least 52% of
+  // its own area is visible — that threshold guarantees it beats either
+  // neighbor (they can share the remaining 48%). Falls back to the
+  // topmost visible status if nothing meets the threshold (e.g. a
+  // single extra-tall status that fills more than a viewport).
+  static const double _focusVisibilityThreshold = 0.52;
+
   void _updateFocusedFromViewport(List<ItemPosition> positions) {
     if (positions.isEmpty) return;
-    int? primary;
-    double bestScore = double.infinity;
+
+    int? dominant;
+    double dominantRatio = 0.0;
+    int? topmost;
+    double topmostLeading = double.infinity;
+
     for (final ItemPosition pos in positions) {
-      final double score = pos.itemLeadingEdge >= 0
-          ? pos.itemLeadingEdge
-          : -pos.itemLeadingEdge + 1.0;
-      if (score < bestScore) {
-        bestScore = score;
-        primary = pos.index;
+      final double itemSize = pos.itemTrailingEdge - pos.itemLeadingEdge;
+      if (itemSize <= 0) continue;
+      final double visibleStart = pos.itemLeadingEdge < 0 ? 0.0 : pos.itemLeadingEdge;
+      final double visibleEnd = pos.itemTrailingEdge > 1.0 ? 1.0 : pos.itemTrailingEdge;
+      final double visibleSize = visibleEnd - visibleStart;
+      if (visibleSize <= 0) continue;
+      final double ratio = visibleSize / itemSize;
+
+      if (ratio >= _focusVisibilityThreshold && ratio > dominantRatio) {
+        dominantRatio = ratio;
+        dominant = pos.index;
+      }
+      if (pos.itemLeadingEdge < topmostLeading) {
+        topmostLeading = pos.itemLeadingEdge;
+        topmost = pos.index;
       }
     }
-    if (primary != null && primary != GlacialHome.focusedStatusIndex.value) {
-      GlacialHome.focusedStatusIndex.value = primary;
+
+    final int? next = dominant ?? topmost;
+    if (next != null && next != GlacialHome.focusedStatusIndex.value) {
+      GlacialHome.focusedStatusIndex.value = next;
     }
   }
 
