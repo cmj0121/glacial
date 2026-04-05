@@ -234,9 +234,11 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   void _updateFocusedFromViewport(List<ItemPosition> positions) {
     if (positions.isEmpty) return;
+    final DateTime? until = GlacialHome.suppressAutoFocusUntil;
+    if (until != null && DateTime.now().isBefore(until)) return;
 
     int? dominant;
-    double dominantRatio = 0.0;
+    double dominantLeading = double.infinity;
     int? topmost;
     double topmostLeading = double.infinity;
 
@@ -249,8 +251,11 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
       if (visibleSize <= 0) continue;
       final double ratio = visibleSize / itemSize;
 
-      if (ratio >= _focusVisibilityThreshold && ratio > dominantRatio) {
-        dominantRatio = ratio;
+      // Among all items >=52% visible, pick the topmost (smallest
+      // leadingEdge) so the selection is stable when many fully-visible
+      // items tie at 100%.
+      if (ratio >= _focusVisibilityThreshold && pos.itemLeadingEdge < dominantLeading) {
+        dominantLeading = pos.itemLeadingEdge;
         dominant = pos.index;
       }
       if (pos.itemLeadingEdge < topmostLeading) {

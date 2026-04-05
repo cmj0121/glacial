@@ -159,17 +159,15 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     if (statuses == null || statuses.isEmpty) return;
 
     final int current = GlacialHome.focusedStatusIndex.value ?? -1;
-    int next;
-    if (current < 0) {
-      // First press selects the first visible item (or 0 as a fallback).
-      final positions = GlacialHome.itemPositions?.itemPositions.value;
-      next = (positions != null && positions.isNotEmpty)
-          ? positions.first.index
-          : 0;
-    } else {
-      next = current + delta;
-    }
-    next = next.clamp(0, statuses.length - 1);
+    final int next = (current < 0 ? 0 : current + delta)
+        .clamp(0, statuses.length - 1);
+    if (next == current) return;
+
+    // Pause viewport-based auto-focus until the scroll animation
+    // completes so rapid j/k presses advance past N -> N+1 -> N+2 cleanly
+    // instead of being reset to the previously-dominant post mid-scroll.
+    GlacialHome.suppressAutoFocusUntil =
+        DateTime.now().add(const Duration(milliseconds: 350));
     GlacialHome.focusedStatusIndex.value = next;
 
     final ItemScrollController? scroll = GlacialHome.itemScrollToTop;

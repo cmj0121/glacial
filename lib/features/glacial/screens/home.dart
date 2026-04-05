@@ -27,6 +27,9 @@ class GlacialHome extends ConsumerStatefulWidget {
   // Index of the status currently focused by keyboard navigation (j/k).
   // null means no selection; timelines observe this to render a highlight.
   static final ValueNotifier<int?> focusedStatusIndex = ValueNotifier<int?>(null);
+  // When set, viewport-based auto-focus is suppressed until this instant
+  // so j/k moves aren't stomped by the in-flight scroll animation.
+  static DateTime? suppressAutoFocusUntil;
 
   final bool backable;
   final Widget? title;
