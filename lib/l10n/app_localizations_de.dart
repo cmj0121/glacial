@@ -1271,4 +1271,8 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_shortcut_reply => 'Auf fokussierten Beitrag antworten';
+
+  @override
+  String get txt_shortcut_bookmark =>
+      'Fokussierten Beitrag mit Lesezeichen versehen';
 }

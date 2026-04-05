@@ -1278,4 +1278,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_shortcut_reply => 'Répondre à la publication ciblée';
+
+  @override
+  String get txt_shortcut_bookmark => 'Marquer la publication ciblée';
 }

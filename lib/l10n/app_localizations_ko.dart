@@ -1217,4 +1217,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_shortcut_reply => '포커스된 게시물에 답글';
+
+  @override
+  String get txt_shortcut_bookmark => '포커스된 게시물 북마크';
 }

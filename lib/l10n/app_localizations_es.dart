@@ -1276,4 +1276,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_shortcut_reply => 'Responder a la publicación enfocada';
+
+  @override
+  String get txt_shortcut_bookmark => 'Guardar publicación enfocada';
 }

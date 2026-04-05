@@ -392,5 +392,6 @@
   "txt_shortcut_open_status": "開啟聚焦的貼文",
   "txt_shortcut_favourite": "將聚焦貼文加入最愛",
   "txt_shortcut_boost": "轉發聚焦貼文",
-  "txt_shortcut_reply": "回覆聚焦貼文"
+  "txt_shortcut_reply": "回覆聚焦貼文",
+  "txt_shortcut_bookmark": "將聚焦貼文加入書籤"
 }

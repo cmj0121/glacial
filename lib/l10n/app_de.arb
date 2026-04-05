@@ -392,5 +392,6 @@
   "txt_shortcut_open_status": "Fokussierten Beitrag öffnen",
   "txt_shortcut_favourite": "Fokussierten Beitrag favorisieren",
   "txt_shortcut_boost": "Fokussierten Beitrag teilen",
-  "txt_shortcut_reply": "Auf fokussierten Beitrag antworten"
+  "txt_shortcut_reply": "Auf fokussierten Beitrag antworten",
+  "txt_shortcut_bookmark": "Fokussierten Beitrag mit Lesezeichen versehen"
 }

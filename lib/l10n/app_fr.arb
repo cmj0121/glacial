@@ -392,5 +392,6 @@
   "txt_shortcut_open_status": "Ouvrir la publication ciblée",
   "txt_shortcut_favourite": "Ajouter aux favoris la publication ciblée",
   "txt_shortcut_boost": "Partager la publication ciblée",
-  "txt_shortcut_reply": "Répondre à la publication ciblée"
+  "txt_shortcut_reply": "Répondre à la publication ciblée",
+  "txt_shortcut_bookmark": "Marquer la publication ciblée"
 }

@@ -392,5 +392,6 @@
   "txt_shortcut_open_status": "選択中の投稿を開く",
   "txt_shortcut_favourite": "選択中の投稿をお気に入り",
   "txt_shortcut_boost": "選択中の投稿をブースト",
-  "txt_shortcut_reply": "選択中の投稿に返信"
+  "txt_shortcut_reply": "選択中の投稿に返信",
+  "txt_shortcut_bookmark": "選択中の投稿をブックマーク"
 }

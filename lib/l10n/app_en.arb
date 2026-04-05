@@ -469,5 +469,6 @@
   "txt_shortcut_open_status": "Open focused post",
   "txt_shortcut_favourite": "Favourite focused post",
   "txt_shortcut_boost": "Boost focused post",
-  "txt_shortcut_reply": "Reply to focused post"
+  "txt_shortcut_reply": "Reply to focused post",
+  "txt_shortcut_bookmark": "Bookmark focused post"
 }

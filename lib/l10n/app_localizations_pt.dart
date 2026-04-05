@@ -1272,4 +1272,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_shortcut_reply => 'Responder à publicação em foco';
+
+  @override
+  String get txt_shortcut_bookmark => 'Salvar publicação em foco';
 }

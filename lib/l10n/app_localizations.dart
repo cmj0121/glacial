@@ -2467,6 +2467,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reply to focused post'**
   String get txt_shortcut_reply;
+
+  /// No description provided for @txt_shortcut_bookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark focused post'**
+  String get txt_shortcut_bookmark;
 }
 
 class _AppLocalizationsDelegate

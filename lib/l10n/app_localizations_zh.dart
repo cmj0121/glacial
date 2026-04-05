@@ -1214,4 +1214,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_shortcut_reply => '回覆聚焦貼文';
+
+  @override
+  String get txt_shortcut_bookmark => '將聚焦貼文加入書籤';
 }

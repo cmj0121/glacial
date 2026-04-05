@@ -1215,4 +1215,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_reply => '選択中の投稿に返信';
+
+  @override
+  String get txt_shortcut_bookmark => '選択中の投稿をブックマーク';
 }

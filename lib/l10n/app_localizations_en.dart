@@ -1258,4 +1258,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_shortcut_reply => 'Reply to focused post';
+
+  @override
+  String get txt_shortcut_bookmark => 'Bookmark focused post';
 }
