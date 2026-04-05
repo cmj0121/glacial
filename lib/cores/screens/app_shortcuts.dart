@@ -1,19 +1,14 @@
-// Global keyboard shortcuts wrapper for the GlacialHome shell.
-//
-// Uses a `HardwareKeyboard` handler so single-key shortcuts are detected
+// Global keyboard shortcuts wrapper for the shell. Uses a
+// HardwareKeyboard handler so single-key shortcuts are detected
 // app-wide on desktop regardless of which widget currently owns focus
 // (mirrors Mastodon web's document-level listener). Key events are
 // ignored while a text field owns focus so typing in composers, search
 // boxes, etc. is never hijacked.
-//
-// Each shortcut commit adds one entry to `_buildBindings()` and one row
-// to the `?` cheatsheet.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:glacial/cores/misc.dart';
 import 'package:glacial/cores/routes.dart';
 import 'package:glacial/cores/screens/glass_sheets.dart';
 import 'package:glacial/cores/storage.dart';
@@ -62,23 +57,20 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     if (!isTopmost) return false;
     if (_textInputHasFocus) return false;
 
-    final bool shift = HardwareKeyboard.instance.isShiftPressed;
-    final bool meta = HardwareKeyboard.instance.isMetaPressed;
-    final bool ctrl = HardwareKeyboard.instance.isControlPressed;
-    final bool alt = HardwareKeyboard.instance.isAltPressed;
-    logger.d('[shortcut] phys=${event.physicalKey.debugName} '
-        'logical=${event.logicalKey.debugName} shift=$shift '
-        'meta=$meta ctrl=$ctrl alt=$alt');
+    final keyboard = HardwareKeyboard.instance;
     // Don't swallow OS-level chords like Cmd+A, Ctrl+C, etc.
-    if (meta || ctrl || alt) return false;
+    if (keyboard.isMetaPressed || keyboard.isControlPressed || keyboard.isAltPressed) {
+      return false;
+    }
+    final bool shift = keyboard.isShiftPressed;
 
-    final match = _bindings.firstWhere(
-      (b) => b.physical == event.physicalKey && b.shift == shift,
-      orElse: () => _NullBinding.instance,
-    );
-    if (identical(match, _NullBinding.instance)) return false;
-    match.run(this);
-    return true;
+    for (final b in _bindings) {
+      if (b.physical == event.physicalKey && b.shift == shift) {
+        b.run(this);
+        return true;
+      }
+    }
+    return false;
   }
 
   void _handleEscape() {
@@ -120,7 +112,7 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
 
   void _replyToFocused() {
     final int? idx = GlacialHome.focusedStatusIndex.value;
-    final List<dynamic>? statuses = GlacialHome.getStatuses?.call();
+    final statuses = GlacialHome.getStatuses?.call();
     if (idx == null || statuses == null || idx < 0 || idx >= statuses.length) return;
     final bool isSignedIn = ref.read(accessStatusProvider)?.accessToken?.isNotEmpty == true;
     if (!isSignedIn) return;
@@ -135,7 +127,7 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
 
   void _openFocusedStatus() {
     final int? idx = GlacialHome.focusedStatusIndex.value;
-    final List<dynamic>? statuses = GlacialHome.getStatuses?.call();
+    final statuses = GlacialHome.getStatuses?.call();
     if (idx == null || statuses == null || idx < 0 || idx >= statuses.length) return;
     context.push(RoutePath.status.path, extra: statuses[idx]);
   }
@@ -148,14 +140,13 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
 
   void _switchTab(int delta) {
     final cycler = GlacialHome.onTabSwitch;
-    logger.d('[shortcut] _switchTab delta=$delta cycler=$cycler');
     if (cycler == null) return;
     cycler(delta);
     GlacialHome.focusedStatusIndex.value = null;
   }
 
   void _moveFocus(int delta) {
-    final List<dynamic>? statuses = GlacialHome.getStatuses?.call();
+    final statuses = GlacialHome.getStatuses?.call();
     if (statuses == null || statuses.isEmpty) return;
 
     final int current = GlacialHome.focusedStatusIndex.value ?? -1;
@@ -232,14 +223,7 @@ class _Binding {
   const _Binding(this.physical, {this.shift = false, required this.run});
 }
 
-class _NullBinding extends _Binding {
-  static final _NullBinding instance = _NullBinding();
-  _NullBinding() : super(PhysicalKeyboardKey.escape, run: _noop);
-  static void _noop(_AppShortcutsState _) {}
-}
-
-/// Rows rendered in the `?` cheatsheet. Each shortcut commit appends to
-/// this list alongside its binding.
+/// Rows rendered in the `?` cheatsheet.
 const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
   _ShortcutRow(keys: <String>['?'], labelKey: _HelpLabel.help),
   _ShortcutRow(keys: <String>['.'], labelKey: _HelpLabel.refresh),
