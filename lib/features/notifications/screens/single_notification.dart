@@ -39,125 +39,51 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
       return const LoadingOverlay(isLoading: true, child: SizedBox(height: 72));
     }
 
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme scheme = theme.colorScheme;
+    final Color accent = widget.schema.type.accentColor(context);
+
     return Container(
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
-          ),
+          bottom: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3)),
         ),
       ),
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-      child: _isMention ? _buildMention(context) : _buildAction(context),
-    );
-  }
-
-  // Layout for aggregated user actions (reblog / favourite / follow /
-  // poll / update): a compact single-row header with a small accent
-  // type icon, overlapping chip-scale avatars of the actors, the
-  // action verb, and the referenced content indented below.
-  Widget _buildAction(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme scheme = theme.colorScheme;
-    final Color accent = widget.schema.type.accentColor(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _TypeBadge(icon: widget.schema.type.icon, accent: accent, size: 22),
-            const SizedBox(width: 10),
-            _AvatarStack(accounts: _accounts, size: 20, overlap: 8),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                _headerText(context),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurface,
-                  height: 1.25,
-                ),
-              ),
-            ),
-          ],
-        ),
-        if (_body != const SizedBox.shrink()) ...[
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(left: 32),
-            child: Opacity(opacity: 0.75, child: _body!),
-          ),
-        ],
-      ],
-    );
-  }
-
-  // Layout for mentions: larger 44px avatar since the mention itself
-  // is primary content, and the status renders at full opacity.
-  Widget _buildMention(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme scheme = theme.colorScheme;
-    final Color accent = widget.schema.type.accentColor(context);
-    final AccountSchema? primary = _accounts.isNotEmpty ? _accounts.first : null;
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 44,
-          height: 44,
-          child: Stack(
-            clipBehavior: Clip.none,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (primary != null)
-                AccountAvatar(schema: primary, size: 44)
-              else
-                Container(
-                  decoration: BoxDecoration(
-                    color: scheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(22),
+              _TypeBadge(icon: widget.schema.type.icon, accent: accent, size: 22),
+              const SizedBox(width: 10),
+              _AvatarStack(accounts: _accounts, size: 20, overlap: 8),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  _headerText(context),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurface,
+                    height: 1.25,
+                    fontWeight: _isMention ? FontWeight.w500 : null,
                   ),
                 ),
-              Positioned(
-                bottom: -2,
-                right: -2,
-                child: _TypeBadge(
-                  icon: widget.schema.type.icon,
-                  accent: accent,
-                  size: 18,
-                  borderColor: scheme.surface,
-                ),
               ),
             ],
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                _headerText(context),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurface,
-                  height: 1.25,
-                ),
-              ),
-              if (_body != const SizedBox.shrink()) ...[
-                const SizedBox(height: 8),
-                _body!,
-              ],
-            ],
-          ),
-        ),
-      ],
+          if (_body != const SizedBox.shrink()) ...[
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 32),
+              child: Opacity(opacity: _isMention ? 1.0 : 0.75, child: _body!),
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -223,13 +149,11 @@ class _TypeBadge extends StatelessWidget {
   final IconData icon;
   final Color accent;
   final double size;
-  final Color? borderColor;
 
   const _TypeBadge({
     required this.icon,
     required this.accent,
     required this.size,
-    this.borderColor,
   });
 
   @override
@@ -242,13 +166,7 @@ class _TypeBadge extends StatelessWidget {
       width: size,
       height: size,
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: accent,
-        shape: BoxShape.circle,
-        border: borderColor != null
-            ? Border.all(color: borderColor!, width: 2)
-            : null,
-      ),
+      decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
       child: Icon(icon, size: size * 0.55, color: onAccent),
     );
   }
