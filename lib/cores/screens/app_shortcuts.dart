@@ -39,22 +39,33 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     super.dispose();
   }
 
+  // Paths on which the compose form is rendered. Routes inside the
+  // ShellRoute swap V2HomeShell's child rather than pushing over it,
+  // so ModalRoute.isCurrent stays true — we need an explicit path check.
+  static const Set<String> _composePaths = <String>{
+    '/home/post',
+    '/home/post/quote',
+    '/home/post/draft',
+    '/home/post/shared',
+    '/home/edit',
+  };
+
   bool _handleKey(KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) return false;
     if (!mounted) return false;
-    // Disable all shortcuts when the shell is not the topmost route
-    // (e.g. compose post, status detail, quote). Esc is the single
-    // exception — it still works to blur inputs and close sheets.
     final bool isTopmost = ModalRoute.of(context)?.isCurrent ?? false;
+    final bool onComposeRoute = _composePaths.contains(
+      GoRouter.of(context).state.uri.path,
+    );
 
-    // Esc is special: it works even from inside a text input, where it
-    // blurs the field (and closes the search bar).
+    // Esc stays active everywhere: blur text input / close sheet, and
+    // on a compose route it also pops back to the previous screen.
     if (event.physicalKey == PhysicalKeyboardKey.escape) {
-      _handleEscape();
+      _handleEscape(onComposeRoute: onComposeRoute);
       return true;
     }
 
-    if (!isTopmost) return false;
+    if (!isTopmost || onComposeRoute) return false;
     if (_textInputHasFocus) return false;
 
     final keyboard = HardwareKeyboard.instance;
@@ -73,9 +84,17 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     return false;
   }
 
-  void _handleEscape() {
+  void _handleEscape({bool onComposeRoute = false}) {
     GlacialHome.onCloseSearch?.call();
-    FocusManager.instance.primaryFocus?.unfocus();
+    final FocusNode? primary = FocusManager.instance.primaryFocus;
+    final bool hadTextFocus = primary?.context?.widget is EditableText;
+    primary?.unfocus();
+    // If the user was typing, one Esc blurs; a second Esc closes the
+    // composer. If nothing was focused and we're on a compose route,
+    // pop straight away.
+    if (!hadTextFocus && onComposeRoute && context.canPop()) {
+      context.pop();
+    }
   }
 
   // Skip shortcuts while a text field owns focus so typing in composers,
