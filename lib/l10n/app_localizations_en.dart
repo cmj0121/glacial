@@ -499,6 +499,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_list_policy_none => 'Do not show any replies';
 
   @override
+  String get txt_list_policy_short_followed => 'Followed replies';
+
+  @override
+  String get txt_list_policy_short_list => 'List replies only';
+
+  @override
+  String get txt_list_policy_short_none => 'No replies';
+
+  @override
+  String get txt_list_short_exclusive => 'Exclusive';
+
+  @override
+  String get txt_list_short_inclusive => 'Inclusive';
+
+  @override
   String get txt_list_exclusive => 'Removed from the Home timeline feed';
 
   @override

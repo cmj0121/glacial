@@ -495,6 +495,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_list_policy_none => '不顯示回覆';
 
   @override
+  String get txt_list_policy_short_followed => '關注者的回覆';
+
+  @override
+  String get txt_list_policy_short_list => '僅列表成員';
+
+  @override
+  String get txt_list_policy_short_none => '不顯示回覆';
+
+  @override
+  String get txt_list_short_exclusive => '獨占';
+
+  @override
+  String get txt_list_short_inclusive => '包含';
+
+  @override
   String get txt_list_exclusive => '從首頁時間軸移除';
 
   @override

@@ -1058,6 +1058,36 @@ abstract class AppLocalizations {
   /// **'Do not show any replies'**
   String get txt_list_policy_none;
 
+  /// No description provided for @txt_list_policy_short_followed.
+  ///
+  /// In en, this message translates to:
+  /// **'Followed replies'**
+  String get txt_list_policy_short_followed;
+
+  /// No description provided for @txt_list_policy_short_list.
+  ///
+  /// In en, this message translates to:
+  /// **'List replies only'**
+  String get txt_list_policy_short_list;
+
+  /// No description provided for @txt_list_policy_short_none.
+  ///
+  /// In en, this message translates to:
+  /// **'No replies'**
+  String get txt_list_policy_short_none;
+
+  /// No description provided for @txt_list_short_exclusive.
+  ///
+  /// In en, this message translates to:
+  /// **'Exclusive'**
+  String get txt_list_short_exclusive;
+
+  /// No description provided for @txt_list_short_inclusive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inclusive'**
+  String get txt_list_short_inclusive;
+
   /// No description provided for @txt_list_exclusive.
   ///
   /// In en, this message translates to:

@@ -495,6 +495,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_list_policy_none => '답글 표시 안함';
 
   @override
+  String get txt_list_policy_short_followed => '팔로우한 답글';
+
+  @override
+  String get txt_list_policy_short_list => '리스트만';
+
+  @override
+  String get txt_list_policy_short_none => '답글 없음';
+
+  @override
+  String get txt_list_short_exclusive => '전용';
+
+  @override
+  String get txt_list_short_inclusive => '포함';
+
+  @override
   String get txt_list_exclusive => '홈 타임라인에서 제외';
 
   @override

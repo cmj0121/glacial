@@ -503,6 +503,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get txt_list_policy_none => 'Keine Antworten anzeigen';
 
   @override
+  String get txt_list_policy_short_followed => 'Antworten von Gefolgten';
+
+  @override
+  String get txt_list_policy_short_list => 'Nur Listen-Antworten';
+
+  @override
+  String get txt_list_policy_short_none => 'Keine Antworten';
+
+  @override
+  String get txt_list_short_exclusive => 'Exklusiv';
+
+  @override
+  String get txt_list_short_inclusive => 'Inklusiv';
+
+  @override
   String get txt_list_exclusive => 'Aus Home-Timeline entfernen';
 
   @override

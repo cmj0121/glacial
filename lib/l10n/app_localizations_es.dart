@@ -503,6 +503,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_list_policy_none => 'No mostrar respuestas';
 
   @override
+  String get txt_list_policy_short_followed => 'Respuestas de seguidos';
+
+  @override
+  String get txt_list_policy_short_list => 'Solo de la lista';
+
+  @override
+  String get txt_list_policy_short_none => 'Sin respuestas';
+
+  @override
+  String get txt_list_short_exclusive => 'Exclusiva';
+
+  @override
+  String get txt_list_short_inclusive => 'Inclusiva';
+
+  @override
   String get txt_list_exclusive => 'Eliminar del feed principal';
 
   @override

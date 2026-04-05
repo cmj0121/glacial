@@ -495,6 +495,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_list_policy_none => '返信を表示しない';
 
   @override
+  String get txt_list_policy_short_followed => 'フォロー中の返信';
+
+  @override
+  String get txt_list_policy_short_list => 'リスト内のみ';
+
+  @override
+  String get txt_list_policy_short_none => '返信なし';
+
+  @override
+  String get txt_list_short_exclusive => '排他的';
+
+  @override
+  String get txt_list_short_inclusive => '包括的';
+
+  @override
   String get txt_list_exclusive => 'ホームタイムラインから除外';
 
   @override
