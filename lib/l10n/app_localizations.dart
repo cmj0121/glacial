@@ -2449,6 +2449,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open focused post'**
   String get txt_shortcut_open_status;
+
+  /// No description provided for @txt_shortcut_favourite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite focused post'**
+  String get txt_shortcut_favourite;
 }
 
 class _AppLocalizationsDelegate

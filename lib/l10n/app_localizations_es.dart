@@ -1266,4 +1266,8 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_shortcut_open_status => 'Abrir publicación enfocada';
+
+  @override
+  String get txt_shortcut_favourite =>
+      'Marcar como favorita la publicación enfocada';
 }

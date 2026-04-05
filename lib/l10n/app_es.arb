@@ -389,5 +389,6 @@
   "txt_shortcut_prev_tab": "Pestaña anterior",
   "txt_shortcut_focus_search": "Enfocar búsqueda",
   "txt_shortcut_compose_post": "Redactar nueva publicación",
-  "txt_shortcut_open_status": "Abrir publicación enfocada"
+  "txt_shortcut_open_status": "Abrir publicación enfocada",
+  "txt_shortcut_favourite": "Marcar como favorita la publicación enfocada"
 }

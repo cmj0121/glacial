@@ -15,6 +15,7 @@ import 'package:glacial/cores/routes.dart';
 import 'package:glacial/cores/screens/glass_sheets.dart';
 import 'package:glacial/cores/storage.dart';
 import 'package:glacial/features/glacial/screens/home.dart';
+import 'package:glacial/features/timeline/models/interaction.dart';
 import 'package:glacial/l10n/app_localizations.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -68,7 +69,15 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
       const SingleActivator(LogicalKeyboardKey.keyN): _composeNewPost,
       const SingleActivator(LogicalKeyboardKey.keyO): _openFocusedStatus,
       const SingleActivator(LogicalKeyboardKey.enter): _openFocusedStatus,
+      const SingleActivator(LogicalKeyboardKey.keyF): () => _interactFocused(StatusInteraction.favourite),
     };
+  }
+
+  void _interactFocused(StatusInteraction action) {
+    if (_textInputHasFocus) return;
+    final int? idx = GlacialHome.focusedStatusIndex.value;
+    if (idx == null) return;
+    GlacialHome.onInteractStatus?.call(idx, action);
   }
 
   void _openFocusedStatus() {
@@ -177,6 +186,7 @@ const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
   _ShortcutRow(keys: <String>['/'], labelKey: _HelpLabel.focusSearch),
   _ShortcutRow(keys: <String>['n'], labelKey: _HelpLabel.composePost),
   _ShortcutRow(keys: <String>['o'], labelKey: _HelpLabel.openStatus),
+  _ShortcutRow(keys: <String>['f'], labelKey: _HelpLabel.favourite),
 ];
 
 class _ShortcutHelpSheet extends StatelessWidget {
@@ -262,7 +272,8 @@ enum _HelpLabel {
   prevTab,
   focusSearch,
   composePost,
-  openStatus;
+  openStatus,
+  favourite;
 
   String resolve(AppLocalizations? l10n) {
     switch (this) {
@@ -284,6 +295,8 @@ enum _HelpLabel {
         return l10n?.txt_shortcut_compose_post ?? 'Compose new post';
       case _HelpLabel.openStatus:
         return l10n?.txt_shortcut_open_status ?? 'Open focused post';
+      case _HelpLabel.favourite:
+        return l10n?.txt_shortcut_favourite ?? 'Favourite focused post';
     }
   }
 }

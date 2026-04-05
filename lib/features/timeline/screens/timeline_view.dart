@@ -64,6 +64,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     GlacialHome.itemPositions = itemPositionsListener;
     GlacialHome.getStatuses = () => statuses;
     GlacialHome.onRefresh = onRefresh;
+    GlacialHome.onInteractStatus = _interactWithStatusAt;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final Duration? refreshInterval = widget.pref?.refreshInterval;
 
@@ -163,11 +164,45 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     if (GlacialHome.focusedStatusIndex.value != null) {
       GlacialHome.focusedStatusIndex.value = null;
     }
+    if (GlacialHome.onInteractStatus == _interactWithStatusAt) {
+      GlacialHome.onInteractStatus = null;
+    }
     _streamSubscription?.cancel();
     _streamingUnsubscribe?.call();
     timer?.cancel();
     _markerDebounce?.cancel();
     super.dispose();
+  }
+
+  Future<void> _interactWithStatusAt(int index, StatusInteraction action) async {
+    if (index < 0 || index >= statuses.length) return;
+    final StatusSchema target = statuses[index];
+    final bool isActive;
+    switch (action) {
+      case StatusInteraction.favourite:
+        isActive = target.favourited ?? false;
+      case StatusInteraction.reblog:
+        isActive = target.reblogged ?? false;
+      case StatusInteraction.bookmark:
+        isActive = target.bookmarked ?? false;
+      default:
+        return;
+    }
+    HapticFeedback.lightImpact();
+    try {
+      final StatusSchema updated = await widget.status.interactWithStatus(
+        target,
+        action,
+        negative: isActive,
+      );
+      if (!mounted) return;
+      final int current = statuses.indexWhere((s) => s.id == target.id);
+      if (current >= 0) {
+        setState(() => statuses[current] = updated);
+      }
+    } catch (_) {
+      // Swallow: transient network errors shouldn't crash the shortcut flow.
+    }
   }
 
   void _onPositionChange() {

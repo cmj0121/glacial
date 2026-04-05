@@ -1206,4 +1206,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_open_status => '選択中の投稿を開く';
+
+  @override
+  String get txt_shortcut_favourite => '選択中の投稿をお気に入り';
 }

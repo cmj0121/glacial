@@ -1263,4 +1263,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_shortcut_open_status => 'Abrir publicação em foco';
+
+  @override
+  String get txt_shortcut_favourite => 'Favoritar publicação em foco';
 }

@@ -1205,4 +1205,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_shortcut_open_status => '開啟聚焦的貼文';
+
+  @override
+  String get txt_shortcut_favourite => '將聚焦貼文加入最愛';
 }

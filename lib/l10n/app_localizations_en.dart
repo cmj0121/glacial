@@ -1249,4 +1249,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_shortcut_open_status => 'Open focused post';
+
+  @override
+  String get txt_shortcut_favourite => 'Favourite focused post';
 }

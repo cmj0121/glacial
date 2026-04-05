@@ -1262,4 +1262,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_shortcut_open_status => 'Fokussierten Beitrag öffnen';
+
+  @override
+  String get txt_shortcut_favourite => 'Fokussierten Beitrag favorisieren';
 }

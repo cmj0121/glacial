@@ -1268,4 +1268,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_shortcut_open_status => 'Ouvrir la publication ciblée';
+
+  @override
+  String get txt_shortcut_favourite =>
+      'Ajouter aux favoris la publication ciblée';
 }

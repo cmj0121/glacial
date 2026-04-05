@@ -18,6 +18,8 @@ class GlacialHome extends ConsumerStatefulWidget {
   static List<int> Function()? activeVisibleIndexes;
   static VoidCallback? onFocusSearch;
   static Future<void> Function()? onRefresh;
+  // Toggle a reblog/favourite/bookmark interaction on the status at index.
+  static Future<void> Function(int index, StatusInteraction action)? onInteractStatus;
   // Index of the status currently focused by keyboard navigation (j/k).
   // null means no selection; timelines observe this to render a highlight.
   static final ValueNotifier<int?> focusedStatusIndex = ValueNotifier<int?>(null);

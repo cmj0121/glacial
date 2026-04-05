@@ -1208,4 +1208,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_shortcut_open_status => '포커스된 게시물 열기';
+
+  @override
+  String get txt_shortcut_favourite => '포커스된 게시물 즐겨찾기';
 }
