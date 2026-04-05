@@ -1212,4 +1212,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_boost => '選択中の投稿をブースト';
+
+  @override
+  String get txt_shortcut_reply => '選択中の投稿に返信';
 }

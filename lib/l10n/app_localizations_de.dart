@@ -1268,4 +1268,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_shortcut_boost => 'Fokussierten Beitrag teilen';
+
+  @override
+  String get txt_shortcut_reply => 'Auf fokussierten Beitrag antworten';
 }

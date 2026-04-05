@@ -1211,4 +1211,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_shortcut_boost => '轉發聚焦貼文';
+
+  @override
+  String get txt_shortcut_reply => '回覆聚焦貼文';
 }

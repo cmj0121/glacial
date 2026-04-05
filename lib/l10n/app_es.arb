@@ -391,5 +391,6 @@
   "txt_shortcut_compose_post": "Redactar nueva publicación",
   "txt_shortcut_open_status": "Abrir publicación enfocada",
   "txt_shortcut_favourite": "Marcar como favorita la publicación enfocada",
-  "txt_shortcut_boost": "Impulsar publicación enfocada"
+  "txt_shortcut_boost": "Impulsar publicación enfocada",
+  "txt_shortcut_reply": "Responder a la publicación enfocada"
 }

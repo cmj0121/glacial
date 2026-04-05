@@ -71,7 +71,18 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
       const SingleActivator(LogicalKeyboardKey.enter): _openFocusedStatus,
       const SingleActivator(LogicalKeyboardKey.keyF): () => _interactFocused(StatusInteraction.favourite),
       const SingleActivator(LogicalKeyboardKey.keyB): () => _interactFocused(StatusInteraction.reblog),
+      const SingleActivator(LogicalKeyboardKey.keyR): _replyToFocused,
     };
+  }
+
+  void _replyToFocused() {
+    if (_textInputHasFocus) return;
+    final int? idx = GlacialHome.focusedStatusIndex.value;
+    final List<dynamic>? statuses = GlacialHome.getStatuses?.call();
+    if (idx == null || statuses == null || idx < 0 || idx >= statuses.length) return;
+    final bool isSignedIn = ref.read(accessStatusProvider)?.accessToken?.isNotEmpty == true;
+    if (!isSignedIn) return;
+    context.push(RoutePath.post.path, extra: statuses[idx]);
   }
 
   void _interactFocused(StatusInteraction action) {
@@ -189,6 +200,7 @@ const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
   _ShortcutRow(keys: <String>['o'], labelKey: _HelpLabel.openStatus),
   _ShortcutRow(keys: <String>['f'], labelKey: _HelpLabel.favourite),
   _ShortcutRow(keys: <String>['b'], labelKey: _HelpLabel.boost),
+  _ShortcutRow(keys: <String>['r'], labelKey: _HelpLabel.reply),
 ];
 
 class _ShortcutHelpSheet extends StatelessWidget {
@@ -276,7 +288,8 @@ enum _HelpLabel {
   composePost,
   openStatus,
   favourite,
-  boost;
+  boost,
+  reply;
 
   String resolve(AppLocalizations? l10n) {
     switch (this) {
@@ -302,6 +315,8 @@ enum _HelpLabel {
         return l10n?.txt_shortcut_favourite ?? 'Favourite focused post';
       case _HelpLabel.boost:
         return l10n?.txt_shortcut_boost ?? 'Boost focused post';
+      case _HelpLabel.reply:
+        return l10n?.txt_shortcut_reply ?? 'Reply to focused post';
     }
   }
 }

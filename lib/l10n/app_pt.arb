@@ -391,5 +391,6 @@
   "txt_shortcut_compose_post": "Escrever nova publicação",
   "txt_shortcut_open_status": "Abrir publicação em foco",
   "txt_shortcut_favourite": "Favoritar publicação em foco",
-  "txt_shortcut_boost": "Impulsionar publicação em foco"
+  "txt_shortcut_boost": "Impulsionar publicação em foco",
+  "txt_shortcut_reply": "Responder à publicação em foco"
 }
