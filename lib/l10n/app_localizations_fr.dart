@@ -1259,4 +1259,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_shortcut_prev_tab => 'Onglet précédent';
+
+  @override
+  String get txt_shortcut_focus_search => 'Activer la recherche';
 }

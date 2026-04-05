@@ -57,6 +57,10 @@ class _AppShortcutsState extends State<AppShortcuts> {
       const SingleActivator(LogicalKeyboardKey.tab, shift: true): () => _switchTab(-1),
       const SingleActivator(LogicalKeyboardKey.arrowRight): () => _switchTab(1),
       const SingleActivator(LogicalKeyboardKey.arrowLeft): () => _switchTab(-1),
+      const SingleActivator(LogicalKeyboardKey.slash): () {
+        if (_textInputHasFocus) return;
+        GlacialHome.onFocusSearch?.call();
+      },
     };
   }
 
@@ -148,6 +152,7 @@ const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
   _ShortcutRow(keys: <String>['k'], labelKey: _HelpLabel.prevPost),
   _ShortcutRow(keys: <String>['Tab'], labelKey: _HelpLabel.nextTab),
   _ShortcutRow(keys: <String>['Shift', 'Tab'], labelKey: _HelpLabel.prevTab),
+  _ShortcutRow(keys: <String>['/'], labelKey: _HelpLabel.focusSearch),
 ];
 
 class _ShortcutHelpSheet extends StatelessWidget {
@@ -230,7 +235,8 @@ enum _HelpLabel {
   nextPost,
   prevPost,
   nextTab,
-  prevTab;
+  prevTab,
+  focusSearch;
 
   String resolve(AppLocalizations? l10n) {
     switch (this) {
@@ -246,6 +252,8 @@ enum _HelpLabel {
         return l10n?.txt_shortcut_next_tab ?? 'Next tab';
       case _HelpLabel.prevTab:
         return l10n?.txt_shortcut_prev_tab ?? 'Previous tab';
+      case _HelpLabel.focusSearch:
+        return l10n?.txt_shortcut_focus_search ?? 'Focus search';
     }
   }
 }

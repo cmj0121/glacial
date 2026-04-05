@@ -1257,4 +1257,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_shortcut_prev_tab => 'Pestaña anterior';
+
+  @override
+  String get txt_shortcut_focus_search => 'Enfocar búsqueda';
 }

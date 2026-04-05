@@ -386,5 +386,6 @@
   "txt_shortcut_next_post": "Nächster Beitrag",
   "txt_shortcut_prev_post": "Vorheriger Beitrag",
   "txt_shortcut_next_tab": "Nächster Tab",
-  "txt_shortcut_prev_tab": "Vorheriger Tab"
+  "txt_shortcut_prev_tab": "Vorheriger Tab",
+  "txt_shortcut_focus_search": "Suche fokussieren"
 }

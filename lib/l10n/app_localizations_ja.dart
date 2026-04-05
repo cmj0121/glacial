@@ -1197,4 +1197,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_prev_tab => '前のタブ';
+
+  @override
+  String get txt_shortcut_focus_search => '検索にフォーカス';
 }

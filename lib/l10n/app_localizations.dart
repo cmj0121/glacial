@@ -2431,6 +2431,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Previous tab'**
   String get txt_shortcut_prev_tab;
+
+  /// No description provided for @txt_shortcut_focus_search.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus search'**
+  String get txt_shortcut_focus_search;
 }
 
 class _AppLocalizationsDelegate

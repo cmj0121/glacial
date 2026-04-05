@@ -386,5 +386,6 @@
   "txt_shortcut_next_post": "次の投稿",
   "txt_shortcut_prev_post": "前の投稿",
   "txt_shortcut_next_tab": "次のタブ",
-  "txt_shortcut_prev_tab": "前のタブ"
+  "txt_shortcut_prev_tab": "前のタブ",
+  "txt_shortcut_focus_search": "検索にフォーカス"
 }

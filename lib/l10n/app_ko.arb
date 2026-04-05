@@ -386,5 +386,6 @@
   "txt_shortcut_next_post": "다음 게시물",
   "txt_shortcut_prev_post": "이전 게시물",
   "txt_shortcut_next_tab": "다음 탭",
-  "txt_shortcut_prev_tab": "이전 탭"
+  "txt_shortcut_prev_tab": "이전 탭",
+  "txt_shortcut_focus_search": "검색창으로 포커스"
 }

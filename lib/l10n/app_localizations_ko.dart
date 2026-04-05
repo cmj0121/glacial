@@ -1199,4 +1199,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_shortcut_prev_tab => '이전 탭';
+
+  @override
+  String get txt_shortcut_focus_search => '검색창으로 포커스';
 }
