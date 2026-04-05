@@ -52,8 +52,13 @@ class _InteractionState extends ConsumerState<Interaction> {
       child: Tooltip(
         message: tooltip,
         child: TextButton.icon(
-          label: count == null ? const SizedBox.shrink() : Text(count.toString()),
-          icon: Icon(icon, size: tabSize, color: color),
+          label: count == null
+              ? const SizedBox.shrink()
+              : Opacity(
+                  opacity: count == 0 ? 0 : 1,
+                  child: Text(count == 0 ? '0' : count.toString()),
+                ),
+          icon: Icon(icon, size: 20, color: color),
           style: TextButton.styleFrom(foregroundColor: color),
           onPressed: isAvailable ? onPressed : null,
         ),
