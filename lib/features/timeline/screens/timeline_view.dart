@@ -228,38 +228,56 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
     return Align(
       alignment: Alignment.topCenter,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
         children: [
-          if (statuses.isNotEmpty) buildLoadingIndicator(),
-          if (statuses.isNotEmpty) buildErrorIndicator(onLoad),
-          OfflineBanner(isOffline: _isOffline),
-          buildUnreadedBanner(),
-          Flexible(child: buildContent()),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (statuses.isNotEmpty) buildLoadingIndicator(),
+              if (statuses.isNotEmpty) buildErrorIndicator(onLoad),
+              OfflineBanner(isOffline: _isOffline),
+              Flexible(child: buildContent()),
+            ],
+          ),
+          if (unreaded.isNotEmpty) buildUnreadedPill(),
         ],
       ),
     );
   }
 
-  // Build the unreaded count widget and the list of statuses.
-  Widget buildUnreadedBanner() {
-    final TextStyle? style = Theme.of(context).textTheme.labelLarge;
+  Widget buildUnreadedPill() {
+    final String text = AppLocalizations.of(context)?.btn_timeline_unread(unreaded.length) ?? "${unreaded.length} new";
 
-    if (unreaded.isEmpty) return const SizedBox.shrink();
-    final String text = AppLocalizations.of(context)?.btn_timeline_unread(unreaded.length) ?? "Unreaded ${unreaded.length}";
-
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        icon: const Icon(Icons.mark_email_unread, size: tabSize),
-        label: Text(text, style: style),
-        style: FilledButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-          foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+    return Positioned(
+      top: 8,
+      left: 0,
+      right: 0,
+      child: Center(
+        child: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(24),
+          color: Theme.of(context).colorScheme.primaryContainer,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(24),
+            onTap: onClickUnreaded,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.arrow_upward, size: 16, color: Theme.of(context).colorScheme.onPrimaryContainer),
+                  const SizedBox(width: 6),
+                  Text(
+                    text,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        onPressed: onClickUnreaded,
       ),
     );
   }
@@ -299,7 +317,9 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
             return Container(
               decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+                border: Border(bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+                )),
               ),
               child: child,
             );
