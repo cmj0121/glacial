@@ -1260,4 +1260,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_shortcut_compose_post => 'Escrever nova publicação';
+
+  @override
+  String get txt_shortcut_open_status => 'Abrir publicação em foco';
 }

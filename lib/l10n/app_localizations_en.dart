@@ -1246,4 +1246,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_shortcut_compose_post => 'Compose new post';
+
+  @override
+  String get txt_shortcut_open_status => 'Open focused post';
 }

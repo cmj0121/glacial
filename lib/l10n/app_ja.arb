@@ -388,5 +388,6 @@
   "txt_shortcut_next_tab": "次のタブ",
   "txt_shortcut_prev_tab": "前のタブ",
   "txt_shortcut_focus_search": "検索にフォーカス",
-  "txt_shortcut_compose_post": "新規投稿を作成"
+  "txt_shortcut_compose_post": "新規投稿を作成",
+  "txt_shortcut_open_status": "選択中の投稿を開く"
 }

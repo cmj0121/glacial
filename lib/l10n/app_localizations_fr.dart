@@ -1265,4 +1265,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_shortcut_compose_post => 'Rédiger une publication';
+
+  @override
+  String get txt_shortcut_open_status => 'Ouvrir la publication ciblée';
 }

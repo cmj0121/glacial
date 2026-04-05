@@ -388,5 +388,6 @@
   "txt_shortcut_next_tab": "Próxima aba",
   "txt_shortcut_prev_tab": "Aba anterior",
   "txt_shortcut_focus_search": "Focar pesquisa",
-  "txt_shortcut_compose_post": "Escrever nova publicação"
+  "txt_shortcut_compose_post": "Escrever nova publicação",
+  "txt_shortcut_open_status": "Abrir publicação em foco"
 }

@@ -1263,4 +1263,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_shortcut_compose_post => 'Redactar nueva publicación';
+
+  @override
+  String get txt_shortcut_open_status => 'Abrir publicación enfocada';
 }

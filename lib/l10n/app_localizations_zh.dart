@@ -1202,4 +1202,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_shortcut_compose_post => '撰寫新貼文';
+
+  @override
+  String get txt_shortcut_open_status => '開啟聚焦的貼文';
 }

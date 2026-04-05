@@ -1259,4 +1259,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_shortcut_compose_post => 'Neuen Beitrag verfassen';
+
+  @override
+  String get txt_shortcut_open_status => 'Fokussierten Beitrag öffnen';
 }

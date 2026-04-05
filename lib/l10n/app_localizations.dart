@@ -2443,6 +2443,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Compose new post'**
   String get txt_shortcut_compose_post;
+
+  /// No description provided for @txt_shortcut_open_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Open focused post'**
+  String get txt_shortcut_open_status;
 }
 
 class _AppLocalizationsDelegate

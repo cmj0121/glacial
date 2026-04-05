@@ -388,5 +388,6 @@
   "txt_shortcut_next_tab": "Onglet suivant",
   "txt_shortcut_prev_tab": "Onglet précédent",
   "txt_shortcut_focus_search": "Activer la recherche",
-  "txt_shortcut_compose_post": "Rédiger une publication"
+  "txt_shortcut_compose_post": "Rédiger une publication",
+  "txt_shortcut_open_status": "Ouvrir la publication ciblée"
 }

@@ -66,7 +66,17 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
         GlacialHome.onFocusSearch?.call();
       },
       const SingleActivator(LogicalKeyboardKey.keyN): _composeNewPost,
+      const SingleActivator(LogicalKeyboardKey.keyO): _openFocusedStatus,
+      const SingleActivator(LogicalKeyboardKey.enter): _openFocusedStatus,
     };
+  }
+
+  void _openFocusedStatus() {
+    if (_textInputHasFocus) return;
+    final int? idx = GlacialHome.focusedStatusIndex.value;
+    final List<dynamic>? statuses = GlacialHome.getStatuses?.call();
+    if (idx == null || statuses == null || idx < 0 || idx >= statuses.length) return;
+    context.push(RoutePath.status.path, extra: statuses[idx]);
   }
 
   void _composeNewPost() {
@@ -166,6 +176,7 @@ const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
   _ShortcutRow(keys: <String>['Shift', 'Tab'], labelKey: _HelpLabel.prevTab),
   _ShortcutRow(keys: <String>['/'], labelKey: _HelpLabel.focusSearch),
   _ShortcutRow(keys: <String>['n'], labelKey: _HelpLabel.composePost),
+  _ShortcutRow(keys: <String>['o'], labelKey: _HelpLabel.openStatus),
 ];
 
 class _ShortcutHelpSheet extends StatelessWidget {
@@ -250,7 +261,8 @@ enum _HelpLabel {
   nextTab,
   prevTab,
   focusSearch,
-  composePost;
+  composePost,
+  openStatus;
 
   String resolve(AppLocalizations? l10n) {
     switch (this) {
@@ -270,6 +282,8 @@ enum _HelpLabel {
         return l10n?.txt_shortcut_focus_search ?? 'Focus search';
       case _HelpLabel.composePost:
         return l10n?.txt_shortcut_compose_post ?? 'Compose new post';
+      case _HelpLabel.openStatus:
+        return l10n?.txt_shortcut_open_status ?? 'Open focused post';
     }
   }
 }
