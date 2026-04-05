@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:glacial/cores/misc.dart';
 import 'package:glacial/cores/routes.dart';
 import 'package:glacial/cores/screens/glass_sheets.dart';
 import 'package:glacial/cores/storage.dart';
@@ -44,7 +45,7 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
   }
 
   bool _handleKey(KeyEvent event) {
-    if (event is! KeyDownEvent) return false;
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) return false;
     if (_textInputHasFocus) return false;
     if (!mounted) return false;
 
@@ -52,11 +53,14 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     final bool meta = HardwareKeyboard.instance.isMetaPressed;
     final bool ctrl = HardwareKeyboard.instance.isControlPressed;
     final bool alt = HardwareKeyboard.instance.isAltPressed;
+    logger.d('[shortcut] phys=${event.physicalKey.debugName} '
+        'logical=${event.logicalKey.debugName} shift=$shift '
+        'meta=$meta ctrl=$ctrl alt=$alt');
     // Don't swallow OS-level chords like Cmd+A, Ctrl+C, etc.
     if (meta || ctrl || alt) return false;
 
     final match = _bindings.firstWhere(
-      (b) => b.key == event.logicalKey && b.shift == shift,
+      (b) => b.physical == event.physicalKey && b.shift == shift,
       orElse: () => _NullBinding.instance,
     );
     if (identical(match, _NullBinding.instance)) return false;
@@ -75,24 +79,25 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
   }
 
   static final List<_Binding> _bindings = <_Binding>[
-    _Binding(LogicalKeyboardKey.slash, shift: true, run: (s) => s._showHelpSheet()),
-    _Binding(LogicalKeyboardKey.slash, run: (s) => GlacialHome.onFocusSearch?.call()),
-    _Binding(LogicalKeyboardKey.period, run: (s) => s._refreshAndScrollTop()),
-    _Binding(LogicalKeyboardKey.keyJ, run: (s) => s._moveFocus(1)),
-    _Binding(LogicalKeyboardKey.arrowDown, run: (s) => s._moveFocus(1)),
-    _Binding(LogicalKeyboardKey.keyK, run: (s) => s._moveFocus(-1)),
-    _Binding(LogicalKeyboardKey.arrowUp, run: (s) => s._moveFocus(-1)),
-    _Binding(LogicalKeyboardKey.tab, run: (s) => s._switchTab(1)),
-    _Binding(LogicalKeyboardKey.tab, shift: true, run: (s) => s._switchTab(-1)),
-    _Binding(LogicalKeyboardKey.arrowRight, run: (s) => s._switchTab(1)),
-    _Binding(LogicalKeyboardKey.arrowLeft, run: (s) => s._switchTab(-1)),
-    _Binding(LogicalKeyboardKey.keyN, run: (s) => s._composeNewPost()),
-    _Binding(LogicalKeyboardKey.keyO, run: (s) => s._openFocusedStatus()),
-    _Binding(LogicalKeyboardKey.enter, run: (s) => s._openFocusedStatus()),
-    _Binding(LogicalKeyboardKey.keyF, run: (s) => s._interactFocused(StatusInteraction.favourite)),
-    _Binding(LogicalKeyboardKey.keyB, run: (s) => s._interactFocused(StatusInteraction.reblog)),
-    _Binding(LogicalKeyboardKey.keyR, run: (s) => s._replyToFocused()),
-    _Binding(LogicalKeyboardKey.keyE, run: (s) => s._interactFocused(StatusInteraction.bookmark)),
+    _Binding(PhysicalKeyboardKey.slash, shift: true, run: (s) => s._showHelpSheet()),
+    _Binding(PhysicalKeyboardKey.slash, run: (s) => GlacialHome.onFocusSearch?.call()),
+    _Binding(PhysicalKeyboardKey.period, run: (s) => s._refreshAndScrollTop()),
+    _Binding(PhysicalKeyboardKey.keyJ, run: (s) => s._moveFocus(1)),
+    _Binding(PhysicalKeyboardKey.arrowDown, run: (s) => s._moveFocus(1)),
+    _Binding(PhysicalKeyboardKey.keyK, run: (s) => s._moveFocus(-1)),
+    _Binding(PhysicalKeyboardKey.arrowUp, run: (s) => s._moveFocus(-1)),
+    _Binding(PhysicalKeyboardKey.tab, run: (s) => s._switchTab(1)),
+    _Binding(PhysicalKeyboardKey.tab, shift: true, run: (s) => s._switchTab(-1)),
+    _Binding(PhysicalKeyboardKey.arrowRight, run: (s) => s._switchTab(1)),
+    _Binding(PhysicalKeyboardKey.arrowLeft, run: (s) => s._switchTab(-1)),
+    _Binding(PhysicalKeyboardKey.keyN, run: (s) => s._composeNewPost()),
+    _Binding(PhysicalKeyboardKey.keyO, run: (s) => s._openFocusedStatus()),
+    _Binding(PhysicalKeyboardKey.enter, run: (s) => s._openFocusedStatus()),
+    _Binding(PhysicalKeyboardKey.numpadEnter, run: (s) => s._openFocusedStatus()),
+    _Binding(PhysicalKeyboardKey.keyF, run: (s) => s._interactFocused(StatusInteraction.favourite)),
+    _Binding(PhysicalKeyboardKey.keyB, run: (s) => s._interactFocused(StatusInteraction.reblog)),
+    _Binding(PhysicalKeyboardKey.keyR, run: (s) => s._replyToFocused()),
+    _Binding(PhysicalKeyboardKey.keyE, run: (s) => s._interactFocused(StatusInteraction.bookmark)),
   ];
 
   void _replyToFocused() {
@@ -192,17 +197,20 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
   }
 }
 
-/// Static binding row for the app-wide key handler.
+/// Static binding row for the app-wide key handler. Uses the physical
+/// key so bindings stay stable regardless of keyboard layout or the
+/// shifted character (e.g. Shift+/ produces logical `question` on
+/// macOS but physical `slash`).
 class _Binding {
-  final LogicalKeyboardKey key;
+  final PhysicalKeyboardKey physical;
   final bool shift;
   final void Function(_AppShortcutsState state) run;
-  const _Binding(this.key, {this.shift = false, required this.run});
+  const _Binding(this.physical, {this.shift = false, required this.run});
 }
 
 class _NullBinding extends _Binding {
   static final _NullBinding instance = _NullBinding();
-  _NullBinding() : super(LogicalKeyboardKey.escape, run: _noop);
+  _NullBinding() : super(PhysicalKeyboardKey.escape, run: _noop);
   static void _noop(_AppShortcutsState _) {}
 }
 
