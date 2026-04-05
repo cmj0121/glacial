@@ -70,6 +70,7 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
       const SingleActivator(LogicalKeyboardKey.keyO): _openFocusedStatus,
       const SingleActivator(LogicalKeyboardKey.enter): _openFocusedStatus,
       const SingleActivator(LogicalKeyboardKey.keyF): () => _interactFocused(StatusInteraction.favourite),
+      const SingleActivator(LogicalKeyboardKey.keyB): () => _interactFocused(StatusInteraction.reblog),
     };
   }
 
@@ -187,6 +188,7 @@ const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
   _ShortcutRow(keys: <String>['n'], labelKey: _HelpLabel.composePost),
   _ShortcutRow(keys: <String>['o'], labelKey: _HelpLabel.openStatus),
   _ShortcutRow(keys: <String>['f'], labelKey: _HelpLabel.favourite),
+  _ShortcutRow(keys: <String>['b'], labelKey: _HelpLabel.boost),
 ];
 
 class _ShortcutHelpSheet extends StatelessWidget {
@@ -273,7 +275,8 @@ enum _HelpLabel {
   focusSearch,
   composePost,
   openStatus,
-  favourite;
+  favourite,
+  boost;
 
   String resolve(AppLocalizations? l10n) {
     switch (this) {
@@ -297,6 +300,8 @@ enum _HelpLabel {
         return l10n?.txt_shortcut_open_status ?? 'Open focused post';
       case _HelpLabel.favourite:
         return l10n?.txt_shortcut_favourite ?? 'Favourite focused post';
+      case _HelpLabel.boost:
+        return l10n?.txt_shortcut_boost ?? 'Boost focused post';
     }
   }
 }

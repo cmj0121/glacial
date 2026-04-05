@@ -1270,4 +1270,7 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get txt_shortcut_favourite =>
       'Marcar como favorita la publicación enfocada';
+
+  @override
+  String get txt_shortcut_boost => 'Impulsar publicación enfocada';
 }

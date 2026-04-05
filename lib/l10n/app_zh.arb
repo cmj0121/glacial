@@ -390,5 +390,6 @@
   "txt_shortcut_focus_search": "聚焦搜尋框",
   "txt_shortcut_compose_post": "撰寫新貼文",
   "txt_shortcut_open_status": "開啟聚焦的貼文",
-  "txt_shortcut_favourite": "將聚焦貼文加入最愛"
+  "txt_shortcut_favourite": "將聚焦貼文加入最愛",
+  "txt_shortcut_boost": "轉發聚焦貼文"
 }

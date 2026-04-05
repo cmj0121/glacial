@@ -1209,4 +1209,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_favourite => '選択中の投稿をお気に入り';
+
+  @override
+  String get txt_shortcut_boost => '選択中の投稿をブースト';
 }

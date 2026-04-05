@@ -1265,4 +1265,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_shortcut_favourite => 'Fokussierten Beitrag favorisieren';
+
+  @override
+  String get txt_shortcut_boost => 'Fokussierten Beitrag teilen';
 }

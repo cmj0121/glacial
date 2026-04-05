@@ -1211,4 +1211,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_shortcut_favourite => '포커스된 게시물 즐겨찾기';
+
+  @override
+  String get txt_shortcut_boost => '포커스된 게시물 부스트';
 }

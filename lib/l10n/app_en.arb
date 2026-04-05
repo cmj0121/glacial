@@ -467,5 +467,6 @@
   "txt_shortcut_focus_search": "Focus search",
   "txt_shortcut_compose_post": "Compose new post",
   "txt_shortcut_open_status": "Open focused post",
-  "txt_shortcut_favourite": "Favourite focused post"
+  "txt_shortcut_favourite": "Favourite focused post",
+  "txt_shortcut_boost": "Boost focused post"
 }

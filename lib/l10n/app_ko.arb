@@ -390,5 +390,6 @@
   "txt_shortcut_focus_search": "검색창으로 포커스",
   "txt_shortcut_compose_post": "새 게시물 작성",
   "txt_shortcut_open_status": "포커스된 게시물 열기",
-  "txt_shortcut_favourite": "포커스된 게시물 즐겨찾기"
+  "txt_shortcut_favourite": "포커스된 게시물 즐겨찾기",
+  "txt_shortcut_boost": "포커스된 게시물 부스트"
 }

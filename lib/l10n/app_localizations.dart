@@ -2455,6 +2455,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Favourite focused post'**
   String get txt_shortcut_favourite;
+
+  /// No description provided for @txt_shortcut_boost.
+  ///
+  /// In en, this message translates to:
+  /// **'Boost focused post'**
+  String get txt_shortcut_boost;
 }
 
 class _AppLocalizationsDelegate

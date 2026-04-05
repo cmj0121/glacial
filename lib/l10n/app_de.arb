@@ -390,5 +390,6 @@
   "txt_shortcut_focus_search": "Suche fokussieren",
   "txt_shortcut_compose_post": "Neuen Beitrag verfassen",
   "txt_shortcut_open_status": "Fokussierten Beitrag öffnen",
-  "txt_shortcut_favourite": "Fokussierten Beitrag favorisieren"
+  "txt_shortcut_favourite": "Fokussierten Beitrag favorisieren",
+  "txt_shortcut_boost": "Fokussierten Beitrag teilen"
 }

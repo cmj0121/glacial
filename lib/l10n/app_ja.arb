@@ -390,5 +390,6 @@
   "txt_shortcut_focus_search": "検索にフォーカス",
   "txt_shortcut_compose_post": "新規投稿を作成",
   "txt_shortcut_open_status": "選択中の投稿を開く",
-  "txt_shortcut_favourite": "選択中の投稿をお気に入り"
+  "txt_shortcut_favourite": "選択中の投稿をお気に入り",
+  "txt_shortcut_boost": "選択中の投稿をブースト"
 }
