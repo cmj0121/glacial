@@ -381,5 +381,6 @@
   "txt_v2_tap_to_select": "Tippen, um diesen Server auszuwählen",
   "txt_v2_no_match": "Keine passenden Server",
   "txt_shortcuts_title": "Tastaturkürzel",
-  "txt_shortcut_help": "Tastaturkürzel anzeigen"
+  "txt_shortcut_help": "Tastaturkürzel anzeigen",
+  "txt_shortcut_refresh": "Aktualisieren und nach oben scrollen"
 }

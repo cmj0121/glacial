@@ -1181,4 +1181,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_shortcut_help => '顯示鍵盤快捷鍵';
+
+  @override
+  String get txt_shortcut_refresh => '重新整理並捲動至頂端';
 }

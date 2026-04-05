@@ -1238,4 +1238,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_shortcut_help => 'Tastaturkürzel anzeigen';
+
+  @override
+  String get txt_shortcut_refresh => 'Aktualisieren und nach oben scrollen';
 }

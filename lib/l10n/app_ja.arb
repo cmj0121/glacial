@@ -381,5 +381,6 @@
   "txt_v2_tap_to_select": "タップしてこのサーバーを選択",
   "txt_v2_no_match": "一致するサーバーがありません",
   "txt_shortcuts_title": "キーボードショートカット",
-  "txt_shortcut_help": "キーボードショートカットを表示"
+  "txt_shortcut_help": "キーボードショートカットを表示",
+  "txt_shortcut_refresh": "更新して最上部にスクロール"
 }

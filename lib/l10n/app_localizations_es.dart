@@ -1242,4 +1242,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get txt_shortcut_help => 'Mostrar atajos de teclado';
+
+  @override
+  String get txt_shortcut_refresh => 'Actualizar y desplazar al inicio';
 }

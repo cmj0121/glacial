@@ -2401,6 +2401,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show keyboard shortcuts'**
   String get txt_shortcut_help;
+
+  /// No description provided for @txt_shortcut_refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh and scroll to top'**
+  String get txt_shortcut_refresh;
 }
 
 class _AppLocalizationsDelegate

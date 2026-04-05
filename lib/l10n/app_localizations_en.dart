@@ -1225,4 +1225,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_shortcut_help => 'Show keyboard shortcuts';
+
+  @override
+  String get txt_shortcut_refresh => 'Refresh and scroll to top';
 }

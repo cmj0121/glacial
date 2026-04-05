@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:glacial/cores/screens/glass_sheets.dart';
+import 'package:glacial/features/glacial/screens/home.dart';
 import 'package:glacial/l10n/app_localizations.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class AppShortcuts extends StatefulWidget {
   final Widget child;
@@ -46,7 +48,21 @@ class _AppShortcutsState extends State<AppShortcuts> {
         if (_textInputHasFocus) return;
         _showHelpSheet();
       },
+      const SingleActivator(LogicalKeyboardKey.period): _refreshAndScrollTop,
     };
+  }
+
+  Future<void> _refreshAndScrollTop() async {
+    if (_textInputHasFocus) return;
+    final ItemScrollController? scroll = GlacialHome.itemScrollToTop;
+    if (scroll?.isAttached == true) {
+      await scroll!.scrollTo(
+        index: 0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+    await GlacialHome.onRefresh?.call();
   }
 
   void _showHelpSheet() {
@@ -74,6 +90,7 @@ class _AppShortcutsState extends State<AppShortcuts> {
 /// this list alongside its binding.
 const List<_ShortcutRow> _shortcutRows = <_ShortcutRow>[
   _ShortcutRow(keys: <String>['?'], labelKey: _HelpLabel.help),
+  _ShortcutRow(keys: <String>['.'], labelKey: _HelpLabel.refresh),
 ];
 
 class _ShortcutHelpSheet extends StatelessWidget {
@@ -151,12 +168,15 @@ class _ShortcutRow {
 }
 
 enum _HelpLabel {
-  help;
+  help,
+  refresh;
 
   String resolve(AppLocalizations? l10n) {
     switch (this) {
       case _HelpLabel.help:
         return l10n?.txt_shortcut_help ?? 'Show keyboard shortcuts';
+      case _HelpLabel.refresh:
+        return l10n?.txt_shortcut_refresh ?? 'Refresh and scroll to top';
     }
   }
 }

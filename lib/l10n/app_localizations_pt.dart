@@ -1239,4 +1239,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_shortcut_help => 'Mostrar atalhos de teclado';
+
+  @override
+  String get txt_shortcut_refresh => 'Atualizar e rolar para o topo';
 }

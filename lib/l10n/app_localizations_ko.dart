@@ -1184,4 +1184,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_shortcut_help => '키보드 단축키 표시';
+
+  @override
+  String get txt_shortcut_refresh => '새로고침 후 맨 위로 스크롤';
 }

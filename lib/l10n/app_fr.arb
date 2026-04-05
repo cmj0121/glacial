@@ -381,5 +381,6 @@
   "txt_v2_tap_to_select": "Appuyez pour sélectionner ce serveur",
   "txt_v2_no_match": "Aucun serveur correspondant",
   "txt_shortcuts_title": "Raccourcis clavier",
-  "txt_shortcut_help": "Afficher les raccourcis clavier"
+  "txt_shortcut_help": "Afficher les raccourcis clavier",
+  "txt_shortcut_refresh": "Actualiser et faire défiler en haut"
 }

@@ -1182,4 +1182,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_help => 'キーボードショートカットを表示';
+
+  @override
+  String get txt_shortcut_refresh => '更新して最上部にスクロール';
 }

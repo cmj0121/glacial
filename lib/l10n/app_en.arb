@@ -458,5 +458,6 @@
   "txt_v2_tap_to_select": "Tap to select this server",
   "txt_v2_no_match": "No matching servers",
   "txt_shortcuts_title": "Keyboard shortcuts",
-  "txt_shortcut_help": "Show keyboard shortcuts"
+  "txt_shortcut_help": "Show keyboard shortcuts",
+  "txt_shortcut_refresh": "Refresh and scroll to top"
 }

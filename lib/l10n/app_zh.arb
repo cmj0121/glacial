@@ -381,5 +381,6 @@
   "txt_v2_tap_to_select": "點擊以選擇此伺服器",
   "txt_v2_no_match": "沒有符合的伺服器",
   "txt_shortcuts_title": "鍵盤快捷鍵",
-  "txt_shortcut_help": "顯示鍵盤快捷鍵"
+  "txt_shortcut_help": "顯示鍵盤快捷鍵",
+  "txt_shortcut_refresh": "重新整理並捲動至頂端"
 }

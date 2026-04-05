@@ -381,5 +381,6 @@
   "txt_v2_tap_to_select": "Toque para selecionar este servidor",
   "txt_v2_no_match": "Nenhum servidor correspondente",
   "txt_shortcuts_title": "Atalhos de teclado",
-  "txt_shortcut_help": "Mostrar atalhos de teclado"
+  "txt_shortcut_help": "Mostrar atalhos de teclado",
+  "txt_shortcut_refresh": "Atualizar e rolar para o topo"
 }

@@ -1244,4 +1244,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_shortcut_help => 'Afficher les raccourcis clavier';
+
+  @override
+  String get txt_shortcut_refresh => 'Actualiser et faire défiler en haut';
 }
