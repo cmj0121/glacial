@@ -61,6 +61,9 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     itemPositionsListener.itemPositions.addListener(_onPositionChange);
 
     GlacialHome.itemScrollToTop = itemScrollController;
+    GlacialHome.itemPositions = itemPositionsListener;
+    GlacialHome.getStatuses = () => statuses;
+    GlacialHome.onRefresh = onRefresh;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final Duration? refreshInterval = widget.pref?.refreshInterval;
 

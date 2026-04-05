@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:glacial/core.dart';
+import 'package:glacial/features/glacial/screens/home.dart';
 
 class SwipeTabView extends StatefulWidget {
   final int itemCount;
@@ -56,10 +57,16 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
     );
 
     tabController.addListener(_onTabControllerChange);
+    GlacialHome.activeTabController = tabController;
+    GlacialHome.activeVisibleIndexes = () => visibleIndexes;
   }
 
   @override
   void dispose() {
+    if (GlacialHome.activeTabController == tabController) {
+      GlacialHome.activeTabController = null;
+      GlacialHome.activeVisibleIndexes = null;
+    }
     tabController.removeListener(_onTabControllerChange);
     if (widget.tabController == null) {
       // If the tabController is not provided, dispose it to avoid memory leak.

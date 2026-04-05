@@ -12,6 +12,12 @@ import 'package:glacial/features/screens.dart';
 class GlacialHome extends ConsumerStatefulWidget {
   // The global scroll-to-top controller callback
   static ItemScrollController? itemScrollToTop;
+  static ItemPositionsListener? itemPositions;
+  static List<StatusSchema> Function()? getStatuses;
+  static TabController? activeTabController;
+  static List<int> Function()? activeVisibleIndexes;
+  static VoidCallback? onFocusSearch;
+  static Future<void> Function()? onRefresh;
 
   final bool backable;
   final Widget? title;
