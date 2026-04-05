@@ -200,8 +200,22 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    // Suppress Flutter's default Tab/Shift+Tab focus traversal so Tab is
+    // reserved for tab-view cycling in this shell. The Tab switching
+    // itself is handled by the HardwareKeyboard handler above.
+    return Actions(
+      actions: <Type, Action<Intent>>{
+        NextFocusIntent: _NoopAction<NextFocusIntent>(),
+        PreviousFocusIntent: _NoopAction<PreviousFocusIntent>(),
+      },
+      child: widget.child,
+    );
   }
+}
+
+class _NoopAction<T extends Intent> extends Action<T> {
+  @override
+  Object? invoke(T intent) => null;
 }
 
 /// Static binding row for the app-wide key handler. Uses the physical
