@@ -20,7 +20,11 @@ class SingleNotification extends ConsumerStatefulWidget {
 }
 
 class _SingleNotificationState extends ConsumerState<SingleNotification> {
-  static const double _avatarSize = 44;
+  // Mentions use the larger avatar since the mention itself is the
+  // primary content; for aggregated user actions (reblog, favourite,
+  // follow, poll, etc.) a smaller avatar keeps the list compact and
+  // visually secondary to the status card being referenced.
+  double get _avatarSize => widget.schema.type == NotificationType.mention ? 44 : 32;
 
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
@@ -99,7 +103,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
             bottom: -2,
             right: -2,
             child: Container(
-              padding: const EdgeInsets.all(3),
+              padding: EdgeInsets.all(_avatarSize >= 44 ? 3 : 2),
               decoration: BoxDecoration(
                 color: accent,
                 shape: BoxShape.circle,
@@ -107,7 +111,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
               ),
               child: Icon(
                 widget.schema.type.icon,
-                size: 11,
+                size: _avatarSize >= 44 ? 11 : 9,
                 color: _onAccent(context, accent),
               ),
             ),
