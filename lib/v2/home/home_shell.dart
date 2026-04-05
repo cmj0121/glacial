@@ -283,6 +283,18 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
 
   void _onNavTap(SidebarButtonType item) {
     _debounce.callOnce(() {
+      final current = _currentRoute;
+
+      // Already on this page → scroll to top
+      if (current == item.route && GlacialHome.itemScrollToTop?.isAttached == true) {
+        GlacialHome.itemScrollToTop?.scrollTo(
+          index: 0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        return;
+      }
+
       if (item == SidebarButtonType.post) {
         context.push(item.route.path);
       } else {
