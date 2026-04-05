@@ -32,7 +32,9 @@ enum NotificationType {
     }
   }
 
-  // The icon associated with the notification type.
+  // The icon associated with the notification type. Uses the same filled
+  // Material family as the StatusInteraction bar so the glyphs match
+  // across the app (e.g. favourite = star in both places).
   IconData get icon {
     switch (this) {
       case NotificationType.mention:
@@ -44,19 +46,19 @@ enum NotificationType {
       case NotificationType.follow:
         return Icons.person_add;
       case NotificationType.followRequest:
-        return Icons.person_add_alt;
+        return Icons.how_to_reg;
       case NotificationType.favourite:
         return Icons.star;
       case NotificationType.poll:
-        return Icons.poll;
+        return Icons.how_to_vote;
       case NotificationType.update:
         return Icons.edit;
       case NotificationType.adminSignUp:
-        return Icons.person_add_alt_rounded;
+        return Icons.admin_panel_settings;
       case NotificationType.adminReport:
-        return Icons.feedback_rounded;
+        return Icons.report;
       case NotificationType.unknown:
-        return Icons.sentiment_dissatisfied_outlined;
+        return Icons.notifications;
     }
   }
 
@@ -93,18 +95,29 @@ enum NotificationType {
     return this == NotificationType.adminSignUp || this == NotificationType.adminReport;
   }
 
-  // Accent color used for the type badge on the avatar overlay.
+  // Accent color for the type icon. Encodes the notification
+  // category, not the specific type:
+  //   primary   = person-to-person (mention, follow, status)
+  //   tertiary  = amplification / engagement (reblog, fav, poll, update)
+  //   error     = admin attention (report, sign-up)
   Color accentColor(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
     switch (this) {
+      case NotificationType.mention:
+      case NotificationType.status:
+      case NotificationType.follow:
+      case NotificationType.followRequest:
+        return scheme.primary;
+      case NotificationType.reblog:
       case NotificationType.favourite:
-      case NotificationType.adminReport:
-        return scheme.error;
       case NotificationType.poll:
       case NotificationType.update:
         return scheme.tertiary;
-      default:
-        return scheme.primary;
+      case NotificationType.adminSignUp:
+      case NotificationType.adminReport:
+        return scheme.error;
+      case NotificationType.unknown:
+        return scheme.onSurfaceVariant;
     }
   }
 }

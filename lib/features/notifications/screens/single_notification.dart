@@ -57,7 +57,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _TypeBadge(icon: widget.schema.type.icon, accent: accent, size: 22),
+              Icon(widget.schema.type.icon, size: 20, color: accent),
               const SizedBox(width: 10),
               _AvatarStack(accounts: _accounts, size: 20, overlap: 8),
               const SizedBox(width: 8),
@@ -141,34 +141,6 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
   Future<void> _loadAccounts() async {
     final List<AccountSchema> accounts = await status?.getAccounts(widget.schema.accounts) ?? [];
     if (mounted) setState(() => _accounts = accounts);
-  }
-}
-
-// Circular accent-colored badge carrying a type icon.
-class _TypeBadge extends StatelessWidget {
-  final IconData icon;
-  final Color accent;
-  final double size;
-
-  const _TypeBadge({
-    required this.icon,
-    required this.accent,
-    required this.size,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme scheme = Theme.of(context).colorScheme;
-    final Color onAccent = accent == scheme.error
-        ? scheme.onError
-        : (accent == scheme.tertiary ? scheme.onTertiary : scheme.onPrimary);
-    return Container(
-      width: size,
-      height: size,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
-      child: Icon(icon, size: size * 0.55, color: onAccent),
-    );
   }
 }
 
