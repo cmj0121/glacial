@@ -145,99 +145,109 @@ class ClockProgressIndicator extends StatefulWidget {
 }
 
 class _ClockProgressIndicatorState extends State<ClockProgressIndicator>
-    with TickerProviderStateMixin {
-  late final AnimationController _rotationController;
-  late final AnimationController _sweepController;
-  late final CurvedAnimation _sweepAnimation;
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _rotationController = AnimationController(
+    _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
     )..repeat();
-
-    _sweepController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: widget.duration.inMilliseconds ~/ 2),
-    )..repeat(reverse: true);
-
-    _sweepAnimation = CurvedAnimation(
-      parent: _sweepController,
-      curve: Curves.easeInOut,
-    );
   }
 
   @override
   void dispose() {
-    _sweepAnimation.dispose();
-    _rotationController.dispose();
-    _sweepController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Color color = widget.color ?? Theme.of(context).colorScheme.secondary;
+    final Color color = widget.color ?? Theme.of(context).colorScheme.primary;
 
     return Center(
       child: SizedBox(
         width: widget.size,
         height: widget.size,
-        child: AnimatedBuilder(
-          animation: Listenable.merge([_rotationController, _sweepAnimation]),
-          builder: (context, child) {
-            return CustomPaint(
-              painter: _ArcSpinnerPainter(
-                rotation: _rotationController.value,
-                sweep: _sweepAnimation.value,
-                color: color,
-                strokeWidth: widget.strokeWidth,
-              ),
-            );
-          },
+        child: CustomPaint(
+          painter: _ClockSpinnerPainter(
+            animation: _controller,
+            color: color,
+            strokeWidth: widget.strokeWidth,
+          ),
         ),
       ),
     );
   }
 }
 
-class _ArcSpinnerPainter extends CustomPainter {
-  final double rotation;
-  final double sweep;
+/// Clock-style spinner — a thin circle face with a single hand that
+/// rotates clockwise like a second hand. Calm and minimal.
+///
+/// Uses [repaint: animation] so it repaints every frame without
+/// rebuilding the widget tree.
+class _ClockSpinnerPainter extends CustomPainter {
+  final Animation<double> animation;
   final Color color;
   final double strokeWidth;
 
-  _ArcSpinnerPainter({
-    required this.rotation,
-    required this.sweep,
+  _ClockSpinnerPainter({
+    required this.animation,
     required this.color,
     required this.strokeWidth,
-  });
+  }) : super(repaint: animation);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
+    final double cx = size.width / 2;
+    final double cy = size.height / 2;
+    final double radius = (size.width - strokeWidth) / 2;
+    final double angle = animation.value * 2 * pi - pi / 2; // start at 12 o'clock
+
+    // Clock face — thin circle.
+    final Paint facePaint = Paint()
+      ..color = color.withValues(alpha: 0.15)
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+    canvas.drawCircle(Offset(cx, cy), radius, facePaint);
+
+    // Hour markers — 4 small dots at 12, 3, 6, 9.
+    final Paint dotPaint = Paint()..color = color.withValues(alpha: 0.25);
+    final double dotRadius = strokeWidth * 0.6;
+    for (int i = 0; i < 4; i++) {
+      final double a = i * pi / 2 - pi / 2;
+      canvas.drawCircle(
+        Offset(cx + radius * cos(a), cy + radius * sin(a)),
+        dotRadius,
+        dotPaint,
+      );
+    }
+
+    // Center dot.
+    canvas.drawCircle(
+      Offset(cx, cy),
+      strokeWidth * 0.8,
+      Paint()..color = color,
+    );
+
+    // Hand — line from center to ~80% of radius.
+    final double handLength = radius * 0.78;
+    final Paint handPaint = Paint()
       ..color = color
       ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
-
-    final Rect arcRect = (Offset.zero & size).deflate(strokeWidth / 2);
-    final double startAngle = rotation * 2 * pi;
-    final double sweepAngle = 0.5 + sweep * 2.0;
-
-    canvas.drawArc(arcRect, startAngle, sweepAngle, false, paint);
+    canvas.drawLine(
+      Offset(cx, cy),
+      Offset(cx + handLength * cos(angle), cy + handLength * sin(angle)),
+      handPaint,
+    );
   }
 
   @override
-  bool shouldRepaint(_ArcSpinnerPainter oldDelegate) {
-    return rotation != oldDelegate.rotation ||
-        sweep != oldDelegate.sweep ||
-        color != oldDelegate.color ||
-        strokeWidth != oldDelegate.strokeWidth;
-  }
+  bool shouldRepaint(_ClockSpinnerPainter oldDelegate) =>
+      color != oldDelegate.color || strokeWidth != oldDelegate.strokeWidth;
 }
 
 // vim: set ts=2 sw=2 sts=2 et:
