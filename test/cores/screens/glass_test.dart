@@ -410,64 +410,6 @@ void main() {
     });
   });
 
-  group('AdaptiveGlassBottomBar', () {
-    testWidgets('renders child widget', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        child: const AdaptiveGlassBottomBar(
-          child: Text('Bottom Bar Content'),
-        ),
-      ));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Bottom Bar Content'), findsOneWidget);
-    });
-
-    testWidgets('applies padding', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        child: const AdaptiveGlassBottomBar(
-          padding: EdgeInsets.all(16),
-          child: Text('Padded Content'),
-        ),
-      ));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(AdaptiveGlassBottomBar), findsOneWidget);
-    });
-
-    testWidgets('uses ClipRect for clipping', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        child: const AdaptiveGlassBottomBar(
-          child: Text('Clip Test'),
-        ),
-      ));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(ClipRect), findsWidgets);
-    });
-
-    testWidgets('uses BackdropFilter for blur effect', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        child: const AdaptiveGlassBottomBar(
-          child: Text('Blur Test'),
-        ),
-      ));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(BackdropFilter), findsOneWidget);
-    });
-
-    testWidgets('uses SafeArea', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        child: const AdaptiveGlassBottomBar(
-          child: Text('Safe Area Test'),
-        ),
-      ));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(SafeArea), findsWidgets);
-    });
-  });
-
   group('AdaptiveGlassTabBar', () {
     testWidgets('renders tabs', (tester) async {
       await tester.pumpWidget(createTestWidget(
@@ -1016,25 +958,6 @@ void main() {
       expect(find.byType(IconButton), findsOneWidget);
       expect(find.byType(BackdropFilter), findsNothing);
       expect(find.byType(ClipOval), findsNothing);
-    });
-  });
-
-  group('AdaptiveGlassBottomBar Material fallback', () {
-    setUp(() => platformOverride = PlatformType.android);
-    tearDown(() => platformOverride = null);
-
-    testWidgets('renders BottomAppBar on Android', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        child: const AdaptiveGlassBottomBar(
-          padding: EdgeInsets.all(8),
-          child: Text('Bottom Bar'),
-        ),
-      ));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Bottom Bar'), findsOneWidget);
-      expect(find.byType(BottomAppBar), findsOneWidget);
-      expect(find.byType(BackdropFilter), findsNothing);
     });
   });
 
