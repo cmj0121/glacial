@@ -280,6 +280,8 @@
   "txt_notification_policy_drop": "Verwerfen",
   "txt_no_announcements": "Keine Ankündigungen von diesem Server",
   "txt_poll_votes": "{count} Stimmen",
+  "txt_media_alt_hint": "Beschreiben Sie dieses Medium für sehbehinderte Benutzer",
+  "txt_media_alt_saved": "Beschreibung gespeichert",
   "txt_media_alt_text": "Alternativtext",
   "txt_media_image_info": "Bildinformationen",
   "txt_media_no_exif": "Keine EXIF-Daten verfügbar",

@@ -872,6 +872,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_media_alt_text => '代替テキスト';
 
   @override
+  String get txt_media_alt_hint => '視覚障害のあるユーザーのためにこのメディアを説明してください';
+
+  @override
+  String get txt_media_alt_saved => '説明を保存しました';
+
+  @override
   String get txt_media_image_info => '画像情報';
 
   @override

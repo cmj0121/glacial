@@ -280,6 +280,8 @@
   "txt_notification_policy_drop": "破棄",
   "txt_no_announcements": "このサーバーからのお知らせはありません",
   "txt_poll_votes": "{count} 票",
+  "txt_media_alt_hint": "視覚障害のあるユーザーのためにこのメディアを説明してください",
+  "txt_media_alt_saved": "説明を保存しました",
   "txt_media_alt_text": "代替テキスト",
   "txt_media_image_info": "画像情報",
   "txt_media_no_exif": "EXIF情報なし",

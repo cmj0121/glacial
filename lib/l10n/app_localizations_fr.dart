@@ -923,6 +923,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get txt_media_alt_text => 'Texte alternatif';
 
   @override
+  String get txt_media_alt_hint =>
+      'Décrivez ce média pour les utilisateurs malvoyants';
+
+  @override
+  String get txt_media_alt_saved => 'Description enregistrée';
+
+  @override
   String get txt_media_image_info => 'Info image';
 
   @override

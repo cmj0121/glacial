@@ -280,6 +280,8 @@
   "txt_notification_policy_drop": "丟棄",
   "txt_no_announcements": "此伺服器沒有公告",
   "txt_poll_votes": "{count} 票",
+  "txt_media_alt_hint": "為視覺障礙使用者描述此媒體",
+  "txt_media_alt_saved": "描述已儲存",
   "txt_media_alt_text": "替代文字",
   "txt_media_image_info": "圖片資訊",
   "txt_media_no_exif": "無 EXIF 資料",

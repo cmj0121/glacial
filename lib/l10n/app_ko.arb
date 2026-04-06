@@ -280,6 +280,8 @@
   "txt_notification_policy_drop": "삭제",
   "txt_no_announcements": "이 서버에서 공지사항이 없습니다",
   "txt_poll_votes": "{count}표",
+  "txt_media_alt_hint": "시각 장애 사용자를 위해 이 미디어를 설명하세요",
+  "txt_media_alt_saved": "설명이 저장되었습니다",
   "txt_media_alt_text": "대체 텍스트",
   "txt_media_image_info": "이미지 정보",
   "txt_media_no_exif": "EXIF 데이터 없음",
