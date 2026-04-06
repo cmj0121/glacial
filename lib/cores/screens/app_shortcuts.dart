@@ -59,10 +59,11 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     final String currentPath = GoRouter.maybeOf(context)?.state.uri.path ?? '';
     final bool shortcutsActive = _shortcutPaths.contains(currentPath);
 
-    // Esc stays active on all routes: blur text input / close sheet,
-    // and pop any backable subroute when nothing is focused.
+    // Esc stays active on all routes: blur text input / close sheet.
+    // On compose routes, Esc does NOT pop the route (prevents losing
+    // unsaved post content); it only blurs and closes modals.
     if (event.physicalKey == PhysicalKeyboardKey.escape) {
-      _handleEscape();
+      _handleEscape(currentPath);
       return true;
     }
 
@@ -104,20 +105,34 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     return false;
   }
 
-  void _handleEscape() {
+  static const Set<String> _composePaths = <String>{
+    '/home/post',
+    '/home/post/quote',
+    '/home/post/draft',
+    '/home/post/shared',
+    '/home/edit',
+  };
+
+  void _handleEscape(String currentPath) {
     GlacialHome.onCloseSearch?.call();
     final FocusNode? primary = FocusManager.instance.primaryFocus;
     final bool hadTextFocus = primary?.context?.widget is EditableText;
     primary?.unfocus();
     if (hadTextFocus) return;
 
-    // Pop the innermost layer: modal sheets/dialogs first (via
-    // Navigator), then GoRouter routes. Without this ordering, Esc
-    // skips open bottom sheets and pops the underlying route.
+    // Always allow closing modal sheets/dialogs (e.g. ALT text editor).
     final NavigatorState navigator = Navigator.of(context);
     if (navigator.canPop()) {
       navigator.pop();
-    } else if (GoRouter.maybeOf(context)?.canPop() ?? false) {
+      return;
+    }
+
+    // On compose routes, stop here — don't pop the route so users
+    // can't accidentally lose unsaved post content via Esc.
+    if (_composePaths.contains(currentPath)) return;
+
+    // On other routes, pop via GoRouter.
+    if (GoRouter.maybeOf(context)?.canPop() ?? false) {
       context.pop();
     }
   }
