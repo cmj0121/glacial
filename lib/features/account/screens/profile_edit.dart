@@ -40,7 +40,7 @@ class EditProfilePage extends ConsumerStatefulWidget {
 }
 
 class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTickerProviderStateMixin {
-  static const double _maxWidth = 680;
+  static final double _maxWidth = maxContentWidth;
   static const int _bioMaxLength = 500;
   final int maxFieldsCount = 4;
   final List<EditProfileCategory> categories = EditProfileCategory.values;
@@ -98,7 +98,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
       child: Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: _maxWidth),
+          constraints: BoxConstraints(maxWidth: _maxWidth),
           child: _buildContent(),
         ),
       ),

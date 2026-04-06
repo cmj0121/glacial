@@ -63,7 +63,7 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
     return Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 680),
+        constraints: BoxConstraints(maxWidth: maxContentWidth),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

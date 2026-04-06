@@ -414,7 +414,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
       indicatorBuilder: ClockProgressIndicator.refreshBuilder,
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 680),
+          constraints: BoxConstraints(maxWidth: maxContentWidth),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: ScrollablePositionedList.builder(

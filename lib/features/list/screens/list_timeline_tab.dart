@@ -14,7 +14,7 @@ class ListTimelineTab extends ConsumerStatefulWidget {
 }
 
 class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerProviderStateMixin {
-  static const double _maxWidth = 680;
+  static final double _maxWidth = maxContentWidth;
 
   late final AccessStatusSchema? status = ref.read(accessStatusProvider);
   final TextEditingController _controller = TextEditingController();
@@ -49,7 +49,7 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
     return Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: _maxWidth),
+        constraints: BoxConstraints(maxWidth: _maxWidth),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
