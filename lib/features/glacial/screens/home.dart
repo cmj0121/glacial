@@ -16,8 +16,15 @@ class GlacialHome extends ConsumerStatefulWidget {
   static List<StatusSchema> Function()? getStatuses;
   static TabController? activeTabController;
   static List<int> Function()? activeVisibleIndexes;
-  // Cycle the active SwipeTabView forward (delta=1) or backward (delta=-1).
-  static void Function(int delta)? onTabSwitch;
+  // Stack of tab-switch cyclers — the most recently mounted SwipeTabView
+  // is on top. Dispose pops, restoring the previous view's cycler.
+  static final List<void Function(int delta)> _tabSwitchStack = [];
+  static void Function(int delta)? get onTabSwitch =>
+      _tabSwitchStack.isNotEmpty ? _tabSwitchStack.last : null;
+  static void pushTabSwitch(void Function(int delta) cycler) => _tabSwitchStack.add(cycler);
+  static void popTabSwitch(void Function(int delta) cycler) => _tabSwitchStack.remove(cycler);
+  /// Test-only: clear the tab switch stack between tests.
+  static void clearTabSwitchStack() => _tabSwitchStack.clear();
   static VoidCallback? onFocusSearch;
   // Collapse/clear the search bar when Esc is pressed.
   static VoidCallback? onCloseSearch;

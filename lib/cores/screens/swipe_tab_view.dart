@@ -13,12 +13,6 @@ class SwipeTabView extends StatefulWidget {
   final bool Function(int)? onTabTappable;
   final TabController? tabController;
   final ValueChanged<int>? onDoubleTap;
-  /// When true, registers this view's tab controller and cycler as
-  /// the global shortcut target (GlacialHome.onTabSwitch etc.).
-  /// Only shell-level tab views (timeline, trends, admin) should set
-  /// this; sub-route tab views (profile, search, editor) must leave
-  /// it false so they don't overwrite the shell's registration.
-  final bool registerShortcuts;
 
   const SwipeTabView({
     super.key,
@@ -28,7 +22,6 @@ class SwipeTabView extends StatefulWidget {
     this.onTabTappable,
     this.tabController,
     this.onDoubleTap,
-    this.registerShortcuts = false,
   });
 
   @override
@@ -69,11 +62,9 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
     );
 
     tabController.addListener(_onTabControllerChange);
-    if (widget.registerShortcuts) {
-      GlacialHome.activeTabController = tabController;
-      GlacialHome.activeVisibleIndexes = () => visibleIndexes;
-      GlacialHome.onTabSwitch = _cycleTab;
-    }
+    GlacialHome.activeTabController = tabController;
+    GlacialHome.activeVisibleIndexes = () => visibleIndexes;
+    GlacialHome.pushTabSwitch(_cycleTab);
   }
 
   // Cycle tabs by [delta] among visibleIndexes, wrapping at both ends.
@@ -106,11 +97,7 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
 
   @override
   void dispose() {
-    if (GlacialHome.activeTabController == tabController) {
-      GlacialHome.activeTabController = null;
-      GlacialHome.activeVisibleIndexes = null;
-      GlacialHome.onTabSwitch = null;
-    }
+    GlacialHome.popTabSwitch(_cycleTab);
     tabController.removeListener(_onTabControllerChange);
     if (widget.tabController == null) {
       // If the tabController is not provided, dispose it to avoid memory leak.

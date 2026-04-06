@@ -12,7 +12,7 @@ void main() {
 
   // Reset all GlacialHome statics between tests to avoid cross-contamination.
   setUp(() {
-    GlacialHome.onTabSwitch = null;
+    GlacialHome.clearTabSwitchStack();
     GlacialHome.onFocusSearch = null;
     GlacialHome.onCloseSearch = null;
     GlacialHome.onRefresh = null;
@@ -40,7 +40,7 @@ void main() {
   group('Tab shortcut', () {
     testWidgets('Tab calls onTabSwitch(1) when registered', (tester) async {
       int? delta;
-      GlacialHome.onTabSwitch = (d) => delta = d;
+      GlacialHome.pushTabSwitch((d) => delta = d);
 
       await tester.pumpWidget(buildShortcutsWidget());
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
@@ -51,7 +51,7 @@ void main() {
 
     testWidgets('Shift+Tab calls onTabSwitch(-1)', (tester) async {
       int? delta;
-      GlacialHome.onTabSwitch = (d) => delta = d;
+      GlacialHome.pushTabSwitch((d) => delta = d);
 
       await tester.pumpWidget(buildShortcutsWidget());
       await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
@@ -63,7 +63,7 @@ void main() {
     });
 
     testWidgets('Tab does nothing when no onTabSwitch registered', (tester) async {
-      GlacialHome.onTabSwitch = null;
+      GlacialHome.clearTabSwitchStack();
 
       await tester.pumpWidget(buildShortcutsWidget());
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
@@ -74,7 +74,7 @@ void main() {
 
     testWidgets('Tab works even when a text field has focus', (tester) async {
       int? delta;
-      GlacialHome.onTabSwitch = (d) => delta = d;
+      GlacialHome.pushTabSwitch((d) => delta = d);
 
       await tester.pumpWidget(buildShortcutsWidget(
         child: const TextField(autofocus: true),
@@ -126,7 +126,7 @@ void main() {
   group('Modifier bypass', () {
     testWidgets('Cmd+key is not consumed', (tester) async {
       int? delta;
-      GlacialHome.onTabSwitch = (d) => delta = d;
+      GlacialHome.pushTabSwitch((d) => delta = d);
 
       await tester.pumpWidget(buildShortcutsWidget());
       await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
@@ -186,7 +186,7 @@ void main() {
   group('focusedStatusIndex', () {
     testWidgets('focusedStatusIndex resets on tab switch', (tester) async {
       GlacialHome.focusedStatusIndex.value = 5;
-      GlacialHome.onTabSwitch = (_) {};
+      GlacialHome.pushTabSwitch((_) {});
 
       await tester.pumpWidget(buildShortcutsWidget());
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
@@ -199,7 +199,7 @@ void main() {
   group('Handler lifecycle', () {
     testWidgets('handler is removed on dispose', (tester) async {
       int? delta;
-      GlacialHome.onTabSwitch = (d) => delta = d;
+      GlacialHome.pushTabSwitch((d) => delta = d);
 
       await tester.pumpWidget(buildShortcutsWidget());
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
@@ -221,7 +221,7 @@ void main() {
 
   group('NextFocusIntent suppression', () {
     testWidgets('Tab does not move focus between widgets', (tester) async {
-      GlacialHome.onTabSwitch = (_) {};
+      GlacialHome.pushTabSwitch((_) {});
 
       await tester.pumpWidget(createTestWidget(
         child: AppShortcuts(
