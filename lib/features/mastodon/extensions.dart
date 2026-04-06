@@ -113,8 +113,11 @@ extension AccessStatusExtension on Storage {
 
     // Seed local compose defaults from server-side preferences on
     // first login (when local prefs are still at defaults).
+    // Deferred so it doesn't trigger rebuilds during route transitions.
     if (account != null && ref != null) {
-      _syncServerPreferences(status, ref);
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _syncServerPreferences(status, ref);
+      });
     }
 
     return status;
