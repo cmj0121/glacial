@@ -43,14 +43,14 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
   // instead of ModalRoute.isCurrent avoids timing issues during route
   // transitions (e.g. Esc-pop back to timeline would keep shortcuts
   // blocked for a frame while the exit animation played).
-  static const Set<String> _shortcutPaths = <String>{
-    '/home/timeline',
-    '/home/list',
-    '/home/trends',
-    '/home/notifications',
-    '/home/conversations',
-    '/home/admin',
-    '/home/follow_requests',
+  static final Set<String> _shortcutPaths = <String>{
+    RoutePath.timeline.path,
+    RoutePath.list.path,
+    RoutePath.trends.path,
+    RoutePath.notifications.path,
+    RoutePath.conversations.path,
+    RoutePath.admin.path,
+    RoutePath.followRequests.path,
   };
 
   bool _handleKey(KeyEvent event) {
@@ -105,12 +105,12 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     return false;
   }
 
-  static const Set<String> _composePaths = <String>{
-    '/home/post',
-    '/home/post/quote',
-    '/home/post/draft',
-    '/home/post/shared',
-    '/home/edit',
+  static final Set<String> _composePaths = <String>{
+    RoutePath.post.path,
+    RoutePath.postQuote.path,
+    RoutePath.postDraft.path,
+    RoutePath.postShared.path,
+    RoutePath.edit.path,
   };
 
   void _handleEscape(String currentPath) {
