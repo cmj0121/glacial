@@ -872,6 +872,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_media_alt_text => '替代文字';
 
   @override
+  String get txt_media_alt_hint => '為視覺障礙使用者描述此媒體';
+
+  @override
+  String get txt_media_alt_saved => '描述已儲存';
+
+  @override
   String get txt_media_image_info => '圖片資訊';
 
   @override

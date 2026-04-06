@@ -1796,6 +1796,18 @@ abstract class AppLocalizations {
   /// **'Alt Text'**
   String get txt_media_alt_text;
 
+  /// No description provided for @txt_media_alt_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe this media for visually impaired users'**
+  String get txt_media_alt_hint;
+
+  /// No description provided for @txt_media_alt_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Description saved'**
+  String get txt_media_alt_saved;
+
   /// Label for image information section in media viewer
   ///
   /// In en, this message translates to:

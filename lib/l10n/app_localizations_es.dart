@@ -922,6 +922,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get txt_media_alt_text => 'Texto alternativo';
 
   @override
+  String get txt_media_alt_hint =>
+      'Describe este medio para usuarios con discapacidad visual';
+
+  @override
+  String get txt_media_alt_saved => 'Descripción guardada';
+
+  @override
   String get txt_media_image_info => 'Info de imagen';
 
   @override

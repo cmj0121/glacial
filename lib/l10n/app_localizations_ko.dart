@@ -873,6 +873,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_media_alt_text => '대체 텍스트';
 
   @override
+  String get txt_media_alt_hint => '시각 장애 사용자를 위해 이 미디어를 설명하세요';
+
+  @override
+  String get txt_media_alt_saved => '설명이 저장되었습니다';
+
+  @override
   String get txt_media_image_info => '이미지 정보';
 
   @override

@@ -235,10 +235,12 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
     );
   }
 
-  // Build the media that can change the description of the media files, or remove
-  // the media files from the list.
+  // Build the media thumbnail with ALT text editor and remove button.
   Widget buildMedia(AttachmentSchema media) {
     final String url = media.previewUrl ?? media.url;
+    final bool hasAlt = media.description?.isNotEmpty == true;
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.all(4),
       child: ClipRRect(
@@ -257,14 +259,110 @@ class _StatusFormState extends ConsumerState<PostStatusForm> {
               top: 0,
               right: 0,
               child: IconButton(
-                icon: Icon(Icons.remove_circle, color: Theme.of(context).colorScheme.tertiary),
+                icon: Icon(Icons.remove_circle, color: scheme.tertiary),
                 onPressed: () => setState(() => medias.remove(media)),
+              ),
+            ),
+            Positioned(
+              bottom: 4,
+              left: 4,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(4),
+                onTap: () => _showAltTextEditor(media),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: hasAlt ? scheme.primary : scheme.surface.withValues(alpha: 0.85),
+                    borderRadius: BorderRadius.circular(4),
+                    border: hasAlt ? null : Border.all(color: scheme.outlineVariant),
+                  ),
+                  child: Text(
+                    'ALT',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: hasAlt ? scheme.onPrimary : scheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _showAltTextEditor(AttachmentSchema media) async {
+    final TextEditingController altController = TextEditingController(text: media.description ?? '');
+    final AppLocalizations? l10n = AppLocalizations.of(context);
+
+    await showAdaptiveGlassSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 4, 24, MediaQuery.of(sheetContext).viewInsets.bottom + 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n?.txt_media_alt_text ?? 'Alt Text',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 4),
+              Container(
+                width: 32, height: 2,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(1),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: altController,
+                maxLines: 4,
+                autofocus: true,
+                textInputAction: TextInputAction.done,
+                decoration: InputDecoration(
+                  hintText: l10n?.txt_media_alt_hint ?? 'Describe this media for visually impaired users',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () async {
+                    final String text = altController.text.trim();
+                    Navigator.of(sheetContext).pop();
+                    if (status == null) return;
+                    final AttachmentSchema updated = await status!.updateMedia(
+                      id: media.id,
+                      description: text,
+                    );
+                    if (!mounted) return;
+                    setState(() {
+                      final int idx = medias.indexWhere((m) => m.id == media.id);
+                      if (idx >= 0) medias[idx] = updated;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(l10n?.txt_media_alt_saved ?? 'Description saved'),
+                      duration: const Duration(seconds: 1),
+                      behavior: SnackBarBehavior.floating,
+                      width: 200,
+                    ));
+                  },
+                  child: Text(l10n?.btn_save ?? 'Save'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    altController.dispose();
   }
 
   // Build the possible actions for the post status form.

@@ -288,6 +288,8 @@
     }
   },
   "txt_media_alt_text": "Alt Text",
+  "txt_media_alt_hint": "Describe this media for visually impaired users",
+  "txt_media_alt_saved": "Description saved",
   "@txt_media_alt_text": {
     "description": "Label for alternative text in media viewer"
   },
