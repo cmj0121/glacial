@@ -207,9 +207,12 @@ class ConversationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
-    return InkWell(
-      onTap: onTap,
-      child: Container(
+    final String names = schema.accounts.map((a) => a.displayName).join(', ');
+    return Semantics(
+      label: names,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
         decoration: BoxDecoration(
           color: schema.unread ? scheme.primary.withValues(alpha: 0.06) : null,
           border: Border(
@@ -230,7 +233,7 @@ class ConversationItem extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 
   // Single 44px avatar; when there are multiple participants, overlay a

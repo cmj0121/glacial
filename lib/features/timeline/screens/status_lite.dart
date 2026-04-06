@@ -39,20 +39,23 @@ class StatusLite extends ConsumerWidget {
     final bool isSelfPost = status?.account?.id == schema.account.id;
     final bool isSchedulePost = schema.scheduledAt != null;
 
-    return InkWellDone(
-      onTap: isSchedulePost ? null : () {
-        final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
+    return Semantics(
+      label: '${schema.account.displayName}: ${canonicalizeHtml(schema.content)}',
+      child: InkWellDone(
+        onTap: isSchedulePost ? null : () {
+          final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
 
-        switch (path) {
-          case RoutePath.status:
-            context.replace(RoutePath.status.path, extra: schema);
-            break;
-          default:
-            context.push(RoutePath.status.path, extra: schema);
-            break;
-        }
-      },
-      child: buildContent(context, status, isSelfPost: isSelfPost),
+          switch (path) {
+            case RoutePath.status:
+              context.replace(RoutePath.status.path, extra: schema);
+              break;
+            default:
+              context.push(RoutePath.status.path, extra: schema);
+              break;
+          }
+        },
+        child: buildContent(context, status, isSelfPost: isSelfPost),
+      ),
     );
   }
 

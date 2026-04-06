@@ -43,14 +43,16 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
     final ColorScheme scheme = theme.colorScheme;
     final Color accent = widget.schema.type.accentColor(context);
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3)),
+    return Semantics(
+      label: _headerText(context),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3)),
+          ),
         ),
-      ),
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-      child: Column(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -84,7 +86,7 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
           ],
         ],
       ),
-    );
+    ));
   }
 
   // "Alice and N others <verb>" — returns a plain-string header.

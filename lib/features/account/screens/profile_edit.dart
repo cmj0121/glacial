@@ -26,6 +26,7 @@ class EditProfilePage extends ConsumerStatefulWidget {
       builder: (context, constraints) {
         return IconButton(
           icon: const Icon(Icons.manage_accounts_outlined),
+          tooltip: AppLocalizations.of(context)?.btn_edit_profile ?? 'Edit profile',
           style: IconButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.onPrimary,
             backgroundColor: Theme.of(context).colorScheme.primary,

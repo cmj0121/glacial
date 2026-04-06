@@ -56,6 +56,7 @@
   "btn_status_info": "View interactions",
   "btn_status_history": "View edit history",
   "btn_profile_core": "Profile",
+  "btn_edit_profile": "Edit profile",
   "btn_profile_post": "Toots",
   "btn_profile_pin": "Pinned",
   "btn_profile_followers": "Followers",
