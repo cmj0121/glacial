@@ -102,7 +102,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
   Widget buildContent() {
     if (groups.isEmpty) {
       final String message = AppLocalizations.of(context)?.txt_no_notifications ?? 'No notifications yet';
-      return isCompleted ? NoResult(message: message, icon: Icons.notifications_none_outlined) : const SizedBox.shrink();
+      return isCompleted ? NoResult(message: message, icon: Icons.notifications_none_outlined) : const SkeletonNotifications();
     }
 
     final Widget builder = ScrollablePositionedList.builder(

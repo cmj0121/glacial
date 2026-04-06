@@ -82,7 +82,7 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
               message: AppLocalizations.of(context)?.txt_no_conversations ?? "No conversations",
               icon: Icons.mail_outline,
             )
-          : const SizedBox.shrink();
+          : const SkeletonConversations();
     }
 
     final Widget builder = ScrollablePositionedList.builder(

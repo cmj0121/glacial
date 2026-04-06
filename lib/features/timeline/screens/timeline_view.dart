@@ -453,7 +453,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
                   )
                 : child;
 
-            return ValueListenableBuilder<int?>(
+            return RepaintBoundary(child: ValueListenableBuilder<int?>(
               valueListenable: GlacialHome.focusedStatusIndex,
               builder: (context, focusedIdx, inner) {
                 final bool isFocused = focusedIdx == index;
@@ -479,7 +479,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
                 );
               },
               child: body,
-            );
+            ));
           },
         ),
       ),
