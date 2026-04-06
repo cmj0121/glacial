@@ -446,6 +446,12 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get btn_profile_core;
 
+  /// No description provided for @btn_edit_profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get btn_edit_profile;
+
   /// No description provided for @btn_profile_post.
   ///
   /// In en, this message translates to:

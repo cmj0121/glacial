@@ -179,6 +179,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_profile_core => 'プロフィール';
 
   @override
+  String get btn_edit_profile => 'Edit profile';
+
+  @override
   String get btn_profile_post => 'トゥート';
 
   @override

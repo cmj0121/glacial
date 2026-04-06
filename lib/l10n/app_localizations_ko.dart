@@ -179,6 +179,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_profile_core => '프로필';
 
   @override
+  String get btn_edit_profile => 'Edit profile';
+
+  @override
   String get btn_profile_post => '글';
 
   @override

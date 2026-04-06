@@ -179,6 +179,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_profile_core => '使用者頁面';
 
   @override
+  String get btn_edit_profile => 'Edit profile';
+
+  @override
   String get btn_profile_post => '嘟文';
 
   @override

@@ -262,7 +262,8 @@ class _InteractionState extends ConsumerState<Interaction> {
           final String plainText = widget.schema.plainText;
           final String content = plainText.isNotEmpty ? '$plainText\n$uri' : uri;
           await SharePlus.instance.share(ShareParams(text: content));
-        } catch (_) {
+        } catch (e) {
+          logger.w('share failed, falling back to clipboard: $e');
           if (!mounted) return;
           Clipboard.setData(ClipboardData(text: widget.schema.uri));
           final String text = AppLocalizations.of(context)?.msg_copied_to_clipboard ?? "Copy to clipboard";

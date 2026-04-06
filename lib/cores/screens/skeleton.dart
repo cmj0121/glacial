@@ -122,4 +122,100 @@ class SkeletonTimeline extends StatelessWidget {
   }
 }
 
+/// Skeleton for a notification row (type icon + avatar + text lines).
+class SkeletonNotificationCard extends StatelessWidget {
+  const SkeletonNotificationCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final Color c = Theme.of(context).colorScheme.surfaceContainerHighest;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3))),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(width: 20, height: 20, decoration: BoxDecoration(color: c, shape: BoxShape.circle)),
+          const SizedBox(width: 10),
+          Container(width: 20, height: 20, decoration: BoxDecoration(color: c, shape: BoxShape.circle)),
+          const SizedBox(width: 8),
+          Expanded(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(width: 160, height: 12, color: c),
+              const SizedBox(height: 8),
+              Container(width: double.infinity, height: 10, color: c),
+              const SizedBox(height: 6),
+              Container(width: 120, height: 10, color: c),
+            ],
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+/// Skeleton for a conversation row (avatar circle + text lines).
+class SkeletonConversationCard extends StatelessWidget {
+  const SkeletonConversationCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final Color c = Theme.of(context).colorScheme.surfaceContainerHighest;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3))),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(width: 44, height: 44, decoration: BoxDecoration(color: c, shape: BoxShape.circle)),
+          const SizedBox(width: 12),
+          Expanded(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(width: 140, height: 14, color: c),
+              const SizedBox(height: 6),
+              Container(width: double.infinity, height: 10, color: c),
+              const SizedBox(height: 4),
+              Container(width: 100, height: 10, color: c),
+            ],
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+/// Shimmer-wrapped notification skeleton list.
+class SkeletonNotifications extends StatelessWidget {
+  final int count;
+  const SkeletonNotifications({super.key, this.count = 5});
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerEffect(child: SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Column(children: List.generate(count, (_) => const SkeletonNotificationCard())),
+    ));
+  }
+}
+
+/// Shimmer-wrapped conversation skeleton list.
+class SkeletonConversations extends StatelessWidget {
+  final int count;
+  const SkeletonConversations({super.key, this.count = 5});
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerEffect(child: SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Column(children: List.generate(count, (_) => const SkeletonConversationCard())),
+    ));
+  }
+}
+
 // vim: set ts=2 sw=2 sts=2 et:

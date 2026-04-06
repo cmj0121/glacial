@@ -306,8 +306,9 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
       if (index > 0 && itemScrollController.isAttached) {
         itemScrollController.jumpTo(index: index);
       }
-    } catch (_) {
+    } catch (e) {
       // Marker restore is best-effort; don't block on failure.
+      logger.d('marker restore failed: $e');
     }
   }
 
@@ -452,7 +453,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
                   )
                 : child;
 
-            return ValueListenableBuilder<int?>(
+            return RepaintBoundary(child: ValueListenableBuilder<int?>(
               valueListenable: GlacialHome.focusedStatusIndex,
               builder: (context, focusedIdx, inner) {
                 final bool isFocused = focusedIdx == index;
@@ -478,7 +479,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
                 );
               },
               child: body,
-            );
+            ));
           },
         ),
       ),
