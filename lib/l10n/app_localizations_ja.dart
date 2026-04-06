@@ -212,6 +212,42 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_profile_privacy => 'プライバシー設定';
 
   @override
+  String get txt_profile_custom_fields => 'カスタムフィールド';
+
+  @override
+  String get txt_profile_field_label => 'ラベル';
+
+  @override
+  String get txt_profile_field_value => '値';
+
+  @override
+  String get txt_profile_add_field => '追加';
+
+  @override
+  String get txt_profile_no_fields => 'カスタムフィールドはまだありません';
+
+  @override
+  String get btn_profile_defaults => '投稿のデフォルト';
+
+  @override
+  String get txt_profile_default_visibility => 'デフォルトの公開範囲';
+
+  @override
+  String get txt_profile_default_media => 'メディア';
+
+  @override
+  String get txt_profile_sensitive_media => 'メディアを閲覧注意にする';
+
+  @override
+  String get desc_profile_sensitive_media => 'メディアをデフォルトで警告の後ろに隠す';
+
+  @override
+  String get txt_profile_default_language => '言語';
+
+  @override
+  String get txt_profile_language_hint => 'ISO 639-1（例: ja, en, zh）';
+
+  @override
   String get btn_status_toot => 'トゥート';
 
   @override

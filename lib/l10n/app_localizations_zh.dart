@@ -212,6 +212,42 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_profile_privacy => '隱私設定';
 
   @override
+  String get txt_profile_custom_fields => '自訂欄位';
+
+  @override
+  String get txt_profile_field_label => '標籤';
+
+  @override
+  String get txt_profile_field_value => '值';
+
+  @override
+  String get txt_profile_add_field => '新增';
+
+  @override
+  String get txt_profile_no_fields => '尚無自訂欄位';
+
+  @override
+  String get btn_profile_defaults => '預設貼文設定';
+
+  @override
+  String get txt_profile_default_visibility => '預設可見性';
+
+  @override
+  String get txt_profile_default_media => '媒體';
+
+  @override
+  String get txt_profile_sensitive_media => '將媒體標記為敏感';
+
+  @override
+  String get desc_profile_sensitive_media => '預設將媒體隱藏在警告之後';
+
+  @override
+  String get txt_profile_default_language => '語言';
+
+  @override
+  String get txt_profile_language_hint => 'ISO 639-1（例如 zh、en、ja）';
+
+  @override
   String get btn_status_toot => '嘟文';
 
   @override

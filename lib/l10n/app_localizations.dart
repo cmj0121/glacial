@@ -512,6 +512,78 @@ abstract class AppLocalizations {
   /// **'Privacy Settings'**
   String get btn_profile_privacy;
 
+  /// No description provided for @txt_profile_custom_fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Fields'**
+  String get txt_profile_custom_fields;
+
+  /// No description provided for @txt_profile_field_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Label'**
+  String get txt_profile_field_label;
+
+  /// No description provided for @txt_profile_field_value.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get txt_profile_field_value;
+
+  /// No description provided for @txt_profile_add_field.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get txt_profile_add_field;
+
+  /// No description provided for @txt_profile_no_fields.
+  ///
+  /// In en, this message translates to:
+  /// **'No custom fields yet'**
+  String get txt_profile_no_fields;
+
+  /// No description provided for @btn_profile_defaults.
+  ///
+  /// In en, this message translates to:
+  /// **'Post Defaults'**
+  String get btn_profile_defaults;
+
+  /// No description provided for @txt_profile_default_visibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Visibility'**
+  String get txt_profile_default_visibility;
+
+  /// No description provided for @txt_profile_default_media.
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get txt_profile_default_media;
+
+  /// No description provided for @txt_profile_sensitive_media.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark media as sensitive'**
+  String get txt_profile_sensitive_media;
+
+  /// No description provided for @desc_profile_sensitive_media.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide media behind a warning by default'**
+  String get desc_profile_sensitive_media;
+
+  /// No description provided for @txt_profile_default_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get txt_profile_default_language;
+
+  /// No description provided for @txt_profile_language_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'ISO 639-1 (e.g. en, ja, zh)'**
+  String get txt_profile_language_hint;
+
   /// No description provided for @btn_status_toot.
   ///
   /// In en, this message translates to:

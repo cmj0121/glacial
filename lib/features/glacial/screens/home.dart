@@ -16,8 +16,15 @@ class GlacialHome extends ConsumerStatefulWidget {
   static List<StatusSchema> Function()? getStatuses;
   static TabController? activeTabController;
   static List<int> Function()? activeVisibleIndexes;
-  // Cycle the active SwipeTabView forward (delta=1) or backward (delta=-1).
-  static void Function(int delta)? onTabSwitch;
+  // Stack of tab-switch cyclers — the most recently mounted SwipeTabView
+  // is on top. Dispose pops, restoring the previous view's cycler.
+  static final List<void Function(int delta)> _tabSwitchStack = [];
+  static void Function(int delta)? get onTabSwitch =>
+      _tabSwitchStack.isNotEmpty ? _tabSwitchStack.last : null;
+  static void pushTabSwitch(void Function(int delta) cycler) => _tabSwitchStack.add(cycler);
+  static void popTabSwitch(void Function(int delta) cycler) => _tabSwitchStack.remove(cycler);
+  /// Test-only: clear the tab switch stack between tests.
+  static void clearTabSwitchStack() => _tabSwitchStack.clear();
   static VoidCallback? onFocusSearch;
   // Collapse/clear the search bar when Esc is pressed.
   static VoidCallback? onCloseSearch;
@@ -71,38 +78,34 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final bool isMobile = constraints.maxWidth < 600;
-        final IconData icon = widget.backable ? Icons.arrow_back_ios_new_rounded : Icons.read_more_rounded;
+    final bool isMobile = MediaQuery.sizeOf(context).width < 600;
+    final IconData icon = widget.backable ? Icons.arrow_back_ios_new_rounded : Icons.read_more_rounded;
 
-        return Scaffold(
-          key: scaffoldKey,
-          extendBodyBehindAppBar: useLiquidGlass,
-          appBar: AdaptiveGlassAppBar(
-            leading: AdaptiveGlassIconButton(
-              icon: icon,
-              size: iconSize,
-              onPressed: widget.backable ? () => context.pop() : () => scaffoldKey.currentState?.openDrawer(),
-            ),
-            title: widget.title,
-            actions: [
-              ...widget.actions,
-              SearchExplorer(size: sidebarSize),
-            ],
+    return Scaffold(
+      key: scaffoldKey,
+      extendBodyBehindAppBar: useLiquidGlass,
+      appBar: AdaptiveGlassAppBar(
+        leading: AdaptiveGlassIconButton(
+          icon: icon,
+          size: iconSize,
+          onPressed: widget.backable ? () => context.pop() : () => scaffoldKey.currentState?.openDrawer(),
+        ),
+        title: widget.title,
+        actions: [
+          ...widget.actions,
+          SearchExplorer(size: sidebarSize),
+        ],
+      ),
+      body: AppShortcuts(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: buildContent(isMobile: isMobile),
           ),
-          body: AppShortcuts(
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: buildContent(isMobile: isMobile),
-              ),
-            ),
-          ),
-          drawer: GlacialDrawer(),
-          bottomNavigationBar: buildBottomNavigationBar(isMobile: isMobile),
-        );
-      },
+        ),
+      ),
+      drawer: GlacialDrawer(),
+      bottomNavigationBar: buildBottomNavigationBar(isMobile: isMobile),
     );
   }
 
