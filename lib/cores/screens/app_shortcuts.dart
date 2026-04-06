@@ -66,11 +66,8 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
       return true;
     }
 
-    // Tab/Shift+Tab is structural navigation — it should cycle the
-    // active SwipeTabView on ANY route that registers one, even when a
-    // text field has focus (Esc is the exit from text fields). Without
-    // this, the Actions no-op for NextFocusIntent swallows Tab and
-    // nothing happens.
+    // Tab/Shift+Tab: cycles whichever SwipeTabView is on top of the
+    // stack, regardless of route or text focus.
     if (event.physicalKey == PhysicalKeyboardKey.tab &&
         GlacialHome.onTabSwitch != null) {
       final bool shift = HardwareKeyboard.instance.isShiftPressed;
@@ -78,17 +75,27 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
       return true;
     }
 
-    if (!shortcutsActive) return false;
     if (_textInputHasFocus) return false;
 
     final keyboard = HardwareKeyboard.instance;
-    // Don't swallow OS-level chords like Cmd+A, Ctrl+C, etc.
     if (keyboard.isMetaPressed || keyboard.isControlPressed || keyboard.isAltPressed) {
       return false;
     }
     final bool shift = keyboard.isShiftPressed;
 
-    for (final b in _bindings) {
+    // Navigation shortcuts (j/k, ., o) work on any route where their
+    // hooks are registered. Content-action shortcuts (f/b/r/e/n/?)
+    // only fire on main-tab routes.
+    for (final b in _navigationBindings) {
+      if (b.physical == event.physicalKey && b.shift == shift) {
+        b.run(this);
+        return true;
+      }
+    }
+
+    if (!shortcutsActive) return false;
+
+    for (final b in _actionBindings) {
       if (b.physical == event.physicalKey && b.shift == shift) {
         b.run(this);
         return true;
@@ -120,22 +127,27 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     return ctx.widget is EditableText;
   }
 
-  static final List<_Binding> _bindings = <_Binding>[
-    _Binding(PhysicalKeyboardKey.slash, shift: true, run: (s) => s._showHelpSheet()),
-    _Binding(PhysicalKeyboardKey.slash, run: (s) => GlacialHome.onFocusSearch?.call()),
+  // Navigation shortcuts — work on any route where their hooks are
+  // registered (j/k need getStatuses, . needs onRefresh, o needs
+  // getStatuses). They no-op safely when hooks are null.
+  static final List<_Binding> _navigationBindings = <_Binding>[
     _Binding(PhysicalKeyboardKey.period, run: (s) => s._refreshAndScrollTop()),
     _Binding(PhysicalKeyboardKey.keyJ, run: (s) => s._moveFocus(1)),
     _Binding(PhysicalKeyboardKey.arrowDown, run: (s) => s._moveFocus(1)),
     _Binding(PhysicalKeyboardKey.keyK, run: (s) => s._moveFocus(-1)),
     _Binding(PhysicalKeyboardKey.arrowUp, run: (s) => s._moveFocus(-1)),
-    _Binding(PhysicalKeyboardKey.tab, run: (s) => s._switchTab(1)),
-    _Binding(PhysicalKeyboardKey.tab, shift: true, run: (s) => s._switchTab(-1)),
-    _Binding(PhysicalKeyboardKey.arrowRight, run: (s) => s._switchTab(1)),
-    _Binding(PhysicalKeyboardKey.arrowLeft, run: (s) => s._switchTab(-1)),
-    _Binding(PhysicalKeyboardKey.keyN, run: (s) => s._composeNewPost()),
     _Binding(PhysicalKeyboardKey.keyO, run: (s) => s._openFocusedStatus()),
     _Binding(PhysicalKeyboardKey.enter, run: (s) => s._openFocusedStatus()),
     _Binding(PhysicalKeyboardKey.numpadEnter, run: (s) => s._openFocusedStatus()),
+  ];
+
+  // Content-action shortcuts — only fire on main-tab routes
+  // (timeline, trends, notifications, etc.) to prevent accidental
+  // interactions while browsing profiles, search results, etc.
+  static final List<_Binding> _actionBindings = <_Binding>[
+    _Binding(PhysicalKeyboardKey.slash, shift: true, run: (s) => s._showHelpSheet()),
+    _Binding(PhysicalKeyboardKey.slash, run: (s) => GlacialHome.onFocusSearch?.call()),
+    _Binding(PhysicalKeyboardKey.keyN, run: (s) => s._composeNewPost()),
     _Binding(PhysicalKeyboardKey.keyF, run: (s) => s._interactFocused(StatusInteraction.favourite)),
     _Binding(PhysicalKeyboardKey.keyB, run: (s) => s._interactFocused(StatusInteraction.reblog)),
     _Binding(PhysicalKeyboardKey.keyR, run: (s) => s._replyToFocused()),
