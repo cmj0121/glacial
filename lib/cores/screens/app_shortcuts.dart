@@ -109,10 +109,15 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     final FocusNode? primary = FocusManager.instance.primaryFocus;
     final bool hadTextFocus = primary?.context?.widget is EditableText;
     primary?.unfocus();
-    // If the user was typing, one Esc blurs; a second Esc (nothing
-    // focused) pops back. Works uniformly for compose screens, status
-    // threads, profiles, and any other backable subroute.
-    if (!hadTextFocus && (GoRouter.maybeOf(context)?.canPop() ?? false)) {
+    if (hadTextFocus) return;
+
+    // Pop the innermost layer: modal sheets/dialogs first (via
+    // Navigator), then GoRouter routes. Without this ordering, Esc
+    // skips open bottom sheets and pops the underlying route.
+    final NavigatorState navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+    } else if (GoRouter.maybeOf(context)?.canPop() ?? false) {
       context.pop();
     }
   }
