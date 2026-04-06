@@ -155,19 +155,20 @@ void main() {
       expect(find.byType(CustomPaint), findsWidgets);
     });
 
-    testWidgets('uses AnimatedBuilder for animation', (tester) async {
+    testWidgets('uses CustomPaint with repaint-driven painter', (tester) async {
       await tester.pumpWidget(createTestWidget(
         child: const ClockProgressIndicator(),
       ));
       await tester.pump();
 
-      // Find AnimatedBuilder that is a descendant of ClockProgressIndicator
+      // Glacial Ring uses CustomPaint with repaint: animation instead
+      // of AnimatedBuilder, so no AnimatedBuilder in the subtree.
       expect(
         find.descendant(
           of: find.byType(ClockProgressIndicator),
-          matching: find.byType(AnimatedBuilder),
+          matching: find.byType(CustomPaint),
         ),
-        findsOneWidget,
+        findsWidgets,
       );
     });
 
