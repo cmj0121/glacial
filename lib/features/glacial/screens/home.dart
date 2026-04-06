@@ -71,38 +71,34 @@ class _GlacialHomeState extends ConsumerState<GlacialHome> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final bool isMobile = constraints.maxWidth < 600;
-        final IconData icon = widget.backable ? Icons.arrow_back_ios_new_rounded : Icons.read_more_rounded;
+    final bool isMobile = MediaQuery.sizeOf(context).width < 600;
+    final IconData icon = widget.backable ? Icons.arrow_back_ios_new_rounded : Icons.read_more_rounded;
 
-        return Scaffold(
-          key: scaffoldKey,
-          extendBodyBehindAppBar: useLiquidGlass,
-          appBar: AdaptiveGlassAppBar(
-            leading: AdaptiveGlassIconButton(
-              icon: icon,
-              size: iconSize,
-              onPressed: widget.backable ? () => context.pop() : () => scaffoldKey.currentState?.openDrawer(),
-            ),
-            title: widget.title,
-            actions: [
-              ...widget.actions,
-              SearchExplorer(size: sidebarSize),
-            ],
+    return Scaffold(
+      key: scaffoldKey,
+      extendBodyBehindAppBar: useLiquidGlass,
+      appBar: AdaptiveGlassAppBar(
+        leading: AdaptiveGlassIconButton(
+          icon: icon,
+          size: iconSize,
+          onPressed: widget.backable ? () => context.pop() : () => scaffoldKey.currentState?.openDrawer(),
+        ),
+        title: widget.title,
+        actions: [
+          ...widget.actions,
+          SearchExplorer(size: sidebarSize),
+        ],
+      ),
+      body: AppShortcuts(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: buildContent(isMobile: isMobile),
           ),
-          body: AppShortcuts(
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: buildContent(isMobile: isMobile),
-              ),
-            ),
-          ),
-          drawer: GlacialDrawer(),
-          bottomNavigationBar: buildBottomNavigationBar(isMobile: isMobile),
-        );
-      },
+        ),
+      ),
+      drawer: GlacialDrawer(),
+      bottomNavigationBar: buildBottomNavigationBar(isMobile: isMobile),
     );
   }
 

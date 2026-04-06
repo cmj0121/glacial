@@ -44,16 +44,18 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
     final bool isAdmin = status?.account?.role?.hasPrivilege == true;
     final timelinesAccess = status?.server?.config.timelinesAccess;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final bool isWide = constraints.maxWidth >= V2Theme.wideBreakpoint;
-        final allItems = SidebarButtonType.values.where((item) {
-          if (item == SidebarButtonType.admin && !isAdmin) return false;
-          return true;
-        }).toList();
-        final bool showNav = allItems.isNotEmpty && !widget.backable;
+    // Use MediaQuery instead of LayoutBuilder to determine wide/narrow
+    // layout. LayoutBuilder creates a nested build scope that conflicts
+    // with AnimatedWidgets (AnimatedBuilder, scroll animations, etc.)
+    // anywhere in the descendant tree during animation ticks.
+    final bool isWide = MediaQuery.sizeOf(context).width >= V2Theme.wideBreakpoint;
+    final allItems = SidebarButtonType.values.where((item) {
+      if (item == SidebarButtonType.admin && !isAdmin) return false;
+      return true;
+    }).toList();
+    final bool showNav = allItems.isNotEmpty && !widget.backable;
 
-        return Scaffold(
+    return Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
             leading: widget.backable
@@ -87,8 +89,6 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
               ? null
               : _buildBottomNav(allItems, isSignedIn: isSignedIn, access: timelinesAccess),
         );
-      },
-    );
   }
 
   Widget _buildDrawerHeader(AccessStatusSchema? status, ThemeData theme, String domain) {
@@ -155,7 +155,19 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
                 context.go(RoutePath.v2Servers.path);
               },
             ),
-            if (isSignedIn)
+            if (isSignedIn) ...[
+              ListTile(
+                leading: status?.account != null
+                    ? AccountAvatar(schema: status!.account!, size: 28)
+                    : const Icon(Icons.person_outline),
+                title: Text(l10n?.btn_profile_core ?? 'Profile'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  if (status?.account != null) {
+                    context.push(RoutePath.profile.path, extra: status!.account);
+                  }
+                },
+              ),
               ListTile(
                 leading: const Icon(Icons.explore_outlined),
                 title: Text(l10n?.btn_drawer_directory ?? 'Directory'),
@@ -164,6 +176,7 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
                   context.push(RoutePath.directory.path);
                 },
               ),
+            ],
             ListTile(
               leading: const Icon(Icons.settings_outlined),
               title: Text(l10n?.btn_drawer_preference ?? 'Preference'),

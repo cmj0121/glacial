@@ -48,6 +48,7 @@ class _TrendsTabState extends ConsumerState<TrendsTab> with SingleTickerProvider
 
     return SwipeTabView(
       tabController: controller,
+      registerShortcuts: true,
       itemCount: tabs.length,
       tabBuilder: (context, index) {
         final TrendsType type = tabs[index];

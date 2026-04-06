@@ -13,6 +13,12 @@ class SwipeTabView extends StatefulWidget {
   final bool Function(int)? onTabTappable;
   final TabController? tabController;
   final ValueChanged<int>? onDoubleTap;
+  /// When true, registers this view's tab controller and cycler as
+  /// the global shortcut target (GlacialHome.onTabSwitch etc.).
+  /// Only shell-level tab views (timeline, trends, admin) should set
+  /// this; sub-route tab views (profile, search, editor) must leave
+  /// it false so they don't overwrite the shell's registration.
+  final bool registerShortcuts;
 
   const SwipeTabView({
     super.key,
@@ -22,6 +28,7 @@ class SwipeTabView extends StatefulWidget {
     this.onTabTappable,
     this.tabController,
     this.onDoubleTap,
+    this.registerShortcuts = false,
   });
 
   @override
@@ -38,6 +45,11 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
 
   late final TabController tabController;
   late final PageController pageController;
+  // Positive while one or more tab-driven page animations are in
+  // flight. onPageChanged is suppressed so intermediate page indexes
+  // don't reset the tab. Counter (not bool) because a rapid second
+  // animateTo cancels the first, whose .then fires immediately.
+  int _tabDrivingPage = 0;
 
   Map<int, Widget> cachedWidgets = {};
 
@@ -57,14 +69,18 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
     );
 
     tabController.addListener(_onTabControllerChange);
-    GlacialHome.activeTabController = tabController;
-    GlacialHome.activeVisibleIndexes = () => visibleIndexes;
-    GlacialHome.onTabSwitch = _cycleTab;
+    if (widget.registerShortcuts) {
+      GlacialHome.activeTabController = tabController;
+      GlacialHome.activeVisibleIndexes = () => visibleIndexes;
+      GlacialHome.onTabSwitch = _cycleTab;
+    }
   }
 
   // Cycle tabs by [delta] among visibleIndexes, wrapping at both ends.
-  // Updates the TabController and the PageView in one pass to avoid the
-  // onPageChanged feedback loop that happens with animateToPage.
+  // Uses direct index assignment (no animateTo) to avoid the
+  // indexIsChanging listener cascade that races with LayoutBuilder
+  // frame callbacks throughout the widget tree. The page animation is
+  // driven directly here, guarded by _tabDrivingPage.
   void _cycleTab(int delta) {
     final List<int> visible = visibleIndexes;
     if (visible.isEmpty) return;
@@ -73,8 +89,19 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
     int nextPos = (curPos + delta) % visible.length;
     if (nextPos < 0) nextPos += visible.length;
     final int target = visible[nextPos];
-    tabController.animateTo(target);
-    pageController.jumpToPage(nextPos);
+
+    // Direct index assignment — fires listeners with indexIsChanging=false,
+    // so _onTabControllerChange skips (no duplicate animateToPage), and
+    // SwipeTabBar._onExternalTabChange rebuilds tab icons immediately.
+    _tabDrivingPage++;
+    tabController.index = target;
+    pageController.animateToPage(
+      nextPos,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+    ).then((_) {
+      if (mounted) _tabDrivingPage--;
+    });
   }
 
   @override
@@ -95,8 +122,13 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
 
   void _onTabControllerChange() {
     if (tabController.indexIsChanging) {
+      _tabDrivingPage++;
       final int pageIndex = visibleIndexes.indexOf(tabController.index);
-      pageController.animateToPage(pageIndex, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
+      pageController.animateToPage(
+        pageIndex,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+      ).then((_) => _tabDrivingPage--);
     }
   }
 
@@ -152,10 +184,16 @@ class _SwipeTabViewState extends State<SwipeTabView> with TickerProviderStateMix
             final int realIndex = visibleIndexes[index];
             return widget.itemBuilder(context, realIndex);
           }),
-          onPageChanged: (index) => setState(() {
+          onPageChanged: (index) {
+            // Skip when the tab controller is driving the page animation
+            // (external tab switch or keyboard Tab shortcut). Without
+            // this, intermediate pages fire during animateToPage and
+            // reset the tab index to the wrong value.
+            if (_tabDrivingPage > 0) return;
             final int realIndex = visibleIndexes[index];
-            tabController.animateTo(realIndex);
-          }),
+            if (tabController.index == realIndex) return;
+            setState(() => tabController.animateTo(realIndex));
+          },
         ),
       ),
     );

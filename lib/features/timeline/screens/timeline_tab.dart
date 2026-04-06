@@ -80,6 +80,7 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
     return SwipeTabView(
       key: ValueKey('${status.domain}_timeline}'),
       tabController: controller,
+      registerShortcuts: true,
       itemCount: types.length,
       tabBuilder: (context, index) {
         final TimelineType type = types[index];

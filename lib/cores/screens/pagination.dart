@@ -105,8 +105,8 @@ mixin PaginatedListMixin<T extends StatefulWidget> on State<T> {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: (_isLoading && !_isRefresh)
-          ? ClockProgressIndicator(key: ValueKey('loading_$hashCode'))
-          : SizedBox.shrink(key: ValueKey('idle_$hashCode')),
+          ? ClockProgressIndicator(key: UniqueKey())
+          : const SizedBox.shrink(),
     );
   }
 

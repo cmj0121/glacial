@@ -39,34 +39,46 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     super.dispose();
   }
 
-  // Paths on which the compose form is rendered. Routes inside the
-  // ShellRoute swap V2HomeShell's child rather than pushing over it,
-  // so ModalRoute.isCurrent stays true — we need an explicit path check.
-  static const Set<String> _composePaths = <String>{
-    '/home/post',
-    '/home/post/quote',
-    '/home/post/draft',
-    '/home/post/shared',
-    '/home/edit',
+  // Paths where shortcuts are active. Using an explicit allowlist
+  // instead of ModalRoute.isCurrent avoids timing issues during route
+  // transitions (e.g. Esc-pop back to timeline would keep shortcuts
+  // blocked for a frame while the exit animation played).
+  static const Set<String> _shortcutPaths = <String>{
+    '/home/timeline',
+    '/home/list',
+    '/home/trends',
+    '/home/notifications',
+    '/home/conversations',
+    '/home/admin',
+    '/home/follow_requests',
   };
 
   bool _handleKey(KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) return false;
     if (!mounted) return false;
-    final bool isTopmost = ModalRoute.of(context)?.isCurrent ?? false;
-    final bool onComposeRoute = _composePaths.contains(
-      GoRouter.of(context).state.uri.path,
-    );
+    final String currentPath = GoRouter.maybeOf(context)?.state.uri.path ?? '';
+    final bool shortcutsActive = _shortcutPaths.contains(currentPath);
 
-    // Esc stays active everywhere: blur text input / close sheet, and
-    // when focus is already clear it pops any backable subroute (post
-    // compose, status detail/thread, profile, etc.).
+    // Esc stays active on all routes: blur text input / close sheet,
+    // and pop any backable subroute when nothing is focused.
     if (event.physicalKey == PhysicalKeyboardKey.escape) {
       _handleEscape();
       return true;
     }
 
-    if (!isTopmost || onComposeRoute) return false;
+    // Tab/Shift+Tab is structural navigation — it should cycle the
+    // active SwipeTabView on ANY route that registers one, even when a
+    // text field has focus (Esc is the exit from text fields). Without
+    // this, the Actions no-op for NextFocusIntent swallows Tab and
+    // nothing happens.
+    if (event.physicalKey == PhysicalKeyboardKey.tab &&
+        GlacialHome.onTabSwitch != null) {
+      final bool shift = HardwareKeyboard.instance.isShiftPressed;
+      _switchTab(shift ? -1 : 1);
+      return true;
+    }
+
+    if (!shortcutsActive) return false;
     if (_textInputHasFocus) return false;
 
     final keyboard = HardwareKeyboard.instance;
@@ -93,7 +105,7 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     // If the user was typing, one Esc blurs; a second Esc (nothing
     // focused) pops back. Works uniformly for compose screens, status
     // threads, profiles, and any other backable subroute.
-    if (!hadTextFocus && context.canPop()) {
+    if (!hadTextFocus && (GoRouter.maybeOf(context)?.canPop() ?? false)) {
       context.pop();
     }
   }

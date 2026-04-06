@@ -53,6 +53,8 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   List<StatusSchema> unreaded = [];
   List<StatusSchema> statuses = [];
+  // Saved reference so dispose can identity-check before clearing.
+  late final List<StatusSchema> Function() _getStatusesClosure;
 
   @override
   void initState() {
@@ -62,7 +64,8 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
     GlacialHome.itemScrollToTop = itemScrollController;
     GlacialHome.itemPositions = itemPositionsListener;
-    GlacialHome.getStatuses = () => statuses;
+    _getStatusesClosure = () => statuses;
+    GlacialHome.getStatuses = _getStatusesClosure;
     GlacialHome.onRefresh = onRefresh;
     GlacialHome.onInteractStatus = _interactWithStatusAt;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -162,10 +165,24 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
   void dispose() {
     itemPositionsListener.itemPositions.removeListener(_onPositionChange);
     if (GlacialHome.focusedStatusIndex.value != null) {
-      GlacialHome.focusedStatusIndex.value = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        GlacialHome.focusedStatusIndex.value = null;
+      });
     }
     if (GlacialHome.onInteractStatus == _interactWithStatusAt) {
       GlacialHome.onInteractStatus = null;
+    }
+    if (GlacialHome.onRefresh == onRefresh) {
+      GlacialHome.onRefresh = null;
+    }
+    if (GlacialHome.itemScrollToTop == itemScrollController) {
+      GlacialHome.itemScrollToTop = null;
+    }
+    if (GlacialHome.itemPositions == itemPositionsListener) {
+      GlacialHome.itemPositions = null;
+    }
+    if (GlacialHome.getStatuses == _getStatusesClosure) {
+      GlacialHome.getStatuses = null;
     }
     _streamSubscription?.cancel();
     _streamingUnsubscribe?.call();
@@ -266,7 +283,11 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
     final int? next = dominant ?? topmost;
     if (next != null && next != GlacialHome.focusedStatusIndex.value) {
-      GlacialHome.focusedStatusIndex.value = next;
+      // Defer to avoid "markNeedsBuild called when widget tree was
+      // locked" — ItemPositionsListener can fire during layout.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        GlacialHome.focusedStatusIndex.value = next;
+      });
     }
   }
 
