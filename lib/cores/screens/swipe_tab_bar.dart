@@ -59,20 +59,23 @@ class _SwipeTabBarState extends State<SwipeTabBar> with TickerProviderStateMixin
 
   void _onExternalTabChange() {
     final int newIndex = widget.controller!.index;
-
-    if (widget.controller!.indexIsChanging) {
-      if (newIndex == selectedIndex) return;
-      animation = Tween<double>(begin: animation.value, end: newIndex.toDouble()).animate(
-        CurvedAnimation(parent: controller, curve: Curves.easeInOut),
-      );
-      selectedIndex = newIndex;
-      controller.forward(from: 0);
-      // No setState during animation — CustomPainter repaints via its
-      // repaint: animation handle.
-    } else {
-      // Animation completed: rebuild tab icons for isSelected highlight.
-      if (mounted) setState(() {});
+    if (newIndex == selectedIndex) {
+      // Index didn't change (e.g. indexIsChanging became false after
+      // animation completed). Rebuild for tab icon highlight update.
+      if (!widget.controller!.indexIsChanging && mounted) setState(() {});
+      return;
     }
+
+    // Animate the indicator to the new position. CustomPainter repaints
+    // via repaint: animation so no AnimatedBuilder needed.
+    animation = Tween<double>(begin: animation.value, end: newIndex.toDouble()).animate(
+      CurvedAnimation(parent: controller, curve: Curves.easeInOut),
+    );
+    selectedIndex = newIndex;
+    controller.forward(from: 0);
+
+    // Rebuild tab icons so isSelected highlight updates immediately.
+    if (mounted) setState(() {});
   }
 
   @override
