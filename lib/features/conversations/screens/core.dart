@@ -1,4 +1,6 @@
 // The Conversation list screen for direct messages.
+import 'dart:io';
+
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -161,12 +163,32 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
 
     setLoading(true);
 
-    final String? maxId = conversations.isNotEmpty ? conversations.last.id : null;
-    final (items, _) = await status?.fetchConversations(maxId: maxId) ?? (<ConversationSchema>[], null);
+    try {
+      final String? maxId = conversations.isNotEmpty ? conversations.last.id : null;
+      final (items, _) = await status?.fetchConversations(maxId: maxId) ?? (<ConversationSchema>[], null);
 
-    if (mounted) {
-      setState(() => conversations.addAll(items));
-      markLoadComplete(isEmpty: items.isEmpty);
+      if (mounted) {
+        setState(() => conversations.addAll(items));
+        markLoadComplete(isEmpty: items.isEmpty);
+      }
+    } on SocketException catch (e) {
+      logger.w('conversation fetch failed (offline): $e');
+      if (mounted) {
+        if (conversations.isEmpty) {
+          markLoadError();
+        } else {
+          markLoadComplete(isEmpty: false);
+        }
+      }
+    } on HttpTimeoutException catch (e) {
+      logger.w('conversation fetch timed out: $e');
+      if (mounted) {
+        if (conversations.isEmpty) {
+          markLoadError();
+        } else {
+          markLoadComplete(isEmpty: false);
+        }
+      }
     }
   }
 }

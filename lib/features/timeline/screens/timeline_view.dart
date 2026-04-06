@@ -306,8 +306,9 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
       if (index > 0 && itemScrollController.isAttached) {
         itemScrollController.jumpTo(index: index);
       }
-    } catch (_) {
+    } catch (e) {
       // Marker restore is best-effort; don't block on failure.
+      logger.d('marker restore failed: $e');
     }
   }
 
