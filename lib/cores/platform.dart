@@ -39,12 +39,7 @@ bool get useLiquidGlass => currentPlatform == PlatformType.apple;
 /// Returns true if the current platform should use Material Design.
 bool get useMaterial => currentPlatform == PlatformType.android;
 
-/// Max content width for the main column. Full width on mobile/tablet
-/// (iOS, Android), constrained on desktop (macOS) for readability.
-double get maxContentWidth {
-  if (kIsWeb) return double.infinity;
-  if (Platform.isIOS || Platform.isAndroid) return double.infinity;
-  return 680;
-}
+/// Max content width for the main column. Full width on all platforms.
+double get maxContentWidth => double.infinity;
 
 // vim: set ts=2 sw=2 sts=2 et:
