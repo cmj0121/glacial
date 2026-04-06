@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:glacial/app.dart';
 import 'package:glacial/features/models.dart';
-import 'package:glacial/features/screens.dart';
 
 import 'misc.dart';
 
@@ -29,8 +28,8 @@ void main() {
     await tester.tap(drawerButton);
     await tester.pump(const Duration(milliseconds: 500));
 
-    final Finder drawer = find.byType(GlacialDrawer);
-    expect(drawer, findsOneWidget, reason: 'Glacial drawer should be present');
+    final Finder drawer = find.byType(Drawer);
+    expect(drawer, findsOneWidget, reason: 'Drawer should be present');
     await tester.pump();
 
     // Find the switch server button and tap it.

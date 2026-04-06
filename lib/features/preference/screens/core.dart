@@ -126,18 +126,6 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           ),
         ],
         const SizedBox(height: 8),
-        _toggleCard(
-          theme: theme, scheme: scheme,
-          title: AppLocalizations.of(context)?.txt_preference_new_ui ?? 'New UI Design',
-          subtitle: AppLocalizations.of(context)?.desc_preference_new_ui ?? 'Try the redesigned interface',
-          icon: Icons.auto_awesome,
-          value: schema.useNewUI,
-          onChanged: (v) {
-            Storage().savePreference(schema.copyWith(useNewUI: v), ref: ref);
-            ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
-          },
-        ),
-        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),

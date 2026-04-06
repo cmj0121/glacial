@@ -142,7 +142,7 @@ class SystemPreferenceSchema {
     this.imageQuality = ImageQualityType.medium,
     this.useOledTheme = false,
     this.hapticFeedback = true,
-    this.useNewUI = false,
+    this.useNewUI = true,
   });
 
   // Convert the JSON string to a SystemPreferenceSchema object.

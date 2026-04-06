@@ -1,6 +1,5 @@
-// The Glacial home page and related widgets.
+// The Glacial shell hooks and related widgets.
 export 'home.dart';
-export 'drawer.dart';
 export 'landing.dart';
 export 'announcement.dart';
 export 'instance_info.dart';
