@@ -212,6 +212,43 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btn_profile_privacy => 'Configuración de privacidad';
 
   @override
+  String get txt_profile_custom_fields => 'Campos personalizados';
+
+  @override
+  String get txt_profile_field_label => 'Etiqueta';
+
+  @override
+  String get txt_profile_field_value => 'Valor';
+
+  @override
+  String get txt_profile_add_field => 'Agregar';
+
+  @override
+  String get txt_profile_no_fields => 'Aún no hay campos personalizados';
+
+  @override
+  String get btn_profile_defaults => 'Publicación predeterminada';
+
+  @override
+  String get txt_profile_default_visibility => 'Visibilidad predeterminada';
+
+  @override
+  String get txt_profile_default_media => 'Multimedia';
+
+  @override
+  String get txt_profile_sensitive_media => 'Marcar multimedia como sensible';
+
+  @override
+  String get desc_profile_sensitive_media =>
+      'Ocultar multimedia detrás de una advertencia';
+
+  @override
+  String get txt_profile_default_language => 'Idioma';
+
+  @override
+  String get txt_profile_language_hint => 'ISO 639-1 (ej. es, en, ja)';
+
+  @override
   String get btn_status_toot => 'Toot';
 
   @override

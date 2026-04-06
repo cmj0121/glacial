@@ -212,6 +212,42 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_profile_privacy => '개인정보 설정';
 
   @override
+  String get txt_profile_custom_fields => '사용자 지정 필드';
+
+  @override
+  String get txt_profile_field_label => '라벨';
+
+  @override
+  String get txt_profile_field_value => '값';
+
+  @override
+  String get txt_profile_add_field => '추가';
+
+  @override
+  String get txt_profile_no_fields => '사용자 지정 필드가 없습니다';
+
+  @override
+  String get btn_profile_defaults => '게시물 기본값';
+
+  @override
+  String get txt_profile_default_visibility => '기본 공개 범위';
+
+  @override
+  String get txt_profile_default_media => '미디어';
+
+  @override
+  String get txt_profile_sensitive_media => '미디어를 민감으로 표시';
+
+  @override
+  String get desc_profile_sensitive_media => '기본적으로 미디어를 경고 뒤에 숨기기';
+
+  @override
+  String get txt_profile_default_language => '언어';
+
+  @override
+  String get txt_profile_language_hint => 'ISO 639-1 (예: ko, en, ja)';
+
+  @override
   String get btn_status_toot => '글쓰기';
 
   @override

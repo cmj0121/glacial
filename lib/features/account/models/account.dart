@@ -34,6 +34,9 @@ class AccountSchema {
   final int followingCount;         // The reported follows of this profile.
   // CredentialAccount entity attributes
   final RoleSchema? role;           // The complete role assigned to the currently authorized user
+  final String? sourcePrivacy;      // Default post visibility from source{} (public/unlisted/private/direct)
+  final bool? sourceSensitive;      // Default sensitive flag from source{}
+  final String? sourceLanguage;     // Default posting language from source{} (ISO 639-1)
 
   const AccountSchema({
     required this.id,
@@ -60,6 +63,9 @@ class AccountSchema {
     required this.followersCount,
     required this.followingCount,
     this.role,
+    this.sourcePrivacy,
+    this.sourceSensitive,
+    this.sourceLanguage,
   });
 
   factory AccountSchema.fromJson(Map<String, dynamic> json) {
@@ -92,6 +98,9 @@ class AccountSchema {
       followersCount: json['followers_count'] as int,
       followingCount: json['following_count'] as int,
       role: json['role'] == null ? null : RoleSchema.fromJson(json['role'] as Map<String, dynamic>),
+      sourcePrivacy: (json['source'] as Map<String, dynamic>?)?['privacy'] as String?,
+      sourceSensitive: (json['source'] as Map<String, dynamic>?)?['sensitive'] as bool?,
+      sourceLanguage: (json['source'] as Map<String, dynamic>?)?['language'] as String?,
     );
   }
 
@@ -109,6 +118,9 @@ class AccountSchema {
         value: canonicalizeHtml(field.value),
         verifiedAt: field.verifiedAt,
       )).toList(),
+      sourcePrivacy: sourcePrivacy,
+      sourceSensitive: sourceSensitive,
+      sourceLanguage: sourceLanguage,
     );
   }
 }
@@ -264,6 +276,9 @@ class AccountCredentialSchema {
   final List<FieldSchema> fields;        // Additional metadata attached to the profile.
   final File? avatar;                    // Avatar image encoded using multipart/form-data.
   final File? header;                    // Header image encoded using multipart/form-data.
+  final String? sourcePrivacy;           // Default post visibility (public/unlisted/private/direct).
+  final bool? sourceSensitive;           // Whether to mark media as sensitive by default.
+  final String? sourceLanguage;          // Default posting language (ISO 639-1, e.g. "en").
 
   const AccountCredentialSchema({
     required this.displayName,
@@ -276,6 +291,9 @@ class AccountCredentialSchema {
     this.fields = const [],
     this.avatar,
     this.header,
+    this.sourcePrivacy,
+    this.sourceSensitive,
+    this.sourceLanguage,
   });
 
   Map<String, dynamic> toJson() {
@@ -293,6 +311,9 @@ class AccountCredentialSchema {
           'value': field.value,
         });
       }),
+      if (sourcePrivacy != null) 'source[privacy]': sourcePrivacy,
+      if (sourceSensitive != null) 'source[sensitive]': sourceSensitive,
+      if (sourceLanguage != null) 'source[language]': sourceLanguage,
     };
 
     return Map.fromEntries(
@@ -321,6 +342,9 @@ class AccountCredentialSchema {
     List<FieldSchema>? fields,
     File? avatar,
     File? header,
+    String? sourcePrivacy,
+    bool? sourceSensitive,
+    String? sourceLanguage,
   }) {
     return AccountCredentialSchema(
       displayName: displayName ?? this.displayName,
@@ -333,6 +357,9 @@ class AccountCredentialSchema {
       fields: fields ?? this.fields,
       avatar: avatar ?? this.avatar,
       header: header ?? this.header,
+      sourcePrivacy: sourcePrivacy ?? this.sourcePrivacy,
+      sourceSensitive: sourceSensitive ?? this.sourceSensitive,
+      sourceLanguage: sourceLanguage ?? this.sourceLanguage,
     );
   }
 }
@@ -340,7 +367,8 @@ class AccountCredentialSchema {
 // The list of the edit profile categories that can be used to edit the profile.
 enum EditProfileCategory {
   general,    // The basic information of the account, including display name, bio and other info.
-  privacy;    // The privacy setup of the current account.
+  privacy,    // The privacy setup of the current account.
+  defaults;   // Default posting settings (visibility, sensitivity, language).
 
   // The tooltip text for the edit profile category, localized if possible.
   String tooltip(BuildContext context) {
@@ -349,6 +377,8 @@ enum EditProfileCategory {
         return AppLocalizations.of(context)?.btn_profile_general_info ?? "General Info";
       case EditProfileCategory.privacy:
         return AppLocalizations.of(context)?.btn_profile_privacy ?? "Privacy Settings";
+      case EditProfileCategory.defaults:
+        return AppLocalizations.of(context)?.btn_profile_defaults ?? "Post Defaults";
     }
   }
 
@@ -359,6 +389,8 @@ enum EditProfileCategory {
         return active ? CupertinoIcons.doc_person_fill : CupertinoIcons.doc_person;
       case EditProfileCategory.privacy:
         return active ? Icons.privacy_tip : Icons.privacy_tip_outlined;
+      case EditProfileCategory.defaults:
+        return active ? Icons.tune : Icons.tune_outlined;
     }
   }
 }
