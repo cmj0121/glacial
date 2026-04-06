@@ -19,6 +19,7 @@ export 'api/list.dart';
 export 'api/marker.dart';
 export 'api/media.dart';
 export 'api/notifications.dart';
+export 'api/preferences.dart';
 export 'api/report.dart';
 export 'api/search.dart';
 export 'api/status.dart';
@@ -110,7 +111,40 @@ extension AccessStatusExtension on Storage {
       ref?.read(accessStatusProvider.notifier).state = status;
     }
 
+    // Seed local compose defaults from server-side preferences on
+    // first login (when local prefs are still at defaults).
+    if (account != null && ref != null) {
+      _syncServerPreferences(status, ref);
+    }
+
     return status;
+  }
+
+  /// Fetch server-side preferences and seed the local
+  /// SystemPreferenceSchema if posting defaults haven't been
+  /// explicitly set (still at factory defaults).
+  Future<void> _syncServerPreferences(AccessStatusSchema status, WidgetRef ref) async {
+    try {
+      final MastodonPreferences? prefs = await status.fetchPreferences();
+      if (prefs == null) return;
+
+      final SystemPreferenceSchema? current = ref.read(preferenceProvider);
+      if (current == null) return;
+
+      // Only seed if visibility is still the factory default (public).
+      // Once the user changes it locally, we stop overwriting.
+      if (current.visibility == VisibilityType.public &&
+          prefs.defaultVisibility != VisibilityType.public) {
+        final SystemPreferenceSchema updated = current.copyWith(
+          visibility: prefs.defaultVisibility,
+          sensitive: prefs.defaultSensitive,
+        );
+        ref.read(preferenceProvider.notifier).state = updated;
+        await Storage().savePreference(updated);
+      }
+    } catch (_) {
+      // Best-effort — don't block login if preferences fetch fails.
+    }
   }
 
   // Migrate old domain-only token keys to composite format.
