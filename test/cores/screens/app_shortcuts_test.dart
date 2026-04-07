@@ -72,19 +72,25 @@ void main() {
       // No crash, no assertion failure
     });
 
-    testWidgets('Tab works even when a text field has focus', (tester) async {
+    testWidgets('Tab is passed through when a text field has focus', (tester) async {
       int? delta;
       GlacialHome.pushTabSwitch((d) => delta = d);
 
       await tester.pumpWidget(buildShortcutsWidget(
         child: const TextField(autofocus: true),
       ));
-      await tester.pump();
+      await tester.pumpAndSettle();
+
+      // Tap to ensure focus is on the text field.
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
 
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
       await tester.pump();
 
-      expect(delta, equals(1));
+      // Tab should NOT switch tabs when typing in a text field — the
+      // key event is passed through so the text input can handle it.
+      expect(delta, isNull);
     });
   });
 

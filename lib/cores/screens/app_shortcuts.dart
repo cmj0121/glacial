@@ -58,6 +58,7 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     if (!mounted) return false;
     final String currentPath = GoRouter.maybeOf(context)?.state.uri.path ?? '';
     final bool shortcutsActive = _shortcutPaths.contains(currentPath);
+    final bool textFocused = _textInputHasFocus;
 
     // Esc stays active on all routes: blur text input / close sheet.
     // On compose routes, Esc does NOT pop the route (prevents losing
@@ -67,6 +68,10 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
       return true;
     }
 
+    // When a text field owns focus, let all other keys pass through
+    // so Tab, period, and letter keys are never swallowed by shortcuts.
+    if (textFocused) return false;
+
     // Tab/Shift+Tab: cycles whichever SwipeTabView is on top of the
     // stack, regardless of route or text focus.
     if (event.physicalKey == PhysicalKeyboardKey.tab &&
@@ -75,8 +80,6 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
       _switchTab(shift ? -1 : 1);
       return true;
     }
-
-    if (_textInputHasFocus) return false;
 
     final keyboard = HardwareKeyboard.instance;
     if (keyboard.isMetaPressed || keyboard.isControlPressed || keyboard.isAltPressed) {
@@ -115,9 +118,8 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
 
   void _handleEscape(String currentPath) {
     GlacialHome.onCloseSearch?.call();
-    final FocusNode? primary = FocusManager.instance.primaryFocus;
-    final bool hadTextFocus = primary?.context?.widget is EditableText;
-    primary?.unfocus();
+    final bool hadTextFocus = _textInputHasFocus;
+    FocusManager.instance.primaryFocus?.unfocus();
     if (hadTextFocus) return;
 
     // Always allow closing modal sheets/dialogs (e.g. ALT text editor).
@@ -144,7 +146,18 @@ class _AppShortcutsState extends ConsumerState<AppShortcuts> {
     if (primary == null) return false;
     final BuildContext? ctx = primary.context;
     if (ctx == null) return false;
-    return ctx.widget is EditableText;
+    // The primary focus node may sit on a Focus widget wrapping the
+    // EditableText, so walk up to check for an ancestor as well.
+    if (ctx.widget is EditableText) return true;
+    bool found = false;
+    ctx.visitAncestorElements((element) {
+      if (element.widget is EditableText) {
+        found = true;
+        return false;
+      }
+      return true;
+    });
+    return found;
   }
 
   // Navigation shortcuts — work on any route where their hooks are
