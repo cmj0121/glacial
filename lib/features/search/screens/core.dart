@@ -29,8 +29,32 @@ class _ExplorerState extends ConsumerState<SearchExplorer> with SingleTickerProv
 
   bool showInput = false;
 
+  void _focusHook() {
+    onShowSearch();
+  }
+
+  void _closeHook() {
+    if (!showInput) return;
+    controller.clear();
+    focusNode.unfocus();
+    setState(() => showInput = false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    GlacialHome.onFocusSearch = _focusHook;
+    GlacialHome.onCloseSearch = _closeHook;
+  }
+
   @override
   void dispose() {
+    if (GlacialHome.onFocusSearch == _focusHook) {
+      GlacialHome.onFocusSearch = null;
+    }
+    if (GlacialHome.onCloseSearch == _closeHook) {
+      GlacialHome.onCloseSearch = null;
+    }
     controller.dispose();
     focusNode.dispose();
     super.dispose();

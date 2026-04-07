@@ -33,26 +33,34 @@ class Attachments extends StatelessWidget {
   }
 
   Widget buildContent(BuildContext context) {
-    if (schemas.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: _buildGrid(),
+      ),
+    );
+  }
+
+  Widget _buildAttachment(int index) {
+    return Padding(
+      padding: const EdgeInsets.all(1),
+      child: Attachment(
+        schema: schemas[index],
+        schemas: schemas,
+        initialIndex: index,
+      ),
+    );
+  }
+
+  Widget _buildGrid() {
+    if (schemas.length == 1) return _buildAttachment(0);
 
     return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: schemas.asMap().entries.map((entry) {
-        final int index = entry.key;
-        final AttachmentSchema schema = entry.value;
-        return Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(1),
-            child: Attachment(
-              schema: schema,
-              schemas: schemas,
-              initialIndex: index,
-            ),
-          ),
-        );
-      }).toList(),
+      children: List.generate(
+        schemas.length.clamp(0, 4),
+        (i) => Expanded(child: _buildAttachment(i)),
+      ),
     );
   }
 }

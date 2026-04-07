@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -52,6 +53,8 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   List<StatusSchema> unreaded = [];
   List<StatusSchema> statuses = [];
+  // Saved reference so dispose can identity-check before clearing.
+  late final List<StatusSchema> Function() _getStatusesClosure;
 
   @override
   void initState() {
@@ -60,6 +63,11 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     itemPositionsListener.itemPositions.addListener(_onPositionChange);
 
     GlacialHome.itemScrollToTop = itemScrollController;
+    GlacialHome.itemPositions = itemPositionsListener;
+    _getStatusesClosure = () => statuses;
+    GlacialHome.getStatuses = _getStatusesClosure;
+    GlacialHome.onRefresh = onRefresh;
+    GlacialHome.onInteractStatus = _interactWithStatusAt;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final Duration? refreshInterval = widget.pref?.refreshInterval;
 
@@ -127,6 +135,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
         if (status == null) return;
         final existingIds = {...statuses.map((s) => s.id), ...unreaded.map((s) => s.id)};
         if (existingIds.contains(status.id)) return;
+        HapticFeedback.selectionClick();
         setState(() => unreaded.insert(0, status));
 
       case StreamingEventType.delete:
@@ -155,11 +164,62 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
   @override
   void dispose() {
     itemPositionsListener.itemPositions.removeListener(_onPositionChange);
+    if (GlacialHome.focusedStatusIndex.value != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        GlacialHome.focusedStatusIndex.value = null;
+      });
+    }
+    if (GlacialHome.onInteractStatus == _interactWithStatusAt) {
+      GlacialHome.onInteractStatus = null;
+    }
+    if (GlacialHome.onRefresh == onRefresh) {
+      GlacialHome.onRefresh = null;
+    }
+    if (GlacialHome.itemScrollToTop == itemScrollController) {
+      GlacialHome.itemScrollToTop = null;
+    }
+    if (GlacialHome.itemPositions == itemPositionsListener) {
+      GlacialHome.itemPositions = null;
+    }
+    if (GlacialHome.getStatuses == _getStatusesClosure) {
+      GlacialHome.getStatuses = null;
+    }
     _streamSubscription?.cancel();
     _streamingUnsubscribe?.call();
     timer?.cancel();
     _markerDebounce?.cancel();
     super.dispose();
+  }
+
+  Future<void> _interactWithStatusAt(int index, StatusInteraction action) async {
+    if (index < 0 || index >= statuses.length) return;
+    final StatusSchema target = statuses[index];
+    final bool isActive;
+    switch (action) {
+      case StatusInteraction.favourite:
+        isActive = target.favourited ?? false;
+      case StatusInteraction.reblog:
+        isActive = target.reblogged ?? false;
+      case StatusInteraction.bookmark:
+        isActive = target.bookmarked ?? false;
+      default:
+        return;
+    }
+    HapticFeedback.lightImpact();
+    try {
+      final StatusSchema updated = await widget.status.interactWithStatus(
+        target,
+        action,
+        negative: isActive,
+      );
+      if (!mounted) return;
+      final int current = statuses.indexWhere((s) => s.id == target.id);
+      if (current >= 0) {
+        setState(() => statuses[current] = updated);
+      }
+    } catch (_) {
+      // Swallow: transient network errors shouldn't crash the shortcut flow.
+    }
   }
 
   void _onPositionChange() {
@@ -168,12 +228,66 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
     if (lastIndex != null && lastIndex > statuses.length - 5) onLoad();
 
+    // Track the topmost visible status as the "current" one so the
+    // highlight follows normal scrolling on mobile too, not just j/k.
+    _updateFocusedFromViewport(positions);
+
     // Save read position for home timeline with debouncing.
     if (widget.type == TimelineType.home && widget.status.isSignedIn) {
       final int? firstIndex = positions.isNotEmpty ? positions.first.index : null;
       if (firstIndex != null && firstIndex < statuses.length) {
         _saveMarkerDebounced(statuses[firstIndex].id);
       }
+    }
+  }
+
+  // Pick the status that dominates the viewport and publish it as the
+  // focused index. A status is considered focused when at least 52% of
+  // its own area is visible — that threshold guarantees it beats either
+  // neighbor (they can share the remaining 48%). Falls back to the
+  // topmost visible status if nothing meets the threshold (e.g. a
+  // single extra-tall status that fills more than a viewport).
+  static const double _focusVisibilityThreshold = 0.52;
+
+  void _updateFocusedFromViewport(List<ItemPosition> positions) {
+    if (positions.isEmpty) return;
+    final DateTime? until = GlacialHome.suppressAutoFocusUntil;
+    if (until != null && DateTime.now().isBefore(until)) return;
+
+    int? dominant;
+    double dominantLeading = double.infinity;
+    int? topmost;
+    double topmostLeading = double.infinity;
+
+    for (final ItemPosition pos in positions) {
+      final double itemSize = pos.itemTrailingEdge - pos.itemLeadingEdge;
+      if (itemSize <= 0) continue;
+      final double visibleStart = pos.itemLeadingEdge < 0 ? 0.0 : pos.itemLeadingEdge;
+      final double visibleEnd = pos.itemTrailingEdge > 1.0 ? 1.0 : pos.itemTrailingEdge;
+      final double visibleSize = visibleEnd - visibleStart;
+      if (visibleSize <= 0) continue;
+      final double ratio = visibleSize / itemSize;
+
+      // Among all items >=52% visible, pick the topmost (smallest
+      // leadingEdge) so the selection is stable when many fully-visible
+      // items tie at 100%.
+      if (ratio >= _focusVisibilityThreshold && pos.itemLeadingEdge < dominantLeading) {
+        dominantLeading = pos.itemLeadingEdge;
+        dominant = pos.index;
+      }
+      if (pos.itemLeadingEdge < topmostLeading) {
+        topmostLeading = pos.itemLeadingEdge;
+        topmost = pos.index;
+      }
+    }
+
+    final int? next = dominant ?? topmost;
+    if (next != null && next != GlacialHome.focusedStatusIndex.value) {
+      // Defer to avoid "markNeedsBuild called when widget tree was
+      // locked" — ItemPositionsListener can fire during layout.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        GlacialHome.focusedStatusIndex.value = next;
+      });
     }
   }
 
@@ -192,8 +306,9 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
       if (index > 0 && itemScrollController.isAttached) {
         itemScrollController.jumpTo(index: index);
       }
-    } catch (_) {
+    } catch (e) {
       // Marker restore is best-effort; don't block on failure.
+      logger.d('marker restore failed: $e');
     }
   }
 
@@ -228,38 +343,56 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
     return Align(
       alignment: Alignment.topCenter,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
         children: [
-          if (statuses.isNotEmpty) buildLoadingIndicator(),
-          if (statuses.isNotEmpty) buildErrorIndicator(onLoad),
-          OfflineBanner(isOffline: _isOffline),
-          buildUnreadedBanner(),
-          Flexible(child: buildContent()),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (statuses.isNotEmpty) buildLoadingIndicator(),
+              if (statuses.isNotEmpty) buildErrorIndicator(onLoad),
+              OfflineBanner(isOffline: _isOffline),
+              Flexible(child: buildContent()),
+            ],
+          ),
+          if (unreaded.isNotEmpty) buildUnreadedPill(),
         ],
       ),
     );
   }
 
-  // Build the unreaded count widget and the list of statuses.
-  Widget buildUnreadedBanner() {
-    final TextStyle? style = Theme.of(context).textTheme.labelLarge;
+  Widget buildUnreadedPill() {
+    final String text = AppLocalizations.of(context)?.btn_timeline_unread(unreaded.length) ?? "${unreaded.length} new";
 
-    if (unreaded.isEmpty) return const SizedBox.shrink();
-    final String text = AppLocalizations.of(context)?.btn_timeline_unread(unreaded.length) ?? "Unreaded ${unreaded.length}";
-
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        icon: const Icon(Icons.mark_email_unread, size: tabSize),
-        label: Text(text, style: style),
-        style: FilledButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-          foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+    return Positioned(
+      top: 8,
+      left: 0,
+      right: 0,
+      child: Center(
+        child: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(24),
+          color: Theme.of(context).colorScheme.primaryContainer,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(24),
+            onTap: onClickUnreaded,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.arrow_upward, size: 16, color: Theme.of(context).colorScheme.onPrimaryContainer),
+                  const SizedBox(width: 6),
+                  Text(
+                    text,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        onPressed: onClickUnreaded,
       ),
     );
   }
@@ -279,15 +412,22 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     return CustomMaterialIndicator(
       onRefresh: onRefresh,
       indicatorBuilder: ClockProgressIndicator.refreshBuilder,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: ScrollablePositionedList.builder(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxContentWidth),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: ScrollablePositionedList.builder(
           itemScrollController: itemScrollController,
           itemPositionsListener: itemPositionsListener,
           shrinkWrap: true,
           itemCount: statuses.length,
           itemBuilder: (context, index) {
             final StatusSchema status = statuses[index];
+            final bool isReplyToAbove = index > 0 &&
+                status.inReplyToID != null &&
+                status.inReplyToID == statuses[index - 1].id;
+
             final Widget child = Status(
               key: ValueKey('status_${status.id}'),
               schema: status,
@@ -297,16 +437,53 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
               }
             );
 
-            return Container(
-              decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
-              ),
-              child: child,
-            );
+            final Widget body = isReplyToAbove
+                ? IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          width: 2,
+                          margin: const EdgeInsets.only(left: 35),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                        ),
+                        Expanded(child: child),
+                      ],
+                    ),
+                  )
+                : child;
+
+            return RepaintBoundary(child: ValueListenableBuilder<int?>(
+              valueListenable: GlacialHome.focusedStatusIndex,
+              builder: (context, focusedIdx, inner) {
+                final bool isFocused = focusedIdx == index;
+                final ColorScheme scheme = Theme.of(context).colorScheme;
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOut,
+                  decoration: BoxDecoration(
+                    color: isFocused
+                        ? scheme.primary.withValues(alpha: 0.14)
+                        : Colors.transparent,
+                    border: Border(
+                      bottom: BorderSide(
+                        color: scheme.outlineVariant.withValues(alpha: 0.3),
+                      ),
+                      left: BorderSide(
+                        color: isFocused ? scheme.primary : Colors.transparent,
+                        width: 3,
+                      ),
+                    ),
+                  ),
+                  child: inner,
+                );
+              },
+              child: body,
+            ));
           },
         ),
       ),
-    );
+    ),),);
   }
 
   // Show the unreaded statuses when the user taps on the unreaded banner and keep the current
@@ -326,6 +503,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   // Clean-up and refresh the timeline when the user pulls down the list.
   Future<void> onRefresh() async {
+    HapticFeedback.mediumImpact();
     setState(() {
       unreaded.clear();
       maxId = null;
@@ -367,24 +545,20 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
         });
         markLoadComplete(isEmpty: isRepeat || schemas.isEmpty);
       }
-    } on SocketException {
-      if (mounted) {
-        setState(() => _isOffline = true);
-        if (statuses.isEmpty) {
-          markLoadError();
-        } else {
-          markLoadComplete(isEmpty: false);
-        }
-      }
-    } on HttpTimeoutException {
-      if (mounted) {
-        setState(() => _isOffline = true);
-        if (statuses.isEmpty) {
-          markLoadError();
-        } else {
-          markLoadComplete(isEmpty: false);
-        }
-      }
+    } on SocketException catch (_) {
+      _handleOffline();
+    } on HttpTimeoutException catch (_) {
+      _handleOffline();
+    }
+  }
+
+  void _handleOffline() {
+    if (!mounted) return;
+    setState(() => _isOffline = true);
+    if (statuses.isEmpty) {
+      markLoadError();
+    } else {
+      markLoadComplete(isEmpty: false);
     }
   }
 

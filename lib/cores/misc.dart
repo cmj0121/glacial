@@ -4,8 +4,14 @@ import 'dart:async';
 import 'package:app_badge_plus/app_badge_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'package:glacial/cores/routes.dart';
+import 'package:glacial/cores/storage.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -107,6 +113,16 @@ String canonicalizeHtml(String html) {
   final RegExp htmlTagRegExp = RegExp(r'<[^>]*>', multiLine: true);
   final String plainText = html.replaceAll(htmlTagRegExp, '').replaceAll('&nbsp;', ' ');
   return plainText.trim();
+}
+
+// Open a URL using the user's preferred method — in-app WebView or native browser.
+void openLink(BuildContext context, Uri uri, {WidgetRef? ref}) {
+  final bool useInApp = ref?.read(preferenceProvider)?.useInAppBrowser ?? true;
+  if (useInApp) {
+    context.push(RoutePath.webview.path, extra: uri);
+  } else {
+    launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
 }
 
 // vim: set ts=2 sw=2 sts=2 et:

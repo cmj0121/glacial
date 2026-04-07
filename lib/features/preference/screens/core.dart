@@ -20,8 +20,6 @@ class SystemPreference extends ConsumerStatefulWidget {
 }
 
 class _SystemPreferenceState extends ConsumerState<SystemPreference> {
-  late final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor);
-
   int selectedIndex = 0;
 
   @override
@@ -29,24 +27,27 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
     return Scaffold(
       body: Align(
         alignment: Alignment.topCenter,
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            child: buildContent(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxContentWidth),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              child: _buildContent(),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget buildContent() {
+  Widget _buildContent() {
     final double size = 18;
     final String text = AppLocalizations.of(context)?.btn_reload ?? "Reload";
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Expanded(flex: 10, child: buildTabView()),
+        Expanded(flex: 10, child: _buildTabView()),
         const Spacer(),
         TextButton.icon(
           icon: Icon(Icons.refresh, size: size, color: Theme.of(context).colorScheme.secondary),
@@ -57,15 +58,13 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
     );
   }
 
-  // Build the tab view that contains the settings per category.
-  Widget buildTabView() {
+  Widget _buildTabView() {
     final List<SystemPreferenceType> types = SystemPreferenceType.values;
 
     return SwipeTabView(
       itemCount: types.length,
       tabBuilder: (BuildContext context, int index) {
         final bool selected = index == selectedIndex;
-
         return Tooltip(
           message: types[index].tooltip(context),
           child: Icon(
@@ -76,397 +75,369 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
         );
       },
       itemBuilder: (BuildContext context, int index) {
-        final SystemPreferenceType type = types[index];
-        late final Widget child;
-
-        switch (type) {
+        switch (types[index]) {
           case SystemPreferenceType.theme:
-            child = buildSystemSettings();
+            return _buildSystemSettings();
           case SystemPreferenceType.engineer:
-            child = buildEngineerSettings();
+            return _buildEngineerSettings();
           case SystemPreferenceType.about:
-            child = buildAppInfo();
+            return _buildAppInfo();
         }
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-          child: child,
-        );
-      }
+      },
     );
   }
 
-  // Build the system-wide settings that control the app's behavior and features.
-  Widget buildSystemSettings() {
+  // ── System settings ──────────────────────────────────────────────
+
+  Widget _buildSystemSettings() {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme scheme = theme.colorScheme;
     final SystemPreferenceSchema schema = ref.watch(preferenceProvider) ?? SystemPreferenceSchema();
 
     return ListView(
-      children: <Widget>[
-        SwitchListTile(
-          title: Text(AppLocalizations.of(context)?.txt_desc_preference_system_theme ?? "The system theme"),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      children: [
+        const SizedBox(height: 8),
+
+        // ── APPEARANCE ──
+        _sectionLabel(theme, AppLocalizations.of(context)?.txt_preference_appearance ?? 'APPEARANCE'),
+        const SizedBox(height: 12),
+        _toggleCard(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.txt_desc_preference_system_theme ?? 'Dark mode',
+          icon: schema.theme == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode,
           value: schema.theme == ThemeMode.dark,
-          secondary: Icon(schema.theme == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode, size: iconSize),
-          onChanged: (bool value) {
-            final ThemeMode theme = value ? ThemeMode.dark : ThemeMode.light;
-            Storage().savePreference(schema.copyWith(theme: theme), ref: ref);
+          onChanged: (v) {
+            Storage().savePreference(schema.copyWith(theme: v ? ThemeMode.dark : ThemeMode.light), ref: ref);
           },
         ),
-
-        const SizedBox(height: 32),
-
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_status ?? "Status Settings"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_status ?? "Control the default status settings.",
-            style: labelStyle,
-          ),
-        ),
-        SwitchListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_sensitive ?? "Sensitive Content"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_sensitive ?? "Show/Hide sensitive content in statuses.",
-            style: labelStyle,
-          ),
-          value: schema.sensitive,
-          secondary: Icon(schema.sensitive ? Icons.visibility_off : Icons.visibility, size: iconSize),
-          onChanged: (bool value) {
-            Storage().savePreference(schema.copyWith(sensitive: value), ref: ref);
-          },
-        ),
-        // Build the default status settings, including the visibility and spoiler text.
-        ListTile(
-          title: Text(schema.visibility.tooltip(context)),
-          subtitle: Text(schema.visibility.description(context), style: labelStyle),
-          leading: Icon(schema.visibility.icon(), size: iconSize),
-          onTap: () async {
-            final int index = VisibilityType.values.indexOf(schema.visibility);
-            final int nextIndex = (index + 1) % VisibilityType.values.length;
-            Storage().savePreference(
-              schema.copyWith(visibility: VisibilityType.values[nextIndex]),
-              ref: ref,
-            );
-          },
-        ),
-        // Build the reply tag settings.
-        ListTile(
-          title: Text(schema.replyTag.tooltip(context)),
-          subtitle: Text(schema.replyTag.description(context), style: labelStyle),
-          leading: Icon(schema.replyTag.icon(), size: iconSize),
-          onTap: () async {
-            final int index = ReplyTagType.values.indexOf(schema.replyTag);
-            final int nextIndex = (index + 1) % ReplyTagType.values.length;
-
-            Storage().savePreference(schema.copyWith(replyTag: ReplyTagType.values[nextIndex]), ref: ref);
-          },
-        ),
-        // Build the refresh interval settings.
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_refresh_interval ?? "Refresh Interval"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_refresh_interval ?? "The interval to refresh the app's data.",
-            style: labelStyle,
-          ),
-          leading: Icon(Icons.refresh, size: iconSize),
-          trailing: Text(
-            schema.refreshInterval.pretty(abbreviated: true, delimiter: " "),
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface),
-          ),
-          onTap: () async {
-            final List<int> intervals = const [0, 10, 30, 60, 120];
-
-            final int index = intervals.indexOf(schema.refreshInterval.inSeconds);
-            final int nextIndex = (index + 1) % intervals.length;
-
-            Storage().savePreference(
-              schema.copyWith(refreshInterval: Duration(seconds: intervals[nextIndex])),
-              ref: ref,
-            );
-          },
-        ),
-        SwitchListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_loaded_top ?? "Load Newest on Launch"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_loaded_top ?? "Load the newest statuses and jump to top when the app is launched.",
-            style: labelStyle,
-          ),
-          value: schema.loadedTop,
-          secondary: Icon(schema.loadedTop ? Icons.vertical_align_top : Icons.vertical_align_center, size: iconSize),
-          onChanged: (bool value) {
-            Storage().savePreference(schema.copyWith(loadedTop: value), ref: ref);
-          },
-        ),
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.desc_quote_policy ?? "Quote Policy"),
-          subtitle: Text(schema.quotePolicy.description(context), style: labelStyle),
-          leading: Icon(schema.quotePolicy.icon, size: iconSize),
-          onTap: () async {
-            final int index = QuotePolicyType.values.indexOf(schema.quotePolicy);
-            final int nextIndex = (index + 1) % QuotePolicyType.values.length;
-
-            Storage().savePreference(schema.copyWith(quotePolicy: QuotePolicyType.values[nextIndex]), ref: ref);
-          },
-        ),
-        // Build the locale settings and selector.
-        buildLocaleSelector(schema: schema),
-
-        const SizedBox(height: 32),
-
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_timeline ?? "Timeline Settings"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_timeline ?? "Control what appears in your timeline.",
-            style: labelStyle,
-          ),
-        ),
-        SwitchListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_hide_replies ?? "Hide Replies"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_hide_replies ?? "Hide replies from your timeline.",
-            style: labelStyle,
-          ),
-          value: schema.hideReplies,
-          secondary: Icon(schema.hideReplies ? Icons.speaker_notes_off : Icons.speaker_notes, size: iconSize),
-          onChanged: (bool value) {
-            Storage().savePreference(schema.copyWith(hideReplies: value), ref: ref);
-          },
-        ),
-        SwitchListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_hide_reblogs ?? "Hide Reblogs"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_hide_reblogs ?? "Hide reblogs from your timeline.",
-            style: labelStyle,
-          ),
-          value: schema.hideReblogs,
-          secondary: Icon(schema.hideReblogs ? Icons.repeat_on : Icons.repeat, size: iconSize),
-          onChanged: (bool value) {
-            Storage().savePreference(schema.copyWith(hideReblogs: value), ref: ref);
-          },
-        ),
-        SwitchListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_auto_play ?? "Auto-play Videos"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_auto_play ?? "Automatically play videos in timeline.",
-            style: labelStyle,
-          ),
-          value: schema.autoPlayVideo,
-          secondary: Icon(schema.autoPlayVideo ? Icons.play_circle : Icons.play_circle_outline, size: iconSize),
-          onChanged: (bool value) {
-            Storage().savePreference(schema.copyWith(autoPlayVideo: value), ref: ref);
-          },
-        ),
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_timeline_limit ?? "Timeline Size"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_timeline_limit ?? "Maximum posts to load at once.",
-            style: labelStyle,
-          ),
-          leading: Icon(Icons.format_list_numbered, size: iconSize),
-          trailing: Text(
-            schema.timelineLimit.toString(),
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface),
-          ),
-          onTap: () {
-            final List<int> limits = const [20, 40, 60, 80, 100];
-            final int index = limits.indexOf(schema.timelineLimit);
-            final int nextIndex = (index + 1) % limits.length;
-
-            Storage().savePreference(schema.copyWith(timelineLimit: limits[nextIndex]), ref: ref);
-          },
-        ),
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_image_quality ?? "Image Quality"),
-          subtitle: Text(schema.imageQuality.description(context), style: labelStyle),
-          leading: Icon(Icons.image, size: iconSize),
-          onTap: () {
-            final int index = ImageQualityType.values.indexOf(schema.imageQuality);
-            final int nextIndex = (index + 1) % ImageQualityType.values.length;
-
-            Storage().savePreference(schema.copyWith(imageQuality: ImageQualityType.values[nextIndex]), ref: ref);
-          },
-        ),
-
-        const SizedBox(height: 32),
-
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_appearance ?? "Appearance"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_appearance ?? "Customize how the app looks.",
-            style: labelStyle,
-          ),
-        ),
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_font_scale ?? "Font Size"),
-          subtitle: Slider(
-            value: schema.fontScale,
-            min: 0.8,
-            max: 1.4,
-            divisions: 6,
-            label: '${(schema.fontScale * 100).round()}%',
-            onChanged: (double value) {
-              Storage().savePreference(schema.copyWith(fontScale: value), ref: ref);
-            },
-          ),
-          leading: Icon(Icons.format_size, size: iconSize),
-        ),
-        if (schema.theme == ThemeMode.dark)
-          SwitchListTile(
-            title: Text(AppLocalizations.of(context)?.txt_preference_oled_theme ?? "OLED Dark Theme"),
-            subtitle: Text(
-              AppLocalizations.of(context)?.desc_preference_oled_theme ?? "Pure black background for OLED screens.",
-              style: labelStyle,
-            ),
+        if (schema.theme == ThemeMode.dark) ...[
+          const SizedBox(height: 8),
+          _toggleCard(
+            theme: theme, scheme: scheme,
+            title: AppLocalizations.of(context)?.txt_preference_oled_theme ?? 'OLED Dark Theme',
+            subtitle: AppLocalizations.of(context)?.desc_preference_oled_theme ?? 'Pure black background',
+            icon: schema.useOledTheme ? Icons.brightness_1 : Icons.brightness_1_outlined,
             value: schema.useOledTheme,
-            secondary: Icon(schema.useOledTheme ? Icons.brightness_1 : Icons.brightness_1_outlined, size: iconSize),
-            onChanged: (bool value) {
-              Storage().savePreference(schema.copyWith(useOledTheme: value), ref: ref);
+            onChanged: (v) {
+              Storage().savePreference(schema.copyWith(useOledTheme: v), ref: ref);
               ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
             },
           ),
-        SwitchListTile(
-          title: Text(AppLocalizations.of(context)?.txt_preference_haptic ?? "Haptic Feedback"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_haptic ?? "Vibrate on interactions like favourite and boost.",
-            style: labelStyle,
+        ],
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+            borderRadius: BorderRadius.circular(12),
           ),
+          child: ListTile(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            leading: Icon(Icons.format_size, size: 22, color: scheme.onSurfaceVariant),
+            title: Text(AppLocalizations.of(context)?.txt_preference_font_scale ?? 'Font Size'),
+            subtitle: Slider(
+              value: schema.fontScale,
+              min: 0.8, max: 1.4, divisions: 6,
+              label: '${(schema.fontScale * 100).round()}%',
+              onChanged: (v) => Storage().savePreference(schema.copyWith(fontScale: v), ref: ref),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        _toggleCard(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.txt_preference_haptic ?? 'Haptic Feedback',
+          subtitle: AppLocalizations.of(context)?.desc_preference_haptic ?? 'Vibrate on interactions',
+          icon: schema.hapticFeedback ? Icons.vibration : Icons.smartphone,
           value: schema.hapticFeedback,
-          secondary: Icon(schema.hapticFeedback ? Icons.vibration : Icons.smartphone, size: iconSize),
-          onChanged: (bool value) {
-            Storage().savePreference(schema.copyWith(hapticFeedback: value), ref: ref);
-          },
+          onChanged: (v) => Storage().savePreference(schema.copyWith(hapticFeedback: v), ref: ref),
         ),
-      ],
-    );
-  }
-
-  // Build the engineer settings that are not meant for the general user.
-  Widget buildEngineerSettings() {
-    final Storage storage = Storage();
-    final DefaultCacheManager cacheManager = DefaultCacheManager();
-
-    // The list of button to clear the cache or reset the app.
-    return ListView(
-      children: [
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.btn_preference_engineer_clear_cache ?? "Clear All Cache"),
-          subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_clear_cache ?? "Clear all cached data."),
-          leading: Icon(Icons.delete_outline_outlined, size: iconSize, color: Theme.of(context).colorScheme.error),
-          onTap: () async {
-            await cacheManager.emptyCache();
-
-            if (mounted) {
-              final String message = AppLocalizations.of(context)?.msg_preference_engineer_clear_cache ?? "Cache cleared successfully.";
-              await showSnackbar(context, message);
-            }
-          },
+        const SizedBox(height: 8),
+        _buildLocaleSelector(schema: schema, theme: theme, scheme: scheme),
+        const SizedBox(height: 8),
+        _toggleCard(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.txt_preference_in_app_browser ?? 'In-App Browser',
+          subtitle: AppLocalizations.of(context)?.desc_preference_in_app_browser ?? 'Open links in WebView instead of native browser',
+          icon: schema.useInAppBrowser ? Icons.web : Icons.open_in_browser,
+          value: schema.useInAppBrowser,
+          onChanged: (v) => Storage().savePreference(schema.copyWith(useInAppBrowser: v), ref: ref),
         ),
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.btn_preference_engineer_test_notifier ?? "Test Notification"),
-          subtitle: Text(
-            AppLocalizations.of(context)?.desc_preference_engineer_test_notifier ?? "Send a dummy notification to test the notification system.",
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor),
+
+        const SizedBox(height: 24),
+
+        // ── POSTING ──
+        _sectionLabel(theme, AppLocalizations.of(context)?.txt_preference_status ?? 'POSTING'),
+        const SizedBox(height: 12),
+        _selectorCard(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.txt_preference_sensitive ?? 'Default Visibility',
+          icon: schema.visibility.icon(),
+          current: schema.visibility.tooltip(context),
+          subtitle: schema.visibility.description(context),
+          options: VisibilityType.values,
+          selected: schema.visibility,
+          labelOf: (v) => v.tooltip(context),
+          iconOf: (v) => v.icon(),
+          onSelected: (v) => Storage().savePreference(schema.copyWith(visibility: v), ref: ref),
+        ),
+        const SizedBox(height: 8),
+        _toggleCard(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.txt_preference_sensitive ?? 'Sensitive Content',
+          subtitle: AppLocalizations.of(context)?.desc_preference_sensitive ?? 'Mark media as sensitive by default',
+          icon: schema.sensitive ? Icons.visibility_off : Icons.visibility,
+          value: schema.sensitive,
+          onChanged: (v) => Storage().savePreference(schema.copyWith(sensitive: v), ref: ref),
+        ),
+        const SizedBox(height: 8),
+        _selectorCard(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.desc_quote_policy ?? 'Quote Policy',
+          icon: schema.quotePolicy.icon,
+          current: schema.quotePolicy.title(context),
+          subtitle: schema.quotePolicy.description(context),
+          options: QuotePolicyType.values,
+          selected: schema.quotePolicy,
+          labelOf: (v) => v.title(context),
+          iconOf: (v) => v.icon,
+          onSelected: (v) => Storage().savePreference(schema.copyWith(quotePolicy: v), ref: ref),
+        ),
+        const SizedBox(height: 8),
+        _selectorCard(
+          theme: theme, scheme: scheme,
+          title: 'Reply Tags',
+          icon: schema.replyTag.icon(),
+          current: schema.replyTag.tooltip(context),
+          subtitle: schema.replyTag.description(context),
+          options: ReplyTagType.values,
+          selected: schema.replyTag,
+          labelOf: (v) => v.tooltip(context),
+          iconOf: (v) => v.icon(),
+          onSelected: (v) => Storage().savePreference(schema.copyWith(replyTag: v), ref: ref),
+        ),
+
+        const SizedBox(height: 24),
+
+        // ── TIMELINE ──
+        _sectionLabel(theme, AppLocalizations.of(context)?.txt_preference_timeline ?? 'TIMELINE'),
+        const SizedBox(height: 12),
+        _toggleCard(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.txt_preference_hide_replies ?? 'Hide Replies',
+          subtitle: AppLocalizations.of(context)?.desc_preference_hide_replies,
+          icon: schema.hideReplies ? Icons.speaker_notes_off : Icons.speaker_notes,
+          value: schema.hideReplies,
+          onChanged: (v) => Storage().savePreference(schema.copyWith(hideReplies: v), ref: ref),
+        ),
+        const SizedBox(height: 8),
+        _toggleCard(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.txt_preference_hide_reblogs ?? 'Hide Reblogs',
+          subtitle: AppLocalizations.of(context)?.desc_preference_hide_reblogs,
+          icon: schema.hideReblogs ? Icons.repeat_on : Icons.repeat,
+          value: schema.hideReblogs,
+          onChanged: (v) => Storage().savePreference(schema.copyWith(hideReblogs: v), ref: ref),
+        ),
+        const SizedBox(height: 8),
+        _toggleCard(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.txt_preference_auto_play ?? 'Auto-play Videos',
+          subtitle: AppLocalizations.of(context)?.desc_preference_auto_play,
+          icon: schema.autoPlayVideo ? Icons.play_circle : Icons.play_circle_outline,
+          value: schema.autoPlayVideo,
+          onChanged: (v) => Storage().savePreference(schema.copyWith(autoPlayVideo: v), ref: ref),
+        ),
+        const SizedBox(height: 8),
+        _toggleCard(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.txt_preference_loaded_top ?? 'Load Newest on Launch',
+          subtitle: AppLocalizations.of(context)?.desc_preference_loaded_top,
+          icon: schema.loadedTop ? Icons.vertical_align_top : Icons.vertical_align_center,
+          value: schema.loadedTop,
+          onChanged: (v) => Storage().savePreference(schema.copyWith(loadedTop: v), ref: ref),
+        ),
+        const SizedBox(height: 8),
+        _selectorCard<int>(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.txt_preference_refresh_interval ?? 'Refresh Interval',
+          icon: Icons.refresh,
+          current: schema.refreshInterval.inSeconds == 0
+              ? 'Off'
+              : schema.refreshInterval.pretty(abbreviated: true, delimiter: ' '),
+          options: const [0, 10, 30, 60, 120],
+          selected: schema.refreshInterval.inSeconds,
+          labelOf: (v) => v == 0 ? 'Off' : Duration(seconds: v).pretty(abbreviated: true, delimiter: ' '),
+          onSelected: (v) => Storage().savePreference(
+            schema.copyWith(refreshInterval: Duration(seconds: v)), ref: ref,
           ),
-          leading: Icon(Icons.notifications, size: iconSize, color: Theme.of(context).colorScheme.tertiary),
-          onTap: () => sendDummyNotification(),
         ),
-        const SizedBox(height: 16),
-        ListTile(
-          title: Text(AppLocalizations.of(context)?.btn_preference_engineer_reset ?? "Reset system"),
-          subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_reset ?? "Clear all settings and reset the app."),
-          leading: Icon(Icons.restart_alt, size: iconSize, color: Theme.of(context).colorScheme.error),
-          onTap: () async {
-            final bool confirmed = await showConfirmDialog(
-              context: context,
-              title: AppLocalizations.of(context)?.btn_preference_engineer_reset ?? "Reset system",
-              message: AppLocalizations.of(context)?.msg_confirm_reset ?? "This will delete all your data, accounts, and settings. This cannot be undone.",
-            );
 
-            if (!confirmed || !mounted) return;
-
-            await storage.purge();
-
-            if (mounted) {
-              final String message = AppLocalizations.of(context)?.msg_preference_engineer_reset ?? "Settings cleared successfully.";
-              await showSnackbar(context, message);
-            }
-          },
-        ),
+        const SizedBox(height: 24),
       ],
     );
   }
 
-  // Build the app information section.
-  Widget buildAppInfo() {
-    final PackageInfo info = Info().info!;
-    final String author = "cmj <cmj@cmj.tw>";
-    final String repo = "https://github.com/cmj0121";
-    final String link = "https://apps.apple.com/app/6745746223";
-    final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).disabledColor);
+  // ── Reusable widgets ─────────────────────────────────────────────
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ListTile(
-          leading: Icon(Icons.numbers, size: iconSize),
-          title: Text(AppLocalizations.of(context)?.txt_about_app_version ?? "App Version"),
-          subtitle: Text('${info.version} (${info.buildNumber})', style: labelStyle),
-          onTap: () => launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication),
-        ),
-        ListTile(
-          leading: Icon(Icons.person, size: iconSize),
-          title: Text(AppLocalizations.of(context)?.txt_about_author ?? "Author"),
-          subtitle: Text(author, style: labelStyle),
-          onTap: () => launchUrl(Uri.parse(repo), mode: LaunchMode.externalApplication),
-        ),
-        ListTile(
-          leading: Icon(Icons.code, size: iconSize),
-          title: Text(AppLocalizations.of(context)?.txt_about_repository ?? "Repository"),
-          subtitle: Text(repo, style: labelStyle),
-          onTap: () => launchUrl(Uri.parse("$repo/${info.appName}"), mode: LaunchMode.externalApplication),
-        ),
-        ListTile(
-          leading: Icon(Icons.copyright, size: iconSize),
-          title: Text(AppLocalizations.of(context)?.txt_about_copyright ?? "Copyright"),
-          subtitle: Text("© $author", style: labelStyle),
-          onTap: () => launchUrl(Uri.parse("$repo/${info.appName}?tab=License-1-ov-file"), mode: LaunchMode.externalApplication),
-        ),
-      ],
+  Widget _sectionLabel(ThemeData theme, String text) {
+    return Text(
+      text.toUpperCase(),
+      style: theme.textTheme.labelSmall?.copyWith(
+        color: theme.colorScheme.onSurfaceVariant,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 1.2,
+      ),
     );
   }
 
-  // Build the locale selector dialog.
-  Widget buildLocaleSelector({required SystemPreferenceSchema schema}) {
+  Widget _toggleCard({
+    required ThemeData theme,
+    required ColorScheme scheme,
+    required String title,
+    String? subtitle,
+    required IconData icon,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: SwitchListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: Text(title, style: theme.textTheme.bodyMedium),
+        subtitle: subtitle != null
+            ? Text(subtitle, style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant))
+            : null,
+        value: value,
+        secondary: Icon(icon, size: 22, color: scheme.onSurfaceVariant),
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  /// A card that shows the current value and opens a bottom sheet with
+  /// all options when tapped — replaces the old tap-to-cycle pattern.
+  Widget _selectorCard<T>({
+    required ThemeData theme,
+    required ColorScheme scheme,
+    required String title,
+    required IconData icon,
+    required String current,
+    String? subtitle,
+    required List<T> options,
+    required T selected,
+    required String Function(T) labelOf,
+    IconData Function(T)? iconOf,
+    required ValueChanged<T> onSelected,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        leading: Icon(icon, size: 22, color: scheme.onSurfaceVariant),
+        title: Text(title, style: theme.textTheme.bodyMedium),
+        subtitle: subtitle != null
+            ? Text(subtitle, style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant))
+            : null,
+        trailing: Text(current, style: theme.textTheme.labelMedium?.copyWith(color: scheme.primary)),
+        onTap: () => showAdaptiveGlassSheet(
+          context: context,
+          builder: (_) => SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 4),
+                  Container(
+                    width: 32, height: 2,
+                    decoration: BoxDecoration(color: scheme.primary, borderRadius: BorderRadius.circular(1)),
+                  ),
+                  const SizedBox(height: 16),
+                  ...options.map((opt) {
+                    final bool isSelected = opt == selected;
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        onSelected(opt);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+                        child: Row(
+                          children: [
+                            Icon(
+                              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                              size: 20, color: isSelected ? scheme.primary : scheme.outline,
+                            ),
+                            if (iconOf != null) ...[
+                              const SizedBox(width: 12),
+                              Icon(iconOf(opt), size: 18, color: scheme.onSurfaceVariant),
+                            ],
+                            const SizedBox(width: 12),
+                            Text(labelOf(opt), style: theme.textTheme.bodyMedium),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocaleSelector({
+    required SystemPreferenceSchema schema,
+    required ThemeData theme,
+    required ColorScheme scheme,
+  }) {
     final Locale locale = schema.locale ?? WidgetsBinding.instance.platformDispatcher.locale;
     final String text = LocaleNames.of(context)!.nameOf(locale.languageCode) ?? locale.languageCode;
 
-    return ListTile(
-      leading: Icon(Icons.translate, size: iconSize),
-      title: Text(text),
-      subtitle: Text(
-        AppLocalizations.of(context)?.desc_preference_locale ?? "Select the app's language.",
-        style: labelStyle,
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(12),
       ),
-      onTap: () async {
-        showAdaptiveGlassDialog(
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        leading: Icon(Icons.translate, size: 22, color: scheme.onSurfaceVariant),
+        title: Text(AppLocalizations.of(context)?.desc_preference_locale ?? 'Language'),
+        trailing: Text(text, style: theme.textTheme.labelMedium?.copyWith(color: scheme.primary)),
+        onTap: () => showAdaptiveGlassDialog(
           context: context,
-          builder: (BuildContext context) {
+          builder: (BuildContext ctx) {
             final List<Locale> locales = AppLocalizations.supportedLocales;
-
             return ListView.builder(
               shrinkWrap: true,
               itemCount: locales.length,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (BuildContext ctx, int index) {
                 final Locale item = locales[index];
-                final String name = '[${item.languageCode}] ${LocaleNames.of(context)?.nameOf(item.languageCode) ?? ""}';
+                final String name = '[${item.languageCode}] ${LocaleNames.of(ctx)?.nameOf(item.languageCode) ?? ""}';
                 final bool selected = item.languageCode == locale.languageCode;
-                final Widget icon = selected ?
-                    Icon(Icons.check, size: tabSize, color: Theme.of(context).colorScheme.primary) :
-                    const SizedBox.shrink();
-
                 return ListTile(
-                  leading: icon,
+                  leading: selected
+                      ? Icon(Icons.check, size: tabSize, color: scheme.primary)
+                      : const SizedBox(width: 24),
                   title: Text(name),
                   onTap: () {
-                    context.pop();
+                    ctx.pop();
                     Storage().savePreference(schema.copyWith(locale: item), ref: ref);
                     ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
                   },
@@ -474,26 +445,133 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
               },
             );
           },
-        );
-      },
+        ),
+      ),
     );
   }
 
-  // The dummy notification to send in local device.
-  Future<void> sendDummyNotification() async {
-    showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_pending ?? "Test notification will be sent in 5 seconds...");
+  // ── Engineer settings ────────────────────────────────────────────
 
+  Widget _buildEngineerSettings() {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme scheme = theme.colorScheme;
+    final Storage storage = Storage();
+    final DefaultCacheManager cacheManager = DefaultCacheManager();
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      children: [
+        const SizedBox(height: 8),
+        _sectionLabel(theme, AppLocalizations.of(context)?.btn_preference_engineer ?? 'DEVELOPER'),
+        const SizedBox(height: 12),
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.btn_preference_applications ?? 'Applications'),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_applications ?? 'Create OAuth2 applications on this server',
+            style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
+          leading: Icon(Icons.api, size: 22, color: scheme.primary),
+          trailing: Icon(Icons.chevron_right, size: 18, color: scheme.onSurfaceVariant),
+          onTap: () => context.push(RoutePath.applications.path),
+        ),
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.btn_preference_engineer_clear_cache ?? 'Clear All Cache'),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_clear_cache ?? 'Clear all cached data.',
+            style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
+          leading: Icon(Icons.delete_outline, size: 22, color: scheme.error),
+          onTap: () async {
+            await cacheManager.emptyCache();
+            if (mounted) {
+              showSnackbar(context, AppLocalizations.of(context)?.msg_preference_engineer_clear_cache ?? 'Cache cleared.');
+            }
+          },
+        ),
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.btn_preference_engineer_test_notifier ?? 'Test Notification'),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_test_notifier ?? 'Send a dummy notification.',
+            style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
+          leading: Icon(Icons.notifications, size: 22, color: scheme.tertiary),
+          onTap: () => _sendDummyNotification(),
+        ),
+        const SizedBox(height: 16),
+        ListTile(
+          title: Text(AppLocalizations.of(context)?.btn_preference_engineer_reset ?? 'Reset System'),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_reset ?? 'Clear all settings and reset.',
+            style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
+          leading: Icon(Icons.restart_alt, size: 22, color: scheme.error),
+          onTap: () async {
+            final bool confirmed = await showConfirmDialog(
+              context: context,
+              title: AppLocalizations.of(context)?.btn_preference_engineer_reset ?? 'Reset',
+              message: AppLocalizations.of(context)?.msg_confirm_reset ?? 'This cannot be undone.',
+            );
+            if (!confirmed || !mounted) return;
+            await storage.purge();
+            if (mounted) {
+              showSnackbar(context, AppLocalizations.of(context)?.msg_preference_engineer_reset ?? 'Reset complete.');
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  // ── About ────────────────────────────────────────────────────────
+
+  Widget _buildAppInfo() {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme scheme = theme.colorScheme;
+    final PackageInfo info = Info().info!;
+    final String author = 'cmj <cmj@cmj.tw>';
+    final String repo = 'https://github.com/cmj0121';
+    final String link = 'https://apps.apple.com/app/6745746223';
+    final TextStyle? sub = theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant);
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      children: [
+        const SizedBox(height: 8),
+        _sectionLabel(theme, AppLocalizations.of(context)?.btn_preference_about ?? 'ABOUT'),
+        const SizedBox(height: 12),
+        ListTile(
+          leading: Icon(Icons.numbers, size: 22, color: scheme.onSurfaceVariant),
+          title: Text(AppLocalizations.of(context)?.txt_about_app_version ?? 'App Version'),
+          subtitle: Text('${info.version} (${info.buildNumber})', style: sub),
+          onTap: () => launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication),
+        ),
+        ListTile(
+          leading: Icon(Icons.person, size: 22, color: scheme.onSurfaceVariant),
+          title: Text(AppLocalizations.of(context)?.txt_about_author ?? 'Author'),
+          subtitle: Text(author, style: sub),
+          onTap: () => launchUrl(Uri.parse(repo), mode: LaunchMode.externalApplication),
+        ),
+        ListTile(
+          leading: Icon(Icons.code, size: 22, color: scheme.onSurfaceVariant),
+          title: Text(AppLocalizations.of(context)?.txt_about_repository ?? 'Repository'),
+          subtitle: Text(repo, style: sub),
+          onTap: () => launchUrl(Uri.parse('$repo/${info.appName}'), mode: LaunchMode.externalApplication),
+        ),
+        ListTile(
+          leading: Icon(Icons.copyright, size: 22, color: scheme.onSurfaceVariant),
+          title: Text(AppLocalizations.of(context)?.txt_about_copyright ?? 'Copyright'),
+          subtitle: Text('© $author', style: sub),
+          onTap: () => launchUrl(Uri.parse('$repo/${info.appName}?tab=License-1-ov-file'), mode: LaunchMode.externalApplication),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _sendDummyNotification() async {
+    showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_pending ?? 'Test notification in 5 seconds...');
     Future.delayed(const Duration(seconds: 5), () {
       final state = WidgetsBinding.instance.lifecycleState;
       switch (state) {
         case AppLifecycleState.paused:
         case AppLifecycleState.inactive:
         case AppLifecycleState.detached:
-          sendLocalNotification("...", "...", badgeNumber: 999);
+          sendLocalNotification('...', '...', badgeNumber: 999);
           return;
         default:
           AppBadgePlus.updateBadge(0);
-          showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_foreground ?? "Notifications are not sent while the app is in the foreground.");
+          showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_foreground ?? 'Notifications require background.');
           return;
       }
     });

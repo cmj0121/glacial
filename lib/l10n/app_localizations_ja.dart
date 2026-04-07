@@ -179,6 +179,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get btn_profile_core => 'プロフィール';
 
   @override
+  String get btn_edit_profile => 'Edit profile';
+
+  @override
   String get btn_profile_post => 'トゥート';
 
   @override
@@ -210,6 +213,42 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get btn_profile_privacy => 'プライバシー設定';
+
+  @override
+  String get txt_profile_custom_fields => 'カスタムフィールド';
+
+  @override
+  String get txt_profile_field_label => 'ラベル';
+
+  @override
+  String get txt_profile_field_value => '値';
+
+  @override
+  String get txt_profile_add_field => '追加';
+
+  @override
+  String get txt_profile_no_fields => 'カスタムフィールドはまだありません';
+
+  @override
+  String get btn_profile_defaults => '投稿のデフォルト';
+
+  @override
+  String get txt_profile_default_visibility => 'デフォルトの公開範囲';
+
+  @override
+  String get txt_profile_default_media => 'メディア';
+
+  @override
+  String get txt_profile_sensitive_media => 'メディアを閲覧注意にする';
+
+  @override
+  String get desc_profile_sensitive_media => 'メディアをデフォルトで警告の後ろに隠す';
+
+  @override
+  String get txt_profile_default_language => '言語';
+
+  @override
+  String get txt_profile_language_hint => 'ISO 639-1（例: ja, en, zh）';
 
   @override
   String get btn_status_toot => 'トゥート';
@@ -493,6 +532,42 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_list_policy_none => '返信を表示しない';
+
+  @override
+  String get txt_list_policy_short_followed => 'フォロー中の返信';
+
+  @override
+  String get txt_list_policy_short_list => 'リスト内のみ';
+
+  @override
+  String get txt_list_policy_short_none => '返信なし';
+
+  @override
+  String get txt_list_short_exclusive => '排他的';
+
+  @override
+  String get txt_list_short_inclusive => '包括的';
+
+  @override
+  String get btn_list_timeline => 'タイムライン';
+
+  @override
+  String get btn_list_members => 'メンバー';
+
+  @override
+  String get txt_list_settings => 'リスト設定';
+
+  @override
+  String get txt_list_reply_policy => '返信ポリシー';
+
+  @override
+  String get txt_list_exclusivity => 'ホーム';
+
+  @override
+  String get desc_list_exclusive_on => 'メンバーの投稿をホームから隠す';
+
+  @override
+  String get desc_list_exclusive_off => 'メンバーの投稿をホームに表示';
 
   @override
   String get txt_list_exclusive => 'ホームタイムラインから除外';
@@ -800,6 +875,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get txt_media_alt_text => '代替テキスト';
 
   @override
+  String get txt_media_alt_hint => '視覚障害のあるユーザーのためにこのメディアを説明してください';
+
+  @override
+  String get txt_media_alt_saved => '説明を保存しました';
+
+  @override
   String get txt_media_image_info => '画像情報';
 
   @override
@@ -831,6 +912,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_no_notifications => '通知はまだありません';
+
+  @override
+  String txt_notification_others(int count) {
+    return '他$count人';
+  }
 
   @override
   String get txt_conversation_unread => '未読';
@@ -1148,4 +1234,161 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_instance_closed => '受付停止';
+
+  @override
+  String get txt_preference_new_ui => '新しいUIデザイン';
+
+  @override
+  String get desc_preference_new_ui =>
+      'レイアウトとナビゲーションが改善された新しいインターフェースをお試しください。';
+
+  @override
+  String get txt_v2_tagline => 'ソーシャルな会話のための落ち着いた空間';
+
+  @override
+  String get btn_v2_get_started => 'はじめる';
+
+  @override
+  String get txt_v2_choose_server => 'サーバーを選択';
+
+  @override
+  String get txt_v2_server_hint => 'サーバーを検索またはURLを入力';
+
+  @override
+  String get txt_v2_popular_servers => '人気のサーバー';
+
+  @override
+  String get txt_v2_tap_to_select => 'タップしてこのサーバーを選択';
+
+  @override
+  String get txt_v2_no_match => '一致するサーバーがありません';
+
+  @override
+  String get txt_shortcuts_title => 'キーボードショートカット';
+
+  @override
+  String get txt_shortcut_help => 'キーボードショートカットを表示';
+
+  @override
+  String get txt_shortcut_refresh => '更新して最上部にスクロール';
+
+  @override
+  String get txt_shortcut_next_post => '次の投稿';
+
+  @override
+  String get txt_shortcut_prev_post => '前の投稿';
+
+  @override
+  String get txt_shortcut_next_tab => '次のタブ';
+
+  @override
+  String get txt_shortcut_prev_tab => '前のタブ';
+
+  @override
+  String get txt_shortcut_focus_search => '検索にフォーカス';
+
+  @override
+  String get txt_shortcut_compose_post => '新規投稿を作成';
+
+  @override
+  String get txt_shortcut_open_status => '選択中の投稿を開く';
+
+  @override
+  String get txt_shortcut_favourite => '選択中の投稿をお気に入り';
+
+  @override
+  String get txt_shortcut_boost => '選択中の投稿をブースト';
+
+  @override
+  String get txt_shortcut_reply => '選択中の投稿に返信';
+
+  @override
+  String get txt_shortcut_bookmark => '選択中の投稿をブックマーク';
+
+  @override
+  String get txt_shortcut_escape => '検索を閉じるか入力をブラー';
+
+  @override
+  String get txt_shortcut_section_navigation => 'ナビゲーション';
+
+  @override
+  String get txt_shortcut_section_actions => 'アクション';
+
+  @override
+  String get txt_shortcut_section_general => '一般';
+
+  @override
+  String get txt_preference_in_app_browser => 'アプリ内ブラウザ';
+
+  @override
+  String get desc_preference_in_app_browser => '外部ブラウザの代わりにアプリ内でリンクを開く';
+
+  @override
+  String get btn_preference_applications => 'アプリケーション';
+
+  @override
+  String get desc_preference_applications => 'このサーバーで OAuth2 アプリケーションを作成';
+
+  @override
+  String get txt_app_new_application => '新規アプリケーション';
+
+  @override
+  String get txt_app_name => 'アプリケーション名';
+
+  @override
+  String get txt_app_name_hint => 'マイアプリ';
+
+  @override
+  String get txt_app_website => 'アプリケーションのウェブサイト';
+
+  @override
+  String get txt_app_redirect_uri => 'リダイレクト URI';
+
+  @override
+  String get txt_app_scopes => 'スコープ';
+
+  @override
+  String get btn_app_create => 'アプリケーションを作成';
+
+  @override
+  String get btn_app_creating => '作成中...';
+
+  @override
+  String get txt_app_created => 'アプリケーション作成完了';
+
+  @override
+  String get txt_app_client_id => 'Client ID';
+
+  @override
+  String get txt_app_client_secret => 'Client Secret';
+
+  @override
+  String get txt_app_access_token => 'Access Token';
+
+  @override
+  String get txt_app_save_warning =>
+      'これらの認証情報を今すぐ保存してください。Client Secret は二度と表示されません。';
+
+  @override
+  String get btn_app_create_another => 'もう一つ作成';
+
+  @override
+  String get btn_app_manage_on_server => 'サーバーでアプリケーションを管理';
+
+  @override
+  String msg_app_copied(String label) {
+    return '$label をコピーしました';
+  }
+
+  @override
+  String get msg_app_create_failed => 'アプリケーションの作成に失敗しました';
+
+  @override
+  String get txt_account_hub_title => 'あなたのアカウント';
+
+  @override
+  String get btn_account_hub_add => 'アカウントを追加';
+
+  @override
+  String get msg_account_hub_expired => 'セッションが期限切れです。アカウントが削除されました。';
 }

@@ -52,8 +52,13 @@ class _InteractionState extends ConsumerState<Interaction> {
       child: Tooltip(
         message: tooltip,
         child: TextButton.icon(
-          label: count == null ? const SizedBox.shrink() : Text(count.toString()),
-          icon: Icon(icon, size: tabSize, color: color),
+          label: count == null
+              ? const SizedBox.shrink()
+              : Opacity(
+                  opacity: count == 0 ? 0 : 1,
+                  child: Text(count == 0 ? '0' : count.toString()),
+                ),
+          icon: Icon(icon, size: 20, color: color),
           style: TextButton.styleFrom(foregroundColor: color),
           onPressed: isAvailable ? onPressed : null,
         ),
@@ -156,7 +161,7 @@ class _InteractionState extends ConsumerState<Interaction> {
         final QuotePolicyType policy = widget.schema.quoteApproval?.toUser ?? QuotePolicyType.nobody;
         return policy.icon;
       default:
-        return widget.action.icon(active: isActive); // Replace with actual logic to determine active state
+        return widget.action.icon(active: isActive);
     }
   }
 
@@ -190,19 +195,14 @@ class _InteractionState extends ConsumerState<Interaction> {
       case StatusInteraction.block:
       case StatusInteraction.edit:
       case StatusInteraction.delete:
-        return Theme.of(context).colorScheme.error;
-      case StatusInteraction.mute:
-        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
-      case StatusInteraction.reblog:
-        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
-      case StatusInteraction.favourite:
-        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
-      case StatusInteraction.bookmark:
-        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
-      case StatusInteraction.pin:
-        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
       case StatusInteraction.report:
         return Theme.of(context).colorScheme.error;
+      case StatusInteraction.mute:
+      case StatusInteraction.reblog:
+      case StatusInteraction.favourite:
+      case StatusInteraction.bookmark:
+      case StatusInteraction.pin:
+        return isActive ? Theme.of(context).colorScheme.tertiary : defaultColor;
       default:
         return defaultColor;
     }
@@ -262,7 +262,8 @@ class _InteractionState extends ConsumerState<Interaction> {
           final String plainText = widget.schema.plainText;
           final String content = plainText.isNotEmpty ? '$plainText\n$uri' : uri;
           await SharePlus.instance.share(ShareParams(text: content));
-        } catch (_) {
+        } catch (e) {
+          logger.w('share failed, falling back to clipboard: $e');
           if (!mounted) return;
           Clipboard.setData(ClipboardData(text: widget.schema.uri));
           final String text = AppLocalizations.of(context)?.msg_copied_to_clipboard ?? "Copy to clipboard";

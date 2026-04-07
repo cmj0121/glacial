@@ -21,7 +21,7 @@ class PreviewCard extends StatelessWidget {
     }
 
     return InkWellDone(
-      onTap: () => context.push(RoutePath.webview.path, extra: Uri.parse(schema.url)),
+      onTap: () => openLink(context, Uri.parse(schema.url)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Padding(

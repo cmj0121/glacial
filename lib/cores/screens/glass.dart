@@ -1,7 +1,6 @@
 // Adaptive Liquid Glass widgets for iOS 26+ support.
 
 export 'glass_app_bar.dart';
-export 'glass_bottom_bar.dart';
 export 'glass_button.dart';
 export 'glass_card.dart';
 export 'glass_container.dart';

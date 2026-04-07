@@ -179,6 +179,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btn_profile_core => '使用者頁面';
 
   @override
+  String get btn_edit_profile => 'Edit profile';
+
+  @override
   String get btn_profile_post => '嘟文';
 
   @override
@@ -210,6 +213,42 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get btn_profile_privacy => '隱私設定';
+
+  @override
+  String get txt_profile_custom_fields => '自訂欄位';
+
+  @override
+  String get txt_profile_field_label => '標籤';
+
+  @override
+  String get txt_profile_field_value => '值';
+
+  @override
+  String get txt_profile_add_field => '新增';
+
+  @override
+  String get txt_profile_no_fields => '尚無自訂欄位';
+
+  @override
+  String get btn_profile_defaults => '預設貼文設定';
+
+  @override
+  String get txt_profile_default_visibility => '預設可見性';
+
+  @override
+  String get txt_profile_default_media => '媒體';
+
+  @override
+  String get txt_profile_sensitive_media => '將媒體標記為敏感';
+
+  @override
+  String get desc_profile_sensitive_media => '預設將媒體隱藏在警告之後';
+
+  @override
+  String get txt_profile_default_language => '語言';
+
+  @override
+  String get txt_profile_language_hint => 'ISO 639-1（例如 zh、en、ja）';
 
   @override
   String get btn_status_toot => '嘟文';
@@ -493,6 +532,42 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_list_policy_none => '不顯示回覆';
+
+  @override
+  String get txt_list_policy_short_followed => '關注者的回覆';
+
+  @override
+  String get txt_list_policy_short_list => '僅列表成員';
+
+  @override
+  String get txt_list_policy_short_none => '不顯示回覆';
+
+  @override
+  String get txt_list_short_exclusive => '獨占';
+
+  @override
+  String get txt_list_short_inclusive => '包含';
+
+  @override
+  String get btn_list_timeline => '時間軸';
+
+  @override
+  String get btn_list_members => '成員';
+
+  @override
+  String get txt_list_settings => '清單設定';
+
+  @override
+  String get txt_list_reply_policy => '回覆政策';
+
+  @override
+  String get txt_list_exclusivity => '首頁動態';
+
+  @override
+  String get desc_list_exclusive_on => '從首頁時間軸隱藏成員貼文';
+
+  @override
+  String get desc_list_exclusive_off => '在首頁時間軸顯示成員貼文';
 
   @override
   String get txt_list_exclusive => '從首頁時間軸移除';
@@ -800,6 +875,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get txt_media_alt_text => '替代文字';
 
   @override
+  String get txt_media_alt_hint => '為視覺障礙使用者描述此媒體';
+
+  @override
+  String get txt_media_alt_saved => '描述已儲存';
+
+  @override
   String get txt_media_image_info => '圖片資訊';
 
   @override
@@ -831,6 +912,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_no_notifications => '還沒有通知';
+
+  @override
+  String txt_notification_others(int count) {
+    return '及其他 $count 位';
+  }
 
   @override
   String get txt_conversation_unread => '未讀';
@@ -1148,4 +1234,159 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_instance_closed => '已關閉';
+
+  @override
+  String get txt_preference_new_ui => '新介面設計';
+
+  @override
+  String get desc_preference_new_ui => '體驗重新設計的介面，改善佈局與導覽。';
+
+  @override
+  String get txt_v2_tagline => '社交對話的寧靜空間';
+
+  @override
+  String get btn_v2_get_started => '開始使用';
+
+  @override
+  String get txt_v2_choose_server => '選擇你的伺服器';
+
+  @override
+  String get txt_v2_server_hint => '搜尋或輸入伺服器網址';
+
+  @override
+  String get txt_v2_popular_servers => '熱門伺服器';
+
+  @override
+  String get txt_v2_tap_to_select => '點擊以選擇此伺服器';
+
+  @override
+  String get txt_v2_no_match => '沒有符合的伺服器';
+
+  @override
+  String get txt_shortcuts_title => '鍵盤快捷鍵';
+
+  @override
+  String get txt_shortcut_help => '顯示鍵盤快捷鍵';
+
+  @override
+  String get txt_shortcut_refresh => '重新整理並捲動至頂端';
+
+  @override
+  String get txt_shortcut_next_post => '下一則貼文';
+
+  @override
+  String get txt_shortcut_prev_post => '上一則貼文';
+
+  @override
+  String get txt_shortcut_next_tab => '下一個分頁';
+
+  @override
+  String get txt_shortcut_prev_tab => '上一個分頁';
+
+  @override
+  String get txt_shortcut_focus_search => '聚焦搜尋框';
+
+  @override
+  String get txt_shortcut_compose_post => '撰寫新貼文';
+
+  @override
+  String get txt_shortcut_open_status => '開啟聚焦的貼文';
+
+  @override
+  String get txt_shortcut_favourite => '將聚焦貼文加入最愛';
+
+  @override
+  String get txt_shortcut_boost => '轉發聚焦貼文';
+
+  @override
+  String get txt_shortcut_reply => '回覆聚焦貼文';
+
+  @override
+  String get txt_shortcut_bookmark => '將聚焦貼文加入書籤';
+
+  @override
+  String get txt_shortcut_escape => '關閉搜尋或取消輸入焦點';
+
+  @override
+  String get txt_shortcut_section_navigation => '導覽';
+
+  @override
+  String get txt_shortcut_section_actions => '動作';
+
+  @override
+  String get txt_shortcut_section_general => '一般';
+
+  @override
+  String get txt_preference_in_app_browser => '應用程式內瀏覽器';
+
+  @override
+  String get desc_preference_in_app_browser => '使用內建瀏覽器開啟連結，而非外部瀏覽器';
+
+  @override
+  String get btn_preference_applications => '應用程式';
+
+  @override
+  String get desc_preference_applications => '在此伺服器上建立 OAuth2 應用程式';
+
+  @override
+  String get txt_app_new_application => '新增應用程式';
+
+  @override
+  String get txt_app_name => '應用程式名稱';
+
+  @override
+  String get txt_app_name_hint => '我的應用程式';
+
+  @override
+  String get txt_app_website => '應用程式網站';
+
+  @override
+  String get txt_app_redirect_uri => '重新導向 URI';
+
+  @override
+  String get txt_app_scopes => '權限範圍';
+
+  @override
+  String get btn_app_create => '建立應用程式';
+
+  @override
+  String get btn_app_creating => '建立中...';
+
+  @override
+  String get txt_app_created => '應用程式已建立';
+
+  @override
+  String get txt_app_client_id => 'Client ID';
+
+  @override
+  String get txt_app_client_secret => 'Client Secret';
+
+  @override
+  String get txt_app_access_token => 'Access Token';
+
+  @override
+  String get txt_app_save_warning => '請立即儲存這些憑證。Client Secret 將不會再次顯示。';
+
+  @override
+  String get btn_app_create_another => '建立另一個';
+
+  @override
+  String get btn_app_manage_on_server => '在伺服器上管理應用程式';
+
+  @override
+  String msg_app_copied(String label) {
+    return '已複製 $label';
+  }
+
+  @override
+  String get msg_app_create_failed => '建立應用程式失敗';
+
+  @override
+  String get txt_account_hub_title => '你的帳號';
+
+  @override
+  String get btn_account_hub_add => '新增帳號';
+
+  @override
+  String get msg_account_hub_expired => '工作階段已過期，帳號已移除。';
 }

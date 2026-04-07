@@ -446,6 +446,12 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get btn_profile_core;
 
+  /// No description provided for @btn_edit_profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get btn_edit_profile;
+
   /// No description provided for @btn_profile_post.
   ///
   /// In en, this message translates to:
@@ -511,6 +517,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy Settings'**
   String get btn_profile_privacy;
+
+  /// No description provided for @txt_profile_custom_fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Fields'**
+  String get txt_profile_custom_fields;
+
+  /// No description provided for @txt_profile_field_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Label'**
+  String get txt_profile_field_label;
+
+  /// No description provided for @txt_profile_field_value.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get txt_profile_field_value;
+
+  /// No description provided for @txt_profile_add_field.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get txt_profile_add_field;
+
+  /// No description provided for @txt_profile_no_fields.
+  ///
+  /// In en, this message translates to:
+  /// **'No custom fields yet'**
+  String get txt_profile_no_fields;
+
+  /// No description provided for @btn_profile_defaults.
+  ///
+  /// In en, this message translates to:
+  /// **'Post Defaults'**
+  String get btn_profile_defaults;
+
+  /// No description provided for @txt_profile_default_visibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Visibility'**
+  String get txt_profile_default_visibility;
+
+  /// No description provided for @txt_profile_default_media.
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get txt_profile_default_media;
+
+  /// No description provided for @txt_profile_sensitive_media.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark media as sensitive'**
+  String get txt_profile_sensitive_media;
+
+  /// No description provided for @desc_profile_sensitive_media.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide media behind a warning by default'**
+  String get desc_profile_sensitive_media;
+
+  /// No description provided for @txt_profile_default_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get txt_profile_default_language;
+
+  /// No description provided for @txt_profile_language_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'ISO 639-1 (e.g. en, ja, zh)'**
+  String get txt_profile_language_hint;
 
   /// No description provided for @btn_status_toot.
   ///
@@ -1057,6 +1135,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Do not show any replies'**
   String get txt_list_policy_none;
+
+  /// No description provided for @txt_list_policy_short_followed.
+  ///
+  /// In en, this message translates to:
+  /// **'Followed replies'**
+  String get txt_list_policy_short_followed;
+
+  /// No description provided for @txt_list_policy_short_list.
+  ///
+  /// In en, this message translates to:
+  /// **'List replies only'**
+  String get txt_list_policy_short_list;
+
+  /// No description provided for @txt_list_policy_short_none.
+  ///
+  /// In en, this message translates to:
+  /// **'No replies'**
+  String get txt_list_policy_short_none;
+
+  /// No description provided for @txt_list_short_exclusive.
+  ///
+  /// In en, this message translates to:
+  /// **'Exclusive'**
+  String get txt_list_short_exclusive;
+
+  /// No description provided for @txt_list_short_inclusive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inclusive'**
+  String get txt_list_short_inclusive;
+
+  /// No description provided for @btn_list_timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get btn_list_timeline;
+
+  /// No description provided for @btn_list_members.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get btn_list_members;
+
+  /// No description provided for @txt_list_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'List settings'**
+  String get txt_list_settings;
+
+  /// No description provided for @txt_list_reply_policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply policy'**
+  String get txt_list_reply_policy;
+
+  /// No description provided for @txt_list_exclusivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Home feed'**
+  String get txt_list_exclusivity;
+
+  /// No description provided for @desc_list_exclusive_on.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide members\' posts from Home timeline'**
+  String get desc_list_exclusive_on;
+
+  /// No description provided for @desc_list_exclusive_off.
+  ///
+  /// In en, this message translates to:
+  /// **'Show members\' posts on Home timeline'**
+  String get desc_list_exclusive_off;
 
   /// No description provided for @txt_list_exclusive.
   ///
@@ -1652,6 +1802,18 @@ abstract class AppLocalizations {
   /// **'Alt Text'**
   String get txt_media_alt_text;
 
+  /// No description provided for @txt_media_alt_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe this media for visually impaired users'**
+  String get txt_media_alt_hint;
+
+  /// No description provided for @txt_media_alt_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Description saved'**
+  String get txt_media_alt_saved;
+
   /// Label for image information section in media viewer
   ///
   /// In en, this message translates to:
@@ -1717,6 +1879,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No notifications yet'**
   String get txt_no_notifications;
+
+  /// No description provided for @txt_notification_others.
+  ///
+  /// In en, this message translates to:
+  /// **'and {count} others'**
+  String txt_notification_others(int count);
 
   /// No description provided for @txt_conversation_unread.
   ///
@@ -2335,6 +2503,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Closed'**
   String get txt_instance_closed;
+
+  /// No description provided for @txt_preference_new_ui.
+  ///
+  /// In en, this message translates to:
+  /// **'New UI Design'**
+  String get txt_preference_new_ui;
+
+  /// No description provided for @desc_preference_new_ui.
+  ///
+  /// In en, this message translates to:
+  /// **'Try the redesigned interface with improved layout and navigation.'**
+  String get desc_preference_new_ui;
+
+  /// No description provided for @txt_v2_tagline.
+  ///
+  /// In en, this message translates to:
+  /// **'A calm space for social conversations'**
+  String get txt_v2_tagline;
+
+  /// No description provided for @btn_v2_get_started.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get btn_v2_get_started;
+
+  /// No description provided for @txt_v2_choose_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your server'**
+  String get txt_v2_choose_server;
+
+  /// No description provided for @txt_v2_server_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search or enter server URL'**
+  String get txt_v2_server_hint;
+
+  /// No description provided for @txt_v2_popular_servers.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular Servers'**
+  String get txt_v2_popular_servers;
+
+  /// No description provided for @txt_v2_tap_to_select.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to select this server'**
+  String get txt_v2_tap_to_select;
+
+  /// No description provided for @txt_v2_no_match.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching servers'**
+  String get txt_v2_no_match;
+
+  /// No description provided for @txt_shortcuts_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard shortcuts'**
+  String get txt_shortcuts_title;
+
+  /// No description provided for @txt_shortcut_help.
+  ///
+  /// In en, this message translates to:
+  /// **'Show keyboard shortcuts'**
+  String get txt_shortcut_help;
+
+  /// No description provided for @txt_shortcut_refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh and scroll to top'**
+  String get txt_shortcut_refresh;
+
+  /// No description provided for @txt_shortcut_next_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Next post'**
+  String get txt_shortcut_next_post;
+
+  /// No description provided for @txt_shortcut_prev_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous post'**
+  String get txt_shortcut_prev_post;
+
+  /// No description provided for @txt_shortcut_next_tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Next tab'**
+  String get txt_shortcut_next_tab;
+
+  /// No description provided for @txt_shortcut_prev_tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous tab'**
+  String get txt_shortcut_prev_tab;
+
+  /// No description provided for @txt_shortcut_focus_search.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus search'**
+  String get txt_shortcut_focus_search;
+
+  /// No description provided for @txt_shortcut_compose_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Compose new post'**
+  String get txt_shortcut_compose_post;
+
+  /// No description provided for @txt_shortcut_open_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Open focused post'**
+  String get txt_shortcut_open_status;
+
+  /// No description provided for @txt_shortcut_favourite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite focused post'**
+  String get txt_shortcut_favourite;
+
+  /// No description provided for @txt_shortcut_boost.
+  ///
+  /// In en, this message translates to:
+  /// **'Boost focused post'**
+  String get txt_shortcut_boost;
+
+  /// No description provided for @txt_shortcut_reply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply to focused post'**
+  String get txt_shortcut_reply;
+
+  /// No description provided for @txt_shortcut_bookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark focused post'**
+  String get txt_shortcut_bookmark;
+
+  /// No description provided for @txt_shortcut_escape.
+  ///
+  /// In en, this message translates to:
+  /// **'Close search or blur input'**
+  String get txt_shortcut_escape;
+
+  /// No description provided for @txt_shortcut_section_navigation.
+  ///
+  /// In en, this message translates to:
+  /// **'NAVIGATION'**
+  String get txt_shortcut_section_navigation;
+
+  /// No description provided for @txt_shortcut_section_actions.
+  ///
+  /// In en, this message translates to:
+  /// **'ACTIONS'**
+  String get txt_shortcut_section_actions;
+
+  /// No description provided for @txt_shortcut_section_general.
+  ///
+  /// In en, this message translates to:
+  /// **'GENERAL'**
+  String get txt_shortcut_section_general;
+
+  /// No description provided for @txt_preference_in_app_browser.
+  ///
+  /// In en, this message translates to:
+  /// **'In-App Browser'**
+  String get txt_preference_in_app_browser;
+
+  /// No description provided for @desc_preference_in_app_browser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open links in WebView instead of native browser'**
+  String get desc_preference_in_app_browser;
+
+  /// No description provided for @btn_preference_applications.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications'**
+  String get btn_preference_applications;
+
+  /// No description provided for @desc_preference_applications.
+  ///
+  /// In en, this message translates to:
+  /// **'Create OAuth2 applications on this server'**
+  String get desc_preference_applications;
+
+  /// No description provided for @txt_app_new_application.
+  ///
+  /// In en, this message translates to:
+  /// **'New Application'**
+  String get txt_app_new_application;
+
+  /// No description provided for @txt_app_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Application name'**
+  String get txt_app_name;
+
+  /// No description provided for @txt_app_name_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'My App'**
+  String get txt_app_name_hint;
+
+  /// No description provided for @txt_app_website.
+  ///
+  /// In en, this message translates to:
+  /// **'Application website'**
+  String get txt_app_website;
+
+  /// No description provided for @txt_app_redirect_uri.
+  ///
+  /// In en, this message translates to:
+  /// **'Redirect URI'**
+  String get txt_app_redirect_uri;
+
+  /// No description provided for @txt_app_scopes.
+  ///
+  /// In en, this message translates to:
+  /// **'Scopes'**
+  String get txt_app_scopes;
+
+  /// No description provided for @btn_app_create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Application'**
+  String get btn_app_create;
+
+  /// No description provided for @btn_app_creating.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating...'**
+  String get btn_app_creating;
+
+  /// No description provided for @txt_app_created.
+  ///
+  /// In en, this message translates to:
+  /// **'Application Created'**
+  String get txt_app_created;
+
+  /// No description provided for @txt_app_client_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Client ID'**
+  String get txt_app_client_id;
+
+  /// No description provided for @txt_app_client_secret.
+  ///
+  /// In en, this message translates to:
+  /// **'Client Secret'**
+  String get txt_app_client_secret;
+
+  /// No description provided for @txt_app_access_token.
+  ///
+  /// In en, this message translates to:
+  /// **'Access Token'**
+  String get txt_app_access_token;
+
+  /// No description provided for @txt_app_save_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Save these credentials now. The client secret will not be shown again.'**
+  String get txt_app_save_warning;
+
+  /// No description provided for @btn_app_create_another.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Another'**
+  String get btn_app_create_another;
+
+  /// No description provided for @btn_app_manage_on_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Applications on Server'**
+  String get btn_app_manage_on_server;
+
+  /// No description provided for @msg_app_copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied {label}'**
+  String msg_app_copied(String label);
+
+  /// No description provided for @msg_app_create_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create application'**
+  String get msg_app_create_failed;
+
+  /// No description provided for @txt_account_hub_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Accounts'**
+  String get txt_account_hub_title;
+
+  /// No description provided for @btn_account_hub_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account'**
+  String get btn_account_hub_add;
+
+  /// No description provided for @msg_account_hub_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Account removed.'**
+  String get msg_account_hub_expired;
 }
 
 class _AppLocalizationsDelegate

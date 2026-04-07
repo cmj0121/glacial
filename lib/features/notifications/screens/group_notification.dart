@@ -1,4 +1,5 @@
 // The group notification widget that shows the notifications from the current signed-in user.
+import 'dart:io';
 import 'dart:math';
 
 import 'package:app_badge_plus/app_badge_plus.dart';
@@ -66,13 +67,16 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
 
     return Align(
       alignment: Alignment.topCenter,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildToolbar(),
-          buildLoadingIndicator(),
-          Flexible(child: buildContent()),
-        ],
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxContentWidth),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildToolbar(),
+            buildLoadingIndicator(),
+            Flexible(child: buildContent()),
+          ],
+        ),
       ),
     );
   }
@@ -98,7 +102,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
   Widget buildContent() {
     if (groups.isEmpty) {
       final String message = AppLocalizations.of(context)?.txt_no_notifications ?? 'No notifications yet';
-      return isCompleted ? NoResult(message: message, icon: Icons.notifications_none_outlined) : const SizedBox.shrink();
+      return isCompleted ? NoResult(message: message, icon: Icons.notifications_none_outlined) : const SkeletonNotifications();
     }
 
     final Widget builder = ScrollablePositionedList.builder(
@@ -162,23 +166,43 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
 
     setLoading(true);
 
-    final String? maxId = groups.isNotEmpty ? groups.last.pageMaxID : null;
-    final GroupNotificationSchema? schema = await status?.fetchNotifications(maxId: maxId);
-    final TimelineMarkerType type = TimelineMarkerType.notifications;
+    try {
+      final String? maxId = groups.isNotEmpty ? groups.last.pageMaxID : null;
+      final GroupNotificationSchema? schema = await status?.fetchNotifications(maxId: maxId);
+      final TimelineMarkerType type = TimelineMarkerType.notifications;
 
-    if (mounted) {
-      setState(() => groups.addAll(schema?.groups ?? []));
-      markLoadComplete(isEmpty: schema?.isEmpty ?? false);
-    }
+      if (mounted) {
+        setState(() => groups.addAll(schema?.groups ?? []));
+        markLoadComplete(isEmpty: schema?.isEmpty ?? false);
+      }
 
-    final int? id = schema?.groups.firstOrNull?.id;
-    if (id != null) {
-      final MarkersSchema? markers = await status?.getMarker(type: type);
-      final MarkerSchema? marker = markers?.markers[type];
-      final int lastReadId = max(int.parse(marker?.lastReadID ?? '0'), id);
+      final int? id = schema?.groups.firstOrNull?.id;
+      if (id != null) {
+        final MarkersSchema? markers = await status?.getMarker(type: type);
+        final MarkerSchema? marker = markers?.markers[type];
+        final int lastReadId = max(int.parse(marker?.lastReadID ?? '0'), id);
 
-      await status?.setMarker(id: lastReadId.toString(), type: type);
-      AppBadgePlus.updateBadge(0);
+        await status?.setMarker(id: lastReadId.toString(), type: type);
+        AppBadgePlus.updateBadge(0);
+      }
+    } on SocketException catch (e) {
+      logger.w('notification fetch failed (offline): $e');
+      if (mounted) {
+        if (groups.isEmpty) {
+          markLoadError();
+        } else {
+          markLoadComplete(isEmpty: false);
+        }
+      }
+    } on HttpTimeoutException catch (e) {
+      logger.w('notification fetch timed out: $e');
+      if (mounted) {
+        if (groups.isEmpty) {
+          markLoadError();
+        } else {
+          markLoadComplete(isEmpty: false);
+        }
+      }
     }
   }
 }

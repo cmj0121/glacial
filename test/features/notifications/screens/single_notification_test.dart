@@ -107,7 +107,6 @@ void main() {
         await tester.pumpWidget(createTestWidget(
           child: SingleNotification(
             schema: _makeGroup(type: 'follow'),
-            iconSize: 24,
           ),
           accessStatus: _noDomainAuth(),
         ));

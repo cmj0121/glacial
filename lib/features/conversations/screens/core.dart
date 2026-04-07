@@ -1,8 +1,11 @@
 // The Conversation list screen for direct messages.
+import 'dart:io';
+
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:glacial/core.dart';
 import 'package:glacial/features/extensions.dart';
@@ -59,12 +62,15 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
 
     return Align(
       alignment: Alignment.topCenter,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildLoadingIndicator(),
-          Flexible(child: buildContent()),
-        ],
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxContentWidth),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildLoadingIndicator(),
+            Flexible(child: buildContent()),
+          ],
+        ),
       ),
     );
   }
@@ -76,7 +82,7 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
               message: AppLocalizations.of(context)?.txt_no_conversations ?? "No conversations",
               icon: Icons.mail_outline,
             )
-          : const SizedBox.shrink();
+          : const SkeletonConversations();
     }
 
     final Widget builder = ScrollablePositionedList.builder(
@@ -157,12 +163,32 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
 
     setLoading(true);
 
-    final String? maxId = conversations.isNotEmpty ? conversations.last.id : null;
-    final (items, _) = await status?.fetchConversations(maxId: maxId) ?? (<ConversationSchema>[], null);
+    try {
+      final String? maxId = conversations.isNotEmpty ? conversations.last.id : null;
+      final (items, _) = await status?.fetchConversations(maxId: maxId) ?? (<ConversationSchema>[], null);
 
-    if (mounted) {
-      setState(() => conversations.addAll(items));
-      markLoadComplete(isEmpty: items.isEmpty);
+      if (mounted) {
+        setState(() => conversations.addAll(items));
+        markLoadComplete(isEmpty: items.isEmpty);
+      }
+    } on SocketException catch (e) {
+      logger.w('conversation fetch failed (offline): $e');
+      if (mounted) {
+        if (conversations.isEmpty) {
+          markLoadError();
+        } else {
+          markLoadComplete(isEmpty: false);
+        }
+      }
+    } on HttpTimeoutException catch (e) {
+      logger.w('conversation fetch timed out: $e');
+      if (mounted) {
+        if (conversations.isEmpty) {
+          markLoadError();
+        } else {
+          markLoadComplete(isEmpty: false);
+        }
+      }
     }
   }
 }
@@ -180,73 +206,102 @@ class ConversationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final String names = schema.accounts.map((a) => a.displayName).join(', ');
+    return Semantics(
+      label: names,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildAvatars(context),
-              const SizedBox(width: 12),
-              Expanded(child: buildBody(context)),
-              if (schema.unread) buildUnreadBadge(context),
-            ],
+          color: schema.unread ? scheme.primary.withValues(alpha: 0.06) : null,
+          border: Border(
+            bottom: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3)),
+            left: BorderSide(
+              color: schema.unread ? scheme.primary : Colors.transparent,
+              width: 3,
+            ),
           ),
+        ),
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildAvatar(context),
+            const SizedBox(width: 12),
+            Expanded(child: _buildBody(context)),
+          ],
         ),
       ),
-    );
+    ));
   }
 
-  // Build stacked avatars for conversation participants.
-  Widget buildAvatars(BuildContext context) {
-    if (schema.accounts.isEmpty) return const SizedBox(width: 40, height: 40);
-
-    if (schema.accounts.length == 1) {
-      return AccountAvatar(schema: schema.accounts.first, size: 40);
-    }
+  // Single 44px avatar; when there are multiple participants, overlay a
+  // small "+N" chip on the bottom-right so the card geometry stays the
+  // same regardless of group size.
+  Widget _buildAvatar(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme scheme = theme.colorScheme;
+    if (schema.accounts.isEmpty) return const SizedBox(width: 44, height: 44);
+    final int extras = schema.accounts.length - 1;
 
     return SizedBox(
-      width: 48,
-      height: 48,
+      width: 44,
+      height: 44,
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: AccountAvatar(schema: schema.accounts[1], size: 30),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            child: AccountAvatar(schema: schema.accounts.first, size: 30),
-          ),
+          AccountAvatar(schema: schema.accounts.first, size: 44),
+          if (extras > 0)
+            Positioned(
+              bottom: -2,
+              right: -2,
+              child: Container(
+                height: 18,
+                constraints: const BoxConstraints(minWidth: 18),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color: scheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(9),
+                  border: Border.all(color: scheme.surface, width: 2),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '+$extras',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: scheme.onSecondaryContainer,
+                    fontWeight: FontWeight.w700,
+                    height: 1.0,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
 
-  // Build the conversation body: participant names and last message preview.
-  Widget buildBody(BuildContext context) {
-    final TextStyle? nameStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
-      fontWeight: schema.unread ? FontWeight.bold : FontWeight.normal,
+  Widget _buildBody(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme scheme = theme.colorScheme;
+    final TextStyle? nameStyle = theme.textTheme.titleSmall?.copyWith(
+      fontWeight: schema.unread ? FontWeight.w700 : FontWeight.w600,
     );
-    final TextStyle? previewStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
-      color: Theme.of(context).colorScheme.outline,
+    final TextStyle? previewStyle = theme.textTheme.bodySmall?.copyWith(
+      color: scheme.onSurfaceVariant,
     );
-    final TextStyle? timeStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: Theme.of(context).colorScheme.outline,
+    final TextStyle? timeStyle = theme.textTheme.labelSmall?.copyWith(
+      color: scheme.onSurfaceVariant,
     );
 
     final String names = schema.accounts.map((a) => a.displayName).join(', ');
     final String? preview = schema.lastStatus == null
         ? null
         : canonicalizeHtml(schema.lastStatus!.content);
-    final String? time = schema.lastStatus?.createdAt.toIso8601String().split('T').first;
+    final DateTime? createdAt = schema.lastStatus?.createdAt;
+    final String? time = createdAt == null
+        ? null
+        : timeago.format(createdAt, locale: timeagoLocale(context));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,21 +321,6 @@ class ConversationItem extends StatelessWidget {
             child: Text(preview, style: previewStyle, maxLines: 2, overflow: TextOverflow.ellipsis),
           ),
       ],
-    );
-  }
-
-  // Build the unread indicator dot.
-  Widget buildUnreadBadge(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8, top: 4),
-      child: Container(
-        width: 10,
-        height: 10,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-      ),
     );
   }
 }

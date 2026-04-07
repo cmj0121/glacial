@@ -179,6 +179,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_profile_core => 'Profile';
 
   @override
+  String get btn_edit_profile => 'Edit profile';
+
+  @override
   String get btn_profile_post => 'Toots';
 
   @override
@@ -210,6 +213,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btn_profile_privacy => 'Privacy Settings';
+
+  @override
+  String get txt_profile_custom_fields => 'Custom Fields';
+
+  @override
+  String get txt_profile_field_label => 'Label';
+
+  @override
+  String get txt_profile_field_value => 'Value';
+
+  @override
+  String get txt_profile_add_field => 'Add';
+
+  @override
+  String get txt_profile_no_fields => 'No custom fields yet';
+
+  @override
+  String get btn_profile_defaults => 'Post Defaults';
+
+  @override
+  String get txt_profile_default_visibility => 'Default Visibility';
+
+  @override
+  String get txt_profile_default_media => 'Media';
+
+  @override
+  String get txt_profile_sensitive_media => 'Mark media as sensitive';
+
+  @override
+  String get desc_profile_sensitive_media =>
+      'Hide media behind a warning by default';
+
+  @override
+  String get txt_profile_default_language => 'Language';
+
+  @override
+  String get txt_profile_language_hint => 'ISO 639-1 (e.g. en, ja, zh)';
 
   @override
   String get btn_status_toot => 'Toot';
@@ -497,6 +537,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_list_policy_none => 'Do not show any replies';
+
+  @override
+  String get txt_list_policy_short_followed => 'Followed replies';
+
+  @override
+  String get txt_list_policy_short_list => 'List replies only';
+
+  @override
+  String get txt_list_policy_short_none => 'No replies';
+
+  @override
+  String get txt_list_short_exclusive => 'Exclusive';
+
+  @override
+  String get txt_list_short_inclusive => 'Inclusive';
+
+  @override
+  String get btn_list_timeline => 'Timeline';
+
+  @override
+  String get btn_list_members => 'Members';
+
+  @override
+  String get txt_list_settings => 'List settings';
+
+  @override
+  String get txt_list_reply_policy => 'Reply policy';
+
+  @override
+  String get txt_list_exclusivity => 'Home feed';
+
+  @override
+  String get desc_list_exclusive_on =>
+      'Hide members\' posts from Home timeline';
+
+  @override
+  String get desc_list_exclusive_off => 'Show members\' posts on Home timeline';
 
   @override
   String get txt_list_exclusive => 'Removed from the Home timeline feed';
@@ -834,6 +911,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get txt_media_alt_text => 'Alt Text';
 
   @override
+  String get txt_media_alt_hint =>
+      'Describe this media for visually impaired users';
+
+  @override
+  String get txt_media_alt_saved => 'Description saved';
+
+  @override
   String get txt_media_image_info => 'Image Info';
 
   @override
@@ -865,6 +949,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_no_notifications => 'No notifications yet';
+
+  @override
+  String txt_notification_others(int count) {
+    return 'and $count others';
+  }
 
   @override
   String get txt_conversation_unread => 'Unread';
@@ -1191,4 +1280,163 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_instance_closed => 'Closed';
+
+  @override
+  String get txt_preference_new_ui => 'New UI Design';
+
+  @override
+  String get desc_preference_new_ui =>
+      'Try the redesigned interface with improved layout and navigation.';
+
+  @override
+  String get txt_v2_tagline => 'A calm space for social conversations';
+
+  @override
+  String get btn_v2_get_started => 'Get Started';
+
+  @override
+  String get txt_v2_choose_server => 'Choose your server';
+
+  @override
+  String get txt_v2_server_hint => 'Search or enter server URL';
+
+  @override
+  String get txt_v2_popular_servers => 'Popular Servers';
+
+  @override
+  String get txt_v2_tap_to_select => 'Tap to select this server';
+
+  @override
+  String get txt_v2_no_match => 'No matching servers';
+
+  @override
+  String get txt_shortcuts_title => 'Keyboard shortcuts';
+
+  @override
+  String get txt_shortcut_help => 'Show keyboard shortcuts';
+
+  @override
+  String get txt_shortcut_refresh => 'Refresh and scroll to top';
+
+  @override
+  String get txt_shortcut_next_post => 'Next post';
+
+  @override
+  String get txt_shortcut_prev_post => 'Previous post';
+
+  @override
+  String get txt_shortcut_next_tab => 'Next tab';
+
+  @override
+  String get txt_shortcut_prev_tab => 'Previous tab';
+
+  @override
+  String get txt_shortcut_focus_search => 'Focus search';
+
+  @override
+  String get txt_shortcut_compose_post => 'Compose new post';
+
+  @override
+  String get txt_shortcut_open_status => 'Open focused post';
+
+  @override
+  String get txt_shortcut_favourite => 'Favourite focused post';
+
+  @override
+  String get txt_shortcut_boost => 'Boost focused post';
+
+  @override
+  String get txt_shortcut_reply => 'Reply to focused post';
+
+  @override
+  String get txt_shortcut_bookmark => 'Bookmark focused post';
+
+  @override
+  String get txt_shortcut_escape => 'Close search or blur input';
+
+  @override
+  String get txt_shortcut_section_navigation => 'NAVIGATION';
+
+  @override
+  String get txt_shortcut_section_actions => 'ACTIONS';
+
+  @override
+  String get txt_shortcut_section_general => 'GENERAL';
+
+  @override
+  String get txt_preference_in_app_browser => 'In-App Browser';
+
+  @override
+  String get desc_preference_in_app_browser =>
+      'Open links in WebView instead of native browser';
+
+  @override
+  String get btn_preference_applications => 'Applications';
+
+  @override
+  String get desc_preference_applications =>
+      'Create OAuth2 applications on this server';
+
+  @override
+  String get txt_app_new_application => 'New Application';
+
+  @override
+  String get txt_app_name => 'Application name';
+
+  @override
+  String get txt_app_name_hint => 'My App';
+
+  @override
+  String get txt_app_website => 'Application website';
+
+  @override
+  String get txt_app_redirect_uri => 'Redirect URI';
+
+  @override
+  String get txt_app_scopes => 'Scopes';
+
+  @override
+  String get btn_app_create => 'Create Application';
+
+  @override
+  String get btn_app_creating => 'Creating...';
+
+  @override
+  String get txt_app_created => 'Application Created';
+
+  @override
+  String get txt_app_client_id => 'Client ID';
+
+  @override
+  String get txt_app_client_secret => 'Client Secret';
+
+  @override
+  String get txt_app_access_token => 'Access Token';
+
+  @override
+  String get txt_app_save_warning =>
+      'Save these credentials now. The client secret will not be shown again.';
+
+  @override
+  String get btn_app_create_another => 'Create Another';
+
+  @override
+  String get btn_app_manage_on_server => 'Manage Applications on Server';
+
+  @override
+  String msg_app_copied(String label) {
+    return 'Copied $label';
+  }
+
+  @override
+  String get msg_app_create_failed => 'Failed to create application';
+
+  @override
+  String get txt_account_hub_title => 'Your Accounts';
+
+  @override
+  String get btn_account_hub_add => 'Add Account';
+
+  @override
+  String get msg_account_hub_expired => 'Session expired. Account removed.';
 }

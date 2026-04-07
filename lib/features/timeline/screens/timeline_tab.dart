@@ -36,12 +36,28 @@ class _TimelineTabState extends ConsumerState<TimelineTab> with TickerProviderSt
     );
 
     controller.index = types.indexWhere((type) => type == widget.initialType);
+    controller.addListener(_syncTabLabel);
+    _syncTabLabel();
   }
 
   @override
   void dispose() {
+    controller.removeListener(_syncTabLabel);
+    if (GlacialHome.activeTabLabel.value != null) {
+      GlacialHome.activeTabLabel.value = null;
+    }
     controller.dispose();
     super.dispose();
+  }
+
+  void _syncTabLabel() {
+    if (controller.index >= 0 && controller.index < types.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          GlacialHome.activeTabLabel.value = types[controller.index].tooltip(context);
+        }
+      });
+    }
   }
 
   @override

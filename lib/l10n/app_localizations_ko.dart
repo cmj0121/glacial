@@ -179,6 +179,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get btn_profile_core => '프로필';
 
   @override
+  String get btn_edit_profile => 'Edit profile';
+
+  @override
   String get btn_profile_post => '글';
 
   @override
@@ -210,6 +213,42 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get btn_profile_privacy => '개인정보 설정';
+
+  @override
+  String get txt_profile_custom_fields => '사용자 지정 필드';
+
+  @override
+  String get txt_profile_field_label => '라벨';
+
+  @override
+  String get txt_profile_field_value => '값';
+
+  @override
+  String get txt_profile_add_field => '추가';
+
+  @override
+  String get txt_profile_no_fields => '사용자 지정 필드가 없습니다';
+
+  @override
+  String get btn_profile_defaults => '게시물 기본값';
+
+  @override
+  String get txt_profile_default_visibility => '기본 공개 범위';
+
+  @override
+  String get txt_profile_default_media => '미디어';
+
+  @override
+  String get txt_profile_sensitive_media => '미디어를 민감으로 표시';
+
+  @override
+  String get desc_profile_sensitive_media => '기본적으로 미디어를 경고 뒤에 숨기기';
+
+  @override
+  String get txt_profile_default_language => '언어';
+
+  @override
+  String get txt_profile_language_hint => 'ISO 639-1 (예: ko, en, ja)';
 
   @override
   String get btn_status_toot => '글쓰기';
@@ -493,6 +532,42 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_list_policy_none => '답글 표시 안함';
+
+  @override
+  String get txt_list_policy_short_followed => '팔로우한 답글';
+
+  @override
+  String get txt_list_policy_short_list => '리스트만';
+
+  @override
+  String get txt_list_policy_short_none => '답글 없음';
+
+  @override
+  String get txt_list_short_exclusive => '전용';
+
+  @override
+  String get txt_list_short_inclusive => '포함';
+
+  @override
+  String get btn_list_timeline => '타임라인';
+
+  @override
+  String get btn_list_members => '멤버';
+
+  @override
+  String get txt_list_settings => '리스트 설정';
+
+  @override
+  String get txt_list_reply_policy => '답글 정책';
+
+  @override
+  String get txt_list_exclusivity => '홈 피드';
+
+  @override
+  String get desc_list_exclusive_on => '홈 타임라인에서 멤버 게시물 숨기기';
+
+  @override
+  String get desc_list_exclusive_off => '홈 타임라인에 멤버 게시물 표시';
 
   @override
   String get txt_list_exclusive => '홈 타임라인에서 제외';
@@ -801,6 +876,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get txt_media_alt_text => '대체 텍스트';
 
   @override
+  String get txt_media_alt_hint => '시각 장애 사용자를 위해 이 미디어를 설명하세요';
+
+  @override
+  String get txt_media_alt_saved => '설명이 저장되었습니다';
+
+  @override
   String get txt_media_image_info => '이미지 정보';
 
   @override
@@ -832,6 +913,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_no_notifications => '아직 알림이 없습니다';
+
+  @override
+  String txt_notification_others(int count) {
+    return '외 $count명';
+  }
 
   @override
   String get txt_conversation_unread => '읽지 않음';
@@ -1151,4 +1237,160 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_instance_closed => '폐쇄';
+
+  @override
+  String get txt_preference_new_ui => '새로운 UI 디자인';
+
+  @override
+  String get desc_preference_new_ui => '개선된 레이아웃과 탐색 기능의 새로운 인터페이스를 사용해 보세요.';
+
+  @override
+  String get txt_v2_tagline => '소셜 대화를 위한 조용한 공간';
+
+  @override
+  String get btn_v2_get_started => '시작하기';
+
+  @override
+  String get txt_v2_choose_server => '서버 선택';
+
+  @override
+  String get txt_v2_server_hint => '서버 검색 또는 URL 입력';
+
+  @override
+  String get txt_v2_popular_servers => '인기 서버';
+
+  @override
+  String get txt_v2_tap_to_select => '이 서버를 선택하려면 탭하세요';
+
+  @override
+  String get txt_v2_no_match => '일치하는 서버가 없습니다';
+
+  @override
+  String get txt_shortcuts_title => '키보드 단축키';
+
+  @override
+  String get txt_shortcut_help => '키보드 단축키 표시';
+
+  @override
+  String get txt_shortcut_refresh => '새로고침 후 맨 위로 스크롤';
+
+  @override
+  String get txt_shortcut_next_post => '다음 게시물';
+
+  @override
+  String get txt_shortcut_prev_post => '이전 게시물';
+
+  @override
+  String get txt_shortcut_next_tab => '다음 탭';
+
+  @override
+  String get txt_shortcut_prev_tab => '이전 탭';
+
+  @override
+  String get txt_shortcut_focus_search => '검색창으로 포커스';
+
+  @override
+  String get txt_shortcut_compose_post => '새 게시물 작성';
+
+  @override
+  String get txt_shortcut_open_status => '포커스된 게시물 열기';
+
+  @override
+  String get txt_shortcut_favourite => '포커스된 게시물 즐겨찾기';
+
+  @override
+  String get txt_shortcut_boost => '포커스된 게시물 부스트';
+
+  @override
+  String get txt_shortcut_reply => '포커스된 게시물에 답글';
+
+  @override
+  String get txt_shortcut_bookmark => '포커스된 게시물 북마크';
+
+  @override
+  String get txt_shortcut_escape => '검색 닫기 또는 입력 포커스 해제';
+
+  @override
+  String get txt_shortcut_section_navigation => '내비게이션';
+
+  @override
+  String get txt_shortcut_section_actions => '작업';
+
+  @override
+  String get txt_shortcut_section_general => '일반';
+
+  @override
+  String get txt_preference_in_app_browser => '인앱 브라우저';
+
+  @override
+  String get desc_preference_in_app_browser => '외부 브라우저 대신 앱 내에서 링크 열기';
+
+  @override
+  String get btn_preference_applications => '애플리케이션';
+
+  @override
+  String get desc_preference_applications => '이 서버에서 OAuth2 애플리케이션 생성';
+
+  @override
+  String get txt_app_new_application => '새 애플리케이션';
+
+  @override
+  String get txt_app_name => '애플리케이션 이름';
+
+  @override
+  String get txt_app_name_hint => '내 앱';
+
+  @override
+  String get txt_app_website => '애플리케이션 웹사이트';
+
+  @override
+  String get txt_app_redirect_uri => '리디렉트 URI';
+
+  @override
+  String get txt_app_scopes => '범위';
+
+  @override
+  String get btn_app_create => '애플리케이션 생성';
+
+  @override
+  String get btn_app_creating => '생성 중...';
+
+  @override
+  String get txt_app_created => '애플리케이션 생성 완료';
+
+  @override
+  String get txt_app_client_id => 'Client ID';
+
+  @override
+  String get txt_app_client_secret => 'Client Secret';
+
+  @override
+  String get txt_app_access_token => 'Access Token';
+
+  @override
+  String get txt_app_save_warning =>
+      '지금 이 자격 증명을 저장하세요. Client Secret은 다시 표시되지 않습니다.';
+
+  @override
+  String get btn_app_create_another => '다른 앱 생성';
+
+  @override
+  String get btn_app_manage_on_server => '서버에서 애플리케이션 관리';
+
+  @override
+  String msg_app_copied(String label) {
+    return '$label 복사됨';
+  }
+
+  @override
+  String get msg_app_create_failed => '애플리케이션 생성 실패';
+
+  @override
+  String get txt_account_hub_title => '내 계정';
+
+  @override
+  String get btn_account_hub_add => '계정 추가';
+
+  @override
+  String get msg_account_hub_expired => '세션이 만료되었습니다. 계정이 삭제되었습니다.';
 }

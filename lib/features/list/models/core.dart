@@ -34,6 +34,18 @@ enum ReplyPolicyType {
         return AppLocalizations.of(context)?.txt_list_policy_none ?? "Do not show any replies";
     }
   }
+
+  // A short label for chip/row usage (1-2 words).
+  String label(BuildContext context) {
+    switch (this) {
+      case ReplyPolicyType.followed:
+        return AppLocalizations.of(context)?.txt_list_policy_short_followed ?? "Followed";
+      case ReplyPolicyType.list:
+        return AppLocalizations.of(context)?.txt_list_policy_short_list ?? "List only";
+      case ReplyPolicyType.none:
+        return AppLocalizations.of(context)?.txt_list_policy_short_none ?? "No replies";
+    }
+  }
 }
 
 // Represents a list of some users that the authenticated user follows.

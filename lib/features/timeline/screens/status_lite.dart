@@ -39,20 +39,23 @@ class StatusLite extends ConsumerWidget {
     final bool isSelfPost = status?.account?.id == schema.account.id;
     final bool isSchedulePost = schema.scheduledAt != null;
 
-    return InkWellDone(
-      onTap: isSchedulePost ? null : () {
-        final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
+    return Semantics(
+      label: '${schema.account.displayName}: ${canonicalizeHtml(schema.content)}',
+      child: InkWellDone(
+        onTap: isSchedulePost ? null : () {
+          final RoutePath path = RoutePath.values.firstWhere((r) => r.path == GoRouterState.of(context).uri.path);
 
-        switch (path) {
-          case RoutePath.status:
-            context.replace(RoutePath.status.path, extra: schema);
-            break;
-          default:
-            context.push(RoutePath.status.path, extra: schema);
-            break;
-        }
-      },
-      child: buildContent(context, status, isSelfPost: isSelfPost),
+          switch (path) {
+            case RoutePath.status:
+              context.replace(RoutePath.status.path, extra: schema);
+              break;
+            default:
+              context.push(RoutePath.status.path, extra: schema);
+              break;
+          }
+        },
+        child: buildContent(context, status, isSelfPost: isSelfPost),
+      ),
     );
   }
 
@@ -61,9 +64,9 @@ class StatusLite extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildHeader(context, isSelfPost: isSelfPost),
-
+        const SizedBox(height: 12),
         Indent(
-        indent: indent,
+          indent: indent,
           child: Column(
             children:[
               buildStatusContent(context, status),
@@ -120,20 +123,53 @@ class StatusLite extends ConsumerWidget {
   }
 
   Widget buildHeader(BuildContext context, {bool isSelfPost = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(flex: 10, child: Account(schema: schema.account, size: headerHeight)),
-            const Spacer(),
-            buildMeta(context, isSelfPost: isSelfPost),
-          ],
+        Semantics(
+          label: schema.account.displayName,
+          button: true,
+          child: GestureDetector(
+            onTap: () => context.push(RoutePath.profile.path, extra: schema.account),
+            child: AccountAvatar(schema: schema.account, size: headerHeight),
+          ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: buildTimeInfo(context),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      schema.account.displayName.isNotEmpty ? schema.account.displayName : schema.account.username,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  buildTimeInfo(context),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '@${schema.account.acct}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).hintColor,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  buildMeta(context, isSelfPost: isSelfPost),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -141,15 +177,13 @@ class StatusLite extends ConsumerWidget {
 
   Widget buildMeta(BuildContext context, {bool isSelfPost = false}) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisSize: MainAxisSize.min,
       children: [
         buildEditLog(context),
         isSelfPost ? buildQuote(context) : const SizedBox.shrink(),
         StatusVisibility(type: schema.visibility, size: iconSize),
-
         buildLikes(context),
         buildFiltered(context),
-        const SizedBox(width: 4),
       ],
     );
   }
@@ -166,7 +200,7 @@ class StatusLite extends ConsumerWidget {
 
     return Tooltip(
       message: schema.createdAt.toLocal().toString(),
-      child: Text(duration, style: TextStyle(color: Theme.of(context).hintColor)),
+      child: Text(duration, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).hintColor)),
     );
   }
 
