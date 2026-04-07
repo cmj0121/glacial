@@ -77,7 +77,7 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
     if (savedAccounts.isNotEmpty) {
       if (mounted) {
         logger.i("preloading completed, ${savedAccounts.length} saved accounts → account hub");
-        context.go(RoutePath.v2AccountHub.path);
+        context.go(RoutePath.v2AccountHub.path, extra: savedAccounts);
       }
       return;
     }

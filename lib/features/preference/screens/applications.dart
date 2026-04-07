@@ -53,6 +53,12 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen> {
   _AppCredentials? _credentials;
 
   @override
+  void initState() {
+    super.initState();
+    _nameController.addListener(() => setState(() {}));
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _websiteController.dispose();

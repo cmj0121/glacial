@@ -148,7 +148,8 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         GoRoute(
           path: RoutePath.v2AccountHub.path,
           builder: (BuildContext context, GoRouterState state) {
-            return const V2AccountHubScreen();
+            final List<SavedAccountSchema>? accounts = state.extra as List<SavedAccountSchema>?;
+            return V2AccountHubScreen(initialAccounts: accounts);
           },
         ),
         // The system preference page to view or edit the app settings

@@ -10,7 +10,9 @@ import 'package:glacial/features/models.dart';
 import 'package:glacial/v2/core.dart';
 
 class V2AccountHubScreen extends ConsumerStatefulWidget {
-  const V2AccountHubScreen({super.key});
+  final List<SavedAccountSchema>? initialAccounts;
+
+  const V2AccountHubScreen({super.key, this.initialAccounts});
 
   @override
   ConsumerState<V2AccountHubScreen> createState() => _V2AccountHubScreenState();
@@ -24,7 +26,14 @@ class _V2AccountHubScreenState extends ConsumerState<V2AccountHubScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _loadAccounts());
+    if (widget.initialAccounts != null && widget.initialAccounts!.isNotEmpty) {
+      final sorted = widget.initialAccounts!.toList()
+        ..sort((a, b) => b.lastUsed.compareTo(a.lastUsed));
+      _accounts = sorted;
+      _isLoading = false;
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _loadAccounts());
+    }
   }
 
   Future<void> _loadAccounts() async {
