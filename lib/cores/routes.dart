@@ -39,7 +39,8 @@ enum RoutePath {
   wip,               // The work-in-progress page of the app.
   // V2 routes
   v2Welcome,         // The v2 welcome/landing screen.
-  v2Servers;         // The v2 server picker screen.
+  v2Servers,         // The v2 server picker screen.
+  v2AccountHub;      // The v2 account hub screen.
 
   // Get the string path for the route.
   String get path {
@@ -114,6 +115,8 @@ enum RoutePath {
         return '/v2/welcome';
       case RoutePath.v2Servers:
         return '/v2/servers';
+      case RoutePath.v2AccountHub:
+        return '/v2/account-hub';
     }
   }
 }

@@ -448,5 +448,8 @@
   "btn_app_create_another": "建立另一個",
   "btn_app_manage_on_server": "在伺服器上管理應用程式",
   "msg_app_copied": "已複製 {label}",
-  "msg_app_create_failed": "建立應用程式失敗"
+  "msg_app_create_failed": "建立應用程式失敗",
+  "txt_account_hub_title": "你的帳號",
+  "btn_account_hub_add": "新增帳號",
+  "msg_account_hub_expired": "工作階段已過期，帳號已移除。"
 }

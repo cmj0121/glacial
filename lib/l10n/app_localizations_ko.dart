@@ -1384,4 +1384,13 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get msg_app_create_failed => '애플리케이션 생성 실패';
+
+  @override
+  String get txt_account_hub_title => '내 계정';
+
+  @override
+  String get btn_account_hub_add => '계정 추가';
+
+  @override
+  String get msg_account_hub_expired => '세션이 만료되었습니다. 계정이 삭제되었습니다.';
 }

@@ -1430,4 +1430,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get msg_app_create_failed => 'Failed to create application';
+
+  @override
+  String get txt_account_hub_title => 'Your Accounts';
+
+  @override
+  String get btn_account_hub_add => 'Add Account';
+
+  @override
+  String get msg_account_hub_expired => 'Session expired. Account removed.';
 }

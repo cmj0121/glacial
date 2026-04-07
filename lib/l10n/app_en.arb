@@ -533,5 +533,8 @@
       }
     }
   },
-  "msg_app_create_failed": "Failed to create application"
+  "msg_app_create_failed": "Failed to create application",
+  "txt_account_hub_title": "Your Accounts",
+  "btn_account_hub_add": "Add Account",
+  "msg_account_hub_expired": "Session expired. Account removed."
 }

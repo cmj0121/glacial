@@ -72,6 +72,16 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
       return ;
     }
 
+    // Check for saved accounts — if any exist, show the account hub.
+    final List<SavedAccountSchema> savedAccounts = await storage.loadSavedAccounts();
+    if (savedAccounts.isNotEmpty) {
+      if (mounted) {
+        logger.i("preloading completed, ${savedAccounts.length} saved accounts → account hub");
+        context.go(RoutePath.v2AccountHub.path);
+      }
+      return;
+    }
+
     final AccessStatusSchema? status = ref.read(accessStatusProvider);
     final bool hasDomain = status?.domain?.isNotEmpty == true;
     final bool isSignedIn = status?.isSignedIn == true;

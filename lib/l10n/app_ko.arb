@@ -448,5 +448,8 @@
   "btn_app_create_another": "다른 앱 생성",
   "btn_app_manage_on_server": "서버에서 애플리케이션 관리",
   "msg_app_copied": "{label} 복사됨",
-  "msg_app_create_failed": "애플리케이션 생성 실패"
+  "msg_app_create_failed": "애플리케이션 생성 실패",
+  "txt_account_hub_title": "내 계정",
+  "btn_account_hub_add": "계정 추가",
+  "msg_account_hub_expired": "세션이 만료되었습니다. 계정이 삭제되었습니다."
 }

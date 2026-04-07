@@ -2791,6 +2791,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to create application'**
   String get msg_app_create_failed;
+
+  /// No description provided for @txt_account_hub_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Accounts'**
+  String get txt_account_hub_title;
+
+  /// No description provided for @btn_account_hub_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account'**
+  String get btn_account_hub_add;
+
+  /// No description provided for @msg_account_hub_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Account removed.'**
+  String get msg_account_hub_expired;
 }
 
 class _AppLocalizationsDelegate

@@ -25,5 +25,6 @@ export 'theme.dart';
 export 'widgets/core.dart';
 export 'landing/landing_screen.dart';
 export 'auth/server_picker.dart';
+export 'account_hub/account_hub_screen.dart';
 export 'home/home_shell.dart';
 // vim: set ts=2 sw=2 sts=2 et:

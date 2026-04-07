@@ -448,5 +448,8 @@
   "btn_app_create_another": "Weitere erstellen",
   "btn_app_manage_on_server": "Anwendungen auf dem Server verwalten",
   "msg_app_copied": "{label} kopiert",
-  "msg_app_create_failed": "Anwendung konnte nicht erstellt werden"
+  "msg_app_create_failed": "Anwendung konnte nicht erstellt werden",
+  "txt_account_hub_title": "Deine Konten",
+  "btn_account_hub_add": "Konto hinzufügen",
+  "msg_account_hub_expired": "Sitzung abgelaufen. Konto wurde entfernt."
 }

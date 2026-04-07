@@ -1382,4 +1382,13 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get msg_app_create_failed => 'アプリケーションの作成に失敗しました';
+
+  @override
+  String get txt_account_hub_title => 'あなたのアカウント';
+
+  @override
+  String get btn_account_hub_add => 'アカウントを追加';
+
+  @override
+  String get msg_account_hub_expired => 'セッションが期限切れです。アカウントが削除されました。';
 }

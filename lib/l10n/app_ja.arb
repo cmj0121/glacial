@@ -448,5 +448,8 @@
   "btn_app_create_another": "もう一つ作成",
   "btn_app_manage_on_server": "サーバーでアプリケーションを管理",
   "msg_app_copied": "{label} をコピーしました",
-  "msg_app_create_failed": "アプリケーションの作成に失敗しました"
+  "msg_app_create_failed": "アプリケーションの作成に失敗しました",
+  "txt_account_hub_title": "あなたのアカウント",
+  "btn_account_hub_add": "アカウントを追加",
+  "msg_account_hub_expired": "セッションが期限切れです。アカウントが削除されました。"
 }

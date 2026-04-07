@@ -1380,4 +1380,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get msg_app_create_failed => '建立應用程式失敗';
+
+  @override
+  String get txt_account_hub_title => '你的帳號';
+
+  @override
+  String get btn_account_hub_add => '新增帳號';
+
+  @override
+  String get msg_account_hub_expired => '工作階段已過期，帳號已移除。';
 }

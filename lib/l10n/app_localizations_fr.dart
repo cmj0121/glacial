@@ -1453,4 +1453,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get msg_app_create_failed => 'Échec de la création de l\'application';
+
+  @override
+  String get txt_account_hub_title => 'Vos comptes';
+
+  @override
+  String get btn_account_hub_add => 'Ajouter un compte';
+
+  @override
+  String get msg_account_hub_expired =>
+      'Session expirée. Le compte a été supprimé.';
 }

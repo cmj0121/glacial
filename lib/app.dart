@@ -144,6 +144,13 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             return const V2ServerPicker();
           },
         ),
+        // The v2 account hub screen
+        GoRoute(
+          path: RoutePath.v2AccountHub.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return const V2AccountHubScreen();
+          },
+        ),
         // The system preference page to view or edit the app settings
         GoRoute(
           path: RoutePath.preference.path,

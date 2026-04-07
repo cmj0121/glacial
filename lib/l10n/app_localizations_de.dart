@@ -1445,4 +1445,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get msg_app_create_failed => 'Anwendung konnte nicht erstellt werden';
+
+  @override
+  String get txt_account_hub_title => 'Deine Konten';
+
+  @override
+  String get btn_account_hub_add => 'Konto hinzufügen';
+
+  @override
+  String get msg_account_hub_expired =>
+      'Sitzung abgelaufen. Konto wurde entfernt.';
 }

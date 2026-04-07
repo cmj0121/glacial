@@ -448,5 +448,8 @@
   "btn_app_create_another": "Créer une autre",
   "btn_app_manage_on_server": "Gérer les applications sur le serveur",
   "msg_app_copied": "{label} copié",
-  "msg_app_create_failed": "Échec de la création de l'application"
+  "msg_app_create_failed": "Échec de la création de l'application",
+  "txt_account_hub_title": "Vos comptes",
+  "btn_account_hub_add": "Ajouter un compte",
+  "msg_account_hub_expired": "Session expirée. Le compte a été supprimé."
 }
