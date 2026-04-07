@@ -35,6 +35,7 @@ enum RoutePath {
   register,          // The account registration page.
   postDraft,         // The post page pre-filled from a saved draft.
   postShared,        // The post page pre-filled from shared content.
+  applications,      // The developer applications page to create OAuth2 apps.
   wip,               // The work-in-progress page of the app.
   // V2 routes
   v2Welcome,         // The v2 welcome/landing screen.
@@ -105,6 +106,8 @@ enum RoutePath {
         return '/home/post/draft';
       case RoutePath.postShared:
         return '/home/post/shared';
+      case RoutePath.applications:
+        return '/preference/applications';
       case RoutePath.wip:
         return '/wip';
       case RoutePath.v2Welcome:

@@ -154,6 +154,16 @@ class _CoreAppState extends ConsumerState<CoreApp> {
             );
           },
         ),
+        // The developer applications page to create OAuth2 apps
+        GoRoute(
+          path: RoutePath.applications.path,
+          builder: (BuildContext context, GoRouterState state) {
+            return BackableView(
+              title: AppLocalizations.of(context)?.btn_preference_applications ?? "Applications",
+              child: ApplicationsScreen(),
+            );
+          },
+        ),
         // The webview page to view the external links
         GoRoute(
           path: RoutePath.webview.path,

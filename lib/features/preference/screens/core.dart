@@ -465,6 +465,14 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
         _sectionLabel(theme, AppLocalizations.of(context)?.btn_preference_engineer ?? 'DEVELOPER'),
         const SizedBox(height: 12),
         ListTile(
+          title: Text(AppLocalizations.of(context)?.btn_preference_applications ?? 'Applications'),
+          subtitle: Text(AppLocalizations.of(context)?.desc_preference_applications ?? 'Create OAuth2 applications on this server',
+            style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
+          leading: Icon(Icons.api, size: 22, color: scheme.primary),
+          trailing: Icon(Icons.chevron_right, size: 18, color: scheme.onSurfaceVariant),
+          onTap: () => context.push(RoutePath.applications.path),
+        ),
+        ListTile(
           title: Text(AppLocalizations.of(context)?.btn_preference_engineer_clear_cache ?? 'Clear All Cache'),
           subtitle: Text(AppLocalizations.of(context)?.desc_preference_engineer_clear_cache ?? 'Clear all cached data.',
             style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
