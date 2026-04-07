@@ -505,5 +505,33 @@
   "txt_shortcut_escape": "Close search or blur input",
   "txt_shortcut_section_navigation": "NAVIGATION",
   "txt_shortcut_section_actions": "ACTIONS",
-  "txt_shortcut_section_general": "GENERAL"
+  "txt_shortcut_section_general": "GENERAL",
+  "txt_preference_in_app_browser": "In-App Browser",
+  "desc_preference_in_app_browser": "Open links in WebView instead of native browser",
+  "btn_preference_applications": "Applications",
+  "desc_preference_applications": "Create OAuth2 applications on this server",
+  "txt_app_new_application": "New Application",
+  "txt_app_name": "Application name",
+  "txt_app_name_hint": "My App",
+  "txt_app_website": "Application website",
+  "txt_app_redirect_uri": "Redirect URI",
+  "txt_app_scopes": "Scopes",
+  "btn_app_create": "Create Application",
+  "btn_app_creating": "Creating...",
+  "txt_app_created": "Application Created",
+  "txt_app_client_id": "Client ID",
+  "txt_app_client_secret": "Client Secret",
+  "txt_app_access_token": "Access Token",
+  "txt_app_save_warning": "Save these credentials now. The client secret will not be shown again.",
+  "btn_app_create_another": "Create Another",
+  "btn_app_manage_on_server": "Manage Applications on Server",
+  "msg_app_copied": "Copied {label}",
+  "@msg_app_copied": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "msg_app_create_failed": "Failed to create application"
 }

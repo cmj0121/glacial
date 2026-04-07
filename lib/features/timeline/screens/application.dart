@@ -1,7 +1,7 @@
 // The Application info that post the status
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
+import 'package:glacial/core.dart';
 import 'package:glacial/features/models.dart';
 
 class Application extends StatelessWidget {
@@ -30,9 +30,8 @@ class Application extends StatelessWidget {
       child: Align(
         alignment: Alignment.centerRight,
         child: InkWell(
-          onTap: schema!.website == null ? null : () async {
-            final Uri url = Uri.parse(schema!.website!);
-            await launchUrl(url);
+          onTap: schema!.website == null ? null : () {
+            openLink(context, Uri.parse(schema!.website!));
           },
           child: Text(schema!.name, style: style),
         ),

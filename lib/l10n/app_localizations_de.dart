@@ -1377,4 +1377,72 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get txt_shortcut_section_general => 'ALLGEMEIN';
+
+  @override
+  String get txt_preference_in_app_browser => 'In-App-Browser';
+
+  @override
+  String get desc_preference_in_app_browser =>
+      'Links im WebView statt im externen Browser öffnen';
+
+  @override
+  String get btn_preference_applications => 'Anwendungen';
+
+  @override
+  String get desc_preference_applications =>
+      'OAuth2-Anwendungen auf diesem Server erstellen';
+
+  @override
+  String get txt_app_new_application => 'Neue Anwendung';
+
+  @override
+  String get txt_app_name => 'Anwendungsname';
+
+  @override
+  String get txt_app_name_hint => 'Meine App';
+
+  @override
+  String get txt_app_website => 'Anwendungswebseite';
+
+  @override
+  String get txt_app_redirect_uri => 'Weiterleitungs-URI';
+
+  @override
+  String get txt_app_scopes => 'Berechtigungen';
+
+  @override
+  String get btn_app_create => 'Anwendung erstellen';
+
+  @override
+  String get btn_app_creating => 'Wird erstellt...';
+
+  @override
+  String get txt_app_created => 'Anwendung erstellt';
+
+  @override
+  String get txt_app_client_id => 'Client ID';
+
+  @override
+  String get txt_app_client_secret => 'Client Secret';
+
+  @override
+  String get txt_app_access_token => 'Access Token';
+
+  @override
+  String get txt_app_save_warning =>
+      'Speichern Sie diese Zugangsdaten jetzt. Das Client Secret wird nicht erneut angezeigt.';
+
+  @override
+  String get btn_app_create_another => 'Weitere erstellen';
+
+  @override
+  String get btn_app_manage_on_server => 'Anwendungen auf dem Server verwalten';
+
+  @override
+  String msg_app_copied(String label) {
+    return '$label kopiert';
+  }
+
+  @override
+  String get msg_app_create_failed => 'Anwendung konnte nicht erstellt werden';
 }

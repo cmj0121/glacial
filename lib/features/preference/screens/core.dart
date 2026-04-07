@@ -154,6 +154,15 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
         ),
         const SizedBox(height: 8),
         _buildLocaleSelector(schema: schema, theme: theme, scheme: scheme),
+        const SizedBox(height: 8),
+        _toggleCard(
+          theme: theme, scheme: scheme,
+          title: AppLocalizations.of(context)?.txt_preference_in_app_browser ?? 'In-App Browser',
+          subtitle: AppLocalizations.of(context)?.desc_preference_in_app_browser ?? 'Open links in WebView instead of native browser',
+          icon: schema.useInAppBrowser ? Icons.web : Icons.open_in_browser,
+          value: schema.useInAppBrowser,
+          onChanged: (v) => Storage().savePreference(schema.copyWith(useInAppBrowser: v), ref: ref),
+        ),
 
         const SizedBox(height: 24),
 

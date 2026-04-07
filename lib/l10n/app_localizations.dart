@@ -2665,6 +2665,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'GENERAL'**
   String get txt_shortcut_section_general;
+
+  /// No description provided for @txt_preference_in_app_browser.
+  ///
+  /// In en, this message translates to:
+  /// **'In-App Browser'**
+  String get txt_preference_in_app_browser;
+
+  /// No description provided for @desc_preference_in_app_browser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open links in WebView instead of native browser'**
+  String get desc_preference_in_app_browser;
+
+  /// No description provided for @btn_preference_applications.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications'**
+  String get btn_preference_applications;
+
+  /// No description provided for @desc_preference_applications.
+  ///
+  /// In en, this message translates to:
+  /// **'Create OAuth2 applications on this server'**
+  String get desc_preference_applications;
+
+  /// No description provided for @txt_app_new_application.
+  ///
+  /// In en, this message translates to:
+  /// **'New Application'**
+  String get txt_app_new_application;
+
+  /// No description provided for @txt_app_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Application name'**
+  String get txt_app_name;
+
+  /// No description provided for @txt_app_name_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'My App'**
+  String get txt_app_name_hint;
+
+  /// No description provided for @txt_app_website.
+  ///
+  /// In en, this message translates to:
+  /// **'Application website'**
+  String get txt_app_website;
+
+  /// No description provided for @txt_app_redirect_uri.
+  ///
+  /// In en, this message translates to:
+  /// **'Redirect URI'**
+  String get txt_app_redirect_uri;
+
+  /// No description provided for @txt_app_scopes.
+  ///
+  /// In en, this message translates to:
+  /// **'Scopes'**
+  String get txt_app_scopes;
+
+  /// No description provided for @btn_app_create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Application'**
+  String get btn_app_create;
+
+  /// No description provided for @btn_app_creating.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating...'**
+  String get btn_app_creating;
+
+  /// No description provided for @txt_app_created.
+  ///
+  /// In en, this message translates to:
+  /// **'Application Created'**
+  String get txt_app_created;
+
+  /// No description provided for @txt_app_client_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Client ID'**
+  String get txt_app_client_id;
+
+  /// No description provided for @txt_app_client_secret.
+  ///
+  /// In en, this message translates to:
+  /// **'Client Secret'**
+  String get txt_app_client_secret;
+
+  /// No description provided for @txt_app_access_token.
+  ///
+  /// In en, this message translates to:
+  /// **'Access Token'**
+  String get txt_app_access_token;
+
+  /// No description provided for @txt_app_save_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Save these credentials now. The client secret will not be shown again.'**
+  String get txt_app_save_warning;
+
+  /// No description provided for @btn_app_create_another.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Another'**
+  String get btn_app_create_another;
+
+  /// No description provided for @btn_app_manage_on_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Applications on Server'**
+  String get btn_app_manage_on_server;
+
+  /// No description provided for @msg_app_copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied {label}'**
+  String msg_app_copied(String label);
+
+  /// No description provided for @msg_app_create_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create application'**
+  String get msg_app_create_failed;
 }
 
 class _AppLocalizationsDelegate

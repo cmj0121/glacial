@@ -1362,4 +1362,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get txt_shortcut_section_general => 'GENERAL';
+
+  @override
+  String get txt_preference_in_app_browser => 'In-App Browser';
+
+  @override
+  String get desc_preference_in_app_browser =>
+      'Open links in WebView instead of native browser';
+
+  @override
+  String get btn_preference_applications => 'Applications';
+
+  @override
+  String get desc_preference_applications =>
+      'Create OAuth2 applications on this server';
+
+  @override
+  String get txt_app_new_application => 'New Application';
+
+  @override
+  String get txt_app_name => 'Application name';
+
+  @override
+  String get txt_app_name_hint => 'My App';
+
+  @override
+  String get txt_app_website => 'Application website';
+
+  @override
+  String get txt_app_redirect_uri => 'Redirect URI';
+
+  @override
+  String get txt_app_scopes => 'Scopes';
+
+  @override
+  String get btn_app_create => 'Create Application';
+
+  @override
+  String get btn_app_creating => 'Creating...';
+
+  @override
+  String get txt_app_created => 'Application Created';
+
+  @override
+  String get txt_app_client_id => 'Client ID';
+
+  @override
+  String get txt_app_client_secret => 'Client Secret';
+
+  @override
+  String get txt_app_access_token => 'Access Token';
+
+  @override
+  String get txt_app_save_warning =>
+      'Save these credentials now. The client secret will not be shown again.';
+
+  @override
+  String get btn_app_create_another => 'Create Another';
+
+  @override
+  String get btn_app_manage_on_server => 'Manage Applications on Server';
+
+  @override
+  String msg_app_copied(String label) {
+    return 'Copied $label';
+  }
+
+  @override
+  String get msg_app_create_failed => 'Failed to create application';
 }

@@ -1318,4 +1318,70 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get txt_shortcut_section_general => '일반';
+
+  @override
+  String get txt_preference_in_app_browser => '인앱 브라우저';
+
+  @override
+  String get desc_preference_in_app_browser => '외부 브라우저 대신 앱 내에서 링크 열기';
+
+  @override
+  String get btn_preference_applications => '애플리케이션';
+
+  @override
+  String get desc_preference_applications => '이 서버에서 OAuth2 애플리케이션 생성';
+
+  @override
+  String get txt_app_new_application => '새 애플리케이션';
+
+  @override
+  String get txt_app_name => '애플리케이션 이름';
+
+  @override
+  String get txt_app_name_hint => '내 앱';
+
+  @override
+  String get txt_app_website => '애플리케이션 웹사이트';
+
+  @override
+  String get txt_app_redirect_uri => '리디렉트 URI';
+
+  @override
+  String get txt_app_scopes => '범위';
+
+  @override
+  String get btn_app_create => '애플리케이션 생성';
+
+  @override
+  String get btn_app_creating => '생성 중...';
+
+  @override
+  String get txt_app_created => '애플리케이션 생성 완료';
+
+  @override
+  String get txt_app_client_id => 'Client ID';
+
+  @override
+  String get txt_app_client_secret => 'Client Secret';
+
+  @override
+  String get txt_app_access_token => 'Access Token';
+
+  @override
+  String get txt_app_save_warning =>
+      '지금 이 자격 증명을 저장하세요. Client Secret은 다시 표시되지 않습니다.';
+
+  @override
+  String get btn_app_create_another => '다른 앱 생성';
+
+  @override
+  String get btn_app_manage_on_server => '서버에서 애플리케이션 관리';
+
+  @override
+  String msg_app_copied(String label) {
+    return '$label 복사됨';
+  }
+
+  @override
+  String get msg_app_create_failed => '애플리케이션 생성 실패';
 }

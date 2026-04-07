@@ -123,6 +123,7 @@ class SystemPreferenceSchema {
   final bool useOledTheme;          // Pure black OLED theme (only applies in dark mode)
   final bool hapticFeedback;        // Haptic feedback on interactions
   final bool useNewUI;              // Enable the new v2 UI design
+  final bool useInAppBrowser;       // Open links in in-app WebView instead of native browser
 
   const SystemPreferenceSchema({
     this.server,
@@ -143,6 +144,7 @@ class SystemPreferenceSchema {
     this.useOledTheme = false,
     this.hapticFeedback = true,
     this.useNewUI = true,
+    this.useInAppBrowser = true,
   });
 
   // Convert the JSON string to a SystemPreferenceSchema object.
@@ -185,6 +187,7 @@ class SystemPreferenceSchema {
       useOledTheme: json["use_oled_theme"] as bool? ?? false,
       hapticFeedback: json["haptic_feedback"] as bool? ?? true,
       useNewUI: json["use_new_ui"] as bool? ?? false,
+      useInAppBrowser: json["use_in_app_browser"] as bool? ?? true,
     );
   }
 
@@ -209,6 +212,7 @@ class SystemPreferenceSchema {
       "use_oled_theme": useOledTheme,
       "haptic_feedback": hapticFeedback,
       "use_new_ui": useNewUI,
+      "use_in_app_browser": useInAppBrowser,
     };
   }
 
@@ -232,6 +236,7 @@ class SystemPreferenceSchema {
     bool? useOledTheme,
     bool? hapticFeedback,
     bool? useNewUI,
+    bool? useInAppBrowser,
   }) {
     return SystemPreferenceSchema(
       server: server ?? this.server,
@@ -252,6 +257,7 @@ class SystemPreferenceSchema {
       useOledTheme: useOledTheme ?? this.useOledTheme,
       hapticFeedback: hapticFeedback ?? this.hapticFeedback,
       useNewUI: useNewUI ?? this.useNewUI,
+      useInAppBrowser: useInAppBrowser ?? this.useInAppBrowser,
     );
   }
 }

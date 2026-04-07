@@ -1377,4 +1377,72 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get txt_shortcut_section_general => 'GERAL';
+
+  @override
+  String get txt_preference_in_app_browser => 'Navegador integrado';
+
+  @override
+  String get desc_preference_in_app_browser =>
+      'Abrir links no WebView em vez do navegador nativo';
+
+  @override
+  String get btn_preference_applications => 'Aplicações';
+
+  @override
+  String get desc_preference_applications =>
+      'Criar aplicações OAuth2 neste servidor';
+
+  @override
+  String get txt_app_new_application => 'Nova aplicação';
+
+  @override
+  String get txt_app_name => 'Nome da aplicação';
+
+  @override
+  String get txt_app_name_hint => 'Meu App';
+
+  @override
+  String get txt_app_website => 'Site da aplicação';
+
+  @override
+  String get txt_app_redirect_uri => 'URI de redirecionamento';
+
+  @override
+  String get txt_app_scopes => 'Permissões';
+
+  @override
+  String get btn_app_create => 'Criar aplicação';
+
+  @override
+  String get btn_app_creating => 'Criando...';
+
+  @override
+  String get txt_app_created => 'Aplicação criada';
+
+  @override
+  String get txt_app_client_id => 'Client ID';
+
+  @override
+  String get txt_app_client_secret => 'Client Secret';
+
+  @override
+  String get txt_app_access_token => 'Access Token';
+
+  @override
+  String get txt_app_save_warning =>
+      'Salve estas credenciais agora. O Client Secret não será exibido novamente.';
+
+  @override
+  String get btn_app_create_another => 'Criar outra';
+
+  @override
+  String get btn_app_manage_on_server => 'Gerenciar aplicações no servidor';
+
+  @override
+  String msg_app_copied(String label) {
+    return '$label copiado';
+  }
+
+  @override
+  String get msg_app_create_failed => 'Falha ao criar aplicação';
 }

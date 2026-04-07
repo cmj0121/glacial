@@ -248,8 +248,7 @@ class _StatusState extends ConsumerState<Status> {
     }
 
     if (mounted) {
-      // Open the link in the in-app webview.
-      context.push(RoutePath.webview.path, extra: uri);
+      openLink(context, uri, ref: ref);
     }
   }
 }

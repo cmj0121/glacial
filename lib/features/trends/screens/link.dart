@@ -30,7 +30,7 @@ class TrendsLink extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
         child: InkWellDone(
-          onTap: () => context.push(RoutePath.webview.path, extra: Uri.parse(schema.url)),
+          onTap: () => openLink(context, Uri.parse(schema.url)),
           child: buildContent(context),
         ),
       ),
@@ -102,7 +102,7 @@ class TrendsLink extends StatelessWidget {
     }
 
     return InkWell(
-      onTap: () => context.push(RoutePath.webview.path, extra: uri),
+      onTap: () => openLink(context, uri),
       child: author,
     );
   }

@@ -1384,4 +1384,73 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get txt_shortcut_section_general => 'GÉNÉRAL';
+
+  @override
+  String get txt_preference_in_app_browser => 'Navigateur intégré';
+
+  @override
+  String get desc_preference_in_app_browser =>
+      'Ouvrir les liens dans le WebView au lieu du navigateur natif';
+
+  @override
+  String get btn_preference_applications => 'Applications';
+
+  @override
+  String get desc_preference_applications =>
+      'Créer des applications OAuth2 sur ce serveur';
+
+  @override
+  String get txt_app_new_application => 'Nouvelle application';
+
+  @override
+  String get txt_app_name => 'Nom de l\'application';
+
+  @override
+  String get txt_app_name_hint => 'Mon App';
+
+  @override
+  String get txt_app_website => 'Site web de l\'application';
+
+  @override
+  String get txt_app_redirect_uri => 'URI de redirection';
+
+  @override
+  String get txt_app_scopes => 'Portées';
+
+  @override
+  String get btn_app_create => 'Créer l\'application';
+
+  @override
+  String get btn_app_creating => 'Création...';
+
+  @override
+  String get txt_app_created => 'Application créée';
+
+  @override
+  String get txt_app_client_id => 'Client ID';
+
+  @override
+  String get txt_app_client_secret => 'Client Secret';
+
+  @override
+  String get txt_app_access_token => 'Access Token';
+
+  @override
+  String get txt_app_save_warning =>
+      'Enregistrez ces identifiants maintenant. Le Client Secret ne sera plus affiché.';
+
+  @override
+  String get btn_app_create_another => 'Créer une autre';
+
+  @override
+  String get btn_app_manage_on_server =>
+      'Gérer les applications sur le serveur';
+
+  @override
+  String msg_app_copied(String label) {
+    return '$label copié';
+  }
+
+  @override
+  String get msg_app_create_failed => 'Échec de la création de l\'application';
 }

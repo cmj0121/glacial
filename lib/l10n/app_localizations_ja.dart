@@ -1316,4 +1316,70 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get txt_shortcut_section_general => '一般';
+
+  @override
+  String get txt_preference_in_app_browser => 'アプリ内ブラウザ';
+
+  @override
+  String get desc_preference_in_app_browser => '外部ブラウザの代わりにアプリ内でリンクを開く';
+
+  @override
+  String get btn_preference_applications => 'アプリケーション';
+
+  @override
+  String get desc_preference_applications => 'このサーバーで OAuth2 アプリケーションを作成';
+
+  @override
+  String get txt_app_new_application => '新規アプリケーション';
+
+  @override
+  String get txt_app_name => 'アプリケーション名';
+
+  @override
+  String get txt_app_name_hint => 'マイアプリ';
+
+  @override
+  String get txt_app_website => 'アプリケーションのウェブサイト';
+
+  @override
+  String get txt_app_redirect_uri => 'リダイレクト URI';
+
+  @override
+  String get txt_app_scopes => 'スコープ';
+
+  @override
+  String get btn_app_create => 'アプリケーションを作成';
+
+  @override
+  String get btn_app_creating => '作成中...';
+
+  @override
+  String get txt_app_created => 'アプリケーション作成完了';
+
+  @override
+  String get txt_app_client_id => 'Client ID';
+
+  @override
+  String get txt_app_client_secret => 'Client Secret';
+
+  @override
+  String get txt_app_access_token => 'Access Token';
+
+  @override
+  String get txt_app_save_warning =>
+      'これらの認証情報を今すぐ保存してください。Client Secret は二度と表示されません。';
+
+  @override
+  String get btn_app_create_another => 'もう一つ作成';
+
+  @override
+  String get btn_app_manage_on_server => 'サーバーでアプリケーションを管理';
+
+  @override
+  String msg_app_copied(String label) {
+    return '$label をコピーしました';
+  }
+
+  @override
+  String get msg_app_create_failed => 'アプリケーションの作成に失敗しました';
 }

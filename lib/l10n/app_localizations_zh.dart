@@ -1315,4 +1315,69 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get txt_shortcut_section_general => '一般';
+
+  @override
+  String get txt_preference_in_app_browser => '應用程式內瀏覽器';
+
+  @override
+  String get desc_preference_in_app_browser => '使用內建瀏覽器開啟連結，而非外部瀏覽器';
+
+  @override
+  String get btn_preference_applications => '應用程式';
+
+  @override
+  String get desc_preference_applications => '在此伺服器上建立 OAuth2 應用程式';
+
+  @override
+  String get txt_app_new_application => '新增應用程式';
+
+  @override
+  String get txt_app_name => '應用程式名稱';
+
+  @override
+  String get txt_app_name_hint => '我的應用程式';
+
+  @override
+  String get txt_app_website => '應用程式網站';
+
+  @override
+  String get txt_app_redirect_uri => '重新導向 URI';
+
+  @override
+  String get txt_app_scopes => '權限範圍';
+
+  @override
+  String get btn_app_create => '建立應用程式';
+
+  @override
+  String get btn_app_creating => '建立中...';
+
+  @override
+  String get txt_app_created => '應用程式已建立';
+
+  @override
+  String get txt_app_client_id => 'Client ID';
+
+  @override
+  String get txt_app_client_secret => 'Client Secret';
+
+  @override
+  String get txt_app_access_token => 'Access Token';
+
+  @override
+  String get txt_app_save_warning => '請立即儲存這些憑證。Client Secret 將不會再次顯示。';
+
+  @override
+  String get btn_app_create_another => '建立另一個';
+
+  @override
+  String get btn_app_manage_on_server => '在伺服器上管理應用程式';
+
+  @override
+  String msg_app_copied(String label) {
+    return '已複製 $label';
+  }
+
+  @override
+  String get msg_app_create_failed => '建立應用程式失敗';
 }
