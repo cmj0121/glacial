@@ -634,10 +634,25 @@ class _V2ServerPickerState extends ConsumerState<V2ServerPicker>
 
   Future<void> _onConfirmServer(ServerSchema schema) async {
     await _exitController.forward();
-    final route = await selectServer(schema: schema, ref: ref);
-    if (mounted) {
-      context.go(route.path);
+    await selectServer(schema: schema, ref: ref);
+    if (!mounted) return;
+
+    // If pushed (e.g. from account hub), pop back so the user can pick
+    // an account on the newly selected server.
+    final router = GoRouter.maybeOf(context);
+    if (router != null && router.canPop()) {
+      router.pop();
+      return;
     }
+
+    // Otherwise (first-time user via go), navigate to the timeline/trends.
+    final AccessStatusSchema? status = ref.read(accessStatusProvider);
+    final bool isSignedIn = status?.isSignedIn == true;
+    final timelinesAccess = status?.server?.config.timelinesAccess;
+    final bool hasTimeline = SidebarButtonType.timeline.isAccessible(
+      isSignedIn: isSignedIn, access: timelinesAccess,
+    );
+    context.go(hasTimeline ? RoutePath.timeline.path : RoutePath.trends.path);
   }
 }
 
