@@ -31,12 +31,17 @@ class _V2AccountHubScreenState extends ConsumerState<V2AccountHubScreen> {
     final List<SavedAccountSchema> saved = await Storage().loadSavedAccounts();
     saved.sort((a, b) => b.lastUsed.compareTo(a.lastUsed));
 
-    if (mounted) {
-      setState(() {
-        _accounts = saved;
-        _isLoading = false;
-      });
+    if (!mounted) return;
+
+    if (saved.isEmpty) {
+      context.go(RoutePath.v2Welcome.path);
+      return;
     }
+
+    setState(() {
+      _accounts = saved;
+      _isLoading = false;
+    });
   }
 
   @override

@@ -152,7 +152,7 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
               title: Text(l10n?.btn_drawer_switch_server ?? 'Switch Server'),
               onTap: () {
                 Navigator.of(context).pop();
-                context.go(RoutePath.v2Servers.path);
+                context.go(RoutePath.v2AccountHub.path);
               },
             ),
             if (isSignedIn) ...[
@@ -360,7 +360,7 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
     if (status == null) return;
 
     await Storage().logout(status, ref: ref);
-    if (mounted) context.go(RoutePath.v2Servers.path);
+    if (mounted) context.go(RoutePath.v2AccountHub.path);
   }
 }
 
