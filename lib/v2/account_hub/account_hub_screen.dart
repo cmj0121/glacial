@@ -118,7 +118,7 @@ class _V2AccountHubScreenState extends ConsumerState<V2AccountHubScreen> {
                       ),
                       icon: const Icon(Icons.person_add, size: 18),
                       label: Text(l10n?.btn_account_hub_add ?? 'Add Account'),
-                      onPressed: () => context.go(RoutePath.v2Servers.path),
+                      onPressed: () => context.push(RoutePath.v2Servers.path),
                     ),
                   ),
                 ),
