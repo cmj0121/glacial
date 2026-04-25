@@ -151,7 +151,7 @@ class AccountLite extends StatelessWidget {
     final String name = schema?.displayName ?? schema?.username ?? '-';
     return ListTile(
       leading: buildAvatar(),
-      title: Text(name, overflow: TextOverflow.ellipsis),
+      title: EmojiSchema.replaceEmojiToWidget(name, emojis: schema?.emojis ?? const []),
       onTap: onTap ?? () => context.push(RoutePath.profile.path, extra: schema),
     );
   }

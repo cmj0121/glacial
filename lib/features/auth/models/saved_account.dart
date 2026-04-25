@@ -1,4 +1,5 @@
 // The saved account schema for multi-account support.
+import 'package:glacial/features/models.dart';
 
 // Represents a saved account entry for quick switching between accounts.
 class SavedAccountSchema {
@@ -8,6 +9,7 @@ class SavedAccountSchema {
   final String displayName;
   final String avatar;
   final DateTime lastUsed;
+  final List<EmojiSchema> emojis;
 
   const SavedAccountSchema({
     required this.domain,
@@ -16,6 +18,7 @@ class SavedAccountSchema {
     required this.displayName,
     required this.avatar,
     required this.lastUsed,
+    this.emojis = const [],
   });
 
   // Composite key used for token storage and account identification.
@@ -29,6 +32,10 @@ class SavedAccountSchema {
       displayName: json['display_name'] as String,
       avatar: json['avatar'] as String,
       lastUsed: DateTime.parse(json['last_used'] as String),
+      // Default to [] so older persisted entries without `emojis` parse fine.
+      emojis: (json['emojis'] as List<dynamic>?)
+          ?.map((e) => EmojiSchema.fromJson(e as Map<String, dynamic>))
+          .toList() ?? [],
     );
   }
 
@@ -40,6 +47,7 @@ class SavedAccountSchema {
       'display_name': displayName,
       'avatar': avatar,
       'last_used': lastUsed.toIso8601String(),
+      'emojis': emojis.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -50,6 +58,7 @@ class SavedAccountSchema {
     String? displayName,
     String? avatar,
     DateTime? lastUsed,
+    List<EmojiSchema>? emojis,
   }) {
     return SavedAccountSchema(
       domain: domain ?? this.domain,
@@ -58,6 +67,7 @@ class SavedAccountSchema {
       displayName: displayName ?? this.displayName,
       avatar: avatar ?? this.avatar,
       lastUsed: lastUsed ?? this.lastUsed,
+      emojis: emojis ?? this.emojis,
     );
   }
 }

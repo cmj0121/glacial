@@ -1,4 +1,5 @@
 // The custom emoji data schema.
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class EmojiSchema {
@@ -24,6 +25,16 @@ class EmojiSchema {
       visible: json['visible'] as bool? ?? json['visible_in_picker'] as bool? ?? true,
       category: json['category'] as String?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'shortcode': shortcode,
+      'url': url,
+      'static_url': staticUrl,
+      'visible': visible,
+      if (category != null) 'category': category,
+    };
   }
 
   // Convert the string including the emoji shortcode into a list of strings,
@@ -70,7 +81,7 @@ class EmojiSchema {
   }
 
   // Convert the string including the emoji shortcode into a Widget image tag.
-  static Widget replaceEmojiToWidget(String content, {List<EmojiSchema>? emojis, double size = 16}) {
+  static Widget replaceEmojiToWidget(String content, {List<EmojiSchema>? emojis, double size = 16, TextStyle? style}) {
     final List<String> parts = splitEmoji(content);
 
     if (parts.isEmpty) {
@@ -84,14 +95,15 @@ class EmojiSchema {
         final EmojiSchema? emoji = emojis?.cast<EmojiSchema?>().firstWhere((e) => e?.shortcode == shortcode, orElse: () => null);
 
         if (emoji == null) {
-          return Flexible(child: Text(part, overflow: TextOverflow.ellipsis));
+          return Flexible(child: Text(part, style: style, overflow: TextOverflow.ellipsis));
         }
 
-        return Image.network(
-          emoji.url,
+        return CachedNetworkImage(
+          imageUrl: emoji.url,
           width: size,
           height: size,
           fit: BoxFit.cover,
+          errorWidget: (_, _, _) => Text(part, style: style, overflow: TextOverflow.ellipsis),
         );
       }).toList(),
     );

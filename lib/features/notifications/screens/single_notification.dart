@@ -64,10 +64,8 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
               _AvatarStack(accounts: _accounts, size: 20, overlap: 8),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  _headerText(context),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                child: _headerWidget(
+                  context,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface,
                     height: 1.25,
@@ -92,6 +90,8 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
   // "Alice and N others <verb>" — returns a plain-string header.
   // Keeping it as a single string lets Flutter handle RTL wrapping and
   // avoids brittle TextSpan math just to bold a single name.
+  // Used as the Semantics label; the visible header is built by
+  // [_headerWidget] so it can render emoji shortcodes inline.
   String _headerText(BuildContext context) {
     final String verb = widget.schema.type.tooltip(context).toLowerCase();
     if (_accounts.isEmpty) return verb;
@@ -102,6 +102,28 @@ class _SingleNotificationState extends ConsumerState<SingleNotification> {
 
     final String others = AppLocalizations.of(context)?.txt_notification_others(extras) ?? '+ $extras others';
     return '$primaryName $others  $verb';
+  }
+
+  Widget _headerWidget(BuildContext context, {TextStyle? style}) {
+    final String verb = widget.schema.type.tooltip(context).toLowerCase();
+    if (_accounts.isEmpty) {
+      return Text(verb, style: style, maxLines: 2, overflow: TextOverflow.ellipsis);
+    }
+
+    final AccountSchema primary = _accounts.first;
+    final String primaryName = primary.displayName.isNotEmpty ? primary.displayName : primary.username;
+    final int extras = widget.schema.count - 1;
+    final String trailing = extras <= 0
+        ? '  $verb'
+        : ' ${AppLocalizations.of(context)?.txt_notification_others(extras) ?? '+ $extras others'}  $verb';
+
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        EmojiSchema.replaceEmojiToWidget(primaryName, emojis: primary.emojis, style: style),
+        Text(trailing, style: style, maxLines: 2, overflow: TextOverflow.ellipsis),
+      ],
+    );
   }
 
   Future<void> _load() async {

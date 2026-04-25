@@ -97,14 +97,14 @@ class _AccountPickerSheetState extends ConsumerState<AccountPickerSheet> {
               width: 40,
               height: 40,
               fit: BoxFit.cover,
-              placeholder: (_, __) => const SizedBox(width: 40, height: 40),
-              errorWidget: (_, __, ___) => const Icon(Icons.person),
+              placeholder: (_, _) => const SizedBox(width: 40, height: 40),
+              errorWidget: (_, _, _) => const Icon(Icons.person),
             ),
           ),
         ),
-        title: Text(
+        title: EmojiSchema.replaceEmojiToWidget(
           saved.displayName.isNotEmpty ? saved.displayName : saved.username,
-          overflow: TextOverflow.ellipsis,
+          emojis: saved.emojis,
         ),
         subtitle: Text(
           '@${saved.username}@${saved.domain}',

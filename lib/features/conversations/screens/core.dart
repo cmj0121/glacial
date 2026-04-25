@@ -294,7 +294,6 @@ class ConversationItem extends StatelessWidget {
       color: scheme.onSurfaceVariant,
     );
 
-    final String names = schema.accounts.map((a) => a.displayName).join(', ');
     final String? preview = schema.lastStatus == null
         ? null
         : canonicalizeHtml(schema.lastStatus!.content);
@@ -303,6 +302,19 @@ class ConversationItem extends StatelessWidget {
         ? null
         : timeago.format(createdAt, locale: timeagoLocale(context));
 
+    final List<Widget> nameChildren = [];
+    for (int i = 0; i < schema.accounts.length; i++) {
+      final AccountSchema a = schema.accounts[i];
+      nameChildren.add(EmojiSchema.replaceEmojiToWidget(
+        a.displayName.isNotEmpty ? a.displayName : a.username,
+        emojis: a.emojis,
+        style: nameStyle,
+      ));
+      if (i < schema.accounts.length - 1) {
+        nameChildren.add(Text(', ', style: nameStyle));
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -310,7 +322,10 @@ class ConversationItem extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: Text(names, style: nameStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: nameChildren,
+              ),
             ),
             if (time != null) Text(time, style: timeStyle),
           ],

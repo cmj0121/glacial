@@ -99,6 +99,7 @@ extension AccessStatusExtension on Storage {
         displayName: account.displayName,
         avatar: account.avatar,
         lastUsed: DateTime.now(),
+        emojis: account.emojis,
       ));
     }
 
