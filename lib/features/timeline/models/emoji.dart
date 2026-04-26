@@ -38,8 +38,12 @@ class EmojiSchema {
   }
 
   // Convert the string including the emoji shortcode into a list of strings,
+  // splitting on any :shortcode: candidate built from printable ASCII (excluding
+  // ':' and whitespace) so fork-specific shortcodes (e.g. Pleroma/Akkoma `:my.emoji:`)
+  // are detected. Candidates whose body is not in [emojis] fall back to literal text
+  // at render time, so a broad pattern is harmless.
   static List<String> splitEmoji(String content) {
-    final RegExp pattern = RegExp(r':[a-zA-Z0-9_+\-]+?:');
+    final RegExp pattern = RegExp(r':[\x21-\x39\x3b-\x7e]+?:');
     final List<String> parts = [];
 
     int lastEnd = 0;
