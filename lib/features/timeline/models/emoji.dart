@@ -1,4 +1,5 @@
 // The custom emoji data schema.
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class EmojiSchema {
@@ -26,9 +27,23 @@ class EmojiSchema {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'shortcode': shortcode,
+      'url': url,
+      'static_url': staticUrl,
+      'visible': visible,
+      if (category != null) 'category': category,
+    };
+  }
+
   // Convert the string including the emoji shortcode into a list of strings,
+  // splitting on any :shortcode: candidate built from printable ASCII (excluding
+  // ':' and whitespace) so fork-specific shortcodes (e.g. Pleroma/Akkoma `:my.emoji:`)
+  // are detected. Candidates whose body is not in [emojis] fall back to literal text
+  // at render time, so a broad pattern is harmless.
   static List<String> splitEmoji(String content) {
-    final RegExp pattern = RegExp(r':[a-zA-Z0-9_+\-]+?:');
+    final RegExp pattern = RegExp(r':[\x21-\x39\x3b-\x7e]+?:');
     final List<String> parts = [];
 
     int lastEnd = 0;
@@ -70,7 +85,7 @@ class EmojiSchema {
   }
 
   // Convert the string including the emoji shortcode into a Widget image tag.
-  static Widget replaceEmojiToWidget(String content, {List<EmojiSchema>? emojis, double size = 16}) {
+  static Widget replaceEmojiToWidget(String content, {List<EmojiSchema>? emojis, double size = 16, TextStyle? style}) {
     final List<String> parts = splitEmoji(content);
 
     if (parts.isEmpty) {
@@ -84,14 +99,15 @@ class EmojiSchema {
         final EmojiSchema? emoji = emojis?.cast<EmojiSchema?>().firstWhere((e) => e?.shortcode == shortcode, orElse: () => null);
 
         if (emoji == null) {
-          return Flexible(child: Text(part, overflow: TextOverflow.ellipsis));
+          return Flexible(child: Text(part, style: style, overflow: TextOverflow.ellipsis));
         }
 
-        return Image.network(
-          emoji.url,
+        return CachedNetworkImage(
+          imageUrl: emoji.url,
           width: size,
           height: size,
           fit: BoxFit.cover,
+          errorWidget: (_, _, _) => Text(part, style: style, overflow: TextOverflow.ellipsis),
         );
       }).toList(),
     );

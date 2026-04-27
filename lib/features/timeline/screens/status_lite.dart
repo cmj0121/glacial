@@ -142,10 +142,10 @@ class StatusLite extends ConsumerWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
+                    child: EmojiSchema.replaceEmojiToWidget(
                       schema.account.displayName.isNotEmpty ? schema.account.displayName : schema.account.username,
+                      emojis: schema.account.emojis,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   const SizedBox(width: 8),

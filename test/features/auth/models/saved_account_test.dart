@@ -139,6 +139,81 @@ void main() {
       expect(parsed[0].compositeKey, 'mastodon.social@12345');
       expect(parsed[1].compositeKey, 'fosstodon.org@67890');
     });
+
+    test('fromJson defaults emojis to empty list when key missing', () {
+      // Lazy migration: persisted entries from before the emoji field was
+      // introduced must still parse without raising.
+      final json = accountJson();
+      expect(json.containsKey('emojis'), isFalse);
+
+      final account = SavedAccountSchema.fromJson(json);
+
+      expect(account.emojis, isEmpty);
+    });
+
+    test('fromJson defaults emojis to empty list when null', () {
+      final json = {...accountJson(), 'emojis': null};
+      final account = SavedAccountSchema.fromJson(json);
+
+      expect(account.emojis, isEmpty);
+    });
+
+    test('emojis round-trip through fromJson/toJson', () {
+      final json = {
+        ...accountJson(),
+        'emojis': [
+          {
+            'shortcode': 'blobcat',
+            'url': 'https://example.com/blobcat.png',
+            'static_url': 'https://example.com/blobcat-static.png',
+            'visible': true,
+          },
+          {
+            'shortcode': 'party_parrot',
+            'url': 'https://example.com/parrot.gif',
+            'static_url': 'https://example.com/parrot.png',
+            'visible': true,
+            'category': 'animated',
+          },
+        ],
+      };
+
+      final account = SavedAccountSchema.fromJson(json);
+      expect(account.emojis.length, 2);
+      expect(account.emojis[0].shortcode, 'blobcat');
+      expect(account.emojis[1].shortcode, 'party_parrot');
+      expect(account.emojis[1].category, 'animated');
+
+      final out = account.toJson();
+      final emojisOut = out['emojis'] as List<dynamic>;
+      expect(emojisOut.length, 2);
+      expect((emojisOut[0] as Map)['shortcode'], 'blobcat');
+      expect((emojisOut[0] as Map)['static_url'], 'https://example.com/blobcat-static.png');
+      expect((emojisOut[1] as Map)['category'], 'animated');
+
+      final rebuilt = SavedAccountSchema.fromJson(jsonDecode(jsonEncode(out)) as Map<String, dynamic>);
+      expect(rebuilt.emojis.length, 2);
+      expect(rebuilt.emojis[1].shortcode, 'party_parrot');
+    });
+
+    test('copyWith updates emojis', () {
+      final original = SavedAccountSchema.fromJson(accountJson());
+      expect(original.emojis, isEmpty);
+
+      const replacement = [
+        EmojiSchema(
+          shortcode: 'wave',
+          url: 'https://example.com/wave.png',
+          staticUrl: 'https://example.com/wave-static.png',
+        ),
+      ];
+      final updated = original.copyWith(emojis: replacement);
+
+      expect(updated.emojis.length, 1);
+      expect(updated.emojis.first.shortcode, 'wave');
+      // Untouched copyWith retains the previous emojis.
+      expect(updated.copyWith().emojis.first.shortcode, 'wave');
+    });
   });
 }
 

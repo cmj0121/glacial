@@ -229,9 +229,9 @@ class _V2AccountHubScreenState extends ConsumerState<V2AccountHubScreen> {
               errorWidget: (_, _, _) => const Icon(Icons.person),
             ),
           ),
-          title: Text(
+          title: EmojiSchema.replaceEmojiToWidget(
             saved.displayName.isNotEmpty ? saved.displayName : saved.username,
-            overflow: TextOverflow.ellipsis,
+            emojis: saved.emojis,
           ),
           subtitle: Text(
             '@${saved.username}@${saved.domain}',

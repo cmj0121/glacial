@@ -181,7 +181,10 @@ class _StatusState extends ConsumerState<Status> {
       action = StatusInteraction.reblog;
     }
 
-    final String label = account.displayName;
+    final String label = account.displayName.isNotEmpty ? account.displayName : account.username;
+    final TextStyle? labelStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
+      color: Theme.of(context).hintColor,
+    );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -193,12 +196,10 @@ class _StatusState extends ConsumerState<Status> {
           AccountAvatar(schema: account, size: metadataHeight),
           const SizedBox(width: 8),
           Flexible(
-            child: Text(
+            child: EmojiSchema.replaceEmojiToWidget(
               label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).hintColor,
-              ),
-              overflow: TextOverflow.ellipsis,
+              emojis: account.emojis,
+              style: labelStyle,
             ),
           ),
         ],

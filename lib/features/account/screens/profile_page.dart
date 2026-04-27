@@ -114,14 +114,14 @@ class ProfilePage extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
+                        EmojiSchema.replaceEmojiToWidget(
                           schema.displayName.isNotEmpty ? schema.displayName : schema.acct,
+                          emojis: schema.emojis,
+                          size: 18,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           '@$acct',
