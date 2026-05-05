@@ -287,10 +287,16 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
       padding: const EdgeInsets.symmetric(horizontal: V2Theme.spacingXS, vertical: V2Theme.spacingSM),
       child: Column(
         children: [
-          ...items.where((i) => i != SidebarButtonType.post).map((item) =>
-            _buildNavButton(item, current: current, isSignedIn: isSignedIn, access: access),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: items
+                    .where((i) => i != SidebarButtonType.post)
+                    .map((item) => _buildNavButton(item, current: current, isSignedIn: isSignedIn, access: access))
+                    .toList(),
+              ),
+            ),
           ),
-          const Spacer(),
           _buildPostButton(current, isSignedIn: isSignedIn),
         ],
       ),
