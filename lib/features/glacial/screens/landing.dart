@@ -72,6 +72,28 @@ class _LandingPageState extends ConsumerState<LandingPage> with SingleTickerProv
       return ;
     }
 
+    // If loadAccessStatus restored a valid signed-in session, auto-resume
+    // directly into the user's timeline. Saved accounts and the hub are
+    // only relevant when the user must pick.
+    final AccessStatusSchema? activeStatus = ref.read(accessStatusProvider);
+    if (activeStatus?.isSignedIn == true) {
+      final timelinesAccess = activeStatus?.server?.config.timelinesAccess;
+      final bool hasTimeline = SidebarButtonType.timeline.isAccessible(
+        isSignedIn: true, access: timelinesAccess,
+      );
+      final RoutePath route = hasTimeline ? RoutePath.timeline : RoutePath.trends;
+      if (mounted) {
+        logger.i("preloading completed, auto-resuming signed-in account → ${route.path} (${activeStatus?.domain})");
+        context.go(route.path);
+
+        final SharedContentSchema? shared = ShareReceiver.consumePendingContent();
+        if (shared != null && shared.hasContent) {
+          context.push(RoutePath.postShared.path, extra: shared);
+        }
+      }
+      return;
+    }
+
     // Check for saved accounts — if any exist, show the account hub.
     final List<SavedAccountSchema> savedAccounts = await storage.loadSavedAccounts();
     if (savedAccounts.isNotEmpty) {
