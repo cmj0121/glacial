@@ -145,92 +145,100 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildDrawerHeader(status, theme, domain),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.swap_horiz),
-              title: Text(l10n?.btn_drawer_switch_server ?? 'Switch Server'),
-              onTap: () {
-                Navigator.of(context).pop();
-                context.go(RoutePath.v2AccountHub.path);
-              },
-            ),
-            if (isSignedIn) ...[
-              ListTile(
-                leading: status?.account != null
-                    ? AccountAvatar(schema: status!.account!, size: 28)
-                    : const Icon(Icons.person_outline),
-                title: Text(l10n?.btn_profile_core ?? 'Profile'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  if (status?.account != null) {
-                    context.push(RoutePath.profile.path, extra: status!.account);
-                  }
-                },
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDrawerHeader(status, theme, domain),
+                    const Divider(),
+                    ListTile(
+                      leading: const Icon(Icons.swap_horiz),
+                      title: Text(l10n?.btn_drawer_switch_server ?? 'Switch Server'),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.go(RoutePath.v2AccountHub.path);
+                      },
+                    ),
+                    if (isSignedIn) ...[
+                      ListTile(
+                        leading: status?.account != null
+                            ? AccountAvatar(schema: status!.account!, size: 28)
+                            : const Icon(Icons.person_outline),
+                        title: Text(l10n?.btn_profile_core ?? 'Profile'),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          if (status?.account != null) {
+                            context.push(RoutePath.profile.path, extra: status!.account);
+                          }
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.people_outline),
+                        title: Text(l10n?.btn_drawer_switch_account ?? 'Switch Account'),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          showAdaptiveGlassSheet(
+                            context: context,
+                            builder: (_) => AccountPickerSheet(status: status),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.drafts_outlined),
+                        title: Text(l10n?.btn_drawer_drafts ?? 'Drafts'),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          final messenger = ScaffoldMessenger.of(context);
+                          showAdaptiveGlassSheet(
+                            context: context,
+                            builder: (_) => DraftListSheet(status: status, messenger: messenger),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.explore_outlined),
+                        title: Text(l10n?.btn_drawer_directory ?? 'Directory'),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          context.push(RoutePath.directory.path);
+                        },
+                      ),
+                    ],
+                    ListTile(
+                      leading: const Icon(Icons.campaign_outlined),
+                      title: Text(l10n?.btn_drawer_announcement ?? 'Announcements'),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        showAdaptiveGlassSheet(
+                          context: context,
+                          builder: (_) => AnnouncementSheet(status: status),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.info_outline),
+                      title: Text(l10n?.btn_drawer_instance_info ?? 'About This Server'),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        showAdaptiveGlassSheet(
+                          context: context,
+                          builder: (_) => InstanceInfoSheet(status: status),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.settings_outlined),
+                      title: Text(l10n?.btn_drawer_preference ?? 'Preference'),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.push(RoutePath.preference.path);
+                      },
+                    ),
+                  ],
+                ),
               ),
-              ListTile(
-                leading: const Icon(Icons.people_outline),
-                title: Text(l10n?.btn_drawer_switch_account ?? 'Switch Account'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  showAdaptiveGlassSheet(
-                    context: context,
-                    builder: (_) => AccountPickerSheet(status: status),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.drafts_outlined),
-                title: Text(l10n?.btn_drawer_drafts ?? 'Drafts'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  final messenger = ScaffoldMessenger.of(context);
-                  showAdaptiveGlassSheet(
-                    context: context,
-                    builder: (_) => DraftListSheet(status: status, messenger: messenger),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.explore_outlined),
-                title: Text(l10n?.btn_drawer_directory ?? 'Directory'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  context.push(RoutePath.directory.path);
-                },
-              ),
-            ],
-            ListTile(
-              leading: const Icon(Icons.campaign_outlined),
-              title: Text(l10n?.btn_drawer_announcement ?? 'Announcements'),
-              onTap: () {
-                Navigator.of(context).pop();
-                showAdaptiveGlassSheet(
-                  context: context,
-                  builder: (_) => AnnouncementSheet(status: status),
-                );
-              },
             ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: Text(l10n?.btn_drawer_instance_info ?? 'About This Server'),
-              onTap: () {
-                Navigator.of(context).pop();
-                showAdaptiveGlassSheet(
-                  context: context,
-                  builder: (_) => InstanceInfoSheet(status: status),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings_outlined),
-              title: Text(l10n?.btn_drawer_preference ?? 'Preference'),
-              onTap: () {
-                Navigator.of(context).pop();
-                context.push(RoutePath.preference.path);
-              },
-            ),
-            const Spacer(),
             if (isSignedIn) ...[
               const Divider(),
               ListTile(
