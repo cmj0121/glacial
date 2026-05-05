@@ -637,15 +637,9 @@ class _V2ServerPickerState extends ConsumerState<V2ServerPicker>
     final RoutePath route = await selectServer(schema: schema, ref: ref);
     if (!mounted) return;
 
-    // If pushed (e.g. from account hub), pop back so the user can pick
-    // an account on the newly selected server.
-    final router = GoRouter.maybeOf(context);
-    if (router != null && router.canPop()) {
-      router.pop();
-      return;
-    }
-
-    // Otherwise (first-time user via go), navigate to the timeline/trends.
+    // OAuth lives on the home shell (SignIn button replaces the post slot
+    // when not signed in), so always land there — popping back to the hub
+    // strands users who picked a server they have no saved account on yet.
     context.go(route.path);
   }
 }
