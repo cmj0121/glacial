@@ -52,6 +52,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
 
   late final TextEditingController nameController = TextEditingController(text: schema.displayName);
   late final TextEditingController noteController = TextEditingController(text: schema.note.trim());
+  late final TextEditingController languageController = TextEditingController(text: schema.sourceLanguage ?? '');
   late final List<(TextEditingController, TextEditingController)> fieldControllers;
 
   bool _saving = false;
@@ -79,6 +80,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
     controller.dispose();
     nameController.dispose();
     noteController.dispose();
+    languageController.dispose();
     for (final c in fieldControllers) {
       c.$1.dispose();
       c.$2.dispose();
@@ -295,7 +297,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
         _sectionLabel(theme, l10n?.txt_profile_default_language ?? 'LANGUAGE'),
         const SizedBox(height: 12),
         _buildTextField(
-          controller: TextEditingController(text: schema.sourceLanguage ?? ''),
+          controller: languageController,
           icon: Icons.translate,
           hint: l10n?.txt_profile_language_hint ?? 'ISO 639-1 (e.g. en, ja, zh)',
           onSubmitted: (v) => _onChanged(schema: schema.copyWith(sourceLanguage: v.trim().isEmpty ? null : v.trim())),
