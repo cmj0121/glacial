@@ -94,15 +94,15 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> with SingleTi
 
   @override
   Widget build(BuildContext context) {
-    return Focus(
-      autofocus: true,
-      onFocusChange: (_) => _onSave(),
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: _maxWidth),
-          child: _buildContent(),
-        ),
+    // Save is initiated explicitly via _buildSaveButton (and onSubmitted on
+    // text fields). The earlier outer Focus.onFocusChange auto-saved on
+    // every focus change — surprising for users and at odds with the
+    // visible save button — so it has been removed.
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: _maxWidth),
+        child: _buildContent(),
       ),
     );
   }
