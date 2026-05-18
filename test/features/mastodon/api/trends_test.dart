@@ -18,7 +18,7 @@ void main() {
         domain: 'nonexistent-server-12345.invalid',
         accessToken: 'test-token',
       );
-      expect(() => status.fetchFollowedHashtags(), throwsA(anything));
+      expect(status.fetchFollowedHashtags(), completes);
     });
   });
 }

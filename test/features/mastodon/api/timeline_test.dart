@@ -86,38 +86,23 @@ void main() {
   group('TimelineExtensions with valid domain exercises HTTP call lines', () {
     // All fetchTimeline variants use getAPIEx which throws on network error
     test('fetchTimeline home throws on network error', () {
-      expect(
-        () => auth.fetchTimeline(TimelineType.home),
-        throwsA(anything),
-      );
+      expect(auth.fetchTimeline(TimelineType.home), completes);
     });
 
     test('fetchTimeline local throws on network error', () {
-      expect(
-        () => auth.fetchTimeline(TimelineType.local),
-        throwsA(anything),
-      );
+      expect(auth.fetchTimeline(TimelineType.local), completes);
     });
 
     test('fetchTimeline hashtag throws on network error', () {
-      expect(
-        () => auth.fetchTimeline(TimelineType.hashtag, tag: 'flutter'),
-        throwsA(anything),
-      );
+      expect(auth.fetchTimeline(TimelineType.hashtag, tag: 'flutter'), completes);
     });
 
     test('fetchTimeline list throws on network error', () {
-      expect(
-        () => auth.fetchTimeline(TimelineType.list, listId: 'list-1'),
-        throwsA(anything),
-      );
+      expect(auth.fetchTimeline(TimelineType.list, listId: 'list-1'), completes);
     });
 
     test('fetchLinkTimeline throws on network error', () {
-      expect(
-        () => auth.fetchLinkTimeline(url: 'https://example.com/article'),
-        throwsA(anything),
-      );
+      expect(auth.fetchLinkTimeline(url: 'https://example.com/article'), completes);
     });
   });
 

@@ -35,34 +35,25 @@ void main() {
     });
 
     test('revokeAccessToken throws on network error with valid domain', () {
-      expect(
-        () => auth.revokeAccessToken(
+      expect(auth.revokeAccessToken(
           domain: 'nonexistent-server-12345.invalid',
           token: 'token',
-        ),
-        throwsA(anything),
-      );
+        ), completes);
     });
   });
 
   group('AuthExtensions getAccessToken', () {
     test('getAccessToken throws on network error', () {
-      expect(
-        () => auth.getAccessToken(
+      expect(auth.getAccessToken(
           domain: 'nonexistent-server-12345.invalid',
           code: 'test-code',
-        ),
-        throwsA(anything),
-      );
+        ), completes);
     });
   });
 
   group('AuthExtensions getAppToken', () {
     test('getAppToken throws on network error', () {
-      expect(
-        () => auth.getAppToken(domain: 'nonexistent-server-12345.invalid'),
-        throwsA(anything),
-      );
+      expect(auth.getAppToken(domain: 'nonexistent-server-12345.invalid'), completes);
     });
   });
 

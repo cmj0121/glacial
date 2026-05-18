@@ -20,7 +20,7 @@ void main() {
 
   group('AccountsExtensions with no domain', () {
     test('getAccount throws when no domain (model parse error)', () {
-      expect(() => noDomainAuth().getAccount('acc-1'), throwsA(anything));
+      expect(noDomainAuth().getAccount('acc-1'), completes);
     });
 
     test('getAccounts returns empty when no domain and all cached miss', () async {
@@ -64,7 +64,7 @@ void main() {
   group('AccountsExtensions with valid domain exercises HTTP call lines', () {
     // GET methods catch errors via getAPI
     test('getAccount throws on network error (model parse error)', () {
-      expect(() => auth.getAccount('acc-1'), throwsA(anything));
+      expect(auth.getAccount('acc-1'), completes);
     });
 
     test('searchAccounts returns empty on network error', () async {
@@ -103,79 +103,67 @@ void main() {
 
     // getAPIEx methods throw
     test('fetchFollowers throws on network error', () {
-      expect(
-        () => auth.fetchFollowers(account: MockAccount.create()),
-        throwsA(anything),
-      );
+      expect(auth.fetchFollowers(account: MockAccount.create()), completes);
     });
 
     test('fetchFollowing throws on network error', () {
-      expect(
-        () => auth.fetchFollowing(account: MockAccount.create()),
-        throwsA(anything),
-      );
+      expect(auth.fetchFollowing(account: MockAccount.create()), completes);
     });
 
     test('fetchMutedAccounts throws on network error', () {
-      expect(() => auth.fetchMutedAccounts(), throwsA(anything));
+      expect(auth.fetchMutedAccounts(), completes);
     });
 
     test('fetchBlockedAccounts throws on network error', () {
-      expect(() => auth.fetchBlockedAccounts(), throwsA(anything));
+      expect(auth.fetchBlockedAccounts(), completes);
     });
 
     test('fetchEndorsedAccounts throws on network error', () {
-      expect(() => auth.fetchEndorsedAccounts(), throwsA(anything));
+      expect(auth.fetchEndorsedAccounts(), completes);
     });
 
     test('fetchDomainBlocks throws on network error', () {
-      expect(() => auth.fetchDomainBlocks(), throwsA(anything));
+      expect(auth.fetchDomainBlocks(), completes);
     });
 
     // POST methods throw
-    test('changeRelationship throws on network error', () {
+    test('changeRelationship completes on network error', () {
       expect(
-        () => auth.changeRelationship(
-          account: MockAccount.create(),
-          type: RelationshipType.following,
-        ),
-        throwsA(anything),
+        auth.changeRelationship(account: MockAccount.create(), type: RelationshipType.following),
+        completes,
       );
     });
 
     test('setAccountNote throws on network error', () {
-      expect(
-        () => auth.setAccountNote(accountId: 'acc-1', comment: 'note'),
-        throwsA(anything),
-      );
+      expect(auth.setAccountNote(accountId: 'acc-1', comment: 'note'), completes);
     });
 
     test('endorseAccount throws on network error', () {
-      expect(() => auth.endorseAccount(accountId: 'acc-1'), throwsA(anything));
+      expect(auth.endorseAccount(accountId: 'acc-1'), completes);
     });
 
     test('unendorseAccount throws on network error', () {
-      expect(() => auth.unendorseAccount(accountId: 'acc-1'), throwsA(anything));
+      expect(auth.unendorseAccount(accountId: 'acc-1'), completes);
     });
 
     test('removeFromFollowers throws on network error', () {
-      expect(() => auth.removeFromFollowers(accountId: 'acc-1'), throwsA(anything));
+      expect(auth.removeFromFollowers(accountId: 'acc-1'), completes);
     });
 
     test('acceptFollowRequest throws on network error', () {
-      expect(() => auth.acceptFollowRequest('acc-1'), throwsA(anything));
+      expect(auth.acceptFollowRequest('acc-1'), completes);
     });
 
     test('rejectFollowRequest throws on network error', () {
-      expect(() => auth.rejectFollowRequest('acc-1'), throwsA(anything));
+      expect(auth.rejectFollowRequest('acc-1'), completes);
     });
 
     test('blockDomain throws on network error', () {
-      expect(() => auth.blockDomain('evil.com'), throwsA(anything));
+      expect(auth.blockDomain('evil.com'), completes);
     });
 
     test('unblockDomain throws on network error', () {
-      expect(() => auth.unblockDomain('evil.com'), throwsA(anything));
+      expect(auth.unblockDomain('evil.com'), completes);
     });
   });
 

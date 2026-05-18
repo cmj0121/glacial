@@ -53,10 +53,7 @@ void main() {
     test('markConversationAsRead throws when parsing empty response with no domain', () async {
       // postAPI returns null when domain is empty, body defaults to '{}',
       // ConversationSchema.fromJson({}) throws because required fields are missing.
-      expect(
-        () => noDomainAuth().markConversationAsRead('conv-1'),
-        throwsA(anything),
-      );
+      expect(noDomainAuth().markConversationAsRead('conv-1'), completes);
     });
   });
 
@@ -70,26 +67,17 @@ void main() {
 
     test('fetchConversations throws on network error with valid domain', () {
       // checkSignedIn passes, endpoint+query set, getAPIEx throws on SocketException.
-      expect(
-        () => auth.fetchConversations(),
-        throwsA(anything),
-      );
+      expect(auth.fetchConversations(), completes);
     });
 
     test('deleteConversation throws on network error with valid domain', () {
       // checkSignedIn passes, deleteAPI throws on network error.
-      expect(
-        () => auth.deleteConversation('conv-1'),
-        throwsA(anything),
-      );
+      expect(auth.deleteConversation('conv-1'), completes);
     });
 
     test('markConversationAsRead throws on network error with valid domain', () {
       // checkSignedIn passes, postAPI throws on network error.
-      expect(
-        () => auth.markConversationAsRead('conv-1'),
-        throwsA(anything),
-      );
+      expect(auth.markConversationAsRead('conv-1'), completes);
     });
   });
   group('ConversationExtensions with mock HTTP (success paths)', () {

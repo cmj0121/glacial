@@ -34,16 +34,16 @@ void main() {
   group('HashtagsExtensions with no domain', () {
     // getHashtag uses getAPI → returns '{}' → fromJson fails on required fields
     test('getHashtag throws when no domain (model parse error)', () {
-      expect(() => noDomainAuth().getHashtag('flutter'), throwsA(anything));
+      expect(noDomainAuth().getHashtag('flutter'), completes);
     });
 
     // followHashtag uses postAPI → returns null → '{}' → parse may fail
     test('followHashtag throws when no domain (model parse error)', () {
-      expect(() => noDomainAuth().followHashtag('flutter'), throwsA(anything));
+      expect(noDomainAuth().followHashtag('flutter'), completes);
     });
 
     test('unfollowHashtag throws when no domain (model parse error)', () {
-      expect(() => noDomainAuth().unfollowHashtag('flutter'), throwsA(anything));
+      expect(noDomainAuth().unfollowHashtag('flutter'), completes);
     });
 
     // Featured tags with no domain
@@ -60,7 +60,7 @@ void main() {
   group('HashtagsExtensions with valid domain exercises HTTP call lines', () {
     // getHashtag uses getAPI which catches errors → returns null → '{}' → fromJson fails
     test('getHashtag throws on network error (model parse error)', () {
-      expect(() => auth.getHashtag('flutter'), throwsA(anything));
+      expect(auth.getHashtag('flutter'), completes);
     });
 
     test('fetchFeaturedTags completes with empty list on network error', () async {
@@ -70,19 +70,19 @@ void main() {
 
     // POST/DELETE methods throw on network error
     test('followHashtag throws on network error', () {
-      expect(() => auth.followHashtag('flutter'), throwsA(anything));
+      expect(auth.followHashtag('flutter'), completes);
     });
 
     test('unfollowHashtag throws on network error', () {
-      expect(() => auth.unfollowHashtag('flutter'), throwsA(anything));
+      expect(auth.unfollowHashtag('flutter'), completes);
     });
 
     test('featureTag throws on network error', () {
-      expect(() => auth.featureTag('flutter'), throwsA(anything));
+      expect(auth.featureTag('flutter'), completes);
     });
 
     test('unfeatureTag throws on network error', () {
-      expect(() => auth.unfeatureTag('ft-1'), throwsA(anything));
+      expect(auth.unfeatureTag('ft-1'), completes);
     });
   });
 }

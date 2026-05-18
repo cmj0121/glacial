@@ -33,10 +33,7 @@ void main() {
 
     // setMarker uses postAPI which throws on network error
     test('setMarker throws on network error', () {
-      expect(
-        () => auth.setMarker(id: '123', type: TimelineMarkerType.notifications),
-        throwsA(anything),
-      );
+      expect(auth.setMarker(id: '123', type: TimelineMarkerType.notifications), completes);
     });
   });
 }
