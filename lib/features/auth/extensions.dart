@@ -101,9 +101,13 @@ extension AuthExtension on Storage {
 
     final String? server = entry?.isExpired == false ? entry?.server : null;
 
-    // Clean up used state from both caches.
-    if (state != null) _stateCache.remove(state);
-    await remove(_keyPendingAuth);
+    // Clean up used state from both caches — but only when we actually
+    // consumed a matching state. An unrelated deep link (e.g. routing
+    // callback with a different state) must not wipe a pending OAuth.
+    if (server != null && state != null) {
+      _stateCache.remove(state);
+      await remove(_keyPendingAuth);
+    }
 
     if (server == null || code == null || server != expectedServer) {
       logger.w("unexpected expected: server=$server, code=$code");

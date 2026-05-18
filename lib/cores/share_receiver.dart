@@ -37,6 +37,8 @@ class ShareReceiver {
       if (content != null && content.hasContent) {
         _pendingContent = content;
       }
+    }).catchError((error) {
+      logger.w("getInitialMedia failed: $error");
     });
   }
 

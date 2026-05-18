@@ -113,16 +113,31 @@ class StreamingService {
         onDone: _onDone,
       );
 
-      // Re-subscribe to all active streams.
+      // Re-subscribe to all active streams. For hashtag/list keys, the colon-
+      // delimited suffix is the discriminator; non-parameterized keys have none.
       for (final key in _subscriptions.keys) {
-        final parts = key.split(':');
         final StreamType? type = _streamTypeFromKey(key);
-        if (type != null) {
-          _sendSubscribe(type, tag: parts.length > 1 ? parts.sublist(1).join(':') : null, listId: parts.length > 1 ? parts[1] : null);
-        }
+        if (type == null) continue;
+        final int colonIdx = key.indexOf(':');
+        final String? suffix = colonIdx >= 0 ? key.substring(colonIdx + 1) : null;
+        _sendSubscribe(
+          type,
+          tag: type == StreamType.hashtag ? suffix : null,
+          listId: type == StreamType.list ? suffix : null,
+        );
       }
     } catch (e) {
       logger.e('[WS] Connection failed to $domain: $e');
+      // Ensure the partially-initialized channel is torn down so the
+      // reconnect path starts from a clean slate.
+      try {
+        await _channelSubscription?.cancel();
+      } catch (_) {}
+      _channelSubscription = null;
+      try {
+        _channel?.sink.close();
+      } catch (_) {}
+      _channel = null;
       _state = StreamingConnectionState.disconnected;
       _scheduleReconnect();
     }
@@ -251,11 +266,20 @@ final Map<String, StreamingService> _services = {};
 
 StreamingService getStreamingService(String domain, {String? accountId, String? accessToken, ChannelFactory? channelFactory}) {
   final String key = accountId != null ? '$domain@$accountId' : domain;
-  return _services.putIfAbsent(key, () => StreamingService(
+  final StreamingService? existing = _services[key];
+  if (existing != null && existing.accessToken == accessToken) {
+    return existing;
+  }
+  // Token (or service) changed — tear down the old service before allocating
+  // a new one so the WebSocket isn't left open with stale credentials.
+  existing?.dispose();
+  final StreamingService created = StreamingService(
     domain: domain,
     accessToken: accessToken,
     channelFactory: channelFactory,
-  ));
+  );
+  _services[key] = created;
+  return created;
 }
 
 void disposeStreamingService(String key) {
