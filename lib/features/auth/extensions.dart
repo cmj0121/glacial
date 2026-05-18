@@ -112,11 +112,19 @@ extension AuthExtension on Storage {
 
     final OAuth2Info info = await storage.getOAuth2Info(server);
     final String? accessToken = await info.getAccessToken(server, code);
+    if (accessToken == null) return null;
 
-    // confirm the access token work.
+    // confirm the access token works; if verification fails, clear the just-
+    // saved token so the caller doesn't end up with a persisted bad token.
     final Uri verifyUri = UriEx.handle(server, "/api/v1/apps/verify_credentials");
     final Map<String, String> headers = {"Authorization": "Bearer $accessToken"};
-    await get(verifyUri, headers: headers);
+    try {
+      await get(verifyUri, headers: headers);
+    } catch (e) {
+      logger.e("verify_credentials failed for $server: $e");
+      await storage.saveAccessToken(server, null);
+      return null;
+    }
 
     logger.i("gain access token and verify credentials for server: $server");
     return accessToken;

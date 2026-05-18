@@ -158,15 +158,28 @@ class AccessStatusSchema {
 
     final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
     final String? payload = body != null ? jsonEncode(body) : null;
-    final response = await post(uri,
-      headers: {
-        ...?headers,
-        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
-      },
-      body: payload,
-    );
-
-    return response.body;
+    try {
+      final response = await post(uri,
+        headers: {
+          ...?headers,
+          ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+        },
+        body: payload,
+      );
+      return response.body;
+    } on HttpException catch (e) {
+      logger.e("HTTP error ${e.statusCode} at [POST] $uri: ${e.message}");
+      return null;
+    } on HttpTimeoutException catch (e) {
+      logger.e("Request timed out at [POST] $uri: $e");
+      return null;
+    } on RateLimitException catch (e) {
+      logger.w("Rate limited at [POST] $uri, retry after ${e.retryAfter.inSeconds}s");
+      return null;
+    } catch (e) {
+      logger.e("failed to fetch API at [POST] $uri: $e");
+      return null;
+    }
   }
 
   // Call the API endpoint with the PUT method and return the response body as a string.
@@ -182,15 +195,28 @@ class AccessStatusSchema {
 
     final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
     final String? payload = body != null ? jsonEncode(body) : null;
-    final response = await put(uri,
-      headers: {
-        ...?headers,
-        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
-      },
-      body: payload,
-    );
-
-    return response.body;
+    try {
+      final response = await put(uri,
+        headers: {
+          ...?headers,
+          ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+        },
+        body: payload,
+      );
+      return response.body;
+    } on HttpException catch (e) {
+      logger.e("HTTP error ${e.statusCode} at [PUT] $uri: ${e.message}");
+      return null;
+    } on HttpTimeoutException catch (e) {
+      logger.e("Request timed out at [PUT] $uri: $e");
+      return null;
+    } on RateLimitException catch (e) {
+      logger.w("Rate limited at [PUT] $uri, retry after ${e.retryAfter.inSeconds}s");
+      return null;
+    } catch (e) {
+      logger.e("failed to fetch API at [PUT] $uri: $e");
+      return null;
+    }
   }
 
   // Call the API endpoint with the PATCH method and return the response body as a string.
@@ -206,16 +232,29 @@ class AccessStatusSchema {
 
     final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
     final String? payload = body != null ? jsonEncode(body) : null;
-    final response = await patch(
-      uri,
-      headers: {
-        ...?headers,
-        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
-      },
-      body: payload,
-    );
-
-    return response.body;
+    try {
+      final response = await patch(
+        uri,
+        headers: {
+          ...?headers,
+          ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+        },
+        body: payload,
+      );
+      return response.body;
+    } on HttpException catch (e) {
+      logger.e("HTTP error ${e.statusCode} at [PATCH] $uri: ${e.message}");
+      return null;
+    } on HttpTimeoutException catch (e) {
+      logger.e("Request timed out at [PATCH] $uri: $e");
+      return null;
+    } on RateLimitException catch (e) {
+      logger.w("Rate limited at [PATCH] $uri, retry after ${e.retryAfter.inSeconds}s");
+      return null;
+    } catch (e) {
+      logger.e("failed to fetch API at [PATCH] $uri: $e");
+      return null;
+    }
   }
 
   // Call the API endpoint with the DELETE method and return the response body as a string.
@@ -230,16 +269,29 @@ class AccessStatusSchema {
     }
 
     final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
-    final response = await delete(
-      uri,
-      headers: {
-        ...?headers,
-        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
-      },
-      body: body != null ? jsonEncode(body) : null,
-    );
-
-    return response.body;
+    try {
+      final response = await delete(
+        uri,
+        headers: {
+          ...?headers,
+          ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+        },
+        body: body != null ? jsonEncode(body) : null,
+      );
+      return response.body;
+    } on HttpException catch (e) {
+      logger.e("HTTP error ${e.statusCode} at [DELETE] $uri: ${e.message}");
+      return null;
+    } on HttpTimeoutException catch (e) {
+      logger.e("Request timed out at [DELETE] $uri: $e");
+      return null;
+    } on RateLimitException catch (e) {
+      logger.w("Rate limited at [DELETE] $uri, retry after ${e.retryAfter.inSeconds}s");
+      return null;
+    } catch (e) {
+      logger.e("failed to fetch API at [DELETE] $uri: $e");
+      return null;
+    }
   }
 
   // Call the API endpoint with the multipart API with customized method.
@@ -256,18 +308,31 @@ class AccessStatusSchema {
     }
 
     final Uri uri = UriEx.handle(domain!, endpoint).replace(queryParameters: queryParameters);
-    final response = await multiparts(
-      uri,
-      method: method,
-      headers: {
-        ...?headers,
-        ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
-      },
-      json: body,
-      files: files,
-    );
-
-    return response.body;
+    try {
+      final response = await multiparts(
+        uri,
+        method: method,
+        headers: {
+          ...?headers,
+          ...accessToken == null ? {} : {"Authorization": "Bearer $accessToken"},
+        },
+        json: body,
+        files: files,
+      );
+      return response.body;
+    } on HttpException catch (e) {
+      logger.e("HTTP error ${e.statusCode} at [$method] $uri: ${e.message}");
+      return null;
+    } on HttpTimeoutException catch (e) {
+      logger.e("Request timed out at [$method] $uri: $e");
+      return null;
+    } on RateLimitException catch (e) {
+      logger.w("Rate limited at [$method] $uri, retry after ${e.retryAfter.inSeconds}s");
+      return null;
+    } catch (e) {
+      logger.e("failed multipart API at [$method] $uri: $e");
+      return null;
+    }
   }
 
   // Ensure the access token is set for the current server.
