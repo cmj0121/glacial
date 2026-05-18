@@ -279,27 +279,32 @@ class _InteractionState extends ConsumerState<Interaction> {
         context.pop();
         showAdaptiveGlassDialog(
           context: context,
-          builder: (BuildContext context) => FilterSelector(
+          builder: (BuildContext dialogContext) => FilterSelector(
             status: widget.schema,
             onSelected: (filter) async {
-              context.pop();
+              Navigator.of(dialogContext).pop();
 
               await widget.status.addFilterStatus(filter: filter, status: widget.schema);
+              if (!mounted) return;
 
               final StatusSchema? updatedStatus = await widget.status.getStatus(widget.schema.id);
-              if (updatedStatus != null) widget.onReload?.call(updatedStatus);
+              if (!mounted || updatedStatus == null) return;
+              widget.onReload?.call(updatedStatus);
             },
             onDeleted: (filter) async {
-              context.pop();
+              Navigator.of(dialogContext).pop();
 
               final List<FilterStatusSchema> statusFilters = await widget.status.fetchFilterStatuses(filter: filter);
+              if (!mounted) return;
               final FilterStatusSchema? status = statusFilters.where((s) => s.statusId == widget.schema.id).firstOrNull;
               if (status == null) return;
 
               await widget.status.removeFilterStatus(status: status);
+              if (!mounted) return;
 
               final StatusSchema? updatedStatus = await widget.status.getStatus(widget.schema.id);
-              if (updatedStatus != null) widget.onReload?.call(updatedStatus);
+              if (!mounted || updatedStatus == null) return;
+              widget.onReload?.call(updatedStatus);
             },
           ),
         );

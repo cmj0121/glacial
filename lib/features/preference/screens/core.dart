@@ -560,8 +560,14 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
   }
 
   Future<void> _sendDummyNotification() async {
-    showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_pending ?? 'Test notification in 5 seconds...');
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context);
+    final String pending = l10n?.msg_test_notification_pending ?? 'Test notification in 5 seconds...';
+    final String foreground = l10n?.msg_test_notification_foreground ?? 'Notifications require background.';
+
+    messenger.showSnackBar(SnackBar(content: Text(pending)));
     Future.delayed(const Duration(seconds: 5), () {
+      if (!mounted) return;
       final state = WidgetsBinding.instance.lifecycleState;
       switch (state) {
         case AppLifecycleState.paused:
@@ -571,7 +577,7 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           return;
         default:
           AppBadgePlus.updateBadge(0);
-          showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_foreground ?? 'Notifications require background.');
+          messenger.showSnackBar(SnackBar(content: Text(foreground)));
           return;
       }
     });

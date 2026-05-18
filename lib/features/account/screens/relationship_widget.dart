@@ -108,8 +108,11 @@ class _RelationshipState extends ConsumerState<Relationship> {
           return;
         }
         if (value is RelationshipType) {
+          // Capture l10n + messenger up-front so the post-await branches
+          // never reach back into a context that may have been unmounted.
+          final l10n = AppLocalizations.of(context);
+          final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
           if (value.isDangerous) {
-            final l10n = AppLocalizations.of(context);
             final String message = value == RelationshipType.block
                 ? (l10n?.msg_confirm_block(widget.schema.displayName) ?? 'Block this account?')
                 : (l10n?.msg_confirm_mute(widget.schema.displayName) ?? 'Mute this account?');
@@ -118,16 +121,18 @@ class _RelationshipState extends ConsumerState<Relationship> {
               title: l10n?.txt_admin_confirm_action ?? 'Confirm',
               message: message,
             );
-            if (!confirmed) return;
+            if (!confirmed || !mounted) return;
           }
           try {
             await status?.changeRelationship(account: widget.schema, type: value);
+            if (!mounted) return;
             onRefresh();
           } catch (e) {
             logger.e("Failed to change relationship: $e");
-            if (mounted) {
-              showSnackbar(context, AppLocalizations.of(context)?.msg_network_error ?? 'Something went wrong. Please try again.');
-            }
+            if (!mounted) return;
+            messenger.showSnackBar(SnackBar(
+              content: Text(l10n?.msg_network_error ?? 'Something went wrong. Please try again.'),
+            ));
           }
         }
       }
