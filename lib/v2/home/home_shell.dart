@@ -270,6 +270,14 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
     final bool accessible = item.isAccessible(isSignedIn: isSignedIn, access: access);
     final bool isSelected = item.route == current;
 
+    if (accessible && item == SidebarButtonType.notifications) {
+      return NotificationBadge(
+        size: iconSize,
+        isSelected: isSelected,
+        onPressed: () => _onNavTap(item),
+      );
+    }
+
     Color? color;
     if (!accessible) {
       color = Theme.of(context).disabledColor;
