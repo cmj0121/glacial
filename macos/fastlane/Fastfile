@@ -64,13 +64,15 @@ platform :mac do
 
     Dir.chdir "../.." do
       sh("flutter pub get")
-      sh("flutter clean")
-      sh("flutter build macos --release --split-debug-info=build/debug-info --obfuscate")
+      sh("flutter build macos --config-only --release --split-debug-info=build/debug-info --obfuscate")
     end
 
+    profile_name = "match AppStore #{ENV['APP_IDENTIFIER']} macos"
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
+      export_method: "app-store",
+      xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER='#{profile_name}'",
     )
 
     # Fix ITMS-90291: objective_c.framework has Resources -> Versions/A/Resources
