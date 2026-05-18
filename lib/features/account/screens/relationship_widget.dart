@@ -20,9 +20,13 @@ class Relationship extends ConsumerStatefulWidget {
 
 class _RelationshipState extends ConsumerState<Relationship> {
   final double size = tabSize;
-  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
   RelationshipSchema? schema;
+
+  // Re-read accessStatusProvider on each access so account switches or
+  // token refreshes inside the widget's lifetime aren't shadowed by a
+  // value captured once in initState.
+  AccessStatusSchema? get status => ref.read(accessStatusProvider);
 
   @override
   void initState() {
