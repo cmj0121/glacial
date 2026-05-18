@@ -100,7 +100,9 @@ class _ExplorerState extends ConsumerState<SearchExplorer> with SingleTickerProv
         suffixIcon: buildCleanButton(),
       ),
 
-      onChanged: (string) => setState(() {}),
+      // Keystrokes are not consumed live — the explorer only navigates on
+      // submit, so there is no reason to rebuild the parent tree on every
+      // letter. Removing this setState avoids work proportional to typing.
       onSubmitted: (string) => onSearch(),
     );
   }

@@ -139,7 +139,10 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
               value: schema.fontScale,
               min: 0.8, max: 1.4, divisions: 6,
               label: '${(schema.fontScale * 100).round()}%',
-              onChanged: (v) => Storage().savePreference(schema.copyWith(fontScale: v), ref: ref),
+              // Update provider live for label feedback, but only persist
+              // to SharedPreferences when the user releases the slider.
+              onChanged: (v) => ref.read(preferenceProvider.notifier).state = schema.copyWith(fontScale: v),
+              onChangeEnd: (v) => Storage().savePreference(schema.copyWith(fontScale: v), ref: ref),
             ),
           ),
         ),

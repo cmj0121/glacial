@@ -285,7 +285,6 @@ class _CoreAppState extends ConsumerState<CoreApp> {
         }
 
         return V2HomeShell(
-          key: ValueKey(state.uri.path),
           backable: backable,
           title: title,
           actions: actions,
