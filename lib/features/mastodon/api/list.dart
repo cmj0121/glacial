@@ -46,7 +46,7 @@ extension ListsExtensions on AccessStatusSchema {
     final String endpoint = '/api/v1/lists';
     final Map<String, dynamic> body = {
       'title': title,
-      'reply_policy': replyPolicy.name,
+      'replies_policy': replyPolicy.name,
       'exclusive': exclusive,
     };
     final String response = await postAPI(endpoint, body: body) ?? '{}';
