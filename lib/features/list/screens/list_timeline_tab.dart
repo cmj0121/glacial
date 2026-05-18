@@ -170,8 +170,14 @@ class _ListTimelineTabState extends ConsumerState<ListTimelineTab> with TickerPr
   Future<void> _onRemove(int index) async {
     if (index < 0 || index >= _lists.length) return;
     final String id = _lists[index].id;
-    await status?.deleteList(id);
-    if (mounted) setState(() => _lists.removeAt(index));
+    final bool ok = await status?.deleteList(id) ?? false;
+    if (!mounted) return;
+    if (ok) {
+      setState(() => _lists.removeAt(index));
+    } else {
+      final String msg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+      showSnackbar(context, msg);
+    }
   }
 }
 

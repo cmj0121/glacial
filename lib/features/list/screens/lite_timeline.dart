@@ -218,8 +218,14 @@ class _LiteTimelineState extends ConsumerState<LiteTimeline> {
               background: _removeBackground(context),
               secondaryBackground: _removeBackground(context),
               onDismissed: (_) async {
-                await status?.removeAccountsFromList(schema.id, [account.id]);
-                if (mounted) setState(() => _membersFuture = status?.getListAccounts(schema.id));
+                final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+                final String errMsg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+                final bool ok = await status?.removeAccountsFromList(schema.id, [account.id]) ?? false;
+                if (!mounted) return;
+                if (!ok) {
+                  messenger.showSnackBar(SnackBar(content: Text(errMsg)));
+                }
+                setState(() => _membersFuture = status?.getListAccounts(schema.id));
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

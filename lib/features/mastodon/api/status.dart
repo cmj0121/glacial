@@ -136,7 +136,10 @@ extension StatusExtensions on AccessStatusSchema {
   }
 
   // The raw action to interact with the status, such as reblog, favourite, or delete.
-  Future<StatusSchema> interactWithStatus(StatusSchema status, StatusInteraction action, {bool? negative}) async {
+  // Returns the updated status on success, or null when the server call failed
+  // (so callers can surface an error and avoid corrupting local state with an
+  // empty `{}` parse).
+  Future<StatusSchema?> interactWithStatus(StatusSchema status, StatusInteraction action, {bool? negative}) async {
     checkSignedIn();
 
     final bool isNegative = negative ?? false;
@@ -162,7 +165,8 @@ extension StatusExtensions on AccessStatusSchema {
         throw ArgumentError('Unsupported status interaction: $action (negative: $isNegative)');
     }
 
-    final String body = await postAPI(endpoint) ?? '{}';
+    final String? body = await postAPI(endpoint);
+    if (body == null) return null;
     return StatusSchema.fromString(body);
   }
 

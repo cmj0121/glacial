@@ -208,18 +208,18 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     }
     HapticFeedback.lightImpact();
     try {
-      final StatusSchema updated = await widget.status.interactWithStatus(
+      final StatusSchema? updated = await widget.status.interactWithStatus(
         target,
         action,
         negative: isActive,
       );
-      if (!mounted) return;
+      if (!mounted || updated == null) return;
       final int current = statuses.indexWhere((s) => s.id == target.id);
       if (current >= 0) {
         setState(() => statuses[current] = updated);
       }
-    } catch (_) {
-      // Swallow: transient network errors shouldn't crash the shortcut flow.
+    } catch (e) {
+      logger.w('keyboard-shortcut interaction failed: $e');
     }
   }
 

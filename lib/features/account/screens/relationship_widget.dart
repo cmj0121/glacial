@@ -178,10 +178,14 @@ class _RelationshipState extends ConsumerState<Relationship> {
 
   // Toggle the endorse/unendorse state for this account.
   Future<void> onToggleEndorse() async {
-    if (schema?.endorsed == true) {
-      await status?.unendorseAccount(accountId: widget.schema.id);
-    } else {
-      await status?.endorseAccount(accountId: widget.schema.id);
+    final RelationshipSchema? result = schema?.endorsed == true
+        ? await status?.unendorseAccount(accountId: widget.schema.id)
+        : await status?.endorseAccount(accountId: widget.schema.id);
+    if (!mounted) return;
+    if (result == null) {
+      final String msg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+      showSnackbar(context, msg);
+      return;
     }
     onRefresh();
   }
@@ -212,8 +216,16 @@ class _RelationshipState extends ConsumerState<Relationship> {
                   foregroundColor: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () async {
-                  Navigator.of(context).pop();
-                  await status?.acceptFollowRequest(widget.schema.id);
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
+                  final String errMsg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+                  navigator.pop();
+                  final result = await status?.acceptFollowRequest(widget.schema.id);
+                  if (!mounted) return;
+                  if (result == null) {
+                    messenger.showSnackBar(SnackBar(content: Text(errMsg)));
+                    return;
+                  }
                   onRefresh();
                 }
               ),
@@ -224,8 +236,16 @@ class _RelationshipState extends ConsumerState<Relationship> {
                   foregroundColor: Theme.of(context).colorScheme.error,
                 ),
                 onPressed: () async {
-                  Navigator.of(context).pop();
-                  await status?.rejectFollowRequest(widget.schema.id);
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
+                  final String errMsg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+                  navigator.pop();
+                  final result = await status?.rejectFollowRequest(widget.schema.id);
+                  if (!mounted) return;
+                  if (result == null) {
+                    messenger.showSnackBar(SnackBar(content: Text(errMsg)));
+                    return;
+                  }
                   onRefresh();
                 }
               ),

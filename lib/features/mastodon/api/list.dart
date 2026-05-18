@@ -75,10 +75,10 @@ extension ListsExtensions on AccessStatusSchema {
     return ListSchema.fromJson(json);
   }
 
-  // Delete a list.
-  Future<void> deleteList(String id) async {
+  // Delete a list. Returns true on success.
+  Future<bool> deleteList(String id) async {
     final String endpoint = '/api/v1/lists/$id';
-    await deleteAPI(endpoint);
+    return await deleteAPI(endpoint) != null;
   }
 
   // View accounts in a list.
@@ -98,11 +98,11 @@ extension ListsExtensions on AccessStatusSchema {
     await postAPI(endpoint, body: body);
   }
 
-  // Remove accounts from the given list.
-  Future<void> removeAccountsFromList(String id, List<String> accountIds) async {
+  // Remove accounts from the given list. Returns true on success.
+  Future<bool> removeAccountsFromList(String id, List<String> accountIds) async {
     final String endpoint = '/api/v1/lists/$id/accounts';
     final Map<String, dynamic> body = {'account_ids': accountIds};
-    await deleteAPI(endpoint, body: body);
+    return await deleteAPI(endpoint, body: body) != null;
   }
 }
 

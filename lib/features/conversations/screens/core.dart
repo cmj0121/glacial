@@ -109,7 +109,7 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
               title: AppLocalizations.of(context)?.txt_admin_confirm_action ?? 'Confirm',
               message: AppLocalizations.of(context)?.msg_confirm_delete_conversation ?? 'Delete this conversation?',
             );
-            if (confirmed) onDismiss(index, conversation.id);
+            if (confirmed) await onDismiss(index, conversation.id);
             return false;
           },
           child: ConversationItem(
@@ -127,11 +127,21 @@ class _ConversationTabState extends ConsumerState<ConversationTab> with Paginate
     );
   }
 
-  // Dismiss a conversation and rebuild the list with fresh controllers.
-  void onDismiss(int index, String conversationId) {
+  // Delete the conversation on the server first; only mutate local state and
+  // recreate scroll controllers when the server confirms. On failure the row
+  // stays in place and the user gets a snackbar.
+  Future<void> onDismiss(int index, String conversationId) async {
+    if (index < 0 || index >= conversations.length) return;
+    final bool ok = await status?.deleteConversation(conversationId) ?? false;
+    if (!mounted) return;
+    if (!ok) {
+      final String msg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+      showSnackbar(context, msg);
+      return;
+    }
+
     itemPositionsListener.itemPositions.removeListener(_onPositionChange);
     conversations.removeAt(index);
-    status?.deleteConversation(conversationId);
 
     itemScrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();

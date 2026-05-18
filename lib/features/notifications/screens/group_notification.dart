@@ -124,7 +124,7 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
             child: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.onError),
           ),
           confirmDismiss: (_) async {
-            onDismissGroup(index, group.key);
+            await onDismissGroup(index, group.key);
             return false;
           },
           child: SingleNotification(schema: group),
@@ -139,12 +139,21 @@ class _GroupNotificationState extends ConsumerState<GroupNotification> with Pagi
     );
   }
 
-  // Dismiss a notification group and rebuild the list with fresh controllers
-  // to avoid ScrollablePositionedList stale state after item removal.
-  void onDismissGroup(int index, String groupKey) {
+  // Dismiss the notification group on the server first; only mutate local
+  // state and recreate scroll controllers when the server confirms. On
+  // failure the row stays in place and the user gets a snackbar.
+  Future<void> onDismissGroup(int index, String groupKey) async {
+    if (index < 0 || index >= groups.length) return;
+    final bool ok = await status?.dismissNotificationGroup(groupKey) ?? false;
+    if (!mounted) return;
+    if (!ok) {
+      final String msg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+      showSnackbar(context, msg);
+      return;
+    }
+
     itemPositionsListener.itemPositions.removeListener(_onPositionChange);
     groups.removeAt(index);
-    status?.dismissNotificationGroup(groupKey);
 
     // Recreate controllers to force a clean ScrollablePositionedList rebuild.
     itemScrollController = ItemScrollController();

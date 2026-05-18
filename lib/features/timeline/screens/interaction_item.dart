@@ -221,12 +221,17 @@ class _InteractionState extends ConsumerState<Interaction> {
       case StatusInteraction.bookmark:
       case StatusInteraction.pin:
         _haptic();
-        final StatusSchema updatedStatus = await widget.status.interactWithStatus(
+        final StatusSchema? updatedStatus = await widget.status.interactWithStatus(
           widget.schema,
           widget.action,
           negative: isActive,
         );
-
+        if (!mounted) return;
+        if (updatedStatus == null) {
+          final String msg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+          showSnackbar(context, msg);
+          return;
+        }
         widget.onReload?.call(updatedStatus);
         return;
       case StatusInteraction.edit:
@@ -301,12 +306,17 @@ class _InteractionState extends ConsumerState<Interaction> {
         return;
       case StatusInteraction.mute:
         _haptic();
-        final StatusSchema mutedStatus = await widget.status.interactWithStatus(
+        final StatusSchema? mutedStatus = await widget.status.interactWithStatus(
           widget.schema,
           widget.action,
           negative: isActive,
         );
-
+        if (!mounted) return;
+        if (mutedStatus == null) {
+          final String msg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+          showSnackbar(context, msg);
+          return;
+        }
         widget.onReload?.call(mutedStatus);
         return;
       case StatusInteraction.block:
