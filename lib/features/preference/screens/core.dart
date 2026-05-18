@@ -501,6 +501,8 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
           leading: Icon(Icons.restart_alt, size: 22, color: scheme.error),
           onTap: () async {
+            final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+            final String successMsg = AppLocalizations.of(context)?.msg_preference_engineer_reset ?? 'Reset complete.';
             final bool confirmed = await showConfirmDialog(
               context: context,
               title: AppLocalizations.of(context)?.btn_preference_engineer_reset ?? 'Reset',
@@ -508,9 +510,13 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             );
             if (!confirmed || !mounted) return;
             await storage.purge();
-            if (mounted) {
-              showSnackbar(context, AppLocalizations.of(context)?.msg_preference_engineer_reset ?? 'Reset complete.');
-            }
+            // Reset in-memory providers so the rest of the app sees the
+            // cleared state immediately, not just the on-disk version.
+            ref.read(preferenceProvider.notifier).state = null;
+            ref.read(accessStatusProvider.notifier).state = null;
+            ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
+            if (!mounted) return;
+            messenger.showSnackBar(SnackBar(content: Text(successMsg)));
           },
         ),
       ],
