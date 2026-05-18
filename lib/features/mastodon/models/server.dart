@@ -41,25 +41,25 @@ class ServerSchema {
     return ServerSchema.fromJson(json);
   }
 
-  // Create a new ServerSchema by the passed JSON object.
+  // Create a new ServerSchema by the passed JSON object. Tolerate missing
+  // optional fields — Mastodon v1 and small/older servers may omit some.
   factory ServerSchema.fromJson(Map<String, dynamic> json) {
-    final Map<String, dynamic> thumbnail = json['thumbnail'] as Map<String, dynamic>;
+    final Map<String, dynamic>? thumbnail = json['thumbnail'] as Map<String, dynamic>?;
 
     return ServerSchema(
-      domain: json['domain'] as String,
-      title: json['title'] as String,
-      desc: json['description'] as String,
-      version: json['version'] as String,
-      thumbnail: thumbnail['url'] as String,
-      usage: ServerUsageSchema.fromJson(json['usage'] as Map<String, dynamic>),
-      config: ServerConfigSchema.fromJson(json['configuration'] as Map<String, dynamic>),
-      registration: RegisterConfigSchema.fromJson(json['registrations'] as Map<String, dynamic>),
-      contact: ContactSchema.fromJson(json['contact'] as Map<String, dynamic>),
-      languages: (json['languages'] as List<dynamic>).map((e) => e as String).toList(),
-      rules: (json['rules'] as List<dynamic>).map((e) {
-        final Map<String, dynamic> rule = e as Map<String, dynamic>;
-        return RuleSchema.fromJson(rule);
-      }).toList(),
+      domain: (json['domain'] as String?) ?? '',
+      title: (json['title'] as String?) ?? '',
+      desc: (json['description'] as String?) ?? '',
+      version: (json['version'] as String?) ?? '',
+      thumbnail: (thumbnail?['url'] as String?) ?? '',
+      usage: ServerUsageSchema.fromJson((json['usage'] as Map<String, dynamic>?) ?? const {}),
+      config: ServerConfigSchema.fromJson((json['configuration'] as Map<String, dynamic>?) ?? const {}),
+      registration: RegisterConfigSchema.fromJson((json['registrations'] as Map<String, dynamic>?) ?? const {}),
+      contact: ContactSchema.fromJson((json['contact'] as Map<String, dynamic>?) ?? const {}),
+      languages: (json['languages'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
+      rules: (json['rules'] as List<dynamic>?)?.map((e) {
+        return RuleSchema.fromJson(e as Map<String, dynamic>);
+      }).toList() ?? const [],
     );
   }
 
@@ -116,8 +116,8 @@ class ServerInfoSchema {
   // Convert the JSON map to a ServerInfoSchema object.
   factory ServerInfoSchema.fromJson(Map<String, dynamic> json) {
     return ServerInfoSchema(
-      domain: json['domain'] as String,
-      thumbnail: json['thumbnail'] as String,
+      domain: (json['domain'] as String?) ?? '',
+      thumbnail: (json['thumbnail'] as String?) ?? '',
     );
   }
 

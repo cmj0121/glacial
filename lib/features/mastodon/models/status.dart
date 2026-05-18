@@ -45,7 +45,10 @@ class AccessStatusSchema {
   factory AccessStatusSchema.fromJson(Map<String, dynamic> json) {
     return AccessStatusSchema(
       domain: json['domain'] as String?,
-      history: (json['history'] as List<dynamic>).map((e) => ServerInfoSchema.fromJson(e as Map<String, dynamic>)).toList(),
+      history: (json['history'] as List<dynamic>?)
+          ?.map((e) => ServerInfoSchema.fromJson(e as Map<String, dynamic>))
+          .toList()
+          ?? const [],
     );
   }
 

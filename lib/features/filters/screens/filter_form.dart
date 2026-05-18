@@ -165,9 +165,12 @@ class _FiltersFormState extends ConsumerState<FiltersForm> {
     final String textNever = AppLocalizations.of(context)?.txt_filter_never ?? "Never";
     final String descExpired = AppLocalizations.of(context)?.desc_filter_expiration ?? "When the filter will expire";
 
-    final String text = index == -1 ?
-        (form.expiresIn! < 0 ? textExpired : Duration(seconds: form.expiresIn ?? 0).pretty()) :
-        (durations[index] == null ? textNever : "In ${durations[index]?.pretty()}");
+    final int? expiresIn = form.expiresIn;
+    final String text = index == -1
+        ? (expiresIn == null
+            ? textNever
+            : (expiresIn < 0 ? textExpired : Duration(seconds: expiresIn).pretty()))
+        : (durations[index] == null ? textNever : "In ${durations[index]?.pretty()}");
 
     return ListTile(
       leading: Icon(Icons.schedule_outlined, size: iconSize),
