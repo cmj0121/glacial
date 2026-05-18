@@ -93,10 +93,13 @@ Future<void> init() async {
 }
 
 
-// The entry point of the app that starts the Flutter application.
+// The entry point of the app that starts the Flutter application. Load
+// persisted preferences before removing the native splash so the first
+// frame already reflects the user's saved settings (theme, etc.) instead
+// of flashing defaults while shared_preferences resolves.
 void start() async {
-  FlutterNativeSplash.remove();
   final SystemPreferenceSchema? schema = await Storage().loadPreference();
+  FlutterNativeSplash.remove();
 
   runApp(
     // Adding ProviderScope enables Riverpod for the entire project
