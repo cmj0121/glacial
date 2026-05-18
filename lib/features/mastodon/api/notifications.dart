@@ -28,12 +28,12 @@ extension GroupNotificationExtensions on AccessStatusSchema {
     return GroupNotificationSchema.fromString(body);
   }
 
-  // Dismiss a single notification group by its group key.
-  Future<void> dismissNotificationGroup(String groupKey) async {
+  // Dismiss a single notification group by its group key. Returns true on success.
+  Future<bool> dismissNotificationGroup(String groupKey) async {
     checkSignedIn();
 
     final String endpoint = '/api/v2/notifications/$groupKey/dismiss';
-    await postAPI(endpoint);
+    return await postAPI(endpoint) != null;
   }
 
   // Get a single notification group by its group key.

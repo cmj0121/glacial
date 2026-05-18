@@ -19,7 +19,7 @@ extension SuggestionsExtensions on AccessStatusSchema {
     checkSignedIn();
 
     final String endpoint = '/api/v2/suggestions';
-    final Map<String, String> query = {"offset": (limit ?? 40).toString()};
+    final Map<String, String> query = {"limit": (limit ?? 40).toString()};
     final String body = await getAPI(endpoint, queryParameters: query) ?? '[]';
     final List<dynamic> json = jsonDecode(body) as List<dynamic>;
 

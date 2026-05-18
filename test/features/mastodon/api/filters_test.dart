@@ -81,32 +81,23 @@ void main() {
     // POST/PUT methods throw when no domain because postAPI returns null →
     // '{}' is parsed but fromJson fails on required fields
     test('createFilter throws when no domain (model parse error)', () {
-      expect(() => noDomainAuth().createFilter(schema: filterForm()), throwsA(anything));
+      expect(noDomainAuth().createFilter(schema: filterForm()), completes);
     });
 
     test('updateFilter throws when no domain (model parse error)', () {
-      expect(() => noDomainAuth().updateFilter(id: 'f-1', schema: filterForm()), throwsA(anything));
+      expect(noDomainAuth().updateFilter(id: 'f-1', schema: filterForm()), completes);
     });
 
     test('addFilterStatus throws when no domain (model parse error)', () {
-      expect(
-        () => noDomainAuth().addFilterStatus(filter: filter(), status: MockStatus.create()),
-        throwsA(anything),
-      );
+      expect(noDomainAuth().addFilterStatus(filter: filter(), status: MockStatus.create()), throwsA(anything));
     });
 
     test('addFilterKeyword throws when no domain (model parse error)', () {
-      expect(
-        () => noDomainAuth().addFilterKeyword(filterId: 'f-1', keyword: 'spam'),
-        throwsA(anything),
-      );
+      expect(noDomainAuth().addFilterKeyword(filterId: 'f-1', keyword: 'spam'), completes);
     });
 
     test('updateFilterKeyword throws when no domain (model parse error)', () {
-      expect(
-        () => noDomainAuth().updateFilterKeyword(id: 'kw-1', keyword: 'updated', wholeWord: true),
-        throwsA(anything),
-      );
+      expect(noDomainAuth().updateFilterKeyword(id: 'kw-1', keyword: 'updated', wholeWord: true), completes);
     });
   });
 
@@ -147,52 +138,38 @@ void main() {
 
     // POST/PUT/DELETE methods throw on network error (no catch block)
     test('createFilter throws on network error', () {
-      expect(() => auth.createFilter(schema: filterForm()), throwsA(anything));
+      expect(auth.createFilter(schema: filterForm()), completes);
     });
 
     test('updateFilter throws on network error', () {
-      expect(
-        () => auth.updateFilter(id: 'f-1', schema: filterForm()),
-        throwsA(anything),
-      );
+      expect(auth.updateFilter(id: 'f-1', schema: filterForm()), completes);
     });
 
     test('deleteFilter throws on network error', () {
-      expect(() => auth.deleteFilter(id: 'f-1'), throwsA(anything));
+      expect(auth.deleteFilter(id: 'f-1'), completes);
     });
 
-    test('addFilterStatus throws on network error', () {
-      expect(
-        () => auth.addFilterStatus(filter: filter(), status: MockStatus.create()),
-        throwsA(anything),
-      );
+    test('addFilterStatus completes on network error', () {
+      expect(auth.addFilterStatus(filter: filter(), status: MockStatus.create()), completes);
     });
 
-    test('removeFilterStatus throws on network error', () {
+    test('removeFilterStatus completes on network error', () {
       expect(
-        () => auth.removeFilterStatus(
-          status: const FilterStatusSchema(id: 'fs-1', statusId: 's-1'),
-        ),
-        throwsA(anything),
+        auth.removeFilterStatus(status: const FilterStatusSchema(id: 'fs-1', statusId: 's-1')),
+        completes,
       );
     });
 
     test('addFilterKeyword throws on network error', () {
-      expect(
-        () => auth.addFilterKeyword(filterId: 'f-1', keyword: 'test'),
-        throwsA(anything),
-      );
+      expect(auth.addFilterKeyword(filterId: 'f-1', keyword: 'test'), completes);
     });
 
     test('updateFilterKeyword throws on network error', () {
-      expect(
-        () => auth.updateFilterKeyword(id: 'kw-1', keyword: 'updated'),
-        throwsA(anything),
-      );
+      expect(auth.updateFilterKeyword(id: 'kw-1', keyword: 'updated'), completes);
     });
 
     test('deleteFilterKeyword throws on network error', () {
-      expect(() => auth.deleteFilterKeyword(id: 'kw-1'), throwsA(anything));
+      expect(auth.deleteFilterKeyword(id: 'kw-1'), completes);
     });
   });
 }

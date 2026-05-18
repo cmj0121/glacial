@@ -13,9 +13,12 @@ immediately understandable without reading.
    post content).
 2. **Responsive by default** — full-width on iPhone, centered `480px` max-width on
    iPad and macOS. No separate layouts; one adaptive widget (`V2CenteredLayout`).
-3. **Platform-native feel** — `NavigationRail` on desktop, `NavigationBar` on mobile.
-   Material 3 theming throughout. Glassmorphism on Apple platforms via existing
-   `useLiquidGlass` flag.
+3. **Platform-native feel** — custom icon-only sidebar on wide layouts and a
+   bottom icon row on narrow layouts (built from `IconButton` plus the existing
+   `NotificationBadge`, so the badge and the filled-tonal post button keep
+   their bespoke styling). The shell switches between these via a
+   `MediaQuery.sizeOf` width breakpoint. Material 3 theming throughout.
+   Glassmorphism on Apple platforms via existing `useLiquidGlass` flag.
 4. **Parallel to v1** — v2 screens live in `lib/v2/`. Models, API, storage, and
    providers are reused from `lib/features/`. When v2 is complete, delete v1 screens
    and move v2 into place.

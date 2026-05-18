@@ -113,8 +113,14 @@ class _FiltersState extends ConsumerState<Filters> {
   }
 
   Future<void> onDelete({required FiltersSchema schema}) async {
-    await status?.deleteFilter(id: schema.id);
-    if (mounted) setState(() => filters.remove(schema));
+    final bool ok = await status?.deleteFilter(id: schema.id) ?? false;
+    if (!mounted) return;
+    if (ok) {
+      setState(() => filters.remove(schema));
+    } else {
+      final String msg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+      showSnackbar(context, msg);
+    }
   }
 }
 

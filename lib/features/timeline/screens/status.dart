@@ -97,6 +97,7 @@ class _StatusState extends ConsumerState<Status> {
     HapticFeedback.mediumImpact();
 
     final l10n = AppLocalizations.of(context);
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
     final RenderBox box = context.findRenderObject() as RenderBox;
     final Offset offset = box.localToGlobal(Offset.zero);
 
@@ -131,6 +132,12 @@ class _StatusState extends ConsumerState<Status> {
             : action == StatusInteraction.favourite ? (schema.favourited ?? false)
             : (schema.bookmarked ?? false),
       );
+      if (!mounted) return;
+      if (updatedStatus == null) {
+        final String msg = l10n?.msg_network_error ?? 'Network error';
+        messenger.showSnackBar(SnackBar(content: Text(msg)));
+        return;
+      }
       onReload(updatedStatus);
     }
   }
@@ -146,7 +153,10 @@ class _StatusState extends ConsumerState<Status> {
       StatusInteraction.favourite,
       negative: schema.favourited ?? false,
     );
-    onReload(updatedStatus);
+    if (!mounted) return;
+    if (updatedStatus != null) {
+      onReload(updatedStatus);
+    }
 
     await Future.delayed(const Duration(milliseconds: 600));
     if (mounted) setState(() => _showHeartOverlay = false);

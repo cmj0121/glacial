@@ -280,6 +280,9 @@ extension AccessStatusExtension on Storage {
     final String? accessToken = await loadAccessToken(saved.compositeKey);
     if (accessToken == null) {
       logger.w("no token found for account: ${saved.compositeKey}");
+      // Clear the in-memory status so callers don't keep showing the old
+      // signed-in account after a failed switch.
+      ref?.read(accessStatusProvider.notifier).state = null;
       return;
     }
 
@@ -293,12 +296,14 @@ extension AccessStatusExtension on Storage {
       if (e.isUnauthorized) {
         logger.w("token revoked/expired for account: ${saved.compositeKey}, cleaning up");
         await removeSavedAccount(saved.compositeKey);
+        ref?.read(accessStatusProvider.notifier).state = null;
         return;
       }
     }
 
     if (account == null) {
       logger.w("failed to verify account: ${saved.compositeKey}");
+      ref?.read(accessStatusProvider.notifier).state = null;
       return;
     }
 

@@ -20,9 +20,13 @@ class Relationship extends ConsumerStatefulWidget {
 
 class _RelationshipState extends ConsumerState<Relationship> {
   final double size = tabSize;
-  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
 
   RelationshipSchema? schema;
+
+  // Re-read accessStatusProvider on each access so account switches or
+  // token refreshes inside the widget's lifetime aren't shadowed by a
+  // value captured once in initState.
+  AccessStatusSchema? get status => ref.read(accessStatusProvider);
 
   @override
   void initState() {
@@ -108,8 +112,11 @@ class _RelationshipState extends ConsumerState<Relationship> {
           return;
         }
         if (value is RelationshipType) {
+          // Capture l10n + messenger up-front so the post-await branches
+          // never reach back into a context that may have been unmounted.
+          final l10n = AppLocalizations.of(context);
+          final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
           if (value.isDangerous) {
-            final l10n = AppLocalizations.of(context);
             final String message = value == RelationshipType.block
                 ? (l10n?.msg_confirm_block(widget.schema.displayName) ?? 'Block this account?')
                 : (l10n?.msg_confirm_mute(widget.schema.displayName) ?? 'Mute this account?');
@@ -118,16 +125,18 @@ class _RelationshipState extends ConsumerState<Relationship> {
               title: l10n?.txt_admin_confirm_action ?? 'Confirm',
               message: message,
             );
-            if (!confirmed) return;
+            if (!confirmed || !mounted) return;
           }
           try {
             await status?.changeRelationship(account: widget.schema, type: value);
+            if (!mounted) return;
             onRefresh();
           } catch (e) {
             logger.e("Failed to change relationship: $e");
-            if (mounted) {
-              showSnackbar(context, AppLocalizations.of(context)?.msg_network_error ?? 'Something went wrong. Please try again.');
-            }
+            if (!mounted) return;
+            messenger.showSnackBar(SnackBar(
+              content: Text(l10n?.msg_network_error ?? 'Something went wrong. Please try again.'),
+            ));
           }
         }
       }
@@ -178,10 +187,14 @@ class _RelationshipState extends ConsumerState<Relationship> {
 
   // Toggle the endorse/unendorse state for this account.
   Future<void> onToggleEndorse() async {
-    if (schema?.endorsed == true) {
-      await status?.unendorseAccount(accountId: widget.schema.id);
-    } else {
-      await status?.endorseAccount(accountId: widget.schema.id);
+    final RelationshipSchema? result = schema?.endorsed == true
+        ? await status?.unendorseAccount(accountId: widget.schema.id)
+        : await status?.endorseAccount(accountId: widget.schema.id);
+    if (!mounted) return;
+    if (result == null) {
+      final String msg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+      showSnackbar(context, msg);
+      return;
     }
     onRefresh();
   }
@@ -212,8 +225,16 @@ class _RelationshipState extends ConsumerState<Relationship> {
                   foregroundColor: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () async {
-                  Navigator.of(context).pop();
-                  await status?.acceptFollowRequest(widget.schema.id);
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
+                  final String errMsg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+                  navigator.pop();
+                  final result = await status?.acceptFollowRequest(widget.schema.id);
+                  if (!mounted) return;
+                  if (result == null) {
+                    messenger.showSnackBar(SnackBar(content: Text(errMsg)));
+                    return;
+                  }
                   onRefresh();
                 }
               ),
@@ -224,8 +245,16 @@ class _RelationshipState extends ConsumerState<Relationship> {
                   foregroundColor: Theme.of(context).colorScheme.error,
                 ),
                 onPressed: () async {
-                  Navigator.of(context).pop();
-                  await status?.rejectFollowRequest(widget.schema.id);
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
+                  final String errMsg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+                  navigator.pop();
+                  final result = await status?.rejectFollowRequest(widget.schema.id);
+                  if (!mounted) return;
+                  if (result == null) {
+                    messenger.showSnackBar(SnackBar(content: Text(errMsg)));
+                    return;
+                  }
                   onRefresh();
                 }
               ),

@@ -26,18 +26,24 @@ class NotificationBadge extends ConsumerStatefulWidget {
 }
 
 class _NotificationBadgeState extends ConsumerState<NotificationBadge> with WidgetsBindingObserver {
-  late final SystemPreferenceSchema? pref = ref.watch(preferenceProvider);
-  late final AccessStatusSchema? status = ref.read(accessStatusProvider);
-
   Timer? _timer;
+  Duration? _scheduledInterval;
+  bool _loadInFlight = false;
   int unreadCount = 0;
+
+  AccessStatusSchema? get _status => ref.read(accessStatusProvider);
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _startTaskIfForeground());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Fetch immediately on cold start so the badge doesn't wait a full
+      // refresh interval before showing unread count.
+      onLoad();
+      _startTaskIfForeground();
+    });
   }
 
   @override
@@ -64,26 +70,33 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
     }
   }
 
-  void _startTask({int? times}) {
-    final Duration? refreshInterval = pref?.refreshInterval;
+  void _startTask() {
+    final Duration? refreshInterval = ref.read(preferenceProvider)?.refreshInterval;
+    if (refreshInterval == _scheduledInterval && _timer != null) return;
+
     _stopTask();
+    _scheduledInterval = refreshInterval;
 
     if (refreshInterval != null && refreshInterval.inSeconds > 0) {
-      final int interval = refreshInterval.inSeconds;
-
-      _timer = Timer.periodic(Duration(seconds: interval * (times ?? 1)), (Timer timer) async {
-        await onLoad();
+      _timer = Timer.periodic(refreshInterval, (Timer timer) {
+        onLoad();
       });
     }
   }
 
-  Future<void> _stopTask() async {
+  void _stopTask() {
     _timer?.cancel();
     _timer = null;
   }
 
   @override
   Widget build(BuildContext context) {
+    // Listen to preference changes so a refreshInterval update reschedules the
+    // timer; we don't use the value here, but the watch wires up the rebuild.
+    ref.listen<SystemPreferenceSchema?>(
+      preferenceProvider,
+      (_, _) => _startTaskIfForeground(),
+    );
     final SidebarButtonType action = SidebarButtonType.notifications;
     final Widget icon = IconButton(
       icon: Icon(action.icon(active: widget.isSelected), size: widget.size),
@@ -106,17 +119,24 @@ class _NotificationBadgeState extends ConsumerState<NotificationBadge> with Widg
 
   // Try to load the unread notifications count when the widget is built.
   Future<void> onLoad() async {
-    final int count = await status?.getUnreadGroupCount() ?? 0;
-
-    if (!mounted) return;
-    if (count > unreadCount) { await onNotify(count); }
-    if (mounted) setState(() => unreadCount = count);
+    if (_loadInFlight) return;
+    _loadInFlight = true;
+    try {
+      final int count = await _status?.getUnreadGroupCount() ?? 0;
+      if (!mounted) return;
+      if (count > unreadCount) await onNotify(count);
+      if (!mounted) return;
+      setState(() => unreadCount = count);
+    } finally {
+      _loadInFlight = false;
+    }
   }
 
   // Send the notification to the user when the unread count is updated.
   Future<void> onNotify(int unreadCount) async {
-    final String title = AppLocalizations.of(context)?.msg_notification_title ?? "New Notifications";
-    final String body = AppLocalizations.of(context)?.msg_notification_body(unreadCount) ?? "You have $unreadCount new notifications.";
+    final l10n = AppLocalizations.of(context);
+    final String title = l10n?.msg_notification_title ?? "New Notifications";
+    final String body = l10n?.msg_notification_body(unreadCount) ?? "You have $unreadCount new notifications.";
 
     await sendLocalNotification(title, body, badgeNumber: unreadCount);
   }

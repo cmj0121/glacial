@@ -37,8 +37,9 @@ extension ListsExtensions on AccessStatusSchema {
     return ListSchema.fromJson(json);
   }
 
-  // Create a new list.
-  Future<ListSchema> createList({
+  // Create a new list. Returns null on server failure so callers can
+  // surface the error instead of crashing on an empty body parse.
+  Future<ListSchema?> createList({
     required String title,
     ReplyPolicyType replyPolicy = ReplyPolicyType.list,
     bool exclusive = false,
@@ -46,17 +47,18 @@ extension ListsExtensions on AccessStatusSchema {
     final String endpoint = '/api/v1/lists';
     final Map<String, dynamic> body = {
       'title': title,
-      'reply_policy': replyPolicy.name,
+      'replies_policy': replyPolicy.name,
       'exclusive': exclusive,
     };
-    final String response = await postAPI(endpoint, body: body) ?? '{}';
+    final String? response = await postAPI(endpoint, body: body);
+    if (response == null) return null;
     final Map<String, dynamic> json = jsonDecode(response) as Map<String, dynamic>;
 
     return ListSchema.fromJson(json);
   }
 
-  // Change the properties of a list.
-  Future<ListSchema> updateList({
+  // Change the properties of a list. Returns null on server failure.
+  Future<ListSchema?> updateList({
     required String id,
     required String title,
     ReplyPolicyType? replyPolicy,
@@ -69,16 +71,17 @@ extension ListsExtensions on AccessStatusSchema {
       if (exclusive != null) 'exclusive': exclusive,
     };
 
-    final String response = await putAPI(endpoint, body: body) ?? '{}';
+    final String? response = await putAPI(endpoint, body: body);
+    if (response == null) return null;
     final Map<String, dynamic> json = jsonDecode(response) as Map<String, dynamic>;
 
     return ListSchema.fromJson(json);
   }
 
-  // Delete a list.
-  Future<void> deleteList(String id) async {
+  // Delete a list. Returns true on success.
+  Future<bool> deleteList(String id) async {
     final String endpoint = '/api/v1/lists/$id';
-    await deleteAPI(endpoint);
+    return await deleteAPI(endpoint) != null;
   }
 
   // View accounts in a list.
@@ -98,11 +101,11 @@ extension ListsExtensions on AccessStatusSchema {
     await postAPI(endpoint, body: body);
   }
 
-  // Remove accounts from the given list.
-  Future<void> removeAccountsFromList(String id, List<String> accountIds) async {
+  // Remove accounts from the given list. Returns true on success.
+  Future<bool> removeAccountsFromList(String id, List<String> accountIds) async {
     final String endpoint = '/api/v1/lists/$id/accounts';
     final Map<String, dynamic> body = {'account_ids': accountIds};
-    await deleteAPI(endpoint, body: body);
+    return await deleteAPI(endpoint, body: body) != null;
   }
 }
 

@@ -139,7 +139,10 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
               value: schema.fontScale,
               min: 0.8, max: 1.4, divisions: 6,
               label: '${(schema.fontScale * 100).round()}%',
-              onChanged: (v) => Storage().savePreference(schema.copyWith(fontScale: v), ref: ref),
+              // Update provider live for label feedback, but only persist
+              // to SharedPreferences when the user releases the slider.
+              onChanged: (v) => ref.read(preferenceProvider.notifier).state = schema.copyWith(fontScale: v),
+              onChangeEnd: (v) => Storage().savePreference(schema.copyWith(fontScale: v), ref: ref),
             ),
           ),
         ),
@@ -498,6 +501,8 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
           leading: Icon(Icons.restart_alt, size: 22, color: scheme.error),
           onTap: () async {
+            final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+            final String successMsg = AppLocalizations.of(context)?.msg_preference_engineer_reset ?? 'Reset complete.';
             final bool confirmed = await showConfirmDialog(
               context: context,
               title: AppLocalizations.of(context)?.btn_preference_engineer_reset ?? 'Reset',
@@ -505,9 +510,13 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
             );
             if (!confirmed || !mounted) return;
             await storage.purge();
-            if (mounted) {
-              showSnackbar(context, AppLocalizations.of(context)?.msg_preference_engineer_reset ?? 'Reset complete.');
-            }
+            // Reset in-memory providers so the rest of the app sees the
+            // cleared state immediately, not just the on-disk version.
+            ref.read(preferenceProvider.notifier).state = null;
+            ref.read(accessStatusProvider.notifier).state = null;
+            ref.read(reloadProvider.notifier).state = !ref.read(reloadProvider);
+            if (!mounted) return;
+            messenger.showSnackBar(SnackBar(content: Text(successMsg)));
           },
         ),
       ],
@@ -560,8 +569,14 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
   }
 
   Future<void> _sendDummyNotification() async {
-    showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_pending ?? 'Test notification in 5 seconds...');
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context);
+    final String pending = l10n?.msg_test_notification_pending ?? 'Test notification in 5 seconds...';
+    final String foreground = l10n?.msg_test_notification_foreground ?? 'Notifications require background.';
+
+    messenger.showSnackBar(SnackBar(content: Text(pending)));
     Future.delayed(const Duration(seconds: 5), () {
+      if (!mounted) return;
       final state = WidgetsBinding.instance.lifecycleState;
       switch (state) {
         case AppLifecycleState.paused:
@@ -571,7 +586,7 @@ class _SystemPreferenceState extends ConsumerState<SystemPreference> {
           return;
         default:
           AppBadgePlus.updateBadge(0);
-          showSnackbar(context, AppLocalizations.of(context)?.msg_test_notification_foreground ?? 'Notifications require background.');
+          messenger.showSnackBar(SnackBar(content: Text(foreground)));
           return;
       }
     });

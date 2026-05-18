@@ -221,12 +221,17 @@ class _InteractionState extends ConsumerState<Interaction> {
       case StatusInteraction.bookmark:
       case StatusInteraction.pin:
         _haptic();
-        final StatusSchema updatedStatus = await widget.status.interactWithStatus(
+        final StatusSchema? updatedStatus = await widget.status.interactWithStatus(
           widget.schema,
           widget.action,
           negative: isActive,
         );
-
+        if (!mounted) return;
+        if (updatedStatus == null) {
+          final String msg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+          showSnackbar(context, msg);
+          return;
+        }
         widget.onReload?.call(updatedStatus);
         return;
       case StatusInteraction.edit:
@@ -274,39 +279,49 @@ class _InteractionState extends ConsumerState<Interaction> {
         context.pop();
         showAdaptiveGlassDialog(
           context: context,
-          builder: (BuildContext context) => FilterSelector(
+          builder: (BuildContext dialogContext) => FilterSelector(
             status: widget.schema,
             onSelected: (filter) async {
-              context.pop();
+              Navigator.of(dialogContext).pop();
 
               await widget.status.addFilterStatus(filter: filter, status: widget.schema);
+              if (!mounted) return;
 
               final StatusSchema? updatedStatus = await widget.status.getStatus(widget.schema.id);
-              if (updatedStatus != null) widget.onReload?.call(updatedStatus);
+              if (!mounted || updatedStatus == null) return;
+              widget.onReload?.call(updatedStatus);
             },
             onDeleted: (filter) async {
-              context.pop();
+              Navigator.of(dialogContext).pop();
 
               final List<FilterStatusSchema> statusFilters = await widget.status.fetchFilterStatuses(filter: filter);
+              if (!mounted) return;
               final FilterStatusSchema? status = statusFilters.where((s) => s.statusId == widget.schema.id).firstOrNull;
               if (status == null) return;
 
               await widget.status.removeFilterStatus(status: status);
+              if (!mounted) return;
 
               final StatusSchema? updatedStatus = await widget.status.getStatus(widget.schema.id);
-              if (updatedStatus != null) widget.onReload?.call(updatedStatus);
+              if (!mounted || updatedStatus == null) return;
+              widget.onReload?.call(updatedStatus);
             },
           ),
         );
         return;
       case StatusInteraction.mute:
         _haptic();
-        final StatusSchema mutedStatus = await widget.status.interactWithStatus(
+        final StatusSchema? mutedStatus = await widget.status.interactWithStatus(
           widget.schema,
           widget.action,
           negative: isActive,
         );
-
+        if (!mounted) return;
+        if (mutedStatus == null) {
+          final String msg = AppLocalizations.of(context)?.msg_network_error ?? 'Network error';
+          showSnackbar(context, msg);
+          return;
+        }
         widget.onReload?.call(mutedStatus);
         return;
       case StatusInteraction.block:

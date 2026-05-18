@@ -50,6 +50,7 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
   VoidCallback? _streamingUnsubscribe;
 
   bool _isOffline = false;
+  bool _loadUnreadedInFlight = false;
 
   List<StatusSchema> unreaded = [];
   List<StatusSchema> statuses = [];
@@ -207,18 +208,18 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
     }
     HapticFeedback.lightImpact();
     try {
-      final StatusSchema updated = await widget.status.interactWithStatus(
+      final StatusSchema? updated = await widget.status.interactWithStatus(
         target,
         action,
         negative: isActive,
       );
-      if (!mounted) return;
+      if (!mounted || updated == null) return;
       final int current = statuses.indexWhere((s) => s.id == target.id);
       if (current >= 0) {
         setState(() => statuses[current] = updated);
       }
-    } catch (_) {
-      // Swallow: transient network errors shouldn't crash the shortcut flow.
+    } catch (e) {
+      logger.w('keyboard-shortcut interaction failed: $e');
     }
   }
 
@@ -564,21 +565,26 @@ class _TimelineState extends State<Timeline> with PaginatedListMixin {
 
   // Load the possible unreaded statuses when the app is resumed.
   Future<void> onLoadUnreaded() async {
-    String? minId = unreaded.isEmpty ?
-        (statuses.isNotEmpty ? statuses.first.id : null) :
-        unreaded.first.id;
+    if (_loadUnreadedInFlight) return;
+    _loadUnreadedInFlight = true;
+    try {
+      String? minId = unreaded.isEmpty ?
+          (statuses.isNotEmpty ? statuses.first.id : null) :
+          unreaded.first.id;
 
-    if (minId == null) return;
+      if (minId == null) return;
 
-    while (true) {
-      final List<StatusSchema> schemas = await onLoadUnreadedMore(minId);
+      while (mounted) {
+        final List<StatusSchema> schemas = await onLoadUnreadedMore(minId);
+        if (!mounted || schemas.isEmpty) break;
 
-      if (schemas.isEmpty) break;
+        setState(() => unreaded.insertAll(0, schemas));
+        minId = schemas.first.id;
 
-      setState(() => unreaded.insertAll(0, schemas));
-      minId = schemas.first.id;
-
-      await Future.delayed(const Duration(milliseconds: 750));
+        await Future.delayed(const Duration(milliseconds: 750));
+      }
+    } finally {
+      _loadUnreadedInFlight = false;
     }
   }
 

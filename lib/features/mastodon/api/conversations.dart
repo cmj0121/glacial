@@ -42,12 +42,12 @@ extension ConversationExtensions on AccessStatusSchema {
     return (conversations, nextId);
   }
 
-  // Delete a conversation by its ID.
-  Future<void> deleteConversation(String id) async {
+  // Delete a conversation by its ID. Returns true on success.
+  Future<bool> deleteConversation(String id) async {
     checkSignedIn();
 
     final String endpoint = '/api/v1/conversations/$id';
-    await deleteAPI(endpoint);
+    return await deleteAPI(endpoint) != null;
   }
 
   // Mark a conversation as read by its ID.

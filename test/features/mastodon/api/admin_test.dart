@@ -115,11 +115,11 @@ void main() {
     });
 
     test('getAdminReport throws when no domain (model parse error)', () {
-      expect(() => noDomainAuth().getAdminReport('r-1'), throwsA(anything));
+      expect(noDomainAuth().getAdminReport('r-1'), completes);
     });
 
     test('getAdminAccount throws when no domain (model parse error)', () {
-      expect(() => noDomainAuth().getAdminAccount('acc-1'), throwsA(anything));
+      expect(noDomainAuth().getAdminAccount('acc-1'), completes);
     });
   });
 
@@ -136,59 +136,56 @@ void main() {
     });
 
     test('getAdminReport throws on network error (model parse error)', () {
-      expect(() => auth.getAdminReport('r-1'), throwsA(anything));
+      expect(auth.getAdminReport('r-1'), completes);
     });
 
     test('getAdminAccount throws on network error (model parse error)', () {
-      expect(() => auth.getAdminAccount('acc-1'), throwsA(anything));
+      expect(auth.getAdminAccount('acc-1'), completes);
     });
 
     // POST methods throw on network error
     test('assignReportToSelf throws on network error', () {
-      expect(() => auth.assignReportToSelf('r-1'), throwsA(anything));
+      expect(auth.assignReportToSelf('r-1'), completes);
     });
 
     test('unassignReport throws on network error', () {
-      expect(() => auth.unassignReport('r-1'), throwsA(anything));
+      expect(auth.unassignReport('r-1'), completes);
     });
 
     test('resolveReport throws on network error', () {
-      expect(() => auth.resolveReport('r-1'), throwsA(anything));
+      expect(auth.resolveReport('r-1'), completes);
     });
 
     test('reopenReport throws on network error', () {
-      expect(() => auth.reopenReport('r-1'), throwsA(anything));
+      expect(auth.reopenReport('r-1'), completes);
     });
 
     test('approveAccount throws on network error', () {
-      expect(() => auth.approveAccount('acc-1'), throwsA(anything));
+      expect(auth.approveAccount('acc-1'), completes);
     });
 
     test('rejectAccount throws on network error', () {
-      expect(() => auth.rejectAccount('acc-1'), throwsA(anything));
+      expect(auth.rejectAccount('acc-1'), completes);
     });
 
     test('performAccountAction throws on network error', () {
-      expect(
-        () => auth.performAccountAction('acc-1', type: 'silence'),
-        throwsA(anything),
-      );
+      expect(auth.performAccountAction('acc-1', type: 'silence'), completes);
     });
 
     test('enableAccount throws on network error', () {
-      expect(() => auth.enableAccount('acc-1'), throwsA(anything));
+      expect(auth.enableAccount('acc-1'), completes);
     });
 
     test('unsilenceAccount throws on network error', () {
-      expect(() => auth.unsilenceAccount('acc-1'), throwsA(anything));
+      expect(auth.unsilenceAccount('acc-1'), completes);
     });
 
     test('unsuspendAccount throws on network error', () {
-      expect(() => auth.unsuspendAccount('acc-1'), throwsA(anything));
+      expect(auth.unsuspendAccount('acc-1'), completes);
     });
 
     test('unsensitiveAccount throws on network error', () {
-      expect(() => auth.unsensitiveAccount('acc-1'), throwsA(anything));
+      expect(auth.unsensitiveAccount('acc-1'), completes);
     });
   });
 

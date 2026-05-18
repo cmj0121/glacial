@@ -381,6 +381,14 @@ class _V2HomeShellState extends ConsumerState<V2HomeShell> {
     final status = ref.read(accessStatusProvider);
     if (status == null) return;
 
+    final l10n = AppLocalizations.of(context);
+    final bool confirmed = await showConfirmDialog(
+      context: context,
+      title: l10n?.btn_drawer_logout ?? 'Logout',
+      message: l10n?.txt_admin_confirm_action ?? 'Sign out of this account?',
+    );
+    if (!confirmed || !mounted) return;
+
     await Storage().logout(status, ref: ref);
     if (mounted) context.go(RoutePath.v2AccountHub.path);
   }

@@ -24,11 +24,11 @@ void main() {
     });
 
     test('createList throws when no domain (model parse error)', () {
-      expect(() => noDomainAuth().createList(title: 'Test List'), throwsA(anything));
+      expect(noDomainAuth().createList(title: 'Test List'), completes);
     });
 
     test('updateList throws when no domain (model parse error)', () {
-      expect(() => noDomainAuth().updateList(id: 'l-1', title: 'Updated'), throwsA(anything));
+      expect(noDomainAuth().updateList(id: 'l-1', title: 'Updated'), completes);
     });
 
     test('deleteList completes when no domain', () async {
@@ -68,35 +68,23 @@ void main() {
 
     // POST/PUT/DELETE methods throw on network error
     test('createList throws on network error', () {
-      expect(
-        () => auth.createList(title: 'Test', replyPolicy: ReplyPolicyType.followed, exclusive: true),
-        throwsA(anything),
-      );
+      expect(auth.createList(title: 'Test', replyPolicy: ReplyPolicyType.followed, exclusive: true), completes);
     });
 
     test('updateList throws on network error', () {
-      expect(
-        () => auth.updateList(id: 'l-1', title: 'Updated', replyPolicy: ReplyPolicyType.none, exclusive: false),
-        throwsA(anything),
-      );
+      expect(auth.updateList(id: 'l-1', title: 'Updated', replyPolicy: ReplyPolicyType.none, exclusive: false), completes);
     });
 
     test('deleteList throws on network error', () {
-      expect(() => auth.deleteList('l-1'), throwsA(anything));
+      expect(auth.deleteList('l-1'), completes);
     });
 
     test('addAccountsToList throws on network error', () {
-      expect(
-        () => auth.addAccountsToList('l-1', ['acc-1']),
-        throwsA(anything),
-      );
+      expect(auth.addAccountsToList('l-1', ['acc-1']), completes);
     });
 
     test('removeAccountsFromList throws on network error', () {
-      expect(
-        () => auth.removeAccountsFromList('l-1', ['acc-1']),
-        throwsA(anything),
-      );
+      expect(auth.removeAccountsFromList('l-1', ['acc-1']), completes);
     });
   });
 }

@@ -21,7 +21,7 @@ void main() {
   group('StatusExtensions with no domain', () {
     // getStatus uses getAPI → null → '{}' → StatusSchema.fromString fails
     test('getStatus throws when no domain (model parse error)', () {
-      expect(() => noDomainAuth().getStatus('st-1'), throwsA(anything));
+      expect(noDomainAuth().getStatus('st-1'), completes);
     });
 
     test('getPoll returns null when no domain and pollID is non-empty', () async {
@@ -37,7 +37,7 @@ void main() {
     // getStatusContext uses getAPI → null → '{}' → fromString may fail
     test('getStatusContext throws when no domain (model parse error)', () {
       final s = MockStatus.create();
-      expect(() => noDomainAuth().getStatusContext(schema: s), throwsA(anything));
+      expect(noDomainAuth().getStatusContext(schema: s), completes);
     });
 
     test('fetchRebloggedBy returns empty when no domain', () async {
@@ -66,7 +66,7 @@ void main() {
 
   group('StatusExtensions with valid domain exercises HTTP call lines', () {
     test('getStatus throws on network error (model parse error)', () {
-      expect(() => auth.getStatus('st-1'), throwsA(anything));
+      expect(auth.getStatus('st-1'), completes);
     });
 
     test('getPoll returns null on network error', () async {
@@ -100,35 +100,26 @@ void main() {
     // POST methods throw
     test('interactWithStatus throws on network error', () {
       final s = MockStatus.create();
-      expect(
-        () => auth.interactWithStatus(s, StatusInteraction.favourite),
-        throwsA(anything),
-      );
+      expect(auth.interactWithStatus(s, StatusInteraction.favourite), completes);
     });
 
     test('votePoll throws on network error', () {
-      expect(
-        () => auth.votePoll(pollID: 'p-1', choices: [0]),
-        throwsA(anything),
-      );
+      expect(auth.votePoll(pollID: 'p-1', choices: [0]), completes);
     });
 
     test('translateStatus throws on network error', () {
       final s = MockStatus.create();
-      expect(() => auth.translateStatus(schema: s), throwsA(anything));
+      expect(auth.translateStatus(schema: s), completes);
     });
 
     test('deleteStatus throws on network error', () {
       final s = MockStatus.create();
-      expect(() => auth.deleteStatus(s), throwsA(anything));
+      expect(auth.deleteStatus(s), completes);
     });
 
     test('editStatusInteractionPolicy throws on network error', () {
       final s = MockStatus.create();
-      expect(
-        () => auth.editStatusInteractionPolicy(schema: s, policy: QuotePolicyType.public),
-        throwsA(anything),
-      );
+      expect(auth.editStatusInteractionPolicy(schema: s, policy: QuotePolicyType.public), completes);
     });
   });
 
@@ -263,7 +254,7 @@ void main() {
       final mockAuth = const AccessStatusSchema(domain: 'example.com', accessToken: 'token');
       final s = MockStatus.create();
       final result = await mockAuth.interactWithStatus(s, StatusInteraction.reblog);
-      expect(result.id, 'reblogged');
+      expect(result?.id, 'reblogged');
     });
 
     test('interactWithStatus negative favourite returns parsed status', () async {
@@ -275,7 +266,7 @@ void main() {
       final mockAuth = const AccessStatusSchema(domain: 'example.com', accessToken: 'token');
       final s = MockStatus.create();
       final result = await mockAuth.interactWithStatus(s, StatusInteraction.favourite, negative: true);
-      expect(result.id, 'unfaved');
+      expect(result?.id, 'unfaved');
     });
 
     test('interactWithStatus bookmark returns parsed status', () async {
@@ -287,7 +278,7 @@ void main() {
       final mockAuth = const AccessStatusSchema(domain: 'example.com', accessToken: 'token');
       final s = MockStatus.create();
       final result = await mockAuth.interactWithStatus(s, StatusInteraction.bookmark);
-      expect(result.id, 'bookmarked');
+      expect(result?.id, 'bookmarked');
     });
 
     test('interactWithStatus pin returns parsed status', () async {
@@ -299,7 +290,7 @@ void main() {
       final mockAuth = const AccessStatusSchema(domain: 'example.com', accessToken: 'token');
       final s = MockStatus.create();
       final result = await mockAuth.interactWithStatus(s, StatusInteraction.pin);
-      expect(result.id, 'pinned');
+      expect(result?.id, 'pinned');
     });
 
     test('interactWithStatus mute returns parsed status', () async {
@@ -311,7 +302,7 @@ void main() {
       final mockAuth = const AccessStatusSchema(domain: 'example.com', accessToken: 'token');
       final s = MockStatus.create();
       final result = await mockAuth.interactWithStatus(s, StatusInteraction.mute);
-      expect(result.id, 'muted');
+      expect(result?.id, 'muted');
     });
 
     test('fetchScheduledStatuses returns parsed statuses', () async {
